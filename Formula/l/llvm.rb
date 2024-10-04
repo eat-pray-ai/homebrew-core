@@ -1,8 +1,8 @@
 class Llvm < Formula
   desc "Next-gen compiler infrastructure"
   homepage "https://llvm.org/"
-  url "https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.0/llvm-project-19.1.0.src.tar.xz"
-  sha256 "5042522b49945bc560ff9206f25fb87980a9b89b914193ca00d961511ff0673c"
+  url "https://github.com/llvm/llvm-project/releases/download/llvmorg-19.1.1/llvm-project-19.1.1.src.tar.xz"
+  sha256 "d40e933e2a208ee142898f85d886423a217e991abbcd42dd8211f507c93e1266"
   # The LLVM Project is under the Apache License v2.0 with LLVM Exceptions
   license "Apache-2.0" => { with: "LLVM-exception" }
   head "https://github.com/llvm/llvm-project.git", branch: "main"
@@ -13,12 +13,12 @@ class Llvm < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "7fafb395fbcf1f3364dd2f0a5af4a5956027993c4ea9cc8e36b8367d8e9a5726"
-    sha256 cellar: :any,                 arm64_sonoma:  "7397168396c6554dfa28db397cc5f08d0274c1c3b766f585754a8edf9f5e3bbb"
-    sha256 cellar: :any,                 arm64_ventura: "480adde82e79b0116a201b69e2410de1365fbfe6964a84e7688e88dff2cc956b"
-    sha256 cellar: :any,                 sonoma:        "f90310d94adf1a4b1b5ac8cef9e7461f837d81ad17d4752c3dd664265dfe7479"
-    sha256 cellar: :any,                 ventura:       "7adfafe60764b040a45232002142cc10551cf155ed1ce7d889ba917b2b6716ff"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ea0cb7a811893181ef275571fd368e94ca7f3b475b21086de6c253d595583bce"
+    sha256 cellar: :any,                 arm64_sequoia: "d3df20aa7b8289e0667b00bf3b28d55279895f26bead6473e2a9e4da54c30183"
+    sha256 cellar: :any,                 arm64_sonoma:  "f053071e6876e945babeccc8a185f70e8eb39d6a79e9c5ebab285fafb7ce6c58"
+    sha256 cellar: :any,                 arm64_ventura: "b744ddedd2eb73e36a02cc5c10a1dab3cac26486799d068903bcda8428bb74f6"
+    sha256 cellar: :any,                 sonoma:        "444ada434ffc18976a9a16b530f42f0b601f2c2627451ca69df3b143fd476d20"
+    sha256 cellar: :any,                 ventura:       "4e3c26f668b408d9806c6a4a8ff5299639c6153d3de6320ebb958c29b5f2576d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fe6cd7c69619252eea13f0c5c590b2662541089d1a7e8bc606dbb07b1a769854"
   end
 
   # Clang cannot find system headers if Xcode CLT is not installed
@@ -62,7 +62,6 @@ class Llvm < Formula
     projects = %w[
       clang
       clang-tools-extra
-      lld
       mlir
       polly
     ]
@@ -127,10 +126,15 @@ class Llvm < Formula
       -DCLANG_PYTHON_BINDINGS_VERSIONS=#{python_versions.join(";")}
       -DLLVM_CREATE_XCODE_TOOLCHAIN=OFF
       -DCLANG_FORCE_MATCHING_LIBCLANG_SOVERSION=OFF
-      -DPACKAGE_VENDOR=#{tap.user}
-      -DBUG_REPORT_URL=#{tap.issues_url}
-      -DCLANG_VENDOR_UTI=org.#{tap.user.downcase}.clang
     ]
+
+    if tap.present?
+      args += %W[
+        -DPACKAGE_VENDOR=#{tap.user}
+        -DBUG_REPORT_URL=#{tap.issues_url}
+      ]
+      args << "-DCLANG_VENDOR_UTI=sh.brew.clang" if tap.official?
+    end
 
     runtimes_cmake_args = []
     builtins_cmake_args = []
@@ -143,12 +147,14 @@ class Llvm < Formula
       end
 
       libcxx_install_libdir = lib/"c++"
-      libcxx_rpaths = [loader_path, rpath(source: libcxx_install_libdir)]
+      libunwind_install_libdir = lib/"unwind"
+      libcxx_rpaths = [loader_path, rpath(source: libcxx_install_libdir, target: libunwind_install_libdir)]
 
       args << "-DLLVM_BUILD_LLVM_C_DYLIB=ON"
       args << "-DLLVM_ENABLE_LIBCXX=ON"
       args << "-DLIBCXX_PSTL_BACKEND=libdispatch"
       args << "-DLIBCXX_INSTALL_LIBRARY_DIR=#{libcxx_install_libdir}"
+      args << "-DLIBUNWIND_INSTALL_LIBRARY_DIR=#{libunwind_install_libdir}"
       args << "-DLIBCXXABI_INSTALL_LIBRARY_DIR=#{libcxx_install_libdir}"
       args << "-DDEFAULT_SYSROOT=#{macos_sdk}" if macos_sdk
       runtimes_cmake_args << "-DCMAKE_INSTALL_RPATH=#{libcxx_rpaths.join("|")}"
@@ -440,15 +446,35 @@ class Llvm < Formula
   end
 
   def caveats
+    s = <<~EOS
+      `lld` is now provided in a separate formula:
+        brew install lld
+    EOS
+
     on_macos do
-      <<~EOS
-        To use the bundled libc++ please add the following LDFLAGS:
-          LDFLAGS="-L#{opt_lib}/c++ -L#{opt_lib} -lunwind"
+      s += <<~EOS
+
+        To use the bundled libunwind please use the following LDFLAGS:
+          LDFLAGS="-L#{opt_lib}/unwind -lunwind"
+
+        To use the bundled libc++ please use the following LDFLAGS:
+          LDFLAGS="-L#{opt_lib}/c++ -L#{opt_lib}/unwind -lunwind"
+
+        NOTE: You probably want to use the libunwind and libc++ provided by macOS unless you know what you're doing.
       EOS
     end
+
+    s
   end
 
   test do
+    alt_location_libs = [
+      shared_library("libc++", "*"),
+      shared_library("libc++abi", "*"),
+      shared_library("libunwind", "*"),
+    ]
+    assert_empty lib.glob(alt_location_libs) if OS.mac?
+
     llvm_version = Utils.safe_popen_read(bin/"llvm-config", "--version").strip
     llvm_version_major = Version.new(llvm_version).major.to_s
     soversion = llvm_version_major.dup
@@ -491,18 +517,6 @@ class Llvm < Formula
     assert_equal "Hello World!", shell_output("./test++").chomp
     system bin/"clang", "-v", "test.c", "-o", "test"
     assert_equal "Hello World!", shell_output("./test").chomp
-
-    # To test `lld`, we mock a broken `ld` to make sure it's not what's being used.
-    (testpath/"fake_ld.c").write <<~EOS
-      int main() { return 1; }
-    EOS
-    (testpath/"bin").mkpath
-    system ENV.cc, "-v", "fake_ld.c", "-o", "bin/ld"
-    with_env(PATH: "#{testpath}/bin:#{ENV["PATH"]}") do
-      # Our fake `ld` will produce a compilation error if it is used instead of `lld`.
-      system bin/"clang", "-v", "test.c", "-o", "test_lld", "-fuse-ld=lld"
-    end
-    assert_equal "Hello World!", shell_output("./test_lld").chomp
 
     # These tests should ignore the usual SDK includes
     with_env(CPATH: nil) do

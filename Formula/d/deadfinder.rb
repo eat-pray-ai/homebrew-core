@@ -1,45 +1,41 @@
 class Deadfinder < Formula
   desc "Finds broken links"
   homepage "https://rubygems.org/gems/deadfinder"
-  url "https://github.com/hahwul/deadfinder/archive/refs/tags/1.3.4.tar.gz"
-  sha256 "ed99ee05c308095763b01adcbc4560c99576c7ed1af59b38a7786bb1469b3a90"
+  url "https://github.com/hahwul/deadfinder/archive/refs/tags/1.4.0.tar.gz"
+  sha256 "15934889544d008cf9b87ce69123f7bed4ba6587bbc3aef82a60d625d2675cec"
   license "MIT"
   head "https://github.com/hahwul/deadfinder.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia:  "9db3b85d28fa5a12700ea85cf0af1d76296da70cd78c9a5898aaf3e5c33c5034"
-    sha256 cellar: :any,                 arm64_sonoma:   "a42db7f64908f83de65a3d7baf4ab8f80584357a75d1884e37913eca755ae6aa"
-    sha256 cellar: :any,                 arm64_ventura:  "0012f43ea8e8fb4cb5978be35889ab6b9a701883ac16a2f62a88fb27b182287c"
-    sha256 cellar: :any,                 arm64_monterey: "f75d8d901cb23916e82be5f3e1747fa7c61c39da533123df29f8236300cd4d0d"
-    sha256 cellar: :any,                 sonoma:         "2c9da96df700b8e6082bfb7ab34a308347de5b9d536a3b8f315c1085966ce424"
-    sha256 cellar: :any,                 ventura:        "58bd84c9b8ffa9426f0e4561130abebfd560fca5c81445e3e4d15f2361287891"
-    sha256 cellar: :any,                 monterey:       "62e31dbd0c5ff09406649aa9b824120166bb4a74ce3fa8ab76994db68ef05d4b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3f4dfdbbe43581cc086866f7b6bdc41cec9e1a1dbe7dfc1166652e73c2c3ed8b"
+    sha256 cellar: :any,                 arm64_sequoia: "9b3153adcb17a495aefc313497dce90327eb01ee24f3afd89f859629616687a2"
+    sha256 cellar: :any,                 arm64_sonoma:  "476d1c7d6def072e651ddf73c9bbe0139ade11ef300846ef6f8ed87a72898e2c"
+    sha256 cellar: :any,                 arm64_ventura: "6899d7a9d3c168cb83de25506b1af305dd2f23340c4ae6dea9a1d50785f9f5c5"
+    sha256 cellar: :any,                 sonoma:        "be54c4a324468ba4d68c45f56e0dff40a53e24c914391debdba67f084133c76f"
+    sha256 cellar: :any,                 ventura:       "af484959880cc03137dac095a779b78592cd04db688f99610c056b02d707a053"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b94ada59473a9b74b0d9e299045628dca2d8a808400f8f97c415fbb61de2ffa0"
   end
 
   depends_on "ruby"
 
   uses_from_macos "libffi"
+  uses_from_macos "libxml2"
+  uses_from_macos "libxslt"
   uses_from_macos "xz"
   uses_from_macos "zlib"
 
+  on_linux do
+    depends_on "pkg-config" => :build
+  end
+
   def install
     ENV["GEM_HOME"] = libexec
+    ENV["NOKOGIRI_USE_SYSTEM_LIBRARIES"] = "1"
     system "bundle", "config", "set", "without", "development", "test"
     system "bundle", "install"
     system "gem", "build", "deadfinder.gemspec"
     system "gem", "install", "deadfinder-#{version}.gem"
     bin.install libexec/"bin/deadfinder"
     bin.env_script_all_files(libexec/"bin", GEM_HOME: ENV["GEM_HOME"])
-
-    # Avoid references to the Homebrew shims directory
-    if OS.mac?
-      shims_references = Dir[libexec/"extensions/**/ffi-*/mkmf.log"].select { |f| File.file? f }
-      inreplace shims_references,
-                Superenv.shims_path.to_s,
-                "<**Reference to the Homebrew shims directory**>",
-                audit_result: false
-    end
   end
 
   test do

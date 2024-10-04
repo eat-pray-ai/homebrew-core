@@ -1,8 +1,8 @@
 class Mockery < Formula
   desc "Mock code autogenerator for Golang"
   homepage "https://github.com/vektra/mockery"
-  url "https://github.com/vektra/mockery/archive/refs/tags/v2.46.0.tar.gz"
-  sha256 "21144b213dafcb17c225777f7f8d5dc29c90cab05e25ec3e80564583458d76f0"
+  url "https://github.com/vektra/mockery/archive/refs/tags/v2.46.2.tar.gz"
+  sha256 "740407dd46872216dc3a7e55bff188d982a533b2f0f8a00c75fbc0eea2645343"
   license "BSD-3-Clause"
   head "https://github.com/vektra/mockery.git", branch: "master"
 
@@ -12,12 +12,12 @@ class Mockery < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "395e422938460705f859164412a4e92f07508ee38319e06f072d524c15468abf"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "395e422938460705f859164412a4e92f07508ee38319e06f072d524c15468abf"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "395e422938460705f859164412a4e92f07508ee38319e06f072d524c15468abf"
-    sha256 cellar: :any_skip_relocation, sonoma:        "155f9fd4130c943cb314b6a8ce1237a46040b4bbbe67f09c641029ba392ca6de"
-    sha256 cellar: :any_skip_relocation, ventura:       "155f9fd4130c943cb314b6a8ce1237a46040b4bbbe67f09c641029ba392ca6de"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "46fd8531c64cd1c2234b69da68bc661b870ce6374345f9aaf1841835e947de46"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "ff52d2f1e842e2bb23bc103760fba6d68035bb1542cb76932b25a8a498c609cd"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "ff52d2f1e842e2bb23bc103760fba6d68035bb1542cb76932b25a8a498c609cd"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "ff52d2f1e842e2bb23bc103760fba6d68035bb1542cb76932b25a8a498c609cd"
+    sha256 cellar: :any_skip_relocation, sonoma:        "14ad01dd50dfb06a7ebbd02090226fd647756ce54d9e292138a2922d707ffde1"
+    sha256 cellar: :any_skip_relocation, ventura:       "14ad01dd50dfb06a7ebbd02090226fd647756ce54d9e292138a2922d707ffde1"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1c88e2a6742c389d46e4f4fdee6c8147156ab299cb87456e37903dce11efc887"
   end
 
   depends_on "go" => :build

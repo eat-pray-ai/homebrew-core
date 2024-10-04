@@ -2,8 +2,8 @@ class Fortio < Formula
   desc "HTTP and gRPC load testing and visualization tool and server"
   homepage "https://fortio.org/"
   url "https://github.com/fortio/fortio.git",
-      tag:      "v1.66.5",
-      revision: "3af89dc91ec84b52b15015f771dc26d59e10416b"
+      tag:      "v1.67.1",
+      revision: "16186b8ff17306f9e4a30c925911916faa641fe5"
   license "Apache-2.0"
 
   # There can be a notable gap between when a version is tagged and a
@@ -15,12 +15,12 @@ class Fortio < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "7135bef976606a42c6bc0074bf022f1257e4fcd2453cd53c8c5995845ff1b632"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "5974dff4b8e0ef64a8a1365525b5926411dee2a715f217ba50b6fc68db6ee85b"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "e5c680ae26d9c42dc46bef031831f0c0257d4ebe6bcc9541e96b5dbf9fcf54c3"
-    sha256 cellar: :any_skip_relocation, sonoma:        "89a8fefb0091e6e170806a966769e63e307020c42beb2f60a4be3ebe64cbe8fa"
-    sha256 cellar: :any_skip_relocation, ventura:       "536141c09e85c704bd3d7f6e4849f4752e973be1665b4526c48eefd45ef05eec"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "40420e79b14fbc436ec542435d031daadc06e5f7825cbc46fe90ba2dc44bcda6"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "0be942de75b61e42e52285ac3b0e96cef94a90bd73b2a49865df8217a02034cf"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "6126ba24ec10d2a7c69c23cace0207a4af2591d591479c45e9cc92d15e56a210"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "9b28c294ab63523a8955312cb16c5dad7bde80256258686cf9721857a9b0990f"
+    sha256 cellar: :any_skip_relocation, sonoma:        "e9ec859b4dd5db8b2be13d6bb984ccc0eb9820103a4d1b12957d73543396722a"
+    sha256 cellar: :any_skip_relocation, ventura:       "fe701efd1db9de289a17205c25575492c3554db8f97866f9304d51d933d72436"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d7e43c41239e8040819de59d98e7b62409aaa63a6fd8cad980b8d85d9e60dc28"
   end
 
   depends_on "go" => :build

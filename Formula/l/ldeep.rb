@@ -3,18 +3,18 @@ class Ldeep < Formula
 
   desc "LDAP enumeration utility"
   homepage "https://github.com/franc-pentest/ldeep"
-  url "https://files.pythonhosted.org/packages/50/81/e25afe565ccab59ca40755fc2bfc2dd47a5cbf864725eee32d8f2afc8a56/ldeep-1.0.66.tar.gz"
-  sha256 "e79aab711b799267110e2b4c6bc1a9dae6076823f0387e6de20ce98307070833"
+  url "https://files.pythonhosted.org/packages/56/1e/7984edfb4e96a60b1f39779bbc170c082c1794edc6e5cd3ff756b7949160/ldeep-1.0.69.tar.gz"
+  sha256 "5378365c90577833f2772cedd85ccc2288dba0c4156063cc2a45c46074617200"
   license "MIT"
   head "https://github.com/franc-pentest/ldeep.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sequoia: "4addafab6ca1ca3481676d79e4332dd623c2893bfb0f59196226b78d4f21ee5b"
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "7965fe9e84141bb216bd8a97d368a038c41f33fa403b667c824f52d7fe959643"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "2aa9e375b870005860080787beac40ff0aaba556b2d6fdf4229e7d8b9f1e6baa"
-    sha256 cellar: :any_skip_relocation, sonoma:        "2af80592fa323de0f5ac2faa07eab02f448978a5874e7dfcb552548836beb6cd"
-    sha256 cellar: :any_skip_relocation, ventura:       "05cd3c4ed28f92899d3012cba8fe937b2c4c7ffd169cca21524e202555287269"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7698658a44d98c346643f4320b90e27847e9965c6ea857e230063fdb450e3e05"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "ac5ccc36d95aa9297e5fdcb26033c974ca125e1daa470580e6d6e56e5f098943"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "e2c44dd33284f0a6284b657c78ee52b9de12b44c55286e2b5087137e3ad2f421"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "baeed8afc58969fbc2795f7645dad93fdf52a404c1d86ee38cd8b34c6cdde666"
+    sha256 cellar: :any_skip_relocation, sonoma:        "b37c8d987c35e16898fae565c3f0e8a35de065f90003f3a6622e3694a090e6e9"
+    sha256 cellar: :any_skip_relocation, ventura:       "06189c745cc938055bdd0bdb08cea1e6dc7deec57908336cab830d0a6c699740"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b11aee4eb6083480fb73fe8eb4893e0f3a3f155d3f55469e3fe541d949fb4314"
   end
 
   depends_on "cryptography"

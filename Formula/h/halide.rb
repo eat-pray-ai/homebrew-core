@@ -13,12 +13,13 @@ class Halide < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "337d62bf6f959d1d169fb53a7c188f91dfff9d711885b6aff7e7a699e95c693b"
-    sha256 cellar: :any,                 arm64_sonoma:  "e4b08ec36e64c194e2d0b25973528438e5a3630b9160b6cbeec05964446951ef"
-    sha256 cellar: :any,                 arm64_ventura: "51f91908f26d48c0d9cadefedb86cf362f61a706a7f94ce76284ade185cca665"
-    sha256 cellar: :any,                 sonoma:        "e4585a4da8f90cad8e65e647e381fac0242cae2da58200b43e6502ffc4eb3a38"
-    sha256 cellar: :any,                 ventura:       "cb74ce65fd1d11bc3829432dc7e4a0eec1521b1372968d22ac29382f6d5a1db3"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "28101a52f9af445d2601475e476ad1a6da766d5bcb275d714107ad6b0305c823"
+    rebuild 2
+    sha256 cellar: :any,                 arm64_sequoia: "6f89eeee118f390658d2a52a67e41996ce89fcd058684961b27423d3b117eea9"
+    sha256 cellar: :any,                 arm64_sonoma:  "e76b080cba6f9754412e6df3562d6e03bbf601233a84d9364c4d63ab98d2029c"
+    sha256 cellar: :any,                 arm64_ventura: "b7dd542219917916ff63c94e29a2869cfbcf9758843c35f9990c06bed44e1348"
+    sha256 cellar: :any,                 sonoma:        "ddd5a3737ec06e925dbfab1487021b3785ef8bcdb300e9163242b9a60c394873"
+    sha256 cellar: :any,                 ventura:       "2f7c424d4540af2ae08aff4f90a019e83fbbd18a97b76571b7ad1456d638b83f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9f58f0eaa4f149d8685fd1f166cf3224995a89621c20e06a39fe0386e1ab71dd"
   end
 
   depends_on "cmake" => :build
@@ -26,6 +27,7 @@ class Halide < Formula
   depends_on "flatbuffers"
   depends_on "jpeg-turbo"
   depends_on "libpng"
+  depends_on "lld"
   depends_on "llvm"
   depends_on "python@3.12"
 
@@ -51,14 +53,19 @@ class Halide < Formula
     builddir = buildpath/"build"
     (builddir/"_deps/wabt-src").install resource("wabt")
 
-    system "cmake", "-S", ".", "-B", builddir,
-                    "-DCMAKE_INSTALL_RPATH=#{rpath}",
-                    "-DHalide_INSTALL_PYTHONDIR=#{prefix/Language::Python.site_packages(python3)}",
-                    "-DHalide_SHARED_LLVM=ON",
-                    "-DPYBIND11_USE_FETCHCONTENT=OFF",
-                    "-DFLATBUFFERS_USE_FETCHCONTENT=OFF",
-                    "-DFETCHCONTENT_SOURCE_DIR_WABT=#{builddir}/_deps/wabt-src",
-                    *std_cmake_args
+    site_packages = prefix/Language::Python.site_packages(python3)
+    rpaths = [rpath, rpath(source: site_packages/"halide")]
+    args = [
+      "-DCMAKE_INSTALL_RPATH=#{rpaths.join(";")}",
+      "-DHalide_INSTALL_PYTHONDIR=#{site_packages}",
+      "-DHalide_SHARED_LLVM=ON",
+      "-DPYBIND11_USE_FETCHCONTENT=OFF",
+      "-DFLATBUFFERS_USE_FETCHCONTENT=OFF",
+      "-DFETCHCONTENT_SOURCE_DIR_WABT=#{builddir}/_deps/wabt-src",
+      "-DCMAKE_SHARED_LINKER_FLAGS=-llldCommon",
+    ]
+    odie "CMAKE_SHARED_LINKER_FLAGS can be removed from `args`" if build.bottle? && version > "18.0.0"
+    system "cmake", "-S", ".", "-B", builddir, *args, *std_cmake_args
     system "cmake", "--build", builddir
     system "cmake", "--install", builddir
   end
