@@ -29,6 +29,7 @@ ain
 aiven-client
 akamai
 alda
+alembic
 algol68g
 aliddns
 aliyun-cli
@@ -184,6 +185,7 @@ bat
 bat-extras
 batik
 bats-core
+batt
 bazarr
 bazel
 bazel-diff
@@ -249,6 +251,7 @@ bottom
 bounceback
 bowtie2
 box2d
+boxes
 bpftop
 breezy
 brev
@@ -407,6 +410,7 @@ circleci
 circumflex
 citus
 cjson
+ckan
 clac
 clair
 clamav
@@ -558,6 +562,7 @@ cycode
 cyctl
 cyme
 cypher-shell
+cyphernetes
 cyrus-sasl
 cython
 czg
@@ -1491,6 +1496,7 @@ libclc
 libcoap
 libcouchbase
 libcpuid
+libcss
 libcyaml
 libdap
 libdeflate
@@ -2677,6 +2683,7 @@ taplo
 tarantool
 tartufo
 task
+taskopen
 tbb
 tbls
 tbox
@@ -2967,6 +2974,7 @@ woof-doom
 wpebackend-fdo
 wstunnel
 wtfis
+wthrr
 wumpus
 wxmaxima
 wxpython

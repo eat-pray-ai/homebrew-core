@@ -1,18 +1,18 @@
 class Jackett < Formula
   desc "API Support for your favorite torrent trackers"
   homepage "https://github.com/Jackett/Jackett"
-  url "https://github.com/Jackett/Jackett/archive/refs/tags/v0.22.707.tar.gz"
-  sha256 "ca764635b831372332365cd6553508f548fce408b52afde6eec0532ae94d4534"
+  url "https://github.com/Jackett/Jackett/archive/refs/tags/v0.22.716.tar.gz"
+  sha256 "70d9ddbe78b57e7a649628d90bb08e73e2a29790b7e483e61a06f3640081c6a2"
   license "GPL-2.0-only"
   head "https://github.com/Jackett/Jackett.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sequoia: "163b0f9328d505e988bacfb5d773a5c5a0a34bf1fd955595a4de2459b4c54133"
-    sha256 cellar: :any,                 arm64_sonoma:  "f3ebff9d2f89c73bf9a1b583e4315955eaa60a7c892576b68f5ed1f4c1a98c93"
-    sha256 cellar: :any,                 arm64_ventura: "981fd8db8b2a493555dcda84ee9296934a932f77aefda02e1f63f6ed12e22b3f"
-    sha256 cellar: :any,                 sonoma:        "63081c9e4cd761e26dfd971843f8b998e13cc928b74d268ef8115b4b0be8b414"
-    sha256 cellar: :any,                 ventura:       "ef622fe7087d565359e5c8845e644928807779fa5d2e0bd4360590295278f962"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:  "038d0e9829663b05c3c905f33b192a2a5984afcbf45d05dd2c64b54bad0ef8a4"
+    sha256 cellar: :any,                 arm64_sequoia: "ed9edd3d57599e83d72721382c505b7d596c9a12f2fcb84c6a3a0f2798110ecf"
+    sha256 cellar: :any,                 arm64_sonoma:  "02629d0895469a2ecf872654faceeafa18d0b9ec570a89c4b5c55614c06f66db"
+    sha256 cellar: :any,                 arm64_ventura: "d56e86c9d267a61f041e97daf41d33760937b2a7114fbcfcd9993877dd36784a"
+    sha256 cellar: :any,                 sonoma:        "0b8aae472d702a4e00059889d07200991d6b96e5c0a9de54007e3a69d26c6f77"
+    sha256 cellar: :any,                 ventura:       "73016c32e5390a3022c6cf0fe8dfb2e5ae7b72b8d9600f0a50440fbc42f4c5d7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "49594df6ee7154341326c87126cec6e3da788d717a3bdaea4a9cc0269dbc4e6a"
   end
 
   depends_on "dotnet"
