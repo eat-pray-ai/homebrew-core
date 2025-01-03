@@ -1,34 +1,40 @@
 class Libsoup < Formula
   desc "HTTP client/server library for GNOME"
   homepage "https://wiki.gnome.org/Projects/libsoup"
-  url "https://download.gnome.org/sources/libsoup/3.4/libsoup-3.4.4.tar.xz"
-  sha256 "291c67725f36ed90ea43efff25064b69c5a2d1981488477c05c481a3b4b0c5aa"
+  url "https://download.gnome.org/sources/libsoup/3.6/libsoup-3.6.1.tar.xz"
+  sha256 "ceb1f1aa2bdd73b2cd8159d3998c96c55ef097ef15e4b4f36029209fa18af838"
   license "LGPL-2.0-or-later"
 
   bottle do
-    rebuild 1
-    sha256 arm64_sonoma:   "df1cb8af129b82f0ab5d96628ea7caf87ade46e9ef9bf6c579da87e510ce46b7"
-    sha256 arm64_ventura:  "b7f355256762b236b6d4fcff8fb5a80049519d99714e3bf051e62c9dac1b519a"
-    sha256 arm64_monterey: "15a0f712603d4b6df25ad49558388335362ffd421302c80337a7371529a2bcaf"
-    sha256 sonoma:         "dbf3dfe5cb28b449d24773caa726f8dfc8e5be50106e838a40b5c391ffd1309b"
-    sha256 ventura:        "ccfb7aa97121d72d9fa0ac050df3d8022410433b8b543000593928912e119ae5"
-    sha256 monterey:       "0882c7581ef56bea324c6ca57ede71822ddd6bce9e6ce828c376b2d9dc2ae9a3"
-    sha256 x86_64_linux:   "6f5b3e5587f4155be4f50f8c219e0036c116db0aa90c4fc2f24694637a67857b"
+    sha256 arm64_sequoia: "59038c9b01838bd300de8378545f93ac519f5514fdbc46eb5d14f3c14fda283d"
+    sha256 arm64_sonoma:  "0ca5b4869214fdbe8f94a95cadd4f54c76e90e7d654532e2dd47aead8e7115b1"
+    sha256 arm64_ventura: "6e1ca00c8119f8822b07dd5f5afeb3a81b3826aa5996041690e83b41f0325eaa"
+    sha256 sonoma:        "86f64098da67f9990514394e8628395adfec0a74047f95e64b3d72a6be5e3ddd"
+    sha256 ventura:       "e10c4fd428919efd579e021ebfbffd5b99568456503bd8e4f4fd170924fc9dda"
+    sha256 x86_64_linux:  "f104ffff26ffffbc3838c42fe3bdbff8be2f1b25f2e4570d2c30005dc24b3e48"
   end
 
   depends_on "gobject-introspection" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => [:build, :test]
   depends_on "python@3.12" => :build
   depends_on "vala" => :build
+
+  depends_on "glib"
   depends_on "glib-networking"
   depends_on "gnutls"
+  depends_on "libnghttp2"
   depends_on "libpsl"
+  depends_on "sqlite"
 
   uses_from_macos "krb5"
   uses_from_macos "libxml2"
-  uses_from_macos "sqlite"
+  uses_from_macos "zlib"
+
+  on_macos do
+    depends_on "gettext"
+  end
 
   on_linux do
     depends_on "brotli"
@@ -42,7 +48,7 @@ class Libsoup < Formula
 
   test do
     # if this test start failing, the problem might very well be in glib-networking instead of libsoup
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <libsoup/soup.h>
 
       int main(int argc, char *argv[]) {
@@ -60,24 +66,9 @@ class Libsoup < Formula
         g_object_unref(session);
         return 0;
       }
-    EOS
-    ENV.libxml2
-    gettext = Formula["gettext"]
-    glib = Formula["glib"]
-    flags = %W[
-      -I#{gettext.opt_include}
-      -I#{glib.opt_include}/glib-2.0
-      -I#{glib.opt_lib}/glib-2.0/include
-      -I#{include}/libsoup-3.0
-      -D_REENTRANT
-      -L#{gettext.opt_lib}
-      -L#{glib.opt_lib}
-      -L#{lib}
-      -lgio-2.0
-      -lglib-2.0
-      -lgobject-2.0
-      -lsoup-3.0
-    ]
+    C
+
+    flags = shell_output("pkgconf --cflags --libs libsoup-3.0").chomp.split
     system ENV.cc, "test.c", "-o", "test", *flags
     system "./test"
   end

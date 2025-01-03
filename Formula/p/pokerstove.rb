@@ -4,16 +4,15 @@ class Pokerstove < Formula
   url "https://github.com/andrewprock/pokerstove/archive/refs/tags/v1.1.tar.gz"
   sha256 "ee263f579846b95df51cf3a4b6beeb2ea5ea0450ce7f1c8d87ed6dd77b377220"
   license "BSD-3-Clause"
-  revision 2
+  revision 4
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "aca637d9472af5c1177f789c012193f2dab84a24631f5d7c5fb92296404e6c54"
-    sha256 cellar: :any,                 arm64_ventura:  "4ea6cc2ab4bd6ad7a5950a819a0eeda64d6812facd879ea4772ca63761fcfc86"
-    sha256 cellar: :any,                 arm64_monterey: "4994960373664eb3ab2f349659c9de1269072656064d628e3169a8c2a8f1c7cc"
-    sha256 cellar: :any,                 sonoma:         "547540b3c66d8a6c48e97e698dd840969a463843923d5cd6923668d0b3efe145"
-    sha256 cellar: :any,                 ventura:        "78e6bd8522c39c8826024bb759395b4882c185ecc2ba6ea25a0cb9c2faf3d112"
-    sha256 cellar: :any,                 monterey:       "09da893792a6821040a2c07523e4033b83ba78cefe2c8cab2b4dff8a9ff6fabe"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "aec9765e83ea140906be373c1c8e81a905413615831a6a4104a67818b9a246c9"
+    sha256 cellar: :any,                 arm64_sequoia: "978e66f99c443c8d099a702d1c0dea99055183d8b16f81a3ca793538bef81828"
+    sha256 cellar: :any,                 arm64_sonoma:  "81056f1a1c63ba420727ecb48c33ba4c3abe557d34c2bf16a1dddfb313652f21"
+    sha256 cellar: :any,                 arm64_ventura: "f723555f1f3a9b6c7a8ba94be52754ec95e732ebf18c86cc0b865c4ea34afb95"
+    sha256 cellar: :any,                 sonoma:        "f20fedc6d4c6c45e1dd0634dbe8771cb44c9d577208ca56431b59361a23ce755"
+    sha256 cellar: :any,                 ventura:       "624e5ba8a982e3e13f5cf9bb39c353bdc58000f88fbe1f76145b4b1d571942ee"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "45cb8d428fdf24f5dafef8135406ea83c214b0cb73602cf1424d8bccb4c2699f"
   end
 
   depends_on "cmake" => :build

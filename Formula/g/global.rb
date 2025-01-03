@@ -4,19 +4,18 @@ class Global < Formula
 
   desc "Source code tag system"
   homepage "https://www.gnu.org/software/global/"
-  url "https://ftp.gnu.org/gnu/global/global-6.6.13.tar.gz"
-  mirror "https://ftpmirror.gnu.org/global/global-6.6.13.tar.gz"
-  sha256 "945f349730da01f77854d9811ca8f801669c9461395a29966d8d88cb6703347b"
+  url "https://ftp.gnu.org/gnu/global/global-6.6.14.tar.gz"
+  mirror "https://ftpmirror.gnu.org/global/global-6.6.14.tar.gz"
+  sha256 "f6e7fd0b68aed292e85bb686616baf6551d5c9424adcddca11d808ba318cb320"
   license "GPL-3.0-or-later"
 
   bottle do
-    sha256 arm64_sonoma:   "a16395e013dbe60ef079902a4aac6908d07dd85fe2668f900839303dacebf9d6"
-    sha256 arm64_ventura:  "40f0b4a0425fd5a8c4ff90122ba5db590496188e18a4da39998f6744b7e68efc"
-    sha256 arm64_monterey: "84dba539683309aac5c9f56945ac3c44ce9707e772b5953ceca146eec7f63ddd"
-    sha256 sonoma:         "5642c79437370efd7ac27d11da8658452a8e796d3ec67271d5a2b341e11a4442"
-    sha256 ventura:        "393f49dff80d637352a2849a19bfa406c3a31bf3e398c98abb90d4da80e653e2"
-    sha256 monterey:       "1c469a31ac0444a3613a19bc9efca253343e371f56b8347d20e5e3b8dc8fff67"
-    sha256 x86_64_linux:   "11c332b78b3e22e7bac5fcfcc750f21e996132ba5490e77907b602f6c47432b8"
+    sha256 arm64_sequoia: "11eed24d33dad01e9a23cd8d7ec8e0fa937af1828ee5d0cdd147b75a02e0a045"
+    sha256 arm64_sonoma:  "48b7c70d65b140cfc53d4d82883640d2348b2a24f6e5456b97b532afb8395284"
+    sha256 arm64_ventura: "38135ecf03e163025ce24ac2919964d0df0c554b7c1ddac5484f0a5be5f38e66"
+    sha256 sonoma:        "25dd61063f62711b0b37222f890169382d50920254c7b269b3f2b1622f8c5609"
+    sha256 ventura:       "32a73fdb042ecc97ee871d76794214ebc56ed8640298538ab1bd3135fdbeb4ba"
+    sha256 x86_64_linux:  "069518d2237ae351e7a27efb6f710d7d632c61261190454241022fd94ba4d620"
   end
 
   head do
@@ -32,7 +31,7 @@ class Global < Formula
 
   depends_on "libtool"
   depends_on "ncurses"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "sqlite"
   depends_on "universal-ctags"
 
@@ -43,10 +42,13 @@ class Global < Formula
     sha256 "786ff802f32e91311bff3889f6e9a86e81505fe99f2735bb6d60ae0c5004f199"
   end
 
+  def python3
+    "python3.13"
+  end
+
   def install
     system "sh", "reconf.sh" if build.head?
 
-    python3 = "python3.12"
     venv = virtualenv_create(libexec, python3)
     venv.pip_install resources
 
@@ -70,16 +72,16 @@ class Global < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       int c2func (void) { return 0; }
       void cfunc (void) {int cvar = c2func(); }")
-    EOS
-    (testpath/"test.py").write <<~EOS
+    C
+    (testpath/"test.py").write <<~PYTHON
       def py2func ():
            return 0
       def pyfunc ():
            pyvar = py2func()
-    EOS
+    PYTHON
 
     system bin/"gtags", "--gtagsconf=#{share}/gtags/gtags.conf", "--gtagslabel=pygments"
     assert_match "test.c", shell_output("#{bin}/global -d cfunc")

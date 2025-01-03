@@ -1,30 +1,22 @@
 class Mmv < Formula
   desc "Move, copy, append, and link multiple files"
   homepage "https://github.com/rrthomas/mmv"
-  url "https://github.com/rrthomas/mmv/releases/download/v2.6/mmv-2.6.tar.gz"
-  sha256 "020cb39cb177aa9e66363d73f49fe2e56aa23a3501c9cb16383f75b1ddcd4fe4"
+  url "https://github.com/rrthomas/mmv/releases/download/v2.10/mmv-2.10.tar.gz"
+  sha256 "2bbba14c099b512b4a7e9effacec53caa06998069d108a5669ff424ffc879d03"
   license "GPL-3.0-or-later"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "c7aa9476b38e87544ae2b503fb26b07c6797af48d6599e35fd36e36146dd703c"
-    sha256 cellar: :any,                 arm64_ventura:  "f31f06317a02f971057af3ff2270d5f6bad1477fafd726e5d45bab0bf7528f30"
-    sha256 cellar: :any,                 arm64_monterey: "675f1116463e152f9ebce257b12cc7751033f44699c1f9fd424c6991dc65b7e6"
-    sha256 cellar: :any,                 sonoma:         "30f0afc5ae3ae60453be909614fca5744be8ca266c583be8f9210816ee5653ad"
-    sha256 cellar: :any,                 ventura:        "f0ae4b832a19d6295ac1c4a06f9580386ddaec418e95c7fe87bd6eb25f38e760"
-    sha256 cellar: :any,                 monterey:       "9f9c382404016cdbc966e8c4e1d191e0620b219033dcede7e88f31c2b253422c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "66d09ff4bda9665a4d90eac5b93f2ad01621f3d45ecbbb6817a38c13e361de8f"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "2b250b77db698b27f905bb70f9a51d543eebcb46473ef3e45cf1633ac5a1e218"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "6dffb0decf330e154afb5051a9120c158daa722d8526c1262b5983fd80378bda"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "223ee17e0352fb0555d0de4f10a3f41ccc32557ea1b4391f5179772adaf86fa9"
+    sha256 cellar: :any_skip_relocation, sonoma:        "7124ecddb8f17257dd6014e7b24b450237f01626dda1cf5e7523e67004f61418"
+    sha256 cellar: :any_skip_relocation, ventura:       "5db972a05a287b8d0f50be04ef2ebf6dcfef37e5553b56a4d29d4b84292e8197"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "eb72ba0164ea3fb58177cc5a9ee2470c1614913a78e86ed91fa3026e36f861c3"
   end
 
   depends_on "help2man" => :build # for patch
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "bdw-gc"
-
-  # Backport fix for gnulib base_name().
-  # TODO: Remove patch and `help2man` dependency in the next release.
-  patch do
-    url "https://github.com/rrthomas/mmv/commit/5a3ab0746db2f761bff332dc2411afe1f99434eb.patch?full_index=1"
-    sha256 "cf9efa6f6eb175d2d71f46ab3a3da317390c82594424168f4af023abd4e9c168"
-  end
 
   def install
     # Fix compile with newer Clang
@@ -39,13 +31,13 @@ class Mmv < Formula
     (testpath/"b").write "2"
 
     assert_match "a -> b : old b would have to be deleted", shell_output("#{bin}/mmv -p a b 2>&1", 1)
-    assert_predicate testpath/"a", :exist?
+    assert_path_exists testpath/"a"
     assert_match "a -> b (*) : done", shell_output("#{bin}/mmv -d -v a b")
-    refute_predicate testpath/"a", :exist?
+    refute_path_exists testpath/"a"
     assert_equal "1", (testpath/"b").read
 
     assert_match "b -> c : done", shell_output("#{bin}/mmv -s -v b c")
-    assert_predicate testpath/"b", :exist?
+    assert_path_exists testpath/"b"
     assert_predicate testpath/"c", :symlink?
     assert_equal "1", (testpath/"c").read
   end

@@ -6,6 +6,7 @@ class Envv < Formula
   license "MIT"
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "2110b9d05836da02e31062ad025810c86e863d23c8a585dcb227da34c20e3376"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "58710a70856d6c30fbb8615800486e82d73abd17eb31e557ecd4b9aa41bfda7d"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "e2d47b445c7d02827f54b9cfd3341e2646d10f0156a9dcf27d7745988b1e4497"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "023e55714270ba7a388b290d867a4fd334a962b33f4bd9d0ed8de513ad7c034b"
@@ -41,7 +42,7 @@ class Envv < Formula
     assert_equal "mylist=B:C; export mylist", shell_output("#{bin}/envv del mylist A").strip
     assert_equal "mylist=A:B; export mylist", shell_output("#{bin}/envv del mylist C").strip
 
-    assert_equal "", shell_output("#{bin}/envv add mylist B").strip
+    assert_empty shell_output("#{bin}/envv add mylist B").strip
     assert_equal "mylist=B:A:C; export mylist", shell_output("#{bin}/envv add mylist B 1").strip
     assert_equal "mylist=A:C:B; export mylist", shell_output("#{bin}/envv add mylist B 99").strip
 

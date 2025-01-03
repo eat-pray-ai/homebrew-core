@@ -15,7 +15,8 @@ class Frugal < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "b3181b74500e524d491a135703928e2681c01bd2052cd116565f34e0eab102f6"
   end
 
-  deprecate! date: "2024-07-02", because: :repo_removed
+  # Also repository was removed and no mirrors available of tarball
+  deprecate! date: "2024-07-02", because: :does_not_build
 
   depends_on "go" => :build
 
@@ -25,7 +26,7 @@ class Frugal < Formula
 
   test do
     (testpath/"test.frugal").write("typedef double Test")
-    system "#{bin}/frugal", "--gen", "go", "test.frugal"
+    system bin/"frugal", "--gen", "go", "test.frugal"
     assert_match "type Test float64", (testpath/"gen-go/test/f_types.go").read
   end
 end

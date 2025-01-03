@@ -1,18 +1,18 @@
 class Mqttui < Formula
   desc "Subscribe to a MQTT Topic or publish something quickly from the terminal"
   homepage "https://github.com/EdJoPaTo/mqttui"
-  url "https://github.com/EdJoPaTo/mqttui/archive/refs/tags/v0.21.0.tar.gz"
-  sha256 "64453143e36f59a2fbb0dd67b02437b170d82fa15daf492cff2750cce0f5c126"
+  url "https://github.com/EdJoPaTo/mqttui/archive/refs/tags/v0.21.1.tar.gz"
+  sha256 "34caa9a540c107738b7156f8a67cbbd2d1f6a25522f964142943aae7d3099501"
   license "GPL-3.0-or-later"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "9d92ce31d6947d8cc59b79b3b2981fd5dbfefca24b7eb6edb19e5423b60df4d2"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "48685db4c03887959fefa286aebb5fde71ef299628d23ad09d86042f06a01f59"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "15f32c048545ff1bf64b6e1ee3ad6fd9d69c222d099fe3192ca1ca37925712aa"
-    sha256 cellar: :any_skip_relocation, sonoma:         "e7795afa5ce635ffc40a7a795e8355205d842f28204aee95b4dc3cdf202430be"
-    sha256 cellar: :any_skip_relocation, ventura:        "2d69821b3c53d01f3f446956981e6d547f26078ce068c3e59c36e95cdd51a733"
-    sha256 cellar: :any_skip_relocation, monterey:       "a7a9ceda7689574b9a0a2a2f550ec4edef1207f368eb845bf67ca6d140364cd8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "2c6ea9fff76a2f36fc2fc64991e0e2ad593248b53143bcc3f63ed9f92fd34e31"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "785c02e782d4705b8856b3a2e7efafcf4316c96b82ef40f09b1941be8d890ad4"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "46e79fe9bd4008a24b0a4747578225a3c7499ab6325d0b4409df68e8ca511f6e"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "1cdd4e2052248e29d0c8d68187310d53cbaf4b64eee1d9b2fdcdc788f02bdf72"
+    sha256 cellar: :any_skip_relocation, sonoma:        "446294e3a949a6d148b8f9910a2bd8de85f6fe20a63aeabbac6c05000dad1b72"
+    sha256 cellar: :any_skip_relocation, ventura:       "5f7ffb503ce101b1e29010d9b35e22f9816e3168cd89b7aa62bf4ab5e21891f1"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "51fede45d21c05b4d32da4164d1305d8b8021b20e3103b18fa70f62b2b26a192"
   end
 
   depends_on "rust" => :build
@@ -20,9 +20,11 @@ class Mqttui < Formula
   def install
     system "cargo", "install", *std_cargo_args
 
-    zsh_completion.install "target/completions/_mqttui"
-    bash_completion.install "target/completions/mqttui.bash"
+    bash_completion.install "target/completions/mqttui.bash" => "mqttui"
     fish_completion.install "target/completions/mqttui.fish"
+    zsh_completion.install "target/completions/_mqttui"
+
+    man1.install "target/manpages/mqttui.1"
   end
 
   test do

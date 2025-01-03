@@ -1,8 +1,8 @@
 class Clazy < Formula
   desc "Qt oriented static code analyzer"
   homepage "https://www.kdab.com/"
-  url "https://download.kde.org/stable/clazy/1.12/src/clazy-1.12.tar.xz"
-  sha256 "611749141d07ce1e006f8a1253f9b2dbd5b7b44d2d5322d471d62430ec2849ac"
+  url "https://download.kde.org/stable/clazy/1.13/src/clazy-1.13.tar.xz"
+  sha256 "6d36da0c9d4d2f8602fb52910bde34bf27501ff758f6182b1a46fa0a91779ef4"
   license "LGPL-2.0-or-later"
   head "https://invent.kde.org/sdk/clazy.git", branch: "master"
 
@@ -12,37 +12,32 @@ class Clazy < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "80dc170c7ddac95d9965a56a6c4692222d39f6163177427aace94c9021caa9d8"
-    sha256 cellar: :any,                 arm64_ventura:  "00bb1c34c4834dccf37b8a482ebb330877a7c389b44bb3639d3bb758008610bb"
-    sha256 cellar: :any,                 arm64_monterey: "c82c91308487e7ac63bcdf0873723b4aa67fc5d01f1701f6e24ef3bf560c5c38"
-    sha256 cellar: :any,                 sonoma:         "02191ae7a0ad0299d036b8302fcf8b58a6b97fa5054f185a9181fae5e933822a"
-    sha256 cellar: :any,                 ventura:        "882362cce46ab78383f72b2aefe4e18df5f867760f1bae674fc1c7f40b05f83e"
-    sha256 cellar: :any,                 monterey:       "eed61eae5ed8a521181fb4d99ce75fc15b8d3de0fff387df7500fe4d96bc9de8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "a4e28a3724c3444ce21c5f7fe53fc68e87ac3508c9d44236c36026a0cf8bc863"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "befed9e3e396380d703605d0c951c3906ec5132eaa00e7331913521d168b0683"
+    sha256 cellar: :any,                 arm64_sonoma:  "17c7fddf8588b5eb3036e694e47e0bacb9e1cc4c72cb7e41df27ac7549a8e07b"
+    sha256 cellar: :any,                 arm64_ventura: "2857ba1a5e9e7d03d342acecbce06ad1bc0d9ca74df84960529ae28205f9887b"
+    sha256 cellar: :any,                 sonoma:        "bb07ed1692e2565c9b0c4ee901b0249b335141e8292d3882dd9fc19d54e59cb6"
+    sha256 cellar: :any,                 ventura:       "83f55f60617d1be46cf987cd6c90d8456372fc76a113b497645eafc709d35910"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "82caf7f18cc0624a9772df4c8d4cf219cbb10dc1b46ac040d19dd555bd8876be"
   end
 
-  depends_on "cmake"   => [:build, :test]
-  depends_on "qt"      => :test
+  depends_on "cmake" => [:build, :test]
+  depends_on "qt" => :test
   depends_on "coreutils"
-  # TODO: Backport patch for LLVM 18 support
-  # https://github.com/KDE/clazy/commit/be6ec9a3f3e1e4cb7168845008fd4d0593877b64
-  depends_on "llvm@17"
+  depends_on "llvm"
 
   uses_from_macos "libxml2"
   uses_from_macos "ncurses"
   uses_from_macos "zlib"
 
-  fails_with gcc: "5" # C++17
-
   def install
-    ENV.append "CXXFLAGS", "-std=gnu++17" # Fix `std::regex` support detection.
     system "cmake", "-S", ".", "-B", "build", "-DCLAZY_LINK_CLANG_DYLIB=ON", *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"CMakeLists.txt").write <<~EOS
+    (testpath/"CMakeLists.txt").write <<~CMAKE
       cmake_minimum_required(VERSION #{Formula["cmake"].version})
 
       project(test VERSION 1.0.0 LANGUAGES CXX)
@@ -62,16 +57,16 @@ class Clazy < Formula
 
       target_link_libraries(test PRIVATE Qt6::Core
       )
-    EOS
+    CMAKE
 
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <QtCore/QString>
       void test()
       {
           qgetenv("Foo").isEmpty();
       }
       int main() { return 0; }
-    EOS
+    CPP
 
     llvm = deps.map(&:to_formula).find { |f| f.name.match?(/^llvm(@\d+(\.\d+)*)?$/) }
     ENV["CLANGXX"] = llvm.opt_bin/"clang++"

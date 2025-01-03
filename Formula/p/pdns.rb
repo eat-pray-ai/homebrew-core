@@ -1,23 +1,27 @@
 class Pdns < Formula
   desc "Authoritative nameserver"
   homepage "https://www.powerdns.com"
-  url "https://downloads.powerdns.com/releases/pdns-4.9.1.tar.bz2"
-  sha256 "30d9671b8f084774dbcba20f5a53a3134d0822ab2edc3ef968da030e630dd09a"
+  url "https://downloads.powerdns.com/releases/pdns-4.9.3.tar.bz2"
+  sha256 "b2e67046a7b95825c35ddc9119ed6e2e853537a576d0c4ee9080bb5f0ad3e8d5"
   license "GPL-2.0-or-later"
 
+  # The first-party download page (https://www.powerdns.com/downloads) isn't
+  # always updated for newer versions, so for now we have to check the
+  # directory listing page where `stable` tarballs are found. We should switch
+  # back to checking the download page if/when it is reliably updated with each
+  # release, as it doesn't have to transfer nearly as much data.
   livecheck do
-    url "https://www.powerdns.com/downloads"
+    url "https://downloads.powerdns.com/releases/"
     regex(/href=.*?pdns[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
   bottle do
-    sha256 arm64_sonoma:   "45cfb0e6bc9a4daf32a9f47162828dbfc922b21573329aa5030136af7c4458a2"
-    sha256 arm64_ventura:  "484eb8d3ca30e64ebae9e35f75a5567d2d60ee8320e26ea629c41bc5ff3ace9b"
-    sha256 arm64_monterey: "38111355e0f36392af2c24210258efb0c2ccc490672851d6730a606c657c0119"
-    sha256 sonoma:         "30a1f72a75c1b488def00e3c4a521c3252d7434b8a1c14b36a785c4ac4f6625c"
-    sha256 ventura:        "ab99793a9aedf11f94cb8b599eba4b87f51f2d04d2a89a79dc64af71eaa3942c"
-    sha256 monterey:       "430d61369186264de83ee350b08ac26108098c40a3dc17d356cc7d57c94438c2"
-    sha256 x86_64_linux:   "a7f9c6ac172c712c7a7212b816efbad67e80bab0ebd37e1271050a04e937d4b2"
+    sha256 arm64_sequoia: "41bd873756e9cb31c6eb2c8608973c1bf4f97b6d2eaf53f1eea529785e5e35f0"
+    sha256 arm64_sonoma:  "eb8750b8ef9397a6c03d31ea970a3866d60658a935f9d5faf0187637c14c8e9d"
+    sha256 arm64_ventura: "20c3d03c0019f29be45645e59dd62067ccdb092a55368c16cfdfa6434052562a"
+    sha256 sonoma:        "7ce4b0c0760418446b8ac2aed2a616cfc42010b056144d0eb5f43885020a2d9e"
+    sha256 ventura:       "fae54199e647bc8f0cab39853df93fc54c120d60b49229e8806037b8c6870acb"
+    sha256 x86_64_linux:  "79ac28fa1a8443237b4120f059d009eee485b6b6c47f1bc10e2320d55c9e9377"
   end
 
   head do
@@ -29,15 +33,13 @@ class Pdns < Formula
     depends_on "ragel"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "boost"
   depends_on "lua"
   depends_on "openssl@3"
   depends_on "sqlite"
 
   uses_from_macos "curl"
-
-  fails_with gcc: "5" # for C++17
 
   def install
     args = %W[

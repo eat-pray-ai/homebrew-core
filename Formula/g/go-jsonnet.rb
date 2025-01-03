@@ -12,6 +12,7 @@ class GoJsonnet < Formula
   end
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "3bc19e31a7ea1de9376c90135df48fdd8ed498f594dd0f7916dac2f41b5a2d31"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "7eed7e4575bf7d5222f5d2e40ab27c0fbc5ef5a1c06cb45bb69a84060500a8cb"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "d7ef4c5d8638c9eb8197bd5be4bfc1e1e52d6dcb7275fe193850b4729ca199af"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "9f6ee690b5458c98426e668d40adc3d9f392b1a3d66a084eb5661dd032ba25d6"
@@ -28,14 +29,16 @@ class GoJsonnet < Formula
   conflicts_with "jsonnet", because: "both install binaries with the same name"
 
   def install
-    system "go", "build", "-o", bin/"jsonnet", "./cmd/jsonnet"
-    system "go", "build", "-o", bin/"jsonnetfmt", "./cmd/jsonnetfmt"
-    system "go", "build", "-o", bin/"jsonnet-lint", "./cmd/jsonnet-lint"
-    system "go", "build", "-o", bin/"jsonnet-deps", "./cmd/jsonnet-deps"
+    ldflags = "-s -w"
+
+    system "go", "build", *std_go_args(ldflags:, output: bin/"jsonnet"), "./cmd/jsonnet"
+    system "go", "build", *std_go_args(ldflags:, output: bin/"jsonnetfmt"), "./cmd/jsonnetfmt"
+    system "go", "build", *std_go_args(ldflags:, output: bin/"jsonnet-lint"), "./cmd/jsonnet-lint"
+    system "go", "build", *std_go_args(ldflags:, output: bin/"jsonnet-deps"), "./cmd/jsonnet-deps"
   end
 
   test do
-    (testpath/"example.jsonnet").write <<~EOS
+    (testpath/"example.jsonnet").write <<~JSONNET
       {
         person1: {
           name: "Alice",
@@ -43,7 +46,7 @@ class GoJsonnet < Formula
         },
         person2: self.person1 { name: "Bob" },
       }
-    EOS
+    JSONNET
 
     expected_output = {
       "person1" => {

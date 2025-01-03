@@ -1,18 +1,17 @@
 class Secp256k1 < Formula
   desc "Optimized C library for EC operations on curve secp256k1"
   homepage "https://github.com/bitcoin-core/secp256k1"
-  url "https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.5.0.tar.gz"
-  sha256 "07934fde88c677abbc4d42c36ef7ef8d3850cd0c065e4f976f66f4f97502c95a"
+  url "https://github.com/bitcoin-core/secp256k1/archive/refs/tags/v0.6.0.tar.gz"
+  sha256 "785bb98e7d6705c51c8dfa8ac3af6aa2ccfa3774714d51c0b9e28fac1146e9f1"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "93eee8b392a8688a7bc5c9d4aaa28f118919c87d4deadebe840006e4962f13de"
-    sha256 cellar: :any,                 arm64_ventura:  "b63f652b4fafc0fdbcb6eb19a2648fb23050dc4261338d5adca96374e33f6075"
-    sha256 cellar: :any,                 arm64_monterey: "ade0ac4f6b18b4c15ccd6daad9049d999a12252510863e7bc9cf418cdbf6c449"
-    sha256 cellar: :any,                 sonoma:         "5683c21ad03defb496ecbd4c25678ae41a835aa0f2ac1672fd1a5f30a892e07c"
-    sha256 cellar: :any,                 ventura:        "4bb4dc07b5fc6bde6b609eff5e65cfb5b5b2065a82b3c7629917ec605852ac87"
-    sha256 cellar: :any,                 monterey:       "e516724759530edee3ed7e31db0223af90f6bb23de976ecac0b0289f6064474f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "09b5d55719eee2b055c887ab7332093c075462d0bb18ba392fe2baf1c41eec78"
+    sha256 cellar: :any,                 arm64_sequoia: "df425b521f46c58e13a1bb877d7a59fdeaf405ec020c530c6052bcab8108b007"
+    sha256 cellar: :any,                 arm64_sonoma:  "f1e59f7f9158c265009d9e68474320514d4275e3fc4ddd9c90b97e690fbb51c1"
+    sha256 cellar: :any,                 arm64_ventura: "7d62c4478e434647dd715759c7c1e5d6d891823b835e102c01458ae41cf278c6"
+    sha256 cellar: :any,                 sonoma:        "11d1cfee8f09a6a398cb05161e3b132634385f9ea17f3f1be9816777fa5fc693"
+    sha256 cellar: :any,                 ventura:       "29a61d5ddeb1e6b5a9d6ced52e059530e8cc1cd0d734a8258d6b48847506dcc6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "021cdad1de96cc81c67a779074717150bd1aa5eff164ecc10d91226871a805dd"
   end
 
   depends_on "autoconf" => [:build]
@@ -34,14 +33,14 @@ class Secp256k1 < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <secp256k1.h>
       int main() {
         secp256k1_context* ctx = secp256k1_context_create(SECP256K1_CONTEXT_NONE);
         secp256k1_context_destroy(ctx);
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c",
                    "-L#{lib}", "-lsecp256k1",
                    "-o", "test"

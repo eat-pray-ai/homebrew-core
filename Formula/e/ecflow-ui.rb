@@ -1,8 +1,8 @@
 class EcflowUi < Formula
   desc "User interface for client/server workflow package"
   homepage "https://confluence.ecmwf.int/display/ECFLOW"
-  url "https://confluence.ecmwf.int/download/attachments/8650755/ecFlow-5.13.2-Source.tar.gz"
-  sha256 "948f848668455e68214acd8167a3ba581e4415e82524fc531e3e09ca257c3cd1"
+  url "https://confluence.ecmwf.int/download/attachments/8650755/ecFlow-5.13.6-Source.tar.gz"
+  sha256 "11e1b693fc8f6aa834fc5a9c34503573f6391464b1c21d5023e4726c79aa9df1"
   license "Apache-2.0"
 
   livecheck do
@@ -11,13 +11,11 @@ class EcflowUi < Formula
   end
 
   bottle do
-    sha256                               arm64_sonoma:   "fa3d0b7071ad32765ec41d105a031b12bcf83701fd75c0c47262ba7e954d0a79"
-    sha256                               arm64_ventura:  "6a2ec157c83c642b4b9244df4d041cd920f666ac349a6391e8d0d8b9a17444f0"
-    sha256                               arm64_monterey: "464d9a211052ee700c9c8af2dc1bbe50f1ec164fb8fbe231472f3cba958c4916"
-    sha256                               sonoma:         "165384dd99c1452812184247f1a2e4fc37508a559422d44e081132729448c896"
-    sha256                               ventura:        "ecbf7c795574dce3e9ba6d1d0415c1a60884743c4107de85732d9b715fbf7352"
-    sha256                               monterey:       "cbfbe0c339bfb5ac54dc1f6b5f41955f4d21da1cacdd90e97858e986a1e7af91"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "dea4a85634ad6b67902f00385e71d30e2c1fb3726569e6698107c9f891224f73"
+    sha256                               arm64_sonoma:  "5cea0da653c4f51a1a40c3c4a87e8a79453a8224bfea852c66a2478a94c7ddbe"
+    sha256                               arm64_ventura: "54e181a33f933ae8ca641edff650a804148d4decb2c14ebb850f874b008ba144"
+    sha256                               sonoma:        "72bd7cb64583c05ebccd391e64cfc855e9f0c2a9860485e5984683802168d246"
+    sha256                               ventura:       "d3233263a300ef529c24b4b9b98264aab54577be3f56b67b9c15afcf8f0734c2"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "33b3a2bffe503c59c19d8f14f030257e4585a83c100b5b09a856da28a3cfa111"
   end
 
   depends_on "boost" => :build
@@ -26,9 +24,6 @@ class EcflowUi < Formula
   depends_on "qt"
 
   uses_from_macos "libxcrypt"
-
-  # requires C++17 compiler to build with Qt
-  fails_with gcc: "5"
 
   def install
     args = %w[
@@ -53,8 +48,6 @@ class EcflowUi < Formula
     binary_version_out = shell_output("#{bin}/ecflow_ui.x --version")
     assert_match @version.to_s, binary_version_out
 
-    #  check that the startup script runs
-    system "#{bin}/ecflow_ui", "-h"
     help_out = shell_output("#{bin}/ecflow_ui -h")
     assert_match "ecFlowUI", help_out
     assert_match "fontsize", help_out

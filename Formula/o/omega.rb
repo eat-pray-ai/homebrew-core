@@ -1,8 +1,8 @@
 class Omega < Formula
   desc "Packaged search engine for websites, built on top of Xapian"
   homepage "https://xapian.org/"
-  url "https://oligarchy.co.uk/xapian/1.4.25/xapian-omega-1.4.25.tar.xz"
-  sha256 "2fc0b505e606d5e1dcde1f22362b6f0237d9e847fc9b6af538f99bc9abd1fccb"
+  url "https://oligarchy.co.uk/xapian/1.4.27/xapian-omega-1.4.27.tar.xz"
+  sha256 "1d193b3285ec150557257b049ee1d8c94c40bcde906ce0ba7f1a38a1a9a5a5c1"
   license "GPL-2.0-or-later"
 
   livecheck do
@@ -11,22 +11,23 @@ class Omega < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "6c382c25807c5c7988be7cfa0b805611917fcf5422fdd1b030313b235597af57"
-    sha256 arm64_ventura:  "6812f64288e8adf48cdce414cbc0ad884d6b2cf4dd1039a25ea1768ea3f7c863"
-    sha256 arm64_monterey: "53ddd62ae301bb2bbdb7bf398213362438ceed13879841d2183ec44149e4fc62"
-    sha256 sonoma:         "9f590bba4f0b97f7c433a51eb0562054f841c226fe71cc0c1f1ffcf68df25e95"
-    sha256 ventura:        "431f55d7584b994e16ae4c25610fc9274597381c1ac1ef9bdb3e5ef422a4e13a"
-    sha256 monterey:       "c45a4ed18d50c4592e6229c34b7de6d95eaaf277ed4b42a451038b12c3d6aa20"
-    sha256 x86_64_linux:   "40803f181f1f6c429aaec0f7d80057a061a692bba40c34c18c045ba9f9194e73"
+    sha256 arm64_sequoia: "52ad2a9eb3d78d3025123d4d9cd5dbc4dd3007dbd95e5b36657cf5ccb420d849"
+    sha256 arm64_sonoma:  "02dd50fcb859e119737d2d992fb055fd83a7edde194a5cd5778b84beed465861"
+    sha256 arm64_ventura: "be25156706f01b6dbad1d8d2840558f700a840c4258b96c80f9711a72f542bde"
+    sha256 sonoma:        "91d06380b0e7325318f851da456247bfe79e9dfae9cc0fba39c0b717926e7330"
+    sha256 ventura:       "7c6282f0ea01a3af2933e90272e910479552d139658277b8aeb2993cf9644380"
+    sha256 x86_64_linux:  "f46bac4544451f7403feff746e53d37f6ec5dcf67d7a2a9545bd2958058547ae"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "libmagic"
   depends_on "pcre2"
   depends_on "xapian"
 
+  uses_from_macos "zlib"
+
   def install
-    system "./configure", *std_configure_args, "--disable-silent-rules"
+    system "./configure", "--disable-silent-rules", *std_configure_args
     system "make", "install"
   end
 

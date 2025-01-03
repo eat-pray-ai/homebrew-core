@@ -1,8 +1,8 @@
 class Ngt < Formula
   desc "Neighborhood graph and tree for indexing high-dimensional data"
   homepage "https://github.com/yahoojapan/NGT"
-  url "https://github.com/yahoojapan/NGT/archive/refs/tags/v2.2.2.tar.gz"
-  sha256 "cad1d2dfd58f9267580e2de0c9617c312a3ca082d1ce3e5f82aaa54ae5bf9470"
+  url "https://github.com/yahoojapan/NGT/archive/refs/tags/v2.3.7.tar.gz"
+  sha256 "eaff74bdd33220987f508d33162b201f13f98b902dceb7423c7a34fa25662f9c"
   license "Apache-2.0"
 
   livecheck do
@@ -11,13 +11,12 @@ class Ngt < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "0443dc2c921f821688d5ca1c0632a25918b3ddd69f84395a0a0f4f06783b41a4"
-    sha256 cellar: :any,                 arm64_ventura:  "e974448bd850bfafd406da12b2381bd7917ee82d408d608d54380ca95fb88551"
-    sha256 cellar: :any,                 arm64_monterey: "29bef16965dafcc00844b266326ad3200f76ba11bbf57977425e5d8d0f0c4d71"
-    sha256 cellar: :any,                 sonoma:         "331b7b19259a2a816f76a43d8f568b18a77cc7a9d91a7bc34b6c074e7201cbf6"
-    sha256 cellar: :any,                 ventura:        "f721c6b0a631979ed7fb5cf22d3cf3dcf53d2b4e87870ac883918eb00192d410"
-    sha256 cellar: :any,                 monterey:       "1cd1c770cd9380cf5f8c3842a898b0ef36d2a4972d9bcf7292020ac03e81ca74"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3ae99e4db91d3f7c56efda9c7a4039fb5a2f1334e229baf4b3ba7612545f3afa"
+    sha256 cellar: :any,                 arm64_sequoia: "0fd7fdfa03e21d6cc7c9a91663b5da4008a032a4daebb4dd7ebf2aed3e4eee41"
+    sha256 cellar: :any,                 arm64_sonoma:  "abe52c3805dfb05250f0dbc6f47d71f18db8bc7a0993f410c2946b24b813a6eb"
+    sha256 cellar: :any,                 arm64_ventura: "f9f269b37c4941df394f3557a7633ebe17f8bee17542e690f79ae82a79c7ffdc"
+    sha256 cellar: :any,                 sonoma:        "70786320c841af6a27bb0dc0dd2a14ccd7e6c62d9e1db5817fec0815b7b31b35"
+    sha256 cellar: :any,                 ventura:       "560ed598cdb96b8b9eb755a04467225e5a0fa54ae9a90651e4e827779a402aed"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "aa481d355cd75f6cc2aad13dddea843ffe5bb1a99cf2a5f93169b76734689204"
   end
 
   depends_on "cmake" => :build
@@ -43,6 +42,6 @@ class Ngt < Formula
 
   test do
     cp_r (pkgshare/"data"), testpath
-    system "#{bin}/ngt", "-d", "128", "-o", "c", "create", "index", "data/sift-dataset-5k.tsv"
+    system bin/"ngt", "-d", "128", "-o", "c", "create", "index", "data/sift-dataset-5k.tsv"
   end
 end

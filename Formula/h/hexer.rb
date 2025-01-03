@@ -11,6 +11,7 @@ class Hexer < Formula
   end
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "bd7a6cbea17a087bc8c9f58fbd4dcc595ea3c1f65760a6c1f7c34d9e4c2c7b1c"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "e5bd5b3ffa68b3200ee5cdda6afa4ed5982760598c759bebc1497404abf170b9"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "78608e7de426f8d081f22e85878d8d0a42388246d79ad773431164f65b05e867"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "71e185121e08ddab73b7f5071eee7420fbb87b159a0a0cfb8d99202e86a407cf"
@@ -22,7 +23,6 @@ class Hexer < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "0d2555b996ecdfe5178d26c9b7279c882fbdbff1551b8f71b6d232338ccf2c74"
   end
 
-  uses_from_macos "expect" => :test
   uses_from_macos "ncurses"
 
   def install
@@ -30,15 +30,8 @@ class Hexer < Formula
   end
 
   test do
-    script = (testpath/"script.exp")
-    script.write <<~EOS
-      #!/usr/bin/expect -f
-      set timeout 10
-      spawn hexer
-      send -- ":q\n"
-      expect eof
-    EOS
-    script.chmod 0700
-    system "expect", "-f", "script.exp"
+    ENV["TERM"] = "xterm"
+    assert_match "00000000:  62 72 65 77", pipe_output("#{bin}/hexer test", "i62726577\e:wq\n")
+    assert_equal "brew", (testpath/"test").read
   end
 end

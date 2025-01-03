@@ -4,6 +4,7 @@ class Gabedit < Formula
   url "https://downloads.sourceforge.net/project/gabedit/gabedit/Gabedit251/GabeditSrc251.tar.gz"
   version "2.5.1"
   sha256 "efcb00151af383f662d535a7a36a2b0ed2f14c420861a28807feaa9e938bff9e"
+  license "MIT"
   revision 1
 
   # Consider switching back to checking SourceForge releases once we can alter
@@ -23,9 +24,20 @@ class Gabedit < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "85b9f31c8d4f0b7daf320543f5da7d50a20212535bf1c753eca37aaa579c737d"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
+
+  depends_on "cairo"
+  depends_on "gdk-pixbuf"
+  depends_on "glib"
   depends_on "gtk+"
   depends_on "gtkglext"
+  depends_on "pango"
+
+  on_macos do
+    depends_on "at-spi2-core"
+    depends_on "gettext"
+    depends_on "harfbuzz"
+  end
 
   on_linux do
     depends_on "autoconf" => :build
@@ -45,6 +57,7 @@ class Gabedit < Formula
     (buildpath/"brew_include").install_symlink opengl_headers => "GL"
 
     inreplace "CONFIG" do |s|
+      s.gsub! "CC = gcc", "CC = #{ENV.cc}"
       if OS.mac?
         s.gsub! "-lX11", ""
         s.gsub! "-lpangox-1.0", ""
@@ -57,9 +70,11 @@ class Gabedit < Formula
       s.gsub! "GTKCFLAGS =", "GTKCFLAGS = -I#{buildpath}/brew_include"
 
       # Work around build failures
+      # incompatible integer to pointer conversion bug report, https://github.com/allouchear/gabedit/issues/2
       if DevelopmentTools.clang_build_version >= 1403
         s.gsub! " -Wall ",
-                " -Wall -Wno-implicit-function-declaration "
+                " -Wall -Wno-implicit-function-declaration " \
+                "-Wno-incompatible-function-pointer-types -Wno-int-conversion "
       end
     end
 
@@ -73,6 +88,6 @@ class Gabedit < Formula
   end
 
   test do
-    assert_predicate bin/"gabedit", :exist?
+    assert_path_exists bin/"gabedit"
   end
 end

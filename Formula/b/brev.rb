@@ -1,8 +1,8 @@
 class Brev < Formula
   desc "CLI tool for managing workspaces provided by brev.dev"
-  homepage "https://docs.brev.dev"
-  url "https://github.com/brevdev/brev-cli/archive/refs/tags/v0.6.287.tar.gz"
-  sha256 "fdc3fb57e8082bdabd3b35e2aaa8c237e7a131b45fe2be020d6582e49729c9de"
+  homepage "https://www.brev.dev/"
+  url "https://github.com/brevdev/brev-cli/archive/refs/tags/v0.6.302.tar.gz"
+  sha256 "7884bcd00ee288ddd517f3e867a58a152ddd02afdb9c49e545ae0a2a0b1e02d9"
   license "MIT"
 
   # Upstream appears to use GitHub releases to indicate that a version is
@@ -14,13 +14,12 @@ class Brev < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "234bb1a50884465b6551cb2d0cbe45ea82cc256a68502d6a3f4bf5f1640406b2"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "5cc9e47075860742203122fb235c5636c1c457eebb568ac7b97c67458383933d"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "b417a4c8959db5858a26427a5128ffb8fb3509705f313ceb48cd18e5c9e38563"
-    sha256 cellar: :any_skip_relocation, sonoma:         "46c3da624d0f26bba44d658e1939d078db06c699410ec9ffd0fbacbabcc9f1e3"
-    sha256 cellar: :any_skip_relocation, ventura:        "04ef9cbe9a15342f476bdccab638d75c6941abd93a86c5bbed93c3351620395c"
-    sha256 cellar: :any_skip_relocation, monterey:       "bb0b22af3da3943051e081c63ed2156cd0588ae4af13e32d19c0f1fa8ee556a0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "6c6dc47cf374c604a6af7d685c6915b24f334208eac99b7b11f0ad11e5bbc115"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "64c670b5ea864522f59aa65e3ee5c9a1051adde82b865bf7b0ece62cba6cc3fa"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "64c670b5ea864522f59aa65e3ee5c9a1051adde82b865bf7b0ece62cba6cc3fa"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "64c670b5ea864522f59aa65e3ee5c9a1051adde82b865bf7b0ece62cba6cc3fa"
+    sha256 cellar: :any_skip_relocation, sonoma:        "cc21b19fdde0c6d0b5700222270ccb593587079e2f0cdd3ceac382156afd5154"
+    sha256 cellar: :any_skip_relocation, ventura:       "cc21b19fdde0c6d0b5700222270ccb593587079e2f0cdd3ceac382156afd5154"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c0f3c683332d01d0b41973c3de810fee5a0d0e502bb5c76882738c5b49ddbcea"
   end
 
   depends_on "go" => :build

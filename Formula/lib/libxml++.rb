@@ -11,6 +11,7 @@ class Libxmlxx < Formula
   end
 
   bottle do
+    sha256 cellar: :any, arm64_sequoia:  "3d646ead3d15603ed585f7e1c8cd6c0a4304b5aa91478665e4bdc1e9daadc31d"
     sha256 cellar: :any, arm64_sonoma:   "ecc4bfa5bec6222f62d35af0afa054dd14dbbc768619e59b751535af9e1d2c40"
     sha256 cellar: :any, arm64_ventura:  "90bb4a37548aef72c8884931767231a8db350f92587fe71540384fa4a665f089"
     sha256 cellar: :any, arm64_monterey: "3c9aed5436d578af2db72c4beacb9597d3641c452a5ae89f53c2e7f760e7b6e6"
@@ -22,7 +23,7 @@ class Libxmlxx < Formula
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => [:build, :test]
   depends_on "glibmm@2.66"
 
   uses_from_macos "libxml2"
@@ -34,7 +35,7 @@ class Libxmlxx < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <libxml++/libxml++.h>
 
       int main(int argc, char *argv[])
@@ -44,35 +45,9 @@ class Libxmlxx < Formula
          xmlpp::Element *rootnode = document.create_root_node("homebrew");
          return 0;
       }
-    EOS
-    ENV.libxml2
-    gettext = Formula["gettext"]
-    glib = Formula["glib"]
-    glibmm = Formula["glibmm@2.66"]
-    libsigcxx = Formula["libsigc++@2"]
-    flags = %W[
-      -I#{gettext.opt_include}
-      -I#{glib.opt_include}/glib-2.0
-      -I#{glib.opt_lib}/glib-2.0/include
-      -I#{glibmm.opt_include}/glibmm-2.4
-      -I#{glibmm.opt_lib}/glibmm-2.4/include
-      -I#{include}/libxml++-2.6
-      -I#{libsigcxx.opt_include}/sigc++-2.0
-      -I#{libsigcxx.opt_lib}/sigc++-2.0/include
-      -I#{lib}/libxml++-2.6/include
-      -L#{gettext.opt_lib}
-      -L#{glib.opt_lib}
-      -L#{glibmm.opt_lib}
-      -L#{libsigcxx.opt_lib}
-      -L#{lib}
-      -lglib-2.0
-      -lglibmm-2.4
-      -lgobject-2.0
-      -lsigc-2.0
-      -lxml++-2.6
-      -lxml2
-    ]
-    flags << "-lintl" if OS.mac?
+    CPP
+
+    flags = shell_output("pkgconf --cflags --libs libxml++-2.6").chomp.split
     system ENV.cxx, "-std=c++11", "test.cpp", "-o", "test", *flags
     system "./test"
   end

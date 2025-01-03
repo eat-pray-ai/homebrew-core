@@ -1,8 +1,8 @@
 class Fakeroot < Formula
   desc "Provide a fake root environment"
   homepage "https://tracker.debian.org/pkg/fakeroot"
-  url "https://deb.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.35.1.orig.tar.gz"
-  sha256 "6a0de53b2de05277d4e6d4a884eb0de7a8ad467b82c07a6f8f2f6a629e655fdc"
+  url "https://deb.debian.org/debian/pool/main/f/fakeroot/fakeroot_1.36.2.orig.tar.gz"
+  sha256 "92ee28cd75ef17a178bb06d9b9f57fb54b068b6a72d4710cccfe8453701c734f"
   license "GPL-3.0-or-later"
 
   livecheck do
@@ -11,13 +11,12 @@ class Fakeroot < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "20991a847ab51f210d5c91be35226e87657d3df7e6e73cc10855d2f89881cb29"
-    sha256 cellar: :any,                 arm64_ventura:  "377efb661d6595713e9018799964562da2ffc4c46932683130f9c81831995def"
-    sha256 cellar: :any,                 arm64_monterey: "aaff012a3b5ef26548e827b3d2793c3489ce7715b0c66452b2f750a0d76ca2c6"
-    sha256 cellar: :any,                 sonoma:         "931c80e3e5133c4f6ed0de1a5cf6fa43bd78fb9c88129c606d95e07b5c6b1715"
-    sha256 cellar: :any,                 ventura:        "aaeb651df301f4bda927f0c40e639187c5515e0d1d5d59148334545fc4f7ff4c"
-    sha256 cellar: :any,                 monterey:       "99b1230055d0bf34057587970377321e9795af2024085c5881ff2558e838a96c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f319cc0fd4acbf1508bfe5b8b73e878d04c0bee463eb05a4501ec3d2ebb0351b"
+    sha256 cellar: :any,                 arm64_sequoia: "d996f780f22a39b0e3ea1caa2d36cf04dc5b911646d660005720eee664168de1"
+    sha256 cellar: :any,                 arm64_sonoma:  "26b1afc9d02feef810a11736a389f46b88d997a81cd2713f94c47ec84a5b0da8"
+    sha256 cellar: :any,                 arm64_ventura: "687a5410e011030703e4ee250067545f31cdb0509c1277bbbd038dda7266ec03"
+    sha256 cellar: :any,                 sonoma:        "921f6e353c931cd8364d8e656bf107d49845df1c9b618d24c3315e50b0fd671d"
+    sha256 cellar: :any,                 ventura:       "3c21764bf649e641c9f3a3296bb2b8e4a89d52d7752d9e2f8b5dcf479190eb9b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a52781c0a99b8debae48e4660bf4076d748271c3e5278901db4cdd4002a21c2f"
   end
 
   # Needed to apply patches below. Remove when no longer needed.

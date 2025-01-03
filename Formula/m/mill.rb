@@ -1,23 +1,20 @@
 class Mill < Formula
   desc "Scala build tool"
-  homepage "https://com-lihaoyi.github.io/mill/mill/Intro_to_Mill.html"
-  url "https://github.com/com-lihaoyi/mill/releases/download/0.11.8/0.11.8-assembly"
-  sha256 "1ce4537b1233af16d68dc1ab4b9f49a996e8c460b393cc0a7f778a328606aab2"
+  homepage "https://mill-build.com/mill/Scala_Intro_to_Mill.html"
+  url "https://github.com/com-lihaoyi/mill/releases/download/0.12.5/0.12.5-assembly"
+  sha256 "0c7b25412feecf06d955d013418de9a9080ce755bedbac7601c9109c33d5a057"
   license "MIT"
 
+  # There can be a notable gap between when a version is tagged and a
+  # corresponding release is created, so we check the "latest" release instead
+  # of the Git tags.
   livecheck do
     url :stable
-    regex(/^v?(\d+(?:\.\d+)+)$/i)
+    strategy :github_latest
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "0074a7a8c087e399795bc061b75e8658f1bf5f0174b857766e8cf8cac51df2e6"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "0074a7a8c087e399795bc061b75e8658f1bf5f0174b857766e8cf8cac51df2e6"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "0074a7a8c087e399795bc061b75e8658f1bf5f0174b857766e8cf8cac51df2e6"
-    sha256 cellar: :any_skip_relocation, sonoma:         "0074a7a8c087e399795bc061b75e8658f1bf5f0174b857766e8cf8cac51df2e6"
-    sha256 cellar: :any_skip_relocation, ventura:        "0074a7a8c087e399795bc061b75e8658f1bf5f0174b857766e8cf8cac51df2e6"
-    sha256 cellar: :any_skip_relocation, monterey:       "0074a7a8c087e399795bc061b75e8658f1bf5f0174b857766e8cf8cac51df2e6"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "76b9fa828dbc215635a723db587f676c6af2f626227dc5608d0f4f62af6ed62e"
+    sha256 cellar: :any_skip_relocation, all: "5cc436fd296cf06161609cc7181ab82307d1d4c0d23392d2f0f04cf3b6ddd196"
   end
 
   depends_on "openjdk"
@@ -29,13 +26,13 @@ class Mill < Formula
   end
 
   test do
-    (testpath/"build.sc").write <<~EOS
+    (testpath/"build.sc").write <<~SCALA
       import mill._
       import mill.scalalib._
       object foo extends ScalaModule {
         def scalaVersion = "2.13.11"
       }
-    EOS
+    SCALA
     output = shell_output("#{bin}/mill resolve __.compile")
     assert_equal "foo.compile", output.lines.last.chomp
   end

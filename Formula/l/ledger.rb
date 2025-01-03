@@ -2,7 +2,7 @@ class Ledger < Formula
   desc "Command-line, double-entry accounting tool"
   homepage "https://ledger-cli.org/"
   license "BSD-3-Clause"
-  revision 4
+  revision 7
   head "https://github.com/ledger/ledger.git", branch: "master"
 
   stable do
@@ -19,6 +19,27 @@ class Ledger < Formula
       url "https://github.com/ledger/ledger/commit/14b90d8d952b40e0a474223e7f74a1e6505d5450.patch?full_index=1"
       sha256 "d250557e385163e3ad3002117ebe985af040d915aab49ae1ea342db82398aeda"
     end
+
+    # Backport fix to build with `boost` 1.85.0
+    patch do
+      url "https://github.com/ledger/ledger/commit/46207852174feb5c76c7ab894bc13b4f388bf501.patch?full_index=1"
+      sha256 "8aaf8daf4748f359946c64488c96345f4a4bdf928f6ec7a1003610174428599f"
+    end
+
+    # Backport fixes to build with `boost` 1.86.0
+    # Ref: https://github.com/ledger/ledger/pull/2381
+    patch do
+      url "https://github.com/ledger/ledger/commit/ad93c185644cfcb14fe4a673e74a0cb5c954a4b4.patch?full_index=1"
+      sha256 "3d2db6b116cd7e8a1051ac7f92853f72c145ff0487f2f4e12e650ee7ec9e67b0"
+    end
+    patch do
+      url "https://github.com/ledger/ledger/commit/4f4cc1688a8e8a7c03f18603cc5a4159d9c89ca3.patch?full_index=1"
+      sha256 "938d62974ee507b851239b6525c98c8cb1c81e24e8ae2939d4675d97a8ec8f67"
+    end
+    patch do
+      url "https://github.com/ledger/ledger/commit/5320c9f719a309ddacdbe77181cabeb351949013.patch?full_index=1"
+      sha256 "9794113b28eabdcfc8b900eafc8dc2c0698409c0b3d856083ed5e38818289ba1"
+    end
   end
 
   livecheck do
@@ -27,13 +48,13 @@ class Ledger < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "bb9834ceed45016edd34db30241a5474f8fe6cf55b75f9c8a63e1d8c6268ac2b"
-    sha256 cellar: :any,                 arm64_ventura:  "ca8de31777a7dd2afc9735b178e415e5e8034e34585193f3c68b31b39f2fe64b"
-    sha256 cellar: :any,                 arm64_monterey: "820af38e740ca052be182d4922ccc25cb5f9b15dd2ab83bea550dd8b275ffde8"
-    sha256 cellar: :any,                 sonoma:         "3f41fb3d90e6b5844ac30fa76a0facdb185ffaa78d711e64f887e5e8b147943c"
-    sha256 cellar: :any,                 ventura:        "2555b42ce1063b39910f906f7250080776884ebd1555e51a35dce1eabb88a48d"
-    sha256 cellar: :any,                 monterey:       "c20b917ab8d18494aa0bdb2fb8d8e6bba5c4c2909ae0fc5eb3c8ccc4b2b4e699"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "7d960afd65dcd0c32dd4699883907b7a444e1f32753a03082b07826f6e7b7f09"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "ce45119d338d9e00956307b4721d33440f14d1907ca54da02fe1ca25a5471459"
+    sha256 cellar: :any,                 arm64_sonoma:  "d159a1cfe29825f3c314a4594355fab005ace773c218a9bb26cdf7db0bfc6ba1"
+    sha256 cellar: :any,                 arm64_ventura: "ab24ca08a201ceef084c01fb75d9f7610f841cbd471f5c906caff3a3e6f3ba93"
+    sha256 cellar: :any,                 sonoma:        "088a64661ab9e5cacc46563de601e06b79f8a75d4c7502d043df15335a906830"
+    sha256 cellar: :any,                 ventura:       "f149928e3e4c40bf16d6c237fe8bb7e54cc5e0651e993e6b30cf3fa887f61bb3"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "601f17b3901dae3f78185c3e5a911f8d04fd3795941f7554567d0e820c9c26a0"
   end
 
   depends_on "cmake" => :build
@@ -42,21 +63,18 @@ class Ledger < Formula
   depends_on "gmp"
   depends_on "gpgme"
   depends_on "mpfr"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   uses_from_macos "mandoc" => :build
   uses_from_macos "libedit"
 
-  # Fix build with `boost` 1.85.0 using open PR.
-  # PR ref: https://github.com/ledger/ledger/pull/2337
-  patch do
-    url "https://github.com/ledger/ledger/commit/1da89f6ffb44a44257b9774c4ceb71e7b495d677.patch?full_index=1"
-    sha256 "8aaf8daf4748f359946c64488c96345f4a4bdf928f6ec7a1003610174428599f"
+  on_macos do
+    depends_on "libassuan"
   end
 
   def install
     ENV.cxx11
-    ENV.prepend_path "PATH", Formula["python@3.12"].opt_libexec/"bin"
+    ENV.prepend_path "PATH", Formula["python@3.13"].opt_libexec/"bin"
 
     args = %W[
       --jobs=#{ENV.make_jobs}
@@ -70,6 +88,7 @@ class Ledger < Formula
       -DPython_FIND_VERSION_MAJOR=3
       -DUSE_GPGME=1
     ] + std_cmake_args
+
     system "./acprep", "opt", "make", *args
     system "./acprep", "opt", "make", "doc", *args
     system "./acprep", "opt", "make", "install", *args
@@ -77,17 +96,16 @@ class Ledger < Formula
     (pkgshare/"examples").install Dir["test/input/*.dat"]
     pkgshare.install "contrib"
     elisp.install Dir["lisp/*.el", "lisp/*.elc"]
-    bash_completion.install pkgshare/"contrib/ledger-completion.bash"
+    bash_completion.install pkgshare/"contrib/ledger-completion.bash" => "ledger"
   end
 
   test do
     balance = testpath/"output"
     system bin/"ledger",
       "--args-only",
-      "--file", "#{pkgshare}/examples/sample.dat",
+      "--file", pkgshare/"examples/sample.dat",
       "--output", balance,
       "balance", "--collapse", "equity"
     assert_equal "          $-2,500.00  Equity", balance.read.chomp
-    assert_equal 0, $CHILD_STATUS.exitstatus
   end
 end

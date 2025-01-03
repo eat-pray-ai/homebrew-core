@@ -1,8 +1,8 @@
 class Geogram < Formula
   desc "Programming library of geometric algorithms"
   homepage "https://brunolevy.github.io/geogram/"
-  url "https://github.com/BrunoLevy/geogram/releases/download/v1.9.0/geogram_1.9.0.tar.gz"
-  sha256 "09c0e28ffc08fdab1f2214ee32e49610d64972d052e890d3cc6dcb6bd25b5fc0"
+  url "https://github.com/BrunoLevy/geogram/releases/download/v1.9.2/geogram_1.9.2.tar.gz"
+  sha256 "ea5bc05e9971e739885ae1bc2800e921f16d0e23a877726b91ce816baaef8ebe"
   license all_of: ["BSD-3-Clause", :public_domain, "LGPL-3.0-or-later", "MIT"]
   head "https://github.com/BrunoLevy/geogram.git", branch: "main"
 
@@ -12,13 +12,12 @@ class Geogram < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "098a179b1206c255fb60710e15db01c4800d615dff223099eebf5845a4706c93"
-    sha256 cellar: :any,                 arm64_ventura:  "de7205ed12782950c36533503a3a4a60cb530a6420866b2c80fd0aed07325af0"
-    sha256 cellar: :any,                 arm64_monterey: "42de7e1ac9aff5dd48bb95a12809cbc26edb1218b3fa28b4d9c669efe565f632"
-    sha256 cellar: :any,                 sonoma:         "5d008a0fe04789fc181f51735be1f2b6c6dc117ecdc0e800a8b9160f62c3e8d8"
-    sha256 cellar: :any,                 ventura:        "f731d2063834b82347928be139a415301afa7074edbc4ee6828da01490a7a654"
-    sha256 cellar: :any,                 monterey:       "8e86639ce16d92f888f75ca768ea8e26cc5f9d5a91bc7b331d07a28b18be6941"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "b236ccd5d6abfe2a0e8d72271cbb8fab4cb56aa4e832b6255670088e46b30f4a"
+    sha256 cellar: :any,                 arm64_sequoia: "a24fe57533f896da1d0661a892ac9fc26baf1cba0c2932c336312f9cd543061e"
+    sha256 cellar: :any,                 arm64_sonoma:  "05dbb6eb600bbd857cefe2aaaafa674c0d6a9b9812f4b23569af936a65d02c82"
+    sha256 cellar: :any,                 arm64_ventura: "ead52a3684e7869b78d48667639dd3f53b799eca4643d70972f1b26ac2a9cfc3"
+    sha256 cellar: :any,                 sonoma:        "11b4532c94dd029456ba4e8f7529e7ab53b2a8007ae1636e334b9beb5523a039"
+    sha256 cellar: :any,                 ventura:       "668b3280a048c09b1e27dcfb320b28c55efdfcc49252f8a56f2a437aeb57f74b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9e734074c3201163275cec7949fcd0db4a00263ea4d308f58a13d91ae702e9a5"
   end
 
   depends_on "cmake" => :build
@@ -50,7 +49,7 @@ class Geogram < Formula
     end
 
     resource("homebrew-bunny").stage { testpath.install Dir["*"].first => "bunny.xyz" }
-    system "#{bin}/vorpalite", "profile=reconstruct", "bunny.xyz", "bunny.meshb"
+    system bin/"vorpalite", "profile=reconstruct", "bunny.xyz", "bunny.meshb"
     assert_predicate testpath/"bunny.meshb", :exist?, "bunny.meshb should exist!"
   end
 end

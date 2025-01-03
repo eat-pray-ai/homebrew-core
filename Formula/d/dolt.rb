@@ -1,8 +1,8 @@
 class Dolt < Formula
   desc "Git for Data"
   homepage "https://github.com/dolthub/dolt"
-  url "https://github.com/dolthub/dolt/archive/refs/tags/v1.41.3.tar.gz"
-  sha256 "8dba55d60555108f4f87ba6995402b8c731b82dd5876d4b279cdc2c98e836120"
+  url "https://github.com/dolthub/dolt/archive/refs/tags/v1.45.2.tar.gz"
+  sha256 "26a76acbf1e72a4b1e8673d70932910dfc5acd47535e198c7c416b6b1505f923"
   license "Apache-2.0"
 
   livecheck do
@@ -11,13 +11,12 @@ class Dolt < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "27b938f3cad1ff53d0e4f156d7a6766525f05ef5d995fa36da07bdac2a42bb87"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "b62a72c9ac8fa0adfc0264f458c24551e59e0f24bafc67a3e662dd0426f0e6db"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "cbf8fde474b07175dd797e550da912896f265bda5135901695d9fed9e7e6a37c"
-    sha256 cellar: :any_skip_relocation, sonoma:         "efaa2042f9bdf3abe01999b7665d8c622706ab6e38a7a56c987f8776b26f918b"
-    sha256 cellar: :any_skip_relocation, ventura:        "da5e57633b55749689b31af99f1d30d2d8044a7a6efef195c73d4098905767eb"
-    sha256 cellar: :any_skip_relocation, monterey:       "efb57d91eb0205b491f3c05ea33d9038b53dd1ea2061dbe850d63500dab9f367"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "4d94f1db72930dfbfddbc8c28983a092102bffd14435e9d6801de00c93e829b3"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "bd81b0d494876f37bbf4ff4370a8f1733595bed823b8f7495df4c0b4d6d1a86a"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "90458d705bc2c9d213b7fe9902348d4228a1fbf90b667603edf291c67962f778"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "8afa007b9507a9ac5568b21aeab0d354d21379361cd9d063d61cd75f130edb8f"
+    sha256 cellar: :any_skip_relocation, sonoma:        "d0472eaee62cc3d1be536b4070526759f97d72a8cc001b6197973a0d9b6afda6"
+    sha256 cellar: :any_skip_relocation, ventura:       "a9f349c7d9e4850c91179a9a08f3f707cb28b08a335add3d701f55b8cf9450f0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "474890e93e6f2864e6d17d0857cae03d6e53c9745c434055e9d74065105f9fb1"
   end
 
   depends_on "go" => :build

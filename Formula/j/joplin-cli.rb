@@ -1,25 +1,22 @@
-require "language/node"
-
 class JoplinCli < Formula
   desc "Note taking and to-do application with synchronization capabilities"
   homepage "https://joplinapp.org/"
-  url "https://registry.npmjs.org/joplin/-/joplin-3.0.1.tgz"
-  sha256 "86217bd4b98a6a9e6b31ee3c716f6f83e2b90ff600bc436b47a428842494b5d4"
+  url "https://registry.npmjs.org/joplin/-/joplin-3.2.2.tgz"
+  sha256 "46cda9164f1e20c2ea451fa12398532fbbeb421a9bcdf275ac220f4163f75da5"
   license "MIT"
 
   bottle do
-    sha256                               arm64_sonoma:   "7c23561c606fd689fb6557fe9492ee4cfd91fa65671649838d4d08e9c538b590"
-    sha256                               arm64_ventura:  "ae900752b55e7c9f534f30d5c6c8e73aa708b968d9091844f78a63129f015f2a"
-    sha256                               arm64_monterey: "ad732ce0027491099b535ea810f29afa113b9a47b5c70ff4d177893b2e96e243"
-    sha256                               sonoma:         "dfab9e98f7525cc364e16e6369ec877927aca251900e5d72ba276d605ea5fab3"
-    sha256                               ventura:        "8c51271183c0f6b374c353b145fdfc8cb0b64a6d14ac8c28fcafd6030827845a"
-    sha256                               monterey:       "6a74e4b6448d14732a02e3bc3f00f06b14d6d438b5f03f5063529ca14dd556f0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "af8c54fbe05e626e923a8e68de949d83df5ad0cb62d473bcef0db1893d76c612"
+    sha256                               arm64_sequoia: "9fb6115ba720d86c13274d26ae70de7f41193f03b3e33d4732e369b8d7d12438"
+    sha256                               arm64_sonoma:  "4f970ffbf4f5a913f15b76f3f69f991e18f557251a047ac3ab2207d7f4186a4a"
+    sha256                               arm64_ventura: "a3611669daf544c463ef4ed5f7345e907d61f30cb0faa16bae76f5cc275b1254"
+    sha256                               sonoma:        "e08b770b0c9c9ad238a7385286a3470c9683c2651b839172c270f100115e1e53"
+    sha256                               ventura:       "116677217ea988081c9e828ef17b43938e7378fd97166d7dc678c7e476a4bac6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "284ad0fcb8c24fe4c4302ea5204b7c22fc09068dadde6315b12a0d4e8a5c18af"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "python-setuptools" => :build # for node-gyp
-  depends_on "python@3.12" => :build
+  depends_on "python@3.13" => :build
   depends_on "glib"
   depends_on "node"
   depends_on "sqlite"
@@ -37,11 +34,11 @@ class JoplinCli < Formula
   def install
     # Need node-addon-api v7+: https://github.com/lovell/sharp/issues/3920
     system "npm", "add", "node-addon-api@8.0.0"
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
-    bin.install_symlink Dir["#{libexec}/bin/*"]
+    system "npm", "install", *std_npm_args
+    bin.install_symlink libexec.glob("bin/*")
 
     node_notifier_vendor_dir = libexec/"lib/node_modules/joplin/node_modules/node-notifier/vendor"
-    node_notifier_vendor_dir.rmtree # remove vendored pre-built binaries
+    rm_r(node_notifier_vendor_dir) # remove vendored pre-built binaries
 
     if OS.mac?
       terminal_notifier_dir = node_notifier_vendor_dir/"mac.noindex"

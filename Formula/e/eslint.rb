@@ -1,27 +1,25 @@
-require "language/node"
-
 class Eslint < Formula
   desc "AST-based pattern checker for JavaScript"
   homepage "https://eslint.org"
-  url "https://registry.npmjs.org/eslint/-/eslint-9.6.0.tgz"
-  sha256 "0b6f858d08b38698d6dc9981889e4a252b0721f2898dc49c538ce785fd0b1c7e"
+  url "https://registry.npmjs.org/eslint/-/eslint-9.17.0.tgz"
+  sha256 "1f5dfb1a392972604ee2b4dbcff6c7a9413e06804f130ac4025203fa7015dc2a"
   license "MIT"
+  head "https://github.com/eslint/eslint.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "4dd7222b19630d2f37b4631a89abc65e238b00a33ac3ca40c9f4ba7c9ed4b309"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "4dd7222b19630d2f37b4631a89abc65e238b00a33ac3ca40c9f4ba7c9ed4b309"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "4dd7222b19630d2f37b4631a89abc65e238b00a33ac3ca40c9f4ba7c9ed4b309"
-    sha256 cellar: :any_skip_relocation, sonoma:         "b44dbcda16afaa7664ecaf09440958df4e3ac8bdb99422a6c0b1379ded8de15e"
-    sha256 cellar: :any_skip_relocation, ventura:        "b44dbcda16afaa7664ecaf09440958df4e3ac8bdb99422a6c0b1379ded8de15e"
-    sha256 cellar: :any_skip_relocation, monterey:       "b44dbcda16afaa7664ecaf09440958df4e3ac8bdb99422a6c0b1379ded8de15e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "b955613c3b9f9d59497559695932a1f1aee22f21195c4607a92aa7f7873c0abb"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "c5570ad93798f59edaa3dca6ed16b04061ab7e56fd8c574e850249079adee996"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "c5570ad93798f59edaa3dca6ed16b04061ab7e56fd8c574e850249079adee996"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "c5570ad93798f59edaa3dca6ed16b04061ab7e56fd8c574e850249079adee996"
+    sha256 cellar: :any_skip_relocation, sonoma:        "57f82ad19880347bf7f78ea4447717b83d72cf73d1de3724d8275e35c26d167a"
+    sha256 cellar: :any_skip_relocation, ventura:       "57f82ad19880347bf7f78ea4447717b83d72cf73d1de3724d8275e35c26d167a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c5570ad93798f59edaa3dca6ed16b04061ab7e56fd8c574e850249079adee996"
   end
 
   depends_on "node"
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
-    bin.install_symlink Dir["#{libexec}/bin/*"]
+    system "npm", "install", *std_npm_args
+    bin.install_symlink libexec.glob("bin/*")
   end
 
   test do

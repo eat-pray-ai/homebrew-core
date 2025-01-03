@@ -1,19 +1,19 @@
 class Xh < Formula
   desc "Friendly and fast tool for sending HTTP requests"
   homepage "https://github.com/ducaale/xh"
-  url "https://github.com/ducaale/xh/archive/refs/tags/v0.22.2.tar.gz"
-  sha256 "32a6470ab705aba4c37fce9806202dcc0ed24f55e091e2f4bdf7583108a3da63"
+  url "https://github.com/ducaale/xh/archive/refs/tags/v0.23.1.tar.gz"
+  sha256 "3f7dc6a3c8809f57a32c9aae7a192b54e87702a65d426784c1775676eea2e67f"
   license "MIT"
   head "https://github.com/ducaale/xh.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "b46d58846d7759fbe1c736006d0fe857b0492df34d6113a240d4d8cf5cd7a5a3"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "030bcc197bf059e6acf36ce83dd43ed355954db088bdc9a3f2c1b95abfe754d6"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "8d93303512119e48518cdd265c8ef8b3d98446c5c08cf6300b825f4dbcadfb8d"
-    sha256 cellar: :any_skip_relocation, sonoma:         "dec56cd579b6b9ffe387ee5bd885bc8185003772b2af8229bd8889f310faa257"
-    sha256 cellar: :any_skip_relocation, ventura:        "6be7ce74ab53b52cf851c35b666d4fee4ac230344828896a79ae9e915a9434d5"
-    sha256 cellar: :any_skip_relocation, monterey:       "450794b3b28a20add068a288a865b960cbdb20762f0f604ea673ba6520d42328"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "67c42aca06e87462cf8ea08bf38da7e194cafc22797e7b3f43b536e876634195"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "cf026bfa5cbc26343dc02123476e897362491bb86c77d2d82d92ccfef4f288fa"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "d9120640e68c2d6c4259413a2b6be5bfceb05e6477de159bc9f751aa4b978644"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "abe934355399d3360301f432adb9fceb41d933e0cb85d0aa45a12b386e60f8a4"
+    sha256 cellar: :any_skip_relocation, sonoma:        "d804da80a06c3fa1f0702aacabb85468a0d5b3065ed749e56ecc9e869b856f4d"
+    sha256 cellar: :any_skip_relocation, ventura:       "b41325090cf596f0d66c6344abeeee23cec0fa3dc197154a2526eb59e49cf100"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "427b3200809c3c8a198031d1f65354d921eb16c020560b1a862fd17c0ca43bb6"
   end
 
   depends_on "rust" => :build
@@ -23,7 +23,7 @@ class Xh < Formula
     bin.install_symlink bin/"xh" => "xhs"
 
     man1.install "doc/xh.1"
-    bash_completion.install "completions/xh.bash"
+    bash_completion.install "completions/xh.bash" => "xh"
     fish_completion.install "completions/xh.fish"
     zsh_completion.install "completions/_xh"
   end

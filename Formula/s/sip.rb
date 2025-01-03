@@ -3,35 +3,37 @@ class Sip < Formula
 
   desc "Tool to create Python bindings for C and C++ libraries"
   homepage "https://python-sip.readthedocs.io/en/latest/"
-  url "https://files.pythonhosted.org/packages/3e/f5/85bfb3c716b8eda9e2b0c0c5f36acb701746045c828a4497a44e581db3a6/sip-6.8.5.tar.gz"
-  sha256 "5dddd5966e9875d89ecde9d3e6ac63225f9972e4d25c09e20fa22f1819409c70"
+  url "https://files.pythonhosted.org/packages/e2/83/b23f610ef99fa23aa3c8dcd2ff8536c37b943654405ff4f45f3230327a40/sip-6.9.1.tar.gz"
+  sha256 "7904be5190d7879952563b78a3af0e58fa27d9525af7f53f93eac7a83b433e7b"
   license "BSD-2-Clause"
   head "https://github.com/Python-SIP/sip.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "4efa47c9d2d33bf5897fe994aef25905611c59d3d80db8f8591aadfee43bdb4b"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "4efa47c9d2d33bf5897fe994aef25905611c59d3d80db8f8591aadfee43bdb4b"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "4efa47c9d2d33bf5897fe994aef25905611c59d3d80db8f8591aadfee43bdb4b"
-    sha256 cellar: :any_skip_relocation, sonoma:         "f0838e9d57c425db439eef5bde3707c0b7ddc09e4f222a6e8f0f3e5a519b0339"
-    sha256 cellar: :any_skip_relocation, ventura:        "f0838e9d57c425db439eef5bde3707c0b7ddc09e4f222a6e8f0f3e5a519b0339"
-    sha256 cellar: :any_skip_relocation, monterey:       "f0838e9d57c425db439eef5bde3707c0b7ddc09e4f222a6e8f0f3e5a519b0339"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "11c3e5fffd8754227f3c8938e0cebcc6b30d17d80a99abb22fa909055b851463"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "fa15876caa8cb425d1aa7b83a91bce73af45621d373cce6febe2622c39649875"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "fa15876caa8cb425d1aa7b83a91bce73af45621d373cce6febe2622c39649875"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "fa15876caa8cb425d1aa7b83a91bce73af45621d373cce6febe2622c39649875"
+    sha256 cellar: :any_skip_relocation, sonoma:        "9f857b0b03025a3fdc47792bdd3a6e1124fc83b2901560a9963c88cd095ef290"
+    sha256 cellar: :any_skip_relocation, ventura:       "9f857b0b03025a3fdc47792bdd3a6e1124fc83b2901560a9963c88cd095ef290"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c09df641c9f1b3f4c19361c6313c2219cea6153465db5e8a1e333a16707cd97e"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "packaging" do
-    url "https://files.pythonhosted.org/packages/51/65/50db4dda066951078f0a96cf12f4b9ada6e4b811516bf0262c0f4f7064d4/packaging-24.1.tar.gz"
-    sha256 "026ed72c8ed3fcce5bf8950572258698927fd1dbda10a5e981cdf0ac37f4f002"
+    url "https://files.pythonhosted.org/packages/d0/63/68dbb6eb2de9cb10ee4c9c14a0148804425e13c4fb20d61cce69f53106da/packaging-24.2.tar.gz"
+    sha256 "c228a6dc5e932d346bc5739379109d49e8853dd8223571c7c5b55260edc0b97f"
   end
 
   resource "setuptools" do
-    url "https://files.pythonhosted.org/packages/1c/1c/8a56622f2fc9ebb0df743373ef1a96c8e20410350d12f44ef03c588318c3/setuptools-70.1.0.tar.gz"
-    sha256 "01a1e793faa5bd89abc851fa15d0a0db26f160890c7102cd8dce643e886b47f5"
+    url "https://files.pythonhosted.org/packages/43/54/292f26c208734e9a7f067aea4a7e282c080750c4546559b58e2e45413ca0/setuptools-75.6.0.tar.gz"
+    sha256 "8199222558df7c86216af4f84c30e9b34a61d8ba19366cc914424cdbd28252f6"
+  end
+
+  def python3
+    "python3.13"
   end
 
   def install
-    python3 = "python3.12"
     venv = virtualenv_install_with_resources
 
     # Modify the path sip-install writes in scripts as we install into a
@@ -40,7 +42,7 @@ class Sip < Formula
   end
 
   test do
-    (testpath/"pyproject.toml").write <<~EOS
+    (testpath/"pyproject.toml").write <<~TOML
       # Specify sip v6 as the build system for the package.
       [build-system]
       requires = ["sip >=6, <7"]
@@ -49,7 +51,7 @@ class Sip < Formula
       # Specify the PEP 566 metadata for the project.
       [tool.sip.metadata]
       name = "fib"
-    EOS
+    TOML
 
     (testpath/"fib.sip").write <<~EOS
       // Define the SIP wrapper to the (theoretical) fib library.
@@ -78,6 +80,6 @@ class Sip < Formula
       %End
     EOS
 
-    system "#{bin}/sip-install", "--target-dir", "."
+    system bin/"sip-install", "--target-dir", "."
   end
 end

@@ -7,6 +7,7 @@ class Reproc < Formula
   head "https://github.com/DaanDeMeyer/reproc.git", branch: "main"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "d0c6ae20f545beb6bcdf1cef7492705e3ee5985c17799f43d4877d5d4c69db2c"
     sha256 cellar: :any,                 arm64_sonoma:   "4d56ba8e140f0ec062188d880a89853361a324a276042f87dfd7534879a8c1f1"
     sha256 cellar: :any,                 arm64_ventura:  "95bc077fda0d3238e9a6d7bee628adcc5cf3fd90268b8e4ee96c97e075d97f74"
     sha256 cellar: :any,                 arm64_monterey: "55aebee60bafdc235d68c900974ae1f27eb06e359fd760c2e90772d8bb783b2f"
@@ -18,30 +19,28 @@ class Reproc < Formula
 
   depends_on "cmake" => :build
 
-  fails_with gcc: "5"
-
   def install
     args = *std_cmake_args << "-DREPROC++=ON"
     system "cmake", "-S", ".", "-B", "build", *args, "-DBUILD_SHARED_LIBS=ON", "-DCMAKE_INSTALL_RPATH=#{rpath}"
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
-    rm_rf "build"
+    rm_r("build")
     system "cmake", "-S", ".", "-B", "build", *args
     system "cmake", "--build", "build"
     lib.install "build/reproc/lib/libreproc.a", "build/reproc++/lib/libreproc++.a"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <reproc/run.h>
 
       int main(void) {
         const char *args[] = { "echo", "Hello, world!", NULL };
         return reproc_run(args, (reproc_options) { 0 });
       }
-    EOS
+    C
 
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <iostream>
       #include <reproc++/run.hpp>
 
@@ -55,7 +54,7 @@ class Reproc < Formula
         std::tie(status, ec) = reproc::run(args, options);
         return ec ? ec.value() : status;
       }
-    EOS
+    CPP
 
     system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-lreproc", "-o", "test-c"
     system ENV.cxx, "test.cpp", "-std=c++11", "-I#{include}", "-L#{lib}", "-lreproc++", "-o", "test-cpp"

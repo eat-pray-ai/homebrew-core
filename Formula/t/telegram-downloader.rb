@@ -1,19 +1,19 @@
 class TelegramDownloader < Formula
   desc "Telegram Messenger downloader/tools written in Golang"
   homepage "https://docs.iyear.me/tdl/"
-  url "https://github.com/iyear/tdl/archive/refs/tags/v0.17.3.tar.gz"
-  sha256 "cfb3ac515370aa6494614bbf20eeda60d69a39ef8b9a3c0c7584b6163b9567c3"
+  url "https://github.com/iyear/tdl/archive/refs/tags/v0.18.3.tar.gz"
+  sha256 "24dda392d0ff96b9ac3e16ed38169f8b5d0697ecc80e6d83809633b19d5f91fc"
   license "AGPL-3.0-only"
   head "https://github.com/iyear/tdl.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "d9cde8f37ff8be6f6e917b8806ad824b9bd38ecc1b9054f4532baf07bffbe72f"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "6a9deafd1f37eb8d1355a56822c96a42399f775ca2347d3612dff6b0ffd1ed8a"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "bdc9eef1f184e7c2c77780e25d29c90558c53df387f88d0ee3b7350740558bf0"
-    sha256 cellar: :any_skip_relocation, sonoma:         "8fa7d1a488e5dca0f15f26fcdb2b7a5d5ef0ad86be419e6caecdd855b16cd8b5"
-    sha256 cellar: :any_skip_relocation, ventura:        "71f85a3ae62750463bde2d8e5b5640cc107b441df407c7785848d6c8866975c7"
-    sha256 cellar: :any_skip_relocation, monterey:       "e87b9c1c3d6f86dfe49b362e0ce7b6da81d27145f16955f79e147fc7cbc6d1df"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "83a99450a0b4f8840fe2ed89d291c35b7f2d796958e873b95e0d3158d213f757"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "ad7daff3ddad71a0c78a906dcdde061e06df87e21273497a8c793aaeb88a6df4"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "87515957cfa197efc5bd4d1a838ab474bfd95f296863b29e0b2333df5849ceec"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "0831ef0ea6471f3100cff507fa847a9fee2dc8054a0ec13d497646653f2733c4"
+    sha256 cellar: :any_skip_relocation, sonoma:        "8fbb49370725842e024a57c17aa4dcb36198c32079b8f4b307aa9f9ad99e2b98"
+    sha256 cellar: :any_skip_relocation, ventura:       "553fd19caf48fe1e93323edc6844d605c5b1e3a626caf105b98e345bbdd00a91"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3bf7a942125d16280177c86635070f55a1bd9bef94d471f78f7123945dc50814"
   end
 
   depends_on "go" => :build

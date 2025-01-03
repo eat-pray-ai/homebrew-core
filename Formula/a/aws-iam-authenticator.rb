@@ -1,8 +1,8 @@
 class AwsIamAuthenticator < Formula
   desc "Use AWS IAM credentials to authenticate to Kubernetes"
   homepage "https://github.com/kubernetes-sigs/aws-iam-authenticator"
-  url "https://github.com/kubernetes-sigs/aws-iam-authenticator/archive/refs/tags/v0.6.21.tar.gz"
-  sha256 "0358a392f49fba10301815b41f97abe99ab9c0e26f4c1a93aca2051241575303"
+  url "https://github.com/kubernetes-sigs/aws-iam-authenticator/archive/refs/tags/v0.6.29.tar.gz"
+  sha256 "65355891c3176fd2f4508a742dbb97302984ddf8995e32c41049141da6a498f5"
   license "Apache-2.0"
   head "https://github.com/kubernetes-sigs/aws-iam-authenticator.git", branch: "master"
 
@@ -16,13 +16,12 @@ class AwsIamAuthenticator < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "5f2a17527f11b0f7455021babb08b0430be64134ecb963f023b93d8bbc7abf43"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "570f0f702c95c7dcf4238c572f13d8a9becf6a13730a72b69261009ba3724301"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "e7f425cd8e7854d8eaba4be358eb255ba364234e47c6959d1a344289d53abb2b"
-    sha256 cellar: :any_skip_relocation, sonoma:         "0836b39a2617d508fc461998b1fc0d9677d745ac1f993a82a91f5611ddd17df3"
-    sha256 cellar: :any_skip_relocation, ventura:        "2f1392a9328dbfd3260a44ffd0b86277c578530e8717d27777546146e6632f62"
-    sha256 cellar: :any_skip_relocation, monterey:       "6d57c0f3c2a16a0267f9cd3eab3073c778e06178a1f6a75ba83cd9b85d2aed0e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "8ddf1c79eb09fac4884b64baa3d62825e17d419f810b5b7cc1b0b10bcc2a0f6e"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "ab87d86a03aec04f1b9754d7853a83f5281185bc21619785a97063a39b47f3f2"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "ab87d86a03aec04f1b9754d7853a83f5281185bc21619785a97063a39b47f3f2"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "ab87d86a03aec04f1b9754d7853a83f5281185bc21619785a97063a39b47f3f2"
+    sha256 cellar: :any_skip_relocation, sonoma:        "2e143b3e6967a9e729453b2c8a22d3fe40ec0bed9754e818ccfc4c619d667f59"
+    sha256 cellar: :any_skip_relocation, ventura:       "2e143b3e6967a9e729453b2c8a22d3fe40ec0bed9754e818ccfc4c619d667f59"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0db3141bcf0b962c6e56814bc9890e54866c598a826be3ca160c6562985f7136"
   end
 
   depends_on "go" => :build
@@ -41,7 +40,7 @@ class AwsIamAuthenticator < Formula
     output = shell_output("#{bin}/aws-iam-authenticator version")
     assert_match %Q("Version":"#{version}"), output
 
-    system "#{bin}/aws-iam-authenticator", "init", "-i", "test"
+    system bin/"aws-iam-authenticator", "init", "-i", "test"
     contents = Dir.entries(".")
     ["cert.pem", "key.pem", "aws-iam-authenticator.kubeconfig"].each do |created|
       assert_includes contents, created

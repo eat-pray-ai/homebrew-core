@@ -6,7 +6,8 @@ class Desk < Formula
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "b2da60c73f101b56b6a5ac51ed46427c68cf0194d7229755b4b25a215b1f0c1a"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, all: "95e0acae98be5f6f5d3105ff2c6236d3e9648b8bbc1ab350e7735ed3935db8fe"
   end
 
   def install
@@ -17,7 +18,11 @@ class Desk < Formula
   end
 
   test do
-    (testpath/".desk/desks/test-desk.sh").write("#\n# Description: A test desk\n#")
+    (testpath/".desk/desks/test-desk.sh").write <<~SHELL
+      #
+      # Description: A test desk
+      #
+    SHELL
     list = pipe_output("#{bin}/desk list")
     assert_match "test-desk", list
     assert_match "A test desk", list

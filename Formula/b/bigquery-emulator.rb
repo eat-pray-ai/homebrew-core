@@ -1,19 +1,18 @@
 class BigqueryEmulator < Formula
   desc "Emulate a GCP BigQuery server on your local machine"
   homepage "https://github.com/goccy/bigquery-emulator"
-  url "https://github.com/goccy/bigquery-emulator/archive/refs/tags/v0.6.3.tar.gz"
-  sha256 "58caf41996a6636df16a88adc3cb8e605ce31585d1a1f72dd04f0efd904c3154"
+  url "https://github.com/goccy/bigquery-emulator/archive/refs/tags/v0.6.6.tar.gz"
+  sha256 "a4055b66ad28f972b43b3fe0c7d54a08c57bf91bb4163a39204e152055d54440"
   license "MIT"
   head "https://github.com/goccy/bigquery-emulator.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "cc00e9a2b4074c765e9d6a62edf564f21a16a0bc78d2100613edbf21a1375fe3"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "d0d252fb73e4ec598e38bd888ed180b6deafd2288d1ac032060cea288b5e60b4"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "47aa3a728d1e77d8f84799f6f2abdaa6ae95a318aaac86b32d7dfe0a3e0204e7"
-    sha256 cellar: :any_skip_relocation, sonoma:         "61ed38002b3b327e951dd4339849c3a54de3757091d7f2acc362aa153139457d"
-    sha256 cellar: :any_skip_relocation, ventura:        "29c7be8cc23ceb5f6feb74e4e71f97c12d36d18b99af690669e2e5967dd23c91"
-    sha256 cellar: :any_skip_relocation, monterey:       "7a635db9f57d235fa1c2c7bc9cdc2359fd5c93a35314aeadead9a563cab90c01"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "7efb8102242a476905cdd9beee9487f783374e86d323e2f362250eb77b7eef75"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "09a97a4d0d2da38a73e8b6bea3fd5957a9e5c2fcf5902845082253969f0b77a8"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "84e54fbfc85104d2effc52b84374c4e3c323eb9659ceb3f1aa7c8a7ae8c1283c"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "099f43b95cae81557172f860bd1f0771193ade8a8e188a578991e6d8759137b5"
+    sha256 cellar: :any_skip_relocation, sonoma:        "6d392929f5f202cb8cf49912926a283b424941c442071106c0a4bc57d5b7a953"
+    sha256 cellar: :any_skip_relocation, ventura:       "4fea8c128986fd389f1441e02bd42aca1a31df8de1a3ce446c63007ce1bb7479"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b53e2bd32bf44be1c5ad737c1f4058d855faf4b82530aeebdecf5e9e690bdab2"
   end
 
   depends_on "go" => :build
@@ -26,7 +25,7 @@ class BigqueryEmulator < Formula
   def install
     ENV["CGO_ENABLED"] = "1"
 
-    ldflags = "-s -w -X main.version=#{version} -X main.revision=Homebrew"
+    ldflags = "-s -w -X main.version=#{version} -X main.revision=#{tap.user}"
     system "go", "build", *std_go_args(ldflags:), "./cmd/bigquery-emulator"
   end
 

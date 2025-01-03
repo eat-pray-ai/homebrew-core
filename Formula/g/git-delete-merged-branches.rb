@@ -3,21 +3,15 @@ class GitDeleteMergedBranches < Formula
 
   desc "Command-line tool to delete merged Git branches"
   homepage "https://github.com/hartwork/git-delete-merged-branches"
-  url "https://files.pythonhosted.org/packages/60/09/917d48f0b931475bf3f3a60c522db12db05411ea028cae2adcb8482e2334/git_delete_merged_branches-7.4.1.tar.gz"
-  sha256 "81ca59d29f3d555c1c4885384f5be33b2a1e637bb8e01f64a8605e9a5f6db6bb"
+  url "https://files.pythonhosted.org/packages/dc/e5/c76a87598f2c76574e6741abedbda6bd50e709f8b51a3d0a30bb130a8dce/git_delete_merged_branches-7.4.2.tar.gz"
+  sha256 "44a4ae5a83f194f0800e373519fd22c6bb3e6e99b883221f7b666bd36cdac415"
   license "GPL-3.0-or-later"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "730fe878bf84f3f1686997cbfc6282e3cfaa12800ede068169aa98afb9e38942"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "62de11e672702ebf784d738bc87a9acda1b2e678ba4fe2caad50c3592d5da8c3"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "7e58af7faeb41355b1f3c79b1516b6badd8f5cf461ba5c7c4fca982dd913ca45"
-    sha256 cellar: :any_skip_relocation, sonoma:         "82dc490bab03da709570a42f0ff41dd0228f279add3e08914638f9d1441090a0"
-    sha256 cellar: :any_skip_relocation, ventura:        "0fc90ecfaee427012ed2babd8c60a866f72e0ab495927deb7d53d23d827ebc4e"
-    sha256 cellar: :any_skip_relocation, monterey:       "5e70e60ff0b865f882d6e7490b668ba7c9c1ad75579a946e8581e085517b4dd6"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "71b1113ce036b61fcfef91135d4ac3275699eb3b026aa4dda3bef714c5f32551"
+    sha256 cellar: :any_skip_relocation, all: "4681c0148a8b4bf480fc79f0f6ba3b89ebe0ba936f9a3d165f2099422684a5a1"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   conflicts_with "git-extras", because: "both install `git-delete-merged-branches` binaries"
 
@@ -27,8 +21,8 @@ class GitDeleteMergedBranches < Formula
   end
 
   resource "prompt-toolkit" do
-    url "https://files.pythonhosted.org/packages/cc/c6/25b6a3d5cd295304de1e32c9edbcf319a52e965b339629d37d42bb7126ca/prompt_toolkit-3.0.43.tar.gz"
-    sha256 "3527b7af26106cbc65a040bcc84839a3566ec1b051bb0bfe953631e704b0ff7d"
+    url "https://files.pythonhosted.org/packages/2d/4f/feb5e137aff82f7c7f3248267b97451da3644f6cdc218edfe549fb354127/prompt_toolkit-3.0.48.tar.gz"
+    sha256 "d6623ab0477a80df74e646bdbc93621143f5caf104206aa29294d53de1a03d90"
   end
 
   resource "wcwidth" do

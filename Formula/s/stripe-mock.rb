@@ -1,24 +1,24 @@
 class StripeMock < Formula
   desc "Mock HTTP server that responds like the real Stripe API"
   homepage "https://github.com/stripe/stripe-mock"
-  url "https://github.com/stripe/stripe-mock/archive/refs/tags/v0.186.0.tar.gz"
-  sha256 "16367a39793144e7a5c59170695b42face0b97328c811a7cd816d0bf4fc06a28"
+  url "https://github.com/stripe/stripe-mock/archive/refs/tags/v0.192.0.tar.gz"
+  sha256 "9b38137b879d3c3b580ce6697dfe4de074a0178a7c96ea55502f26417b1e37e4"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "09f9c37d683a9d022f898a2091633b9b8110926b9840c201532b88f3530b9862"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "e845cb069dbf28699982063b023b852aa0d94aa3deaad66c995a486d2d9ae394"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "d242c78b05f0bdff216b437bddefca3775a0082f8abdb6e5afe7db47ebee2672"
-    sha256 cellar: :any_skip_relocation, sonoma:         "dbd0e44ce2b0176ece1e3b1ac946c19e9eb6f7c94d1188373c5aab167be59de5"
-    sha256 cellar: :any_skip_relocation, ventura:        "bf86591baa8417f93d7b7c02207ddee7f65259167ba1d33b1657656ce4a45931"
-    sha256 cellar: :any_skip_relocation, monterey:       "4bcb342adfd0a0aaca13e8119232c4481d3168b8ba28e6f48a2f793e56fdf04f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "9dcddddf5ab0fd232a28b8d4eff90e92d1f355ddc241b48e2090cb0f4b2ef60b"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "a2ba9c9c2bcf0036489d84d279a8c80bf7d72d483112bb6db13e1a78d89e156d"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "a2ba9c9c2bcf0036489d84d279a8c80bf7d72d483112bb6db13e1a78d89e156d"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "a2ba9c9c2bcf0036489d84d279a8c80bf7d72d483112bb6db13e1a78d89e156d"
+    sha256 cellar: :any_skip_relocation, sonoma:        "f9df4eb35c18303d84efdc994c16aa5bf83c0a45175b1379d756ca08f73ab336"
+    sha256 cellar: :any_skip_relocation, ventura:       "f9df4eb35c18303d84efdc994c16aa5bf83c0a45175b1379d756ca08f73ab336"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0d7cd69e545b5998185ed466614cf0c7bef58d33e38589be6caf94d52cd701be"
   end
 
   depends_on "go" => :build
 
   def install
-    system "go", "build", *std_go_args(ldflags: "-X main.version=#{version}")
+    system "go", "build", *std_go_args(ldflags: "-s -w -X main.version=#{version}")
   end
 
   service do

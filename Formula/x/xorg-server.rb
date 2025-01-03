@@ -1,29 +1,33 @@
 class XorgServer < Formula
   desc "X Window System display server"
   homepage "https://www.x.org"
-  url "https://www.x.org/releases/individual/xserver/xorg-server-21.1.13.tar.xz"
-  sha256 "b45a02d5943f72236a360d3cc97e75134aa4f63039ff88c04686b508a3dc740c"
+  url "https://www.x.org/releases/individual/xserver/xorg-server-21.1.15.tar.xz"
+  sha256 "841c82901282902725762df03adbbcd68153d4cdfb0d61df0cfd73ad677ae089"
   license all_of: ["MIT", "APSL-2.0"]
 
   bottle do
-    sha256 arm64_sonoma:   "7addc20a2fb8c6957edb2f16112eaddc23f8c01c7250c53ff3a34bef1645c587"
-    sha256 arm64_ventura:  "a740be8e7bbbd889c072b8e21241a5713a90fee2a7fc1b2ce6fe7980689bee83"
-    sha256 arm64_monterey: "5058f086397aed7f1f60cf9e3d8f2e6fd325ea91b68d30aad7a41e62e67e00c2"
-    sha256 sonoma:         "efae9ba3ae6c19571025af4fcfd52fa00a7d2c98fa6a990f221aa11f22f7a524"
-    sha256 ventura:        "9e098a4297c4893dd808200df0cbbb29d8914512ae687afe2ce0465d0c8737f0"
-    sha256 monterey:       "7dfbafe73a8c5236d065fd00f293f6c9262e71c2f7a7bbf209c724099d0953a9"
-    sha256 x86_64_linux:   "5aa175f5d2e02c026a21b721339f05c1928d6260dd6dac76aa46b501be696099"
+    sha256 arm64_sequoia: "da384bbf7907580328b19bd260d4297133081fec86df0a36397e4c3f26f28bbe"
+    sha256 arm64_sonoma:  "db3cb3b2450ecae3fe883348607120451778f6f2254892cc161c6ca476dbe359"
+    sha256 arm64_ventura: "47bbc240f25c91a73ab35b4df2fa089955ad18ffc1a5f4e796069fe556cb2ed2"
+    sha256 sonoma:        "96d25305aeff7f1ba96090a396cad3ef95e18742c54c4e75095b863ec3298948"
+    sha256 ventura:       "e2ce400b5f1192569337c85792841966eea31d11676673d23ab67fa739b9f3fa"
+    sha256 x86_64_linux:  "10b25721ee179b39c9dbeeb816be020d8f418ab1ec7c54f384f562c29c2d4575"
   end
 
   depends_on "font-util"   => :build
   depends_on "libxkbfile"  => :build
   depends_on "meson"       => :build
   depends_on "ninja"       => :build
-  depends_on "pkg-config"  => :build
+  depends_on "pkgconf"     => :build
   depends_on "util-macros" => :build
   depends_on "xorgproto"   => :build
   depends_on "xtrans"      => :build
 
+  depends_on "libx11"
+  depends_on "libxau"
+  depends_on "libxcb"
+  depends_on "libxdmcp"
+  depends_on "libxext"
   depends_on "libxfixes"
   depends_on "libxfont2"
   depends_on "mesa"
@@ -45,6 +49,7 @@ class XorgServer < Formula
     depends_on "dbus"
     depends_on "libdrm"
     depends_on "libepoxy"
+    depends_on "libpciaccess"
     depends_on "libtirpc"
     depends_on "libxcvt"
     depends_on "libxshmfence"
@@ -52,12 +57,12 @@ class XorgServer < Formula
     depends_on "systemd"
 
     resource "xvfb-run" do
-      url "https://salsa.debian.org/xorg-team/xserver/xorg-server/-/raw/xorg-server-2_21.1.4-1/debian/local/xvfb-run"
+      url "https://salsa.debian.org/xorg-team/xserver/xorg-server/-/raw/xorg-server-2_21.1.13-3/debian/local/xvfb-run"
       sha256 "fd05e0f8e6207c3984b980a0f037381c9c4a6f22a6dd94fdcfa995318db2a0a4"
     end
 
     resource "xvfb-run.1" do
-      url "https://salsa.debian.org/xorg-team/xserver/xorg-server/-/raw/xorg-server-2_21.1.4-1/debian/local/xvfb-run.1"
+      url "https://salsa.debian.org/xorg-team/xserver/xorg-server/-/raw/xorg-server-2_21.1.13-3/debian/local/xvfb-run.1"
       sha256 "08f14f55e14e52e5d98713c4d8f25ae68d67e2ee188dc0247770c6ada6e27c05"
     end
   end
@@ -109,7 +114,7 @@ class XorgServer < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <assert.h>
       #include <xcb/xcb.h>
 
@@ -120,7 +125,7 @@ class XorgServer < Formula
         xcb_disconnect(connection);
         return 0;
       }
-    EOS
+    C
     xcb = Formula["libxcb"]
     system ENV.cc, "./test.c", "-o", "test", "-I#{xcb.include}", "-L#{xcb.lib}", "-lxcb"
 

@@ -1,8 +1,8 @@
 class Ki18n < Formula
   desc "KDE Gettext-based UI text internationalization"
   homepage "https://api.kde.org/frameworks/ki18n/html/index.html"
-  url "https://download.kde.org/stable/frameworks/6.3/ki18n-6.3.0.tar.xz"
-  sha256 "4d95341eba2070fec3901396eb0a68f4a8423337de5ea23fb86b0ea70c957282"
+  url "https://download.kde.org/stable/frameworks/6.9/ki18n-6.9.0.tar.xz"
+  sha256 "736ae10e3a8c5dced155d3347f9dbd91c34f485d7495815f85f4d624681a1860"
   license all_of: [
     "BSD-3-Clause",
     "LGPL-2.0-or-later",
@@ -16,26 +16,22 @@ class Ki18n < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "8e2d0ece5758922e109247faf363470c04739131ffc8d8d1c1fe70a0a32d8ff5"
-    sha256 arm64_ventura:  "061ef3d8c446205ace1488d8af7c9e8aac17e5378c2d8ade420edc1225654d2a"
-    sha256 arm64_monterey: "c001e740f39ef48057b52b2852e68ed44cabc271af845614f4b039166709eef8"
-    sha256 sonoma:         "bb3b4a6ac90019c71b71ff86ade0b7a70898aed312d7870a2f4bde639a68c284"
-    sha256 ventura:        "870ee3530dfa621b0c90bb6d2d9924026eec0ae298d35550e64980877efc81ee"
-    sha256 monterey:       "85afe103724c945d586949b043695aa59420cf3b5e0d430b4b2108225f776e7f"
-    sha256 x86_64_linux:   "75ed65533dad5aee2dfac3bc14d8b22158f35d43b3d29b5dc95cc6dd40abeda5"
+    sha256 arm64_sonoma:  "c66e88224164c4b306e3ae5fcf9dade6403d022a8c8aa20e776536c044f95690"
+    sha256 arm64_ventura: "c485832b702a5895e4be8e7900c9a0c776a4b1b7f48677cd2b18d88b9d4e3885"
+    sha256 sonoma:        "9f82faf3d5f75c4252a33462139e2407870e6e9e6b4234320a82c89758ecf800"
+    sha256 ventura:       "5ce342453bb11886f3118cf7ce30bb04b3db2b0a83b131a0cfbb867efa237185"
+    sha256 x86_64_linux:  "687619b7907833a8e7bbef94f70f9e9ab25c8d827566ba9e8c864ee8139a6c77"
   end
 
   depends_on "cmake" => [:build, :test]
   depends_on "doxygen" => :build
   depends_on "extra-cmake-modules" => [:build, :test]
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "gettext"
   depends_on "iso-codes"
   depends_on "qt"
 
   uses_from_macos "python" => :build, since: :catalina
-
-  fails_with gcc: "5"
 
   def install
     args = %W[
@@ -56,11 +52,12 @@ class Ki18n < Formula
     qt = Formula["qt"]
     qt_major = qt.version.major
 
-    (testpath/"CMakeLists.txt").write <<~EOS
+    (testpath/"CMakeLists.txt").write <<~CMAKE
       cmake_minimum_required(VERSION 3.5)
       include(FeatureSummary)
-      find_package(ECM #{version unless build.head?} NO_MODULE)
+      find_package(ECM #{version} NO_MODULE)
       set_package_properties(ECM PROPERTIES TYPE REQUIRED)
+      set(CMAKE_AUTOMOC ON)
       set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} "#{pkgshare}/cmake")
       set(CMAKE_CXX_STANDARD 17)
       set(QT_MAJOR_VERSION #{qt_major})
@@ -72,7 +69,7 @@ class Ki18n < Formula
       find_package(LibIntl)
       set_package_properties(LibIntl PROPERTIES TYPE REQUIRED)
       add_subdirectory(autotests)
-    EOS
+    CMAKE
 
     cp_r (pkgshare/"autotests"), testpath
 

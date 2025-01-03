@@ -13,6 +13,7 @@ class Mpdas < Formula
 
   bottle do
     rebuild 1
+    sha256 arm64_sequoia:  "df5684e5298c02319fea93f70ecad6210c12b66bd1ca2686ec9758dcbeeba20d"
     sha256 arm64_sonoma:   "432d575a1263ee85112c5c4c9d20781507ee5c95245d3978f686ca272df74adc"
     sha256 arm64_ventura:  "a33d1f587e538bbc81db4d3bf60dc7c37c82ee462400c6051785e4338f1c46e1"
     sha256 arm64_monterey: "89b5e45abcb88c8df236dea703162ed9d7f372c0872c3af23630c56e18e31c8e"
@@ -26,7 +27,7 @@ class Mpdas < Formula
     sha256 x86_64_linux:   "863be659b7b2e9ee5e61c73d284d0a753430f438fbf1225efcee4120850883d2"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "libmpdclient"
 
   uses_from_macos "curl"

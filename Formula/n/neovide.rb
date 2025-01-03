@@ -1,24 +1,26 @@
 class Neovide < Formula
   desc "No Nonsense Neovim Client in Rust"
   homepage "https://github.com/neovide/neovide"
-  url "https://github.com/neovide/neovide/archive/refs/tags/0.13.1.tar.gz"
-  sha256 "6cc2ddf50708a343114756d424b318c581c148437b96ba9563c401dfdb754408"
+  url "https://github.com/neovide/neovide/archive/refs/tags/0.13.3.tar.gz"
+  sha256 "21c8eaa53cf3290d2b1405c8cb2cde5f39bc14ef597b328e76f1789b0ef3539a"
   license "MIT"
   head "https://github.com/neovide/neovide.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "053f5a69ef87d61891aab9809fe48f40bbdb64b72d282cec7e0b7c0b1ddb5204"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "c04bce151e58ed54613a7f7e3f430fa9244ce7581ef5e4627dc0d63b350e9043"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "f7de1e55ca74e158cdfc6d00297f5a7445333d337458f37d1d86efc0ef649e5e"
-    sha256 cellar: :any_skip_relocation, sonoma:         "eaf53cbb3008a2a17171c10d162c79a7f70d1e5da0b405a6a9c09c3f332423a3"
-    sha256 cellar: :any_skip_relocation, ventura:        "9ccb8283f738be5ef49de800cf607a2caa4c7c6a05d4c48a89a274bb37f2e143"
-    sha256 cellar: :any_skip_relocation, monterey:       "ea11dec2a953a55471ecb5ea300d9eecde1934dd3191a6c62ab5ba6f473237a6"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "0a6b7dd59a8a6fd2f54f350d727a95386dbc4661a186c8a5d38d56167e39bd70"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "a707205c55f9f4b08ce1228baf5de9c7e3501c55dd161c45c647f362ddc9164e"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "9ca6b4e3e0b753cbb25ce6c1c8cc83baa3e8dddfbae1bb3b8cb03102c6ad8c60"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "fe99aabf60388de8d103fde859c56193b2c7192ef2282b99249baf1a7bae8b68"
+    sha256 cellar: :any_skip_relocation, sonoma:        "6175015a4a4ca06f7b9d948a733b4ad85580837d6f12e587f8e2742fde3981cc"
+    sha256 cellar: :any_skip_relocation, ventura:       "b89ecae1aae8bfdd70cf0b966b14091fe088a1eaf7fcdacced64a89ccbefb111"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e119675832daa71d45d9cc1a805d14c014caf8f5f45744c6ccd57231e3ff91cd"
   end
 
+  depends_on "ninja" => :build
   depends_on "rust" => :build
   depends_on "neovim"
 
+  uses_from_macos "llvm" => :build
   uses_from_macos "python" => :build, since: :catalina
 
   on_macos do
@@ -26,12 +28,42 @@ class Neovide < Formula
   end
 
   on_linux do
+    depends_on "python@3.12" => :build # https://github.com/rust-skia/rust-skia/issues/1049
+    depends_on "expat"
     depends_on "fontconfig"
     depends_on "freetype"
-    depends_on "libxcb"
+    depends_on "harfbuzz"
+    depends_on "icu4c@76"
+    depends_on "jpeg-turbo"
+    depends_on "libpng"
+    depends_on "libxkbcommon" # dynamically loaded by xkbcommon-dl
+    depends_on "mesa" # dynamically loaded by glutin
+    depends_on "zlib"
+  end
+
+  fails_with :gcc do
+    cause "Skia build uses clang target option"
   end
 
   def install
+    ENV["FORCE_SKIA_BUILD"] = "1" # avoid pre-built `skia`
+
+    # FIXME: On macOS, `skia-bindings` crate only allows building `skia` with bundled libraries
+    if OS.linux?
+      if build.stable?
+        skia_bindings_version = Version.new(File.read("Cargo.lock")[/name = "skia-bindings"\nversion = "(.*)"/, 1])
+        odie "Remove `python@3.12` dependency and PATH modification" if skia_bindings_version >= "0.80.0"
+        ENV.prepend_path "PATH", Formula["python@3.12"].opt_libexec/"bin"
+      end
+
+      ENV["SKIA_USE_SYSTEM_LIBRARIES"] = "1"
+      ENV["CLANG_PATH"] = which(ENV.cc) # force bindgen to use superenv clang to find brew libraries
+
+      # GN doesn't use CFLAGS so pass extra paths using superenv
+      ENV.append_path "HOMEBREW_INCLUDE_PATHS", Formula["freetype"].opt_include/"freetype2"
+      ENV.append_path "HOMEBREW_INCLUDE_PATHS", Formula["harfbuzz"].opt_include/"harfbuzz"
+    end
+
     system "cargo", "install", *std_cargo_args
 
     return unless OS.mac?

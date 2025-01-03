@@ -1,8 +1,8 @@
 class Cadical < Formula
   desc "Clean and efficient state-of-the-art SAT solver"
   homepage "https://fmv.jku.at/cadical/"
-  url "https://github.com/arminbiere/cadical/archive/refs/tags/rel-2.0.0.tar.gz"
-  sha256 "9afe5f6439442d854e56fc1fac3244ce241dbb490735939def8fd03584f89331"
+  url "https://github.com/arminbiere/cadical/archive/refs/tags/rel-2.1.1.tar.gz"
+  sha256 "6e6ad07dc833d2ae4f49115f9b92b5f78e4b1a9ef37f83f252dbc035c9d41850"
   license "MIT"
 
   livecheck do
@@ -11,13 +11,12 @@ class Cadical < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "9825a0c9c4c024f5023494de2712b28b28deab1d7cca9aa1033cf5f89d9345b0"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "ff3003444ea747f336347ffcc6a8d6814b5456f52e7604255db0844f48891551"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "e4785bb323b72519598901d2423da7c70d9d975f9588c79ca7d15cf298851286"
-    sha256 cellar: :any_skip_relocation, sonoma:         "dd0d8346c3c1baa30a5e0a8ca3a43be9e15233baf2b687a53259c35843280233"
-    sha256 cellar: :any_skip_relocation, ventura:        "21d53219f41b054fe86e9620f2d32a2705b22ea44e18b78bb4a3f636f7f6984c"
-    sha256 cellar: :any_skip_relocation, monterey:       "818b56977e0184acb239948980be236ff7c27ad091473543ff6be1b5a6889abc"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f61dfbc010d7b4c25e835c9e3e102387774fa9ee820d3ae6356a91f12f0fc73d"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "bcda9767eeeb92ee295e5ea771685921675abe36cd05fced553c42dee2ee42e2"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "6eaa2bba5167b6886cc22cde377134970373454b8726b119567a3c1640e3e2d3"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "051ee3a2b14fd87fdb4677ff19c936a08b7a24ef35b0b240cd5f7419082f5822"
+    sha256 cellar: :any_skip_relocation, sonoma:        "bf1bba0754b2f75845bee0419c7a31b2f5b0c7b7513e87ce27b39822bc14e361"
+    sha256 cellar: :any_skip_relocation, ventura:       "9a4ca7ff7f647a65ff10c1cc21a765847fb23fba46f58890b09b789ea0579895"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9fd1ec6e2fd2f692e59cf687715c14d4c3b2c1853a6e345491c93392364403b7"
   end
 
   def install
@@ -45,7 +44,7 @@ class Cadical < Formula
     result = shell_output("#{bin}/cadical simple.cnf", 20)
     assert_match "s UNSATISFIABLE", result
 
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <cadical.hpp>
       #include <cassert>
       int main() {
@@ -58,7 +57,7 @@ class Cadical < Formula
         assert(res > 0);
         return 0;
       }
-    EOS
+    CPP
     system ENV.cxx, "test.cpp", "-L#{lib}", "-lcadical", "-o", "test", "-std=c++11"
     system "./test"
   end

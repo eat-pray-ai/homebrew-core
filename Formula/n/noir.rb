@@ -1,18 +1,17 @@
 class Noir < Formula
   desc "Attack surface detector that identifies endpoints by static analysis"
   homepage "https://github.com/owasp-noir/noir"
-  url "https://github.com/owasp-noir/noir/archive/refs/tags/v0.16.1.tar.gz"
-  sha256 "c6968a08fb088a636c856b6c256ad6c3facb6df64713648ac68d5d132170ce95"
+  url "https://github.com/owasp-noir/noir/archive/refs/tags/v0.18.3.tar.gz"
+  sha256 "5173e62129afafeb6bb622b2a0ab45db9b2bb0781fad1258b6679f3bab3d69c2"
   license "MIT"
 
   bottle do
-    sha256 arm64_sonoma:   "2e612535fc80df55436fe2ee12aaafe2d9b30ce1fb61a225f6b996f88bc8830f"
-    sha256 arm64_ventura:  "7d432f1aa9ea9237203b613c12b7b1c3954f0576fbaa41aa20de780e8a96aaa9"
-    sha256 arm64_monterey: "21a640cec6c9dd754469ee8039718d07a98674ebc0d15183c53e1f7bf11368a2"
-    sha256 sonoma:         "8921344dbb277320723b92f89440cf654bf576961eabf914cc2a3ce399e59394"
-    sha256 ventura:        "7db5e6f4723122f6abf135000b41e933537c78900d437bb1878d59076c9d8a20"
-    sha256 monterey:       "4dee8b3e0dae2fb1639daf3d16ce7ce2892d5a02e8437a53cd4d557c72edbb12"
-    sha256 x86_64_linux:   "e09e339d1decd5d7cbae23c9fb239ec68c9c4d1898fd9af805db3d04d9bfad66"
+    sha256 arm64_sequoia: "747e63fa8cf8a20d6d2bd2e40af11d70a787de376d92669778982163f863b2e7"
+    sha256 arm64_sonoma:  "285aaca5a309f0a5f9336016ab1269b409e723511e3b25454656ad47df28f77e"
+    sha256 arm64_ventura: "5a84fb8f63013c45d6a406abbf5e50b2aca04331fa65ed8e956120edc548ba1a"
+    sha256 sonoma:        "3bff904faa03844d84db4b617e55ae6d4d5a29afb775c3770c77f4ff0cc45688"
+    sha256 ventura:       "a1ad7b130ad06390e8dc8a69043983cae847b1b2cc3ea93dc08366c29e05b916"
+    sha256 x86_64_linux:  "73f691ad47d84104de788c4da63c6d5cb381acf54cc3c1d3634427efeb4d22c6"
   end
 
   depends_on "bdw-gc"
@@ -28,6 +27,9 @@ class Noir < Formula
     system "shards", "install"
     system "shards", "build", "--release", "--no-debug"
     bin.install "bin/noir"
+
+    generate_completions_from_executable(bin/"noir", shell_parameter_format: "--generate-completion=",
+                                                     shells:                 [:bash, :zsh, :fish])
   end
 
   test do

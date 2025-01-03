@@ -1,8 +1,8 @@
 class Scala < Formula
   desc "JVM-based programming language"
   homepage "https://www.scala-lang.org/"
-  url "https://github.com/lampepfl/dotty/releases/download/3.4.2/scala3-3.4.2.tar.gz"
-  sha256 "2447f095126c6532a4d0300896c87e5350e8ce6e14417c1578b4a4348187304b"
+  url "https://github.com/scala/scala3/releases/download/3.6.2/scala3-3.6.2.tar.gz"
+  sha256 "9525b93f8b9488330ecbdb85df3046d3ef46c6760ac23248902c4d89194c5206"
   license "Apache-2.0"
 
   livecheck do
@@ -11,22 +11,21 @@ class Scala < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "b9bc4c1eefa68cdb4b9f01fbd21296ea579a0f6dc8a1f78cfba625494cb49560"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "b3f22ca7949354f01ca6513cb7cb41e2300805c7c439fbe11ba5b919be34f2bf"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "fe398060d782c37d4a851cf41663a701e5d6f450b26168f999e0aa81b1627330"
-    sha256 cellar: :any_skip_relocation, sonoma:         "a079e73558095bade0b25c37a7495c858d6b77e854bc9dc3a76d196cca07853b"
-    sha256 cellar: :any_skip_relocation, ventura:        "13d4ba4f872971a7b43437091d5f887fe79af4decaa3acfd7609a9916beb0e07"
-    sha256 cellar: :any_skip_relocation, monterey:       "3cc745af73dee67fb6362cfb9ed97b115d3453b061f38b30d3bd04b54fb2b676"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f60a74e344a241c429b07d46554dfec6878b2a921895f67c91d38940f7971d98"
+    sha256 cellar: :any_skip_relocation, all: "9836e7809cd8da0a45de3e6b212b452a538a102b750b356f4e9111d3d2aca94c"
   end
 
+  # JDK Compatibility: https://docs.scala-lang.org/overviews/jdk-compatibility/overview.html
   depends_on "openjdk"
 
   conflicts_with "pwntools", because: "both install `common` binaries"
 
   def install
+    # fix `scala-cli.jar` path, upstream pr ref, https://github.com/scala/scala3/pull/22185
+    inreplace "libexec/cli-common-platform", "bin/scala-cli", "libexec/scala-cli"
+
     rm Dir["bin/*.bat"]
-    libexec.install "lib"
+
+    libexec.install "lib", "maven2", "VERSION", "libexec"
     prefix.install "bin"
     bin.env_script_all_files libexec/"bin", Language::Java.overridable_java_home_env
 
@@ -44,13 +43,13 @@ class Scala < Formula
 
   test do
     file = testpath/"Test.scala"
-    file.write <<~EOS
+    file.write <<~SCALA
       object Test {
         def main(args: Array[String]): Unit = {
           println(s"${2 + 2}")
         }
       }
-    EOS
+    SCALA
 
     out = shell_output("#{bin}/scala #{file}").strip
 

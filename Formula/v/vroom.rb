@@ -8,6 +8,7 @@ class Vroom < Formula
 
   bottle do
     rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia:  "1c0df6c3a21095891a7cbf1508accd44318e83734b741b0ebc9aea5e99b61cd7"
     sha256 cellar: :any,                 arm64_sonoma:   "6165a7cb235b8a0bc6e57479ec80257751698945e9a4b699115d3163fa1a0add"
     sha256 cellar: :any,                 arm64_ventura:  "0c57cf1a0b33c08327c768bf70580b3c9687fa18694466965b8d3f2e794f9093"
     sha256 cellar: :any,                 arm64_monterey: "e9748811a768dafc95d402f4626c04e0a63b69aa3e503a22c835334b4503d814"
@@ -18,13 +19,11 @@ class Vroom < Formula
   end
 
   depends_on "cxxopts" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rapidjson" => :build
   depends_on "asio"
   depends_on macos: :mojave # std::optional C++17 support
   depends_on "openssl@3"
-
-  fails_with gcc: "5"
 
   def install
     # fixes https://github.com/VROOM-Project/vroom/issues/997 , remove in version > 1.13.0
@@ -33,7 +32,7 @@ class Vroom < Formula
 
     # Use brewed dependencies instead of vendored dependencies
     cd "include" do
-      rm_rf ["cxxopts", "rapidjson"]
+      rm_r(["cxxopts", "rapidjson"])
       mkdir_p "cxxopts"
       ln_s Formula["cxxopts"].opt_include, "cxxopts/include"
       ln_s Formula["rapidjson"].opt_include, "rapidjson"

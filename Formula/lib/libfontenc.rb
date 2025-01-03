@@ -6,6 +6,7 @@ class Libfontenc < Formula
   license "MIT"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "5e4228d360d809601a62a880d67db005d4a9d3a92ddfbf47e6c6d0154f258bcd"
     sha256 cellar: :any,                 arm64_sonoma:   "67887ebe92518e43424e8b468b310fde9ab42d9791d387d59519cdbfb4a2f43c"
     sha256 cellar: :any,                 arm64_ventura:  "15cec1b1e8ca8856aa59de28068cd187831281b1376597d7bb87c5f79b80e10c"
     sha256 cellar: :any,                 arm64_monterey: "129b929cf9305162d58922cce06530c4c1da2968adc292503240105c454bae67"
@@ -16,7 +17,7 @@ class Libfontenc < Formula
   end
 
   depends_on "font-util" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "util-macros" => :build
   depends_on "xorgproto" => :build
 
@@ -24,27 +25,25 @@ class Libfontenc < Formula
 
   def install
     args = %W[
-      --prefix=#{prefix}
       --sysconfdir=#{etc}
       --localstatedir=#{var}
-      --disable-dependency-tracking
       --disable-silent-rules
     ]
 
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args
     system "make"
     system "make", "install"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include "X11/fonts/fontenc.h"
 
       int main(int argc, char* argv[]) {
         FontMapRec rec;
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c"
     assert_equal 0, $CHILD_STATUS.exitstatus
   end

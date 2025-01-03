@@ -1,9 +1,10 @@
 class Inspircd < Formula
   desc "Modular C++ Internet Relay Chat daemon"
   homepage "https://www.inspircd.org/"
-  url "https://github.com/inspircd/inspircd/archive/refs/tags/v4.0.1.tar.gz"
-  sha256 "3e00d545593f2f2585792585b58501bfc953dc16ae1f35dc55333ccb57d6ef5d"
+  url "https://github.com/inspircd/inspircd/archive/refs/tags/v4.4.0.tar.gz"
+  sha256 "9f24615b1663ca6ed611f39c3f74da291656fc88df18991ab67f1becbab40aaa"
   license "GPL-2.0-only"
+  revision 1
 
   livecheck do
     url :stable
@@ -11,28 +12,21 @@ class Inspircd < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "d5abadab741ca0717579b214d91c5cd8dd965d1bcb755f632844fe2d408c67c1"
-    sha256 arm64_ventura:  "82abfdd3a78022e463db28423b351f3234ac192fee85b47b4c33e8a8992afe4d"
-    sha256 arm64_monterey: "7a3cbdf29a81080411b58cab08105df4ad5378d8ce46a09383ae2e84258c63eb"
-    sha256 sonoma:         "634439a40b40cb558429f5fc4e68afa1eac505cd5bd8bca48b19b9cf45cf216f"
-    sha256 ventura:        "426b652fd1859062899388ecb5b10328d3cd97e466497efb09cd8cc8117f4fd1"
-    sha256 monterey:       "1d6429341d727e9ed7b1eea59b19bbae0d085f9d9564851cefaa1e3a31ff2c8b"
-    sha256 x86_64_linux:   "40867db14252aa063c009eb300836b34059f9b350afd2cf0d60396c7361edd22"
+    sha256 arm64_sequoia: "3fde189e5a1a348382c1c5763b864a9a41e1a89c509252d993360c63b1a6e557"
+    sha256 arm64_sonoma:  "8df92567a908112bb8f5055e525a95b5239cb89cc2acb31d114400c631bbe01d"
+    sha256 arm64_ventura: "d23c663c9997cb8a46b6f2de29dbd19ceaa9987d9a2d28c06721d587e6d9d165"
+    sha256 sonoma:        "3fef2264fecbf9d78e11a71355334fefc74b591985af4db8a0cad37a657bb6af"
+    sha256 ventura:       "758aeb9e3628f9ed769314f9c507c8733220013a70e16a5472cc0714701fe4aa"
+    sha256 x86_64_linux:  "4b1a8af15e371bc33667843f40443259f741cfe4927d3ca4c438136ae3190873"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "argon2"
   depends_on "gnutls"
   depends_on "libpq"
-  depends_on "mysql-client"
+  depends_on "mariadb-connector-c"
 
   uses_from_macos "openldap"
-
-  on_macos do
-    depends_on "openssl@3"
-    depends_on "zlib"
-    depends_on "zstd"
-  end
 
   skip_clean "data"
   skip_clean "logs"
@@ -48,6 +42,6 @@ class Inspircd < Formula
   end
 
   test do
-    assert_match("ERROR: Cannot open config file", shell_output("#{bin}/inspircd", 1))
+    assert_match("ERROR: Cannot open config file", shell_output(bin/"inspircd", 1))
   end
 end

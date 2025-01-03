@@ -2,11 +2,10 @@ class Wownero < Formula
   desc "Official wallet and node software for the Wownero cryptocurrency"
   homepage "https://wownero.org"
   # TODO: Check if we can use unversioned `protobuf` at version bump
-  url "https://git.wownero.com/wownero/wownero.git",
-      tag:      "v0.11.1.0",
-      revision: "1b8475003c065b0387f21323dad8a03b131ae7d1"
+  url "https://codeberg.org/wownero/wownero.git",
+      tag:      "v0.11.3.0",
+      revision: "3e302be710f4e6b4f58642989c8e47711362fa56"
   license "BSD-3-Clause"
-  revision 4
 
   # The `strategy` code below can be removed if/when this software exceeds
   # version 10.0.0. Until then, it's used to omit a malformed tag that would
@@ -25,19 +24,20 @@ class Wownero < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "66aee0c27f86ecb1b0e3caaf93ae25ee27da25b6df902abad0184cc0aec2a183"
-    sha256 cellar: :any,                 arm64_ventura:  "e7463d258b3e5fb8e8f727a826e3c5e0d3b31333a4c47af297a9156ad5cd0420"
-    sha256 cellar: :any,                 arm64_monterey: "adeaa5de1a95f628dac6a7e0c297156fdb682a1c88506d497836cf6bebf0210d"
-    sha256 cellar: :any,                 sonoma:         "88ab320c55493c28d1f555a53bdd812b271de7a1c7b49718bfeddd8958f29970"
-    sha256 cellar: :any,                 ventura:        "8df745706752ed9c52d12d55901cfeb99392c1e35ec814bfa3300966474f4a16"
-    sha256 cellar: :any,                 monterey:       "ebff9bdbe435cabcfd404dde72bd1d6f2b462c81fd358601034125a665e474d1"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "309674cbecc3d3b542d345f5501716da422b7cfb40ac4d6cb93c5129942f8193"
+    sha256 cellar: :any,                 arm64_sequoia: "e853a94c2180d3369de8bb4f5d04cf7ffea7736b3d1d53f17c69b7bfc3275982"
+    sha256 cellar: :any,                 arm64_sonoma:  "89cc4a6b275adf3f8e97f36e8cbfa545bf7b892f6e0f26575e47f936cc816fa9"
+    sha256 cellar: :any,                 arm64_ventura: "a7573258aa7a6c1aa62858fabdd590b4546d57e3c1c569ba5355361d7e9d7a47"
+    sha256 cellar: :any,                 sonoma:        "6f1149d4459630ab60f67a3d84a75e73d933b2dd2885ec215e2dbf05a37fbecf"
+    sha256 cellar: :any,                 ventura:       "b31910c666b6bba034ed47c3a6100f6b42ab5e15ab9f5213e4b831ffc2883d1d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b579603a0d8d4e8f796ef7efb40e6ff5ceab8272bb585b95914991cc2538f720"
   end
+
+  disable! date: "2025-05-11", because: "needs to use unmaintained `boost@1.85` and `protobuf@21`"
 
   depends_on "cmake" => :build
   depends_on "miniupnpc" => :build
-  depends_on "pkg-config" => :build
-  depends_on "boost"
+  depends_on "pkgconf" => :build
+  depends_on "boost@1.85"
   depends_on "hidapi"
   depends_on "libsodium"
   depends_on "libusb"
@@ -50,19 +50,6 @@ class Wownero < Formula
   conflicts_with "monero", because: "both install a wallet2_api.h header"
 
   def install
-    # Work around build error with Boost 1.85.0.
-    # Reported to `monero` where issue needs to be fixed as `wownero` is a fork.
-    # Issue ref: https://github.com/monero-project/monero/issues/9304
-    ENV.append "CXXFLAGS", "-include boost/numeric/conversion/bounds.hpp"
-    copy_option_files = %w[
-      src/common/boost_serialization_helper.h
-      src/p2p/net_peerlist.cpp
-      src/wallet/wallet2.cpp
-    ]
-    inreplace copy_option_files, "boost::filesystem::copy_option::overwrite_if_exists",
-                                 "boost::filesystem::copy_options::overwrite_existing"
-    inreplace "src/simplewallet/simplewallet.cpp", "boost::filesystem::complete(", "boost::filesystem::absolute("
-
     # Need to help CMake find `readline` when not using /usr/local prefix
     args = %W[-DReadline_ROOT_DIR=#{Formula["readline"].opt_prefix}]
 

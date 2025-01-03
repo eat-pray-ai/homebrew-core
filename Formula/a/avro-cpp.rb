@@ -8,32 +8,29 @@ class AvroCpp < Formula
       tag:      "release-1.11.3",
       revision: "35ff8b997738e4d983871902d47bfb67b3250734"
   license "Apache-2.0"
-  revision 3
+  revision 5
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "9c18b3e6a70662c65940c9c801ee5922ce4e544bc72d43e46d152c82f2ecf9e8"
-    sha256 cellar: :any,                 arm64_ventura:  "383756d16a7283848668dce914fbe1a3c20bdcb940f17aefc164b0bee73bb28b"
-    sha256 cellar: :any,                 arm64_monterey: "3bc07ae9ff324a636b14711adf2fba1097a47cc29450349cc5c8aaf46f5495a5"
-    sha256 cellar: :any,                 sonoma:         "562b3515afee306e3b66c89cf6821057febf6ab5d7b33e8d750de315e2510b0d"
-    sha256 cellar: :any,                 ventura:        "4f83184b24b6d10f6f3112b3d9a60ce118f056ea47f3f220304acc88a76e328f"
-    sha256 cellar: :any,                 monterey:       "07b66ac00605ab6f36c1ade022db1f0799bb1c9c473bafe4494970d13bd83ecf"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "583938354670ae2694cf6f543a906c471fed38b3c5299b5716302585bb94165b"
+    sha256 cellar: :any,                 arm64_sequoia: "e73e3635f152d88ce0c8da13877b5209a603e36827041ec5c720753b30a2a17c"
+    sha256 cellar: :any,                 arm64_sonoma:  "1a2c2abbaf8b968a600372c87a5a6a0a43a20e0700630d6b8678238cf4816313"
+    sha256 cellar: :any,                 arm64_ventura: "a0a70dd6e799584704493d3e69398742b6ec82053f8a26b910c266b36e45d192"
+    sha256 cellar: :any,                 sonoma:        "138264d7b172c9239e1cc417ae89d7df6f8e15dacd932700b15e426f395f664f"
+    sha256 cellar: :any,                 ventura:       "a19fac27486d0554f54542a95e7eb8eb5a1198889e61900faab846951a121aee"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "01fecf30ba2081ab2b4ac52e800ba0d3323a28b85b20b291f557c8b2027e576c"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "boost"
 
   def install
-    cd "lang/c++" do
-      system "cmake", "-S", ".", "-B", "build", *std_cmake_args
-      system "cmake", "--build", "build"
-      system "cmake", "--install", "build"
-    end
+    system "cmake", "-S", "lang/c++", "-B", "build", "-DCMAKE_CXX_STANDARD=14", *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"cpx.json").write <<~EOS
+    (testpath/"cpx.json").write <<~JSON
       {
           "type": "record",
           "name": "cpx",
@@ -42,16 +39,18 @@ class AvroCpp < Formula
               {"name": "im", "type" : "double"}
           ]
       }
-    EOS
-    (testpath/"test.cpp").write <<~EOS
+    JSON
+
+    (testpath/"test.cpp").write <<~CPP
       #include "cpx.hh"
 
       int main() {
         cpx::cpx number;
         return 0;
       }
-    EOS
-    system "#{bin}/avrogencpp", "-i", "cpx.json", "-o", "cpx.hh", "-n", "cpx"
+    CPP
+
+    system bin/"avrogencpp", "-i", "cpx.json", "-o", "cpx.hh", "-n", "cpx"
     system ENV.cxx, "test.cpp", "-std=c++11", "-o", "test"
     system "./test"
   end

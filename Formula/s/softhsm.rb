@@ -15,6 +15,7 @@ class Softhsm < Formula
 
   bottle do
     rebuild 2
+    sha256 arm64_sequoia:  "469b96859edc8a37e5e3dd99aab7c7f615dad572d7ca71576fe7efa5059244a2"
     sha256 arm64_sonoma:   "1b90ff62e89b9461223d118fa261551030e232218110b9366d7d097553d2e64e"
     sha256 arm64_ventura:  "d41a143c3d5e8ea1b7f932c41cea27dbb64341d7e28bfb4c61af68aa68499b77"
     sha256 arm64_monterey: "c4912791b41e00485fc4b07abf4a9f5ffd0e75d613dd3e316b15f837e4fcc95d"
@@ -33,21 +34,20 @@ class Softhsm < Formula
     depends_on "autoconf" => :build
     depends_on "automake" => :build
     depends_on "libtool" => :build
-    depends_on "pkg-config" => :build
+    depends_on "pkgconf" => :build
   end
 
   depends_on "openssl@3"
 
   def install
     system "sh", "./autogen.sh" if build.head?
-    system "./configure", "--disable-dependency-tracking",
-                          "--disable-silent-rules",
-                          "--prefix=#{prefix}",
+    system "./configure", "--disable-silent-rules",
                           "--sysconfdir=#{etc}/softhsm",
                           "--localstatedir=#{var}",
                           "--with-crypto-backend=openssl",
                           "--with-openssl=#{Formula["openssl@3"].opt_prefix}",
-                          "--disable-gost"
+                          "--disable-gost",
+                          *std_configure_args
     system "make", "install"
   end
 
@@ -58,9 +58,9 @@ class Softhsm < Formula
   test do
     (testpath/"softhsm2.conf").write("directories.tokendir = #{testpath}")
     ENV["SOFTHSM2_CONF"] = "#{testpath}/softhsm2.conf"
-    system "#{bin}/softhsm2-util", "--init-token", "--slot", "0",
-                                   "--label", "testing", "--so-pin", "1234",
-                                   "--pin", "1234"
-    system "#{bin}/softhsm2-util", "--show-slots"
+    system bin/"softhsm2-util", "--init-token", "--slot", "0",
+                                "--label", "testing", "--so-pin", "1234",
+                                "--pin", "1234"
+    system bin/"softhsm2-util", "--show-slots"
   end
 end

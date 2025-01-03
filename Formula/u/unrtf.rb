@@ -8,6 +8,7 @@ class Unrtf < Formula
   head "https://hg.savannah.gnu.org/hgweb/unrtf/", using: :hg
 
   bottle do
+    sha256 arm64_sequoia:  "cea46b40e6483a6d9ca253f214b32830ad9fe133502aeee92b4ff06074da8566"
     sha256 arm64_sonoma:   "b1dc04615894a229fd0ece73e4e96f5a86e6448dc422714d259bee15a9eec0e9"
     sha256 arm64_ventura:  "fbc5a59efc2a686ed6968150a3101f3e5121194eb8d505672bcf457b924085a1"
     sha256 arm64_monterey: "90ccbe686fedc51d5c3ef8f7088577a625e0ad3c3199632fcdc12d6e4e379f52"
@@ -35,12 +36,12 @@ class Unrtf < Formula
   end
 
   test do
-    (testpath/"test.rtf").write <<~'EOS'
+    (testpath/"test.rtf").write <<~'RTF'
       {\rtf1\ansi
       {\b hello} world
       }
-    EOS
-    expected = <<~EOS
+    RTF
+    expected = <<~HTML
       <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
       <html>
       <head>
@@ -49,7 +50,7 @@ class Unrtf < Formula
       </head>
       <body><b>hello</b> world</body>
       </html>
-    EOS
+    HTML
     assert_equal expected, shell_output("#{bin}/unrtf --html test.rtf")
   end
 end

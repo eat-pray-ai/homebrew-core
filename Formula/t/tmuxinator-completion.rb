@@ -1,8 +1,8 @@
 class TmuxinatorCompletion < Formula
   desc "Shell completion for Tmuxinator"
   homepage "https://github.com/tmuxinator/tmuxinator"
-  url "https://github.com/tmuxinator/tmuxinator/archive/refs/tags/v3.3.0.tar.gz"
-  sha256 "e15cf0d7fc8fc88b89adbeeebacd8061620c759da060b1bccf93bf8541679061"
+  url "https://github.com/tmuxinator/tmuxinator/archive/refs/tags/v3.3.3.tar.gz"
+  sha256 "af5104c0beda911a8f263808ffb16e4438dbc755ee77bbf528d4bb46cac07a95"
   license "MIT"
   head "https://github.com/tmuxinator/tmuxinator.git", branch: "master"
 
@@ -11,16 +11,8 @@ class TmuxinatorCompletion < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "32c35616dd8562fb18546e47a774d8f2dface7f7e645471e24bff8d56d742c21"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "32c35616dd8562fb18546e47a774d8f2dface7f7e645471e24bff8d56d742c21"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "32c35616dd8562fb18546e47a774d8f2dface7f7e645471e24bff8d56d742c21"
-    sha256 cellar: :any_skip_relocation, sonoma:         "d4f82e19e51b9236c0fe732d52b075ae8b40504628cdc78126740d635abe353f"
-    sha256 cellar: :any_skip_relocation, ventura:        "d4f82e19e51b9236c0fe732d52b075ae8b40504628cdc78126740d635abe353f"
-    sha256 cellar: :any_skip_relocation, monterey:       "d4f82e19e51b9236c0fe732d52b075ae8b40504628cdc78126740d635abe353f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "32c35616dd8562fb18546e47a774d8f2dface7f7e645471e24bff8d56d742c21"
+    sha256 cellar: :any_skip_relocation, all: "93630f3783e22aae47a9b1e1710d0088f4d78a5845c1008ad8cabd5d8d63ed83"
   end
-
-  conflicts_with "tmuxinator", because: "the tmuxinator formula includes completion"
 
   def install
     bash_completion.install "completion/tmuxinator.bash" => "tmuxinator"

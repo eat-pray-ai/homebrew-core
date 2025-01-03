@@ -7,6 +7,7 @@ class Snappy < Formula
   head "https://github.com/google/snappy.git", branch: "master"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "45275e26a466be03a8a2b81ef27afc862038b220cdf7d8cd63f6ff9f47f18e56"
     sha256 cellar: :any,                 arm64_sonoma:   "2b905dfed7d6c0b44de9c89a79a6aa69824758c2727dcffe95bc6ebef465cf3f"
     sha256 cellar: :any,                 arm64_ventura:  "ca5b33ef7fd245020808bcb339f5b7799a4d4441b50c430c9bdd4eeca6a7d785"
     sha256 cellar: :any,                 arm64_monterey: "a3ad18bfdb378542375074f5f3423bb4972147595ee7b3ec38acd04469bff5db"
@@ -17,7 +18,7 @@ class Snappy < Formula
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   # Fix issue where Mojave clang fails due to entering a __GNUC__ block
   on_macos do
@@ -36,24 +37,25 @@ class Snappy < Formula
   def install
     ENV.llvm_clang if OS.mac? && (DevelopmentTools.clang_build_version <= 1100)
 
-    # Disable tests/benchmarks used for Snappy development
-    args = std_cmake_args + %w[
+    args = %w[
       -DSNAPPY_BUILD_TESTS=OFF
       -DSNAPPY_BUILD_BENCHMARKS=OFF
     ]
 
-    system "cmake", ".", *args
-    system "make", "install"
-    system "make", "clean"
-    system "cmake", ".", "-DBUILD_SHARED_LIBS=ON", *args
-    system "make", "install"
+    system "cmake", "-S", ".", "-B", "build/static", *args, *std_cmake_args
+    system "cmake", "--build", "build/static"
+    system "cmake", "--install", "build/static"
+
+    system "cmake", "-S", ".", "-B", "build/shared", "-DBUILD_SHARED_LIBS=ON", *args, *std_cmake_args
+    system "cmake", "--build", "build/shared"
+    system "cmake", "--install", "build/shared"
   end
 
   test do
     # Force use of Clang on Mojave
     ENV.clang if OS.mac?
 
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <assert.h>
       #include <snappy.h>
       #include <string>
@@ -69,7 +71,7 @@ class Snappy < Formula
         assert(source == decompressed);
         return 0;
       }
-    EOS
+    CPP
 
     system ENV.cxx, "-std=c++11", "test.cpp", "-L#{lib}", "-lsnappy", "-o", "test"
     system "./test"

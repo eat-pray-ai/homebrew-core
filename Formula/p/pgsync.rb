@@ -1,33 +1,31 @@
 class Pgsync < Formula
   desc "Sync Postgres data between databases"
   homepage "https://github.com/ankane/pgsync"
-  url "https://github.com/ankane/pgsync/archive/refs/tags/v0.7.4.tar.gz"
-  sha256 "0d8c0d319374f658a8aacafb15edbc074328aaec503fa92aae6032d3e1f12e60"
+  url "https://github.com/ankane/pgsync/archive/refs/tags/v0.8.0.tar.gz"
+  sha256 "385aa0be8683ae4877fc6b39a3a4a0664680ed1631559fadd7b5113d7724ecea"
   license "MIT"
   revision 1
 
   bottle do
-    sha256                               arm64_sonoma:   "3be5e4c0b54da4fb5bc67559ed678390d673a80d0fd0d7cc84a3869056b04735"
-    sha256                               arm64_ventura:  "390b56a83b1952e3fe7f90b401b09c85262d113864c1e96b34a505eeaca8c71d"
-    sha256                               arm64_monterey: "199400c31c4ad508359244ac88d64f255a08325b4cd1fa23a7675b1c524458c5"
-    sha256                               sonoma:         "d93d99284723f99cd8e9fb8662657e165b850555bcb2d0b7eb52a47a8c6db58a"
-    sha256                               ventura:        "752a83687459ec26d56765dc3097221411944a8064749056489a9a3df812e864"
-    sha256                               monterey:       "6a2edf7a42f8482631d31245b4a12f462f0ceefadaf486e4fe512fdc46ddf14f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "e8f827a09b68fe73cbc33d6f6d02adba242e8577b2adde061ead9ee7bdedc67c"
+    sha256 cellar: :any,                 arm64_sequoia: "d569525a961f1543642f07928fe0ca9317ac819c670a7f6d6735d8752168bac6"
+    sha256 cellar: :any,                 arm64_sonoma:  "95f8e9b647da0ca010fe39d6f289e64e849b25f212f0e50fb7906e3a88e854fe"
+    sha256 cellar: :any,                 arm64_ventura: "c3fe3a0ab9336a9fd3343e1466ba5a137294d2ffbae99110adb2e2c152f1e206"
+    sha256 cellar: :any,                 sonoma:        "0b1082fa75fb757eea994e9d50be3116d701587c5880430fb20d3a018b875a3d"
+    sha256 cellar: :any,                 ventura:       "01e1f89f86a1cb51e8c4821a98611c5bad2f18d7145c82e39498d474af9af87c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ce4b49836360a1abe20cd60228f4e555765a5e41483709706584931abb6dd64d"
   end
 
   depends_on "libpq"
-
-  uses_from_macos "ruby"
+  depends_on "ruby"
 
   resource "parallel" do
-    url "https://rubygems.org/gems/parallel-1.22.1.gem"
-    sha256 "ebdf1f0c51f182df38522f70ba770214940bef998cdb6e00f36492b29699761f"
+    url "https://rubygems.org/gems/parallel-1.25.1.gem"
+    sha256 "12e089b9aa36ea2343f6e93f18cfcebd031798253db8260590d26a7f70b1ab90"
   end
 
   resource "pg" do
-    url "https://rubygems.org/gems/pg-1.4.6.gem"
-    sha256 "d98f3dcb4a6ae29780a2219340cb0e55dbafbb7eb4ccc2b99f892f2569a7a61e"
+    url "https://rubygems.org/gems/pg-1.5.6.gem"
+    sha256 "4bc3ad2438825eea68457373555e3fd4ea1a82027b8a6be98ef57c0d57292b1c"
   end
 
   resource "slop" do

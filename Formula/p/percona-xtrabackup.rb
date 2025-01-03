@@ -1,10 +1,10 @@
 class PerconaXtrabackup < Formula
   desc "Open source hot backup tool for InnoDB and XtraDB databases"
   homepage "https://www.percona.com/software/mysql-database/percona-xtrabackup"
-  # TODO: Check if we can use unversioned `protobuf` at version bump
   url "https://downloads.percona.com/downloads/Percona-XtraBackup-LATEST/Percona-XtraBackup-8.0.35-31/source/tarball/percona-xtrabackup-8.0.35-31.tar.gz"
   sha256 "c6bda1e7f983e5a667bff22d1d67d33404db4e741676d03c9c60bbd4b263cabf"
   license "GPL-2.0-only"
+  revision 10
 
   livecheck do
     url "https://docs.percona.com/percona-xtrabackup/latest/"
@@ -19,28 +19,27 @@ class PerconaXtrabackup < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "4e946a2cfea03a1948984d70f7f962620ff5daa969dffb22fba8550245b9e963"
-    sha256 arm64_ventura:  "5933c6a83680e1f249f0ea0688710aebbad26e66a4c4371dc8e3d52fa9058434"
-    sha256 arm64_monterey: "f3ef69bc3099153309a5bc27abc74af7758d235c9ccbbdd562854f1328afa9d1"
-    sha256 sonoma:         "87c8f8dc9b73d22530f39db6ba3041258c2647e676a0a175876c66ae0c1c0ebf"
-    sha256 ventura:        "d23a41e05238236f562b0ef10d6836bf3f741a6962e5243ffcbcf4e981eb9d32"
-    sha256 monterey:       "3c7bae88a2359b7922269699dcf8d45bcf86e0ee0cd50d2a701175e34d77459f"
-    sha256 x86_64_linux:   "a7d51f7b824f4eef8dbaa13809d7f4ea45f46bdb8cf2c729c0068646b5a392e7"
+    sha256 arm64_sequoia: "dcbfa284b06d4e13b0257572b48e4439e399634fa5ec386ebc3441aa1e40bd61"
+    sha256 arm64_sonoma:  "0267922c3ab1bb13088ee69d0f1e193eb6bb51802498faa25d4e743b1303df05"
+    sha256 arm64_ventura: "e3159c40d946ab1d835796752ac8cf58d747be6cba870542f80516c31a653943"
+    sha256 sonoma:        "96bc0828e36471db3a53b7467552b2d454afb6233bc28594c9b45977e3499387"
+    sha256 ventura:       "ac7403309b0a8cdde899985001922fa589e204ff110409c0f65e7cdd2867a94d"
+    sha256 x86_64_linux:  "8dbc24960ca95f9361d0174cc68b38f35192ca13c0ba19237c2f91301461e0bf"
   end
 
   depends_on "bison" => :build # needs bison >= 3.0.4
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "libevent" => :build
+  depends_on "pkgconf" => :build
   depends_on "sphinx-doc" => :build
-  depends_on "icu4c"
+  depends_on "abseil"
+  depends_on "icu4c@76"
   depends_on "libev"
-  depends_on "libevent"
-  depends_on "libfido2"
   depends_on "libgcrypt"
   depends_on "lz4"
   depends_on "mysql-client"
   depends_on "openssl@3"
-  depends_on "protobuf@21"
+  depends_on "protobuf"
   depends_on "zlib"
   depends_on "zstd"
 
@@ -60,11 +59,6 @@ class PerconaXtrabackup < Formula
     depends_on "procps"
   end
 
-  fails_with :gcc do
-    version "6"
-    cause "The build requires GCC 7.1 or later."
-  end
-
   # Should be installed before DBD::mysql
   resource "Devel::CheckLib" do
     url "https://cpan.metacpan.org/authors/id/M/MA/MATTN/Devel-CheckLib-1.16.tar.gz"
@@ -78,8 +72,8 @@ class PerconaXtrabackup < Formula
   end
 
   resource "DBD::mysql" do
-    url "https://cpan.metacpan.org/authors/id/D/DV/DVEEDEN/DBD-mysql-5.006.tar.gz"
-    sha256 "4ca6c6415552a8acd3d8e01a96d0ac5a4a936e845c4c0e6a7ac6a10ad3798db7"
+    url "https://cpan.metacpan.org/authors/id/D/DV/DVEEDEN/DBD-mysql-5.008.tar.gz"
+    sha256 "a2324566883b6538823c263ec8d7849b326414482a108e7650edc0bed55bcd89"
   end
 
   # https://github.com/percona/percona-xtrabackup/blob/percona-xtrabackup-#{version}/cmake/boost.cmake
@@ -94,9 +88,29 @@ class PerconaXtrabackup < Formula
   patch :DATA
 
   def install
-    # Disable ABI checking
-    inreplace "cmake/abi_check.cmake", "RUN_ABI_CHECK 1", "RUN_ABI_CHECK 0" if OS.linux?
+    # Remove bundled libraries other than explicitly allowed below.
+    # `boost` and `rapidjson` must use bundled copy due to patches.
+    # `lz4` is still needed due to xxhash.c used by mysqlgcs
+    keep = %w[duktape libkmip lz4 rapidjson robin-hood-hashing]
+    (buildpath/"extra").each_child { |dir| rm_r(dir) unless keep.include?(dir.basename.to_s) }
+    (buildpath/"boost").install resource("boost")
 
+    if OS.linux?
+      # Disable ABI checking
+      inreplace "cmake/abi_check.cmake", "RUN_ABI_CHECK 1", "RUN_ABI_CHECK 0"
+
+      # Work around build issue with Protobuf 22+ on Linux
+      # Ref: https://bugs.mysql.com/bug.php?id=113045
+      # Ref: https://bugs.mysql.com/bug.php?id=115163
+      inreplace "cmake/protobuf.cmake" do |s|
+        s.gsub! 'IF(APPLE AND WITH_PROTOBUF STREQUAL "system"', 'IF(WITH_PROTOBUF STREQUAL "system"'
+        s.gsub! ' INCLUDE REGEX "${HOMEBREW_HOME}.*")', ' INCLUDE REGEX "libabsl.*")'
+      end
+    end
+
+    icu4c = deps.map(&:to_formula).find { |f| f.name.match?(/^icu4c@\d+$/) }
+    # -DWITH_FIDO=system isn't set as feature isn't enabled and bundled copy was removed.
+    # Formula paths are set to avoid HOMEBREW_HOME logic in CMake scripts
     cmake_args = %W[
       -DBUILD_CONFIG=xtrabackup_release
       -DCOMPILATION_COMMENT=Homebrew
@@ -104,24 +118,22 @@ class PerconaXtrabackup < Formula
       -DINSTALL_MANDIR=share/man
       -DWITH_MAN_PAGES=ON
       -DINSTALL_MYSQLTESTDIR=
+      -DBISON_EXECUTABLE=#{Formula["bison"].opt_bin}/bison
+      -DOPENSSL_ROOT_DIR=#{Formula["openssl@3"].opt_prefix}
+      -DWITH_ICU=#{icu4c.opt_prefix}
       -DWITH_SYSTEM_LIBS=ON
+      -DWITH_BOOST=#{buildpath}/boost
       -DWITH_EDITLINE=system
-      -DWITH_FIDO=system
-      -DWITH_ICU=system
       -DWITH_LIBEVENT=system
       -DWITH_LZ4=system
       -DWITH_PROTOBUF=system
       -DWITH_SSL=system
-      -DOPENSSL_ROOT_DIR=#{Formula["openssl@3"].opt_prefix}
       -DWITH_ZLIB=system
       -DWITH_ZSTD=system
     ]
     # Work around build script incorrectly looking for procps on macOS.
     # Issue ref: https://jira.percona.com/browse/PXB-3210
     cmake_args << "-DPROCPS_INCLUDE_DIR=/dev/null" if OS.mac?
-
-    (buildpath/"boost").install resource("boost")
-    cmake_args << "-DWITH_BOOST=#{buildpath}/boost"
 
     # Remove conflicting manpages
     rm (Dir["man/*"] - ["man/CMakeLists.txt"])
@@ -180,7 +192,7 @@ index 42e63d0..5d21cc3 100644
 @@ -1942,31 +1942,6 @@ MYSQL_CHECK_RAPIDJSON()
  MYSQL_CHECK_FIDO()
  MYSQL_CHECK_FIDO_DLLS()
- 
+
 -IF(APPLE)
 -  GET_FILENAME_COMPONENT(HOMEBREW_BASE ${HOMEBREW_HOME} DIRECTORY)
 -  IF(EXISTS ${HOMEBREW_BASE}/include/boost)

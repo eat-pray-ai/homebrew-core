@@ -1,8 +1,8 @@
 class Highs < Formula
   desc "Linear optimization software"
   homepage "https://www.maths.ed.ac.uk/hall/HiGHS/"
-  url "https://github.com/ERGO-Code/HiGHS/archive/refs/tags/v1.7.2.tar.gz"
-  sha256 "5ff96c14ae19592d3568e9ae107624cbaf3409d328fb1a586359f0adf9b34bf7"
+  url "https://github.com/ERGO-Code/HiGHS/archive/refs/tags/v1.9.0.tar.gz"
+  sha256 "dff575df08d88583c109702c7c5c75ff6e51611e6eacca8b5b3fdfba8ecc2cb4"
   license "MIT"
 
   # Upstream appears to use GitHub releases to indicate that a version is
@@ -14,24 +14,23 @@ class Highs < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "6e0a9593505baa0d95894861d7f201554d767ccac37cbf0692d7a3be055a5f3e"
-    sha256 cellar: :any,                 arm64_ventura:  "094a768e4547999482bf4e10b5662e10cb0db453f57a4d749a81176a35d585a9"
-    sha256 cellar: :any,                 arm64_monterey: "586be157934927ec7817305f333a1acd011c5d683dc458de08860f317fcc4d2c"
-    sha256 cellar: :any,                 sonoma:         "cdda4454e4edc4f691ef4f92a2caceb99a9e7341a93c847b64df1c5b7f085638"
-    sha256 cellar: :any,                 ventura:        "f93ba4fbe164ade8686b869d7d4a7ef4a9c5d9f7d96a2fa0776af74bcffdbf99"
-    sha256 cellar: :any,                 monterey:       "87ce36dba1029c9cd64f670cae49c3a5052c370126856d2726f51fa04ebf9d15"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "36f79aac054788d29037129bd3f15732c39bcc16fd28167dc5fc092a107ae8db"
+    sha256 cellar: :any,                 arm64_sequoia: "6c321f3658baa46d629748d62bac7c22d278c7d582ea79a0f1f3e3403894863a"
+    sha256 cellar: :any,                 arm64_sonoma:  "dc96ee1daca80330321339a3d03e5ef7105c6c1357f8c045a37417df595241f1"
+    sha256 cellar: :any,                 arm64_ventura: "1cb8bb55922993dcc9c157d5377aa632f8aed42417ff771801a8b499b32b5b43"
+    sha256 cellar: :any,                 sonoma:        "e2e05016dcf50ba1bc9d8323cf1ad9493da0f0cfb3a365eb04b40f7c4314c708"
+    sha256 cellar: :any,                 ventura:       "8c6b108a3ee9d87fe43d383c1118f7db9ccd9271fbdd3f21f27a78a46c5be55e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "143c28a7fce282c8bba26b7e3c238cb8323aa27f6581c017100ba3fe7f7959ed"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   uses_from_macos "zlib"
 
   def install
     system "cmake", "-S", ".", "-B", "build",
-                    *std_cmake_args,
-                    "-DCMAKE_INSTALL_RPATH=#{rpath}"
+                    "-DCMAKE_INSTALL_RPATH=#{rpath}",
+                    *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
     pkgshare.install "check", "examples"

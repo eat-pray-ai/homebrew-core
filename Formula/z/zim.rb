@@ -3,29 +3,22 @@ class Zim < Formula
 
   desc "Graphical text editor used to maintain a collection of wiki pages"
   homepage "https://zim-wiki.org/"
-  url "https://github.com/zim-desktop-wiki/zim-desktop-wiki/archive/refs/tags/0.75.2.tar.gz"
-  sha256 "79d20946d2c51fb1285b8a80b8afedb39402d6e4f1349ebe4be945318f275493"
+  url "https://github.com/zim-desktop-wiki/zim-desktop-wiki/archive/refs/tags/0.76.0.tar.gz"
+  sha256 "7373b175b05029e73a39a7259f6e50c67b83736d0cca64c5e5de70910117ee0f"
   license "GPL-2.0-or-later"
   head "https://github.com/zim-desktop-wiki/zim-desktop-wiki.git", branch: "master"
 
   bottle do
-    rebuild 3
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "201282b70e7324e1a7c21306827b3591dfb99f91f1ae941b9b1f1c3f7fa04e43"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "201282b70e7324e1a7c21306827b3591dfb99f91f1ae941b9b1f1c3f7fa04e43"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "201282b70e7324e1a7c21306827b3591dfb99f91f1ae941b9b1f1c3f7fa04e43"
-    sha256 cellar: :any_skip_relocation, sonoma:         "201282b70e7324e1a7c21306827b3591dfb99f91f1ae941b9b1f1c3f7fa04e43"
-    sha256 cellar: :any_skip_relocation, ventura:        "201282b70e7324e1a7c21306827b3591dfb99f91f1ae941b9b1f1c3f7fa04e43"
-    sha256 cellar: :any_skip_relocation, monterey:       "201282b70e7324e1a7c21306827b3591dfb99f91f1ae941b9b1f1c3f7fa04e43"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "40b97490f127ba70d47cf4d8f841259fa4b432ef74e7d83038a46adbb2624d81"
+    sha256 cellar: :any_skip_relocation, all: "93ca5096b6032ce96d12926d672019011b0996d0430db4e4a96d3251539956d1"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "adwaita-icon-theme"
   depends_on "graphviz"
   depends_on "gtk+3"
   depends_on "gtksourceview4"
   depends_on "pygobject3"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "pyxdg" do
     url "https://files.pythonhosted.org/packages/b0/25/7998cd2dec731acbd438fbf91bc619603fc5188de0a9a17699a781840452/pyxdg-0.28.tar.gz"
@@ -33,12 +26,15 @@ class Zim < Formula
   end
 
   resource "setuptools" do
-    url "https://files.pythonhosted.org/packages/d6/4f/b10f707e14ef7de524fe1f8988a294fb262a29c9b5b12275c7e188864aed/setuptools-69.5.1.tar.gz"
-    sha256 "6c1fccdac05a97e598fb0ae3bbed5904ccb317337a51139dcd51453611bbb987"
+    url "https://files.pythonhosted.org/packages/43/54/292f26c208734e9a7f067aea4a7e282c080750c4546559b58e2e45413ca0/setuptools-75.6.0.tar.gz"
+    sha256 "8199222558df7c86216af4f84c30e9b34a61d8ba19366cc914424cdbd28252f6"
+  end
+
+  def python3
+    "python3.13"
   end
 
   def install
-    python3 = "python3.12"
     build_venv = virtualenv_create(buildpath/"venv", python3)
     build_venv.pip_install resource("setuptools")
     ENV.prepend_create_path "PYTHONPATH", build_venv.site_packages
@@ -60,7 +56,8 @@ class Zim < Formula
   end
 
   test do
-    ENV["LC_ALL"] = "en_US.UTF-8"
+    # Workaround for https://github.com/zim-desktop-wiki/zim-desktop-wiki/issues/2665
+    ENV["LC_ALL"] = (OS.mac? && MacOS.version >= :sequoia) ? "C" : "en_US.UTF-8"
     ENV["LANG"] = "en_US.UTF-8"
 
     mkdir_p %w[Notes/Homebrew HTML]

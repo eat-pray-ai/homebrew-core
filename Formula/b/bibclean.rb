@@ -11,6 +11,7 @@ class Bibclean < Formula
   end
 
   bottle do
+    sha256 arm64_sequoia:  "13c1d6444ba0a4dd09e6840c29240a230d4d5bab8946912b275fc53fca9558bc"
     sha256 arm64_sonoma:   "9ec0d9aaf5fa2f6f48a1fd7d221a8f76d0af01d2adc36be38ad81a9660750fbe"
     sha256 arm64_ventura:  "d3fe9381c582b76b086b44099f31247d59ce061cd28332df637410c9249ea801"
     sha256 arm64_monterey: "13dab8081ee1d770d8ee59434aff9960da2210f8e20c41f95d23cdfa263b2041"
@@ -46,7 +47,7 @@ class Bibclean < Formula
   end
 
   test do
-    (testpath/"test.bib").write <<~EOS
+    (testpath/"test.bib").write <<~BIBTEX
       @article{small,
       author = {Test, T.},
       title = {Test},
@@ -54,8 +55,8 @@ class Bibclean < Formula
       year = 2014,
       note = {test},
       }
-    EOS
+    BIBTEX
 
-    system "#{bin}/bibclean", "test.bib"
+    system bin/"bibclean", "test.bib"
   end
 end

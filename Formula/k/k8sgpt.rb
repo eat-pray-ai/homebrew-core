@@ -1,31 +1,27 @@
 class K8sgpt < Formula
   desc "Scanning your k8s clusters, diagnosing, and triaging issues in simple English"
   homepage "https://k8sgpt.ai/"
-  url "https://github.com/k8sgpt-ai/k8sgpt/archive/refs/tags/v0.3.37.tar.gz"
-  sha256 "30cf355e51c3baa2a62c690ff57eaf1ac4b88e1b6898626a4dd61670bc435822"
+  url "https://github.com/k8sgpt-ai/k8sgpt/archive/refs/tags/v0.3.48.tar.gz"
+  sha256 "136aea5b15d3d3089ae3e2306cd5aa306e29f4fa95db99074ea561d74808b034"
   license "Apache-2.0"
   head "https://github.com/k8sgpt-ai/k8sgpt.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "cffa587565ea61a708176a72c3ddc66990e756d6c1984252ac27f0f4e2eaac12"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "149f308aaebcff1792d15c6afea14f695d6197a5ded068c36fa8bc8c3e2b7548"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "6c4b0d7b6403a0491ebcd3a5ff1e5e363a53f817e4b775e892d6f21730118461"
-    sha256 cellar: :any_skip_relocation, sonoma:         "33932061a8ebbfc8982ccfa455c87fa742090e4bd4611fadfdf99e80143b3096"
-    sha256 cellar: :any_skip_relocation, ventura:        "6547039d51c82c445d95da37cc7e6d35dd6a0efbd7afa290ff109a1fd841432f"
-    sha256 cellar: :any_skip_relocation, monterey:       "bad9eaf167c979f79c2a11797a03e9fd5fcc87568d30abb3c933a22b8dee0912"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "4c6bd141b9ed7c35a22e0d8aa0d02a8123ed561250c94ef3ea90b76383f35569"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "2f602eecaa26e3cecfa32b30336cad0b9dd9d4aefd2a18bb0735d7fb014fc7fb"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "7d69d2ffb1e6370c415903a97d53822b3815e020d41f41554d7a7e51521e0080"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "49a0ec70ce339484618361cc51271846ba04d760c66ef5d05c39534079debd43"
+    sha256 cellar: :any_skip_relocation, sonoma:        "7dee8f6e3826a7c9565f49c1cd76aa82b6a49f32c4ad9db32314fffcd3848f47"
+    sha256 cellar: :any_skip_relocation, ventura:       "b6ece54069362879080ed0d0f5c60987aafad244ec0e046da72c9fd77a764e25"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6d761977e246403973e65fc137d9392e7ac7943794c2b3be2a70490874a261fc"
   end
 
   depends_on "go" => :build
 
   def install
-    ldflags = %W[
-      -s -w
-      -X main.version=#{version}
-      -X main.commit=#{tap.user}
-      -X main.date=#{time.iso8601}
-    ]
+    ldflags = "-s -w -X main.version=#{version} -X main.commit=#{tap.user} -X main.date=#{time.iso8601}"
     system "go", "build", *std_go_args(ldflags:)
+
+    generate_completions_from_executable(bin/"k8sgpt", "completion")
   end
 
   test do

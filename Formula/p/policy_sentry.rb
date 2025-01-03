@@ -3,24 +3,25 @@ class PolicySentry < Formula
 
   desc "Generate locked-down AWS IAM Policies"
   homepage "https://policy-sentry.readthedocs.io/en/latest/"
-  url "https://files.pythonhosted.org/packages/ca/f1/496838fb09f5bb76d178616bf6c5029634d33a115e1702550f623a9d6ea6/policy_sentry-0.12.14.tar.gz"
-  sha256 "4c71d8e6a827168f1283d51f5b502aeb66ba2f8aaf89088f0a40e0460bd29cec"
+  url "https://files.pythonhosted.org/packages/bc/4b/e03bbe626379bfee06c944a01ef25ad14ce30bc9dd86988dfda1cf343347/policy_sentry-0.14.0.tar.gz"
+  sha256 "5c52cebebad26e2360393f34af523c1685541d67b0dfd721b0779dbe9e327f1a"
   license "MIT"
   head "https://github.com/salesforce/policy_sentry.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "5430188c83ed9429ab4969ab0ece7e1b09819ee073c658fec973c7af363a146a"
-    sha256 cellar: :any,                 arm64_ventura:  "4e39fffb802e74b35a40e5291623a6487197af4cf5883b20a75739d719c8eb48"
-    sha256 cellar: :any,                 arm64_monterey: "f39ebd81cc45f012f06a037f325a7a1b90e1a1c77156330380ee603143d744a7"
-    sha256 cellar: :any,                 sonoma:         "50be8b80434439e8047a62a8acd0164e98c1453ee9922623eab0a5f40523675c"
-    sha256 cellar: :any,                 ventura:        "8ffba8af4e314b16f3656176d65e63cd9422c443a26924fb8ef479f5421e9742"
-    sha256 cellar: :any,                 monterey:       "0da424bec7b1fef03a830ec302be01ad0a71f5f3d1b4d771be065a91391c90f6"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "56640ff5306923b4be3ea82bcb7870973b9feac18f994feeeb38d763528df255"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "860c76164176b1eeff4f588f406f401dde52783bd361ba984510b6ce91f0b5a8"
+    sha256 cellar: :any,                 arm64_sonoma:  "3555491fe5d02633cf2a50f65547fc2fb80525c56a3ef99a95d626832a6cb6f8"
+    sha256 cellar: :any,                 arm64_ventura: "aaa2e1c8171a28f5d2f86cb44d7c040edcfc7902da1f7e089aaeeb47829e12e2"
+    sha256 cellar: :any,                 sonoma:        "bcca67ecf36d4e7fbac2f7e820d8200cb51530e3e40c0f13fff17b96d31d232a"
+    sha256 cellar: :any,                 ventura:       "9242e399c04dc2bdd00852dc63f5310ef080a7cb43b25f5f2783754a770be818"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7c73b7b5dea54f6d5e0902da6190458092be9a7e5652d76baf2c9fe654e76417"
   end
 
+  depends_on "rust" => :build # for orjson
   depends_on "certifi"
   depends_on "libyaml"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "beautifulsoup4" do
     url "https://files.pythonhosted.org/packages/b3/ca/824b1195773ce6166d388573fc106ce56d4a805bd7427b624e063596ec58/beautifulsoup4-4.12.3.tar.gz"
@@ -28,23 +29,28 @@ class PolicySentry < Formula
   end
 
   resource "charset-normalizer" do
-    url "https://files.pythonhosted.org/packages/63/09/c1bc53dab74b1816a00d8d030de5bf98f724c52c1635e07681d312f20be8/charset-normalizer-3.3.2.tar.gz"
-    sha256 "f30c3cb33b24454a82faecaf01b19c18562b1e89558fb6c56de4d9118a032fd5"
+    url "https://files.pythonhosted.org/packages/16/b0/572805e227f01586461c80e0fd25d65a2115599cc9dad142fee4b747c357/charset_normalizer-3.4.1.tar.gz"
+    sha256 "44251f18cd68a75b56585dd00dae26183e102cd5e0f9f1466e6df5da2ed64ea3"
   end
 
   resource "click" do
-    url "https://files.pythonhosted.org/packages/96/d3/f04c7bfcf5c1862a2a5b845c6b2b360488cf47af55dfa79c98f6a6bf98b5/click-8.1.7.tar.gz"
-    sha256 "ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de"
+    url "https://files.pythonhosted.org/packages/b9/2e/0090cbf739cee7d23781ad4b89a9894a41538e4fcf4c31dcdd705b78eb8b/click-8.1.8.tar.gz"
+    sha256 "ed53c9d8990d83c2a27deae68e4ee337473f6330c040a31d4225c9574d16096a"
   end
 
   resource "idna" do
-    url "https://files.pythonhosted.org/packages/21/ed/f86a79a07470cb07819390452f178b3bef1d375f2ec021ecfc709fc7cf07/idna-3.7.tar.gz"
-    sha256 "028ff3aadf0609c1fd278d8ea3089299412a7a8b9bd005dd08b9f8285bcb5cfc"
+    url "https://files.pythonhosted.org/packages/f1/70/7703c29685631f5a7590aa73f1f1d3fa9a380e654b86af429e0934a32f7d/idna-3.10.tar.gz"
+    sha256 "12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9"
+  end
+
+  resource "orjson" do
+    url "https://files.pythonhosted.org/packages/45/0b/8c7eaf1e2152f1e0fb28ae7b22e2b35a6b1992953a1ebe0371ba4d41d3ad/orjson-3.10.13.tar.gz"
+    sha256 "eb9bfb14ab8f68d9d9492d4817ae497788a15fd7da72e14dfabc289c3bb088ec"
   end
 
   resource "pyyaml" do
-    url "https://files.pythonhosted.org/packages/cd/e5/af35f7ea75cf72f2cd079c95ee16797de7cd71f29ea7c68ae5ce7be1eda0/PyYAML-6.0.1.tar.gz"
-    sha256 "bfdf460b1736c775f2ba9f6a92bca30bc2095067b8a9d77876d1fad6cc3b4a43"
+    url "https://files.pythonhosted.org/packages/54/ed/79a089b6be93607fa5cdaedf301d7dfb23af5f25c398d5ead2525b063e17/pyyaml-6.0.2.tar.gz"
+    sha256 "d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e"
   end
 
   resource "requests" do
@@ -58,23 +64,27 @@ class PolicySentry < Formula
   end
 
   resource "soupsieve" do
-    url "https://files.pythonhosted.org/packages/ce/21/952a240de1c196c7e3fbcd4e559681f0419b1280c617db21157a0390717b/soupsieve-2.5.tar.gz"
-    sha256 "5663d5a7b3bfaeee0bc4372e7fc48f9cff4940b3eec54a6451cc5299f1097690"
+    url "https://files.pythonhosted.org/packages/d7/ce/fbaeed4f9fb8b2daa961f90591662df6a86c1abf25c548329a86920aedfb/soupsieve-2.6.tar.gz"
+    sha256 "e2e68417777af359ec65daac1057404a3c8a5455bb8abc36f1a9866ab1a51abb"
   end
 
   resource "urllib3" do
-    url "https://files.pythonhosted.org/packages/43/6d/fa469ae21497ddc8bc93e5877702dca7cb8f911e337aca7452b5724f1bb6/urllib3-2.2.2.tar.gz"
-    sha256 "dd505485549a7a552833da5e6063639d0d177c04f23bc3864e41e5dc5f612168"
+    url "https://files.pythonhosted.org/packages/aa/63/e53da845320b757bf29ef6a9062f5c669fe997973f966045cb019c3f4b66/urllib3-2.3.0.tar.gz"
+    sha256 "f8c5449b3cf0861679ce7e0503c7b44b5ec981bec0d1d3795a07f1ba96f0204d"
   end
 
   def install
     virtualenv_install_with_resources
+
+    generate_completions_from_executable(bin/"policy_sentry", shells: [:fish, :zsh], shell_parameter_format: :click)
   end
 
   test do
     assert_match version.to_s, shell_output("#{bin}/policy_sentry --version")
 
-    system bin/"policy_sentry", "initialize"
-    assert_predicate testpath/".policy_sentry/iam-definition.json", :exist?
+    test_file = testpath/"policy_sentry.yml"
+    output = shell_output("#{bin}/policy_sentry create-template -o #{test_file} -t actions")
+    assert_match "write-policy template file written to: #{test_file}", output
+    assert_match "mode: actions", test_file.read
   end
 end

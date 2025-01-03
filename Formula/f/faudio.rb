@@ -1,19 +1,18 @@
 class Faudio < Formula
   desc "Accuracy-focused XAudio reimplementation for open platforms"
   homepage "https://fna-xna.github.io/"
-  url "https://github.com/FNA-XNA/FAudio/archive/refs/tags/24.07.tar.gz"
-  sha256 "f7cd15ed111133fbc1ac387fa3e715b3a67d5e4cf59d8e290ac85d856d92367b"
+  url "https://github.com/FNA-XNA/FAudio/archive/refs/tags/25.01.tar.gz"
+  sha256 "044a79222ac01eb0e279f0204e403f01dfea03d29163a721ec266135dd09fb95"
   license "Zlib"
   head "https://github.com/FNA-XNA/FAudio.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "93b38e0d432d0483a878fe3364730f1d4cc586b6e2beb007016aca552186c984"
-    sha256 cellar: :any,                 arm64_ventura:  "dec7e98e44be44d8b2035d6623176749e6fdee72d04e1007cf526168522950b3"
-    sha256 cellar: :any,                 arm64_monterey: "40555c329a69eaf627d0bde4245788075185fbecb6fc37969e4f80ce85482eb4"
-    sha256 cellar: :any,                 sonoma:         "f2f60f070358527b795341461821c542dd6579de25640662bde307421ab2fad0"
-    sha256 cellar: :any,                 ventura:        "bbebad65af54f5905b52a9a0fb607602d0ac8e68215e8c9782d8c3b9fcc86b47"
-    sha256 cellar: :any,                 monterey:       "88747ddd5a152321110e2aee904d0465aa6ccfa8bedf292dde39392d371590e0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "af8c010662f09a18de1ba34058cc5c8895a5094615f9c8fb97f05393743a1345"
+    sha256 cellar: :any,                 arm64_sequoia: "878cad02164b5cb077145195a6bbe08446b4296edb7774a7bd454655880332fe"
+    sha256 cellar: :any,                 arm64_sonoma:  "24028f4449b2f9ed15774dbe25fff96209a372d638d4107ec5b8b444329f2939"
+    sha256 cellar: :any,                 arm64_ventura: "5573b9a5fcfc5889b0a24a6a8cad7a1e69be40856ed2726d3f61902527961166"
+    sha256 cellar: :any,                 sonoma:        "8c2275c45672725ef981cb5676778a3d38f0de1ee2f3a3f47dd4038e5466be4e"
+    sha256 cellar: :any,                 ventura:       "8388fe308cb670d97b287bb9a80d4455c23552c19236d9839c5e80809aae14b1"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1b1270da232ca4c686d816d93af7046afc0bc38921c72224bb2a8d16b2c81dcc"
   end
 
   depends_on "cmake" => :build
@@ -26,14 +25,14 @@ class Faudio < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <FAudio.h>
       int main(int argc, char const *argv[])
       {
         FAudio *audio;
         return FAudioCreate(&audio, 0, FAUDIO_DEFAULT_PROCESSOR);
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-L#{lib}", "-lFAudio", "-o", "test"
     system "./test"
   end

@@ -1,40 +1,44 @@
 class OpentelemetryCpp < Formula
   desc "OpenTelemetry C++ Client"
   homepage "https://opentelemetry.io/"
-  url "https://github.com/open-telemetry/opentelemetry-cpp/archive/refs/tags/v1.16.0.tar.gz"
-  sha256 "2209af23f43094651ddf007d44153c23facd41d9891b9b2d8cbc2dc9bb8064dd"
+  url "https://github.com/open-telemetry/opentelemetry-cpp/archive/refs/tags/v1.18.0.tar.gz"
+  sha256 "b149109d5983cf8290d614654a878899a68b0c8902b64c934d06f47cd50ffe2e"
   license "Apache-2.0"
+  revision 4
   head "https://github.com/open-telemetry/opentelemetry-cpp.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "5c4d45995ac8d2cbfcfca60604dd32781ed05a63a8d33e6756fcaa16040746f4"
-    sha256 cellar: :any,                 arm64_ventura:  "6b312b5d313ef254897f4d858a5ee3728e9696346131cd280ab397c0279838ec"
-    sha256 cellar: :any,                 arm64_monterey: "b8461c27f9135dda6c03feffa6b83e4bdc47f71e46de78ff090f58aee78eaa2e"
-    sha256 cellar: :any,                 sonoma:         "b0013c46b15040573e82592f0b60cc397277c6b4dc761c65016064380ae00300"
-    sha256 cellar: :any,                 ventura:        "bb1af7d003e45007c481cbe8e4ebe47b8e313b94587bf0ccd1266d1a2c5c9558"
-    sha256 cellar: :any,                 monterey:       "bf80583ccfba24eac889f8df181c82036888e0e1d789e1abe47e9c3ea77f0021"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "18cc23e92b9efba7bee9041ba517c8d448785779eac62b2d47987c8cb1e0ca03"
+    sha256 cellar: :any,                 arm64_sequoia: "4fb00cef9637187d69babfa0a270c094a4ac83cb19dc9f99a464a78b8fbdd71e"
+    sha256 cellar: :any,                 arm64_sonoma:  "924521228973b436e918722d06ce291c046c45f85f131329422e54a3d46b5511"
+    sha256 cellar: :any,                 arm64_ventura: "77bf289f66b96a5d88b2f7036514238a21ea526124c7a46922bff31a32d1aee4"
+    sha256 cellar: :any,                 sonoma:        "883c5594885acc83d5d0ef9107abb17c2049382171a7055e3d629ea55003c96c"
+    sha256 cellar: :any,                 ventura:       "0b0fa8437e78420181fa830ae543e4d25a79d86d88f443d543807ba7755852c4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5dd0d680e0b2c0df3d6b706921d8cf8105676078c67802cda9e86b1ebd74753e"
   end
 
   depends_on "cmake" => :build
   depends_on "abseil"
-  depends_on "boost"
   depends_on "grpc"
   depends_on "nlohmann-json"
   depends_on "prometheus-cpp"
   depends_on "protobuf"
+
   uses_from_macos "curl"
+
+  on_macos do
+    depends_on "c-ares"
+    depends_on "openssl@3"
+    depends_on "re2"
+  end
 
   def install
     ENV.append "LDFLAGS", "-Wl,-undefined,dynamic_lookup" if OS.mac?
     system "cmake", "-S", ".", "-B", "build",
+                    "-DBUILD_SHARED_LIBS=ON",
                     "-DCMAKE_CXX_STANDARD=17", # Keep in sync with C++ standard in abseil.rb
                     "-DCMAKE_INSTALL_RPATH=#{rpath}",
-                    "-DBUILD_TESTING=OFF",
                     "-DWITH_ELASTICSEARCH=ON",
                     "-DWITH_EXAMPLES=OFF",
-                    "-DWITH_JAEGER=OFF", # deprecated, needs older `thrift`
-                    "-DWITH_METRICS_PREVIEW=ON",
                     "-DWITH_OTLP_GRPC=ON",
                     "-DWITH_OTLP_HTTP=ON",
                     "-DWITH_ABSEIL=ON",
@@ -45,7 +49,7 @@ class OpentelemetryCpp < Formula
   end
 
   test do
-    (testpath/"test.cc").write <<~EOS
+    (testpath/"test.cc").write <<~CPP
       #include "opentelemetry/sdk/trace/simple_processor.h"
       #include "opentelemetry/sdk/trace/tracer_provider.h"
       #include "opentelemetry/trace/provider.h"
@@ -71,7 +75,7 @@ class OpentelemetryCpp < Formula
         auto tracer = provider->GetTracer("foo_library", "1.0.0");
         auto scoped_span = trace_api::Scope(tracer->StartSpan("test"));
       }
-    EOS
+    CPP
     system ENV.cxx, "test.cc", "-std=c++17",
                     "-DHAVE_ABSEIL",
                     "-I#{include}", "-L#{lib}",

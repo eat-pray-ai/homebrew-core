@@ -4,16 +4,15 @@ class Bastet < Formula
   url "https://github.com/fph/bastet/archive/refs/tags/0.43.2.tar.gz"
   sha256 "f219510afc1d83e4651fbffd5921b1e0b926d5311da4f8fa7df103dc7f2c403f"
   license "GPL-3.0-or-later"
-  revision 8
+  revision 10
 
   bottle do
-    sha256 arm64_sonoma:   "613188cf7249352d19dc221c665e284cbe2c1cb23e1f1660839443ccc9b3590a"
-    sha256 arm64_ventura:  "4796e71682caa79b26c8ac9f08efb98b3b4d93ce06b85a87d8b4e32caec83e87"
-    sha256 arm64_monterey: "c1914a121bce507894647f9107dfe71c2dcb861fcf30a5be6cc873eb7c1cf895"
-    sha256 sonoma:         "1e74837a564737a04ab9620ab01e453f5329c1c2131fd49b0cec73ecd0dbeefa"
-    sha256 ventura:        "9355ece1db630ee9a17ec079e8a927b57b072375e284079f131da8f43bcb3b15"
-    sha256 monterey:       "f351b34012eb18c94adb76f1feb7dce7e65875288a8db08fd90171c962105589"
-    sha256 x86_64_linux:   "c37884c0f7cb692d4afe307a3197b8df7a142936578043b62444c50e02e5a794"
+    sha256 arm64_sequoia: "3609a905ba94c6dfa333b703b2a98a7d2d104f98b9ea01e4ee8e5d50f7c1be93"
+    sha256 arm64_sonoma:  "3b694178acf005d63ff6005cc31b4432b2c085e6f4442787ec71d6ae684480f7"
+    sha256 arm64_ventura: "396f9c63d674290dc9b51e9a883f2de4d1beadc18f88ca517b9c4766e285e8a6"
+    sha256 sonoma:        "77d12f1eb8fa1ba72bb5c5c352247b059268110baa8c67cea54097b392b0e7f9"
+    sha256 ventura:       "c81ce5e9ebdb37bd5b779670c0ec6b79096b9be3f86116c5a52e6301ce0902aa"
+    sha256 x86_64_linux:  "d39605f160ac522349d9b0e7d0af9320cddd62793a2fa656caad94eb78c70bb2"
   end
 
   depends_on "boost"
@@ -28,7 +27,7 @@ class Bastet < Formula
   def install
     inreplace %w[Config.cpp bastet.6], "/var", var
 
-    ENV.append "CXXFLAGS", "-std=c++14"
+    ENV.append "CXX", "-std=c++14"
 
     system "make", "all"
 

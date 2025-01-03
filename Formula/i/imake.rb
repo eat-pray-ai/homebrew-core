@@ -11,6 +11,7 @@ class Imake < Formula
   end
 
   bottle do
+    sha256 arm64_sequoia:  "7ec67382a8dbee7134f20cacb6f701e780ce5e0da7902341047bfcff4492c9e2"
     sha256 arm64_sonoma:   "2e5e51212893abfdefa9fe94309a52728693418424af70ad64424974816d1624"
     sha256 arm64_ventura:  "1bf5d0e8b8fc5f7030162a29d9054863f2af080a8ec62db87d8f6ce90c55d8d6"
     sha256 arm64_monterey: "5708253a196811ca791e556e6b22582b84b8f925d15b2bccca6d13b9f049002b"
@@ -20,7 +21,7 @@ class Imake < Formula
     sha256 x86_64_linux:   "296155e61983cc533d3f5ab094d796d2ab3d992606be73da1f7a51f3920ea41e"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "xorgproto" => :build
   depends_on "tradcpp"
 
@@ -34,10 +35,10 @@ class Imake < Formula
 
     # imake runtime is broken when used with clang's cpp
     cpp_program = Formula["tradcpp"].opt_bin/"tradcpp"
-    (buildpath/"imakemdep.h").append_lines <<~EOS
+    (buildpath/"imakemdep.h").append_lines <<~C
       #define DEFAULT_CPP "#{cpp_program}"
       #undef USE_CC_E"
-    EOS
+    C
 
     inreplace "imake.man", /__cpp__/, cpp_program
 

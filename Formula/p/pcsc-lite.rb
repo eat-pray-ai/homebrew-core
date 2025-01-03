@@ -1,8 +1,8 @@
 class PcscLite < Formula
   desc "Middleware to access a smart card using SCard API"
   homepage "https://pcsclite.apdu.fr/"
-  url "https://pcsclite.apdu.fr/files/pcsc-lite-2.2.3.tar.xz"
-  sha256 "cab1e62755713f62ce1b567954dbb0e9a7e668ffbc3bbad3ce85c53f8f4e00a4"
+  url "https://pcsclite.apdu.fr/files/pcsc-lite-2.3.1.tar.xz"
+  sha256 "a641d44d57affe1edd8365dd75307afc307e7eefb4e7ad839f6f146baa41ed56"
   license all_of: ["BSD-3-Clause", "GPL-3.0-or-later", "ISC"]
 
   livecheck do
@@ -11,20 +11,19 @@ class PcscLite < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_sonoma:   "760f0716aded7ee6623d5a4108b2e8d6dc87ca8730a28cf93d3ea6817c619ecc"
-    sha256 cellar: :any, arm64_ventura:  "5dfea6504f19e8069d37f99ba5348435576868af1bec9c3dea095b498ee1025a"
-    sha256 cellar: :any, arm64_monterey: "0b8f14f08afe6d3ce4cd703b00286429da1e2def6232f3aa59e3677a16b9a42e"
-    sha256 cellar: :any, sonoma:         "03a78c628d6e82a8da03591d6ea58a93d96d3c28cece699630796941ff3e859e"
-    sha256 cellar: :any, ventura:        "6d887b6eccd1b5807864c497ac84c2971381924c1898cfa42ce786698014db2b"
-    sha256 cellar: :any, monterey:       "8e0e52ca0fdc9ec478940e3dfe8bce1c9e8656819e54de4bb75d3fa1fe3978ed"
-    sha256               x86_64_linux:   "2468288b18f882ed8eed4ab3a8dd5f86c0c8a4208c94e4c39d79218a6de6fb80"
+    sha256 cellar: :any, arm64_sequoia: "3ca118a06f993b4e816cb413ce785e9de04ac644935ef249537ad072f0870a36"
+    sha256 cellar: :any, arm64_sonoma:  "b49c4bd9527a8160c09e3c9484c6b0728517338c69ce4177b17062c2bb7b9491"
+    sha256 cellar: :any, arm64_ventura: "6705e2237d956fc2efb95afde3bfac55ede429a1d3f36566a5e976cbd588de90"
+    sha256 cellar: :any, sonoma:        "2420823643965f84f9b96f98c2892fa4eb4277d573d0a2363ee580fef9182929"
+    sha256 cellar: :any, ventura:       "7773c59109c4cecd12b1bd9cb447254d2e7d8d483117169a6bde6fd8eca8bfbd"
+    sha256               x86_64_linux:  "06be6fce142f34e1b661bde9814ce8cbf718300754fa586c5e5ca7a543dc0fa3"
   end
 
   keg_only :shadowed_by_macos, "macOS provides PCSC.framework"
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   uses_from_macos "flex" => :build
 

@@ -1,8 +1,8 @@
 class Cweb < Formula
   desc "Literate documentation system for C, C++, and Java"
   homepage "https://cs.stanford.edu/~knuth/cweb.html"
-  url "https://github.com/ascherer/cweb/archive/refs/tags/cweb-4.11.tar.gz"
-  sha256 "527699448053028080b186e8e05fd14930f61504c8a5689d14d968662607f29d"
+  url "https://github.com/ascherer/cweb/archive/refs/tags/cweb-4.12.1.tar.gz"
+  sha256 "c6e08d726b1b587187a70d45cf49dd990dfe70053059064fea0999e3f4fa976f"
   # See discussions in this thread, https://github.com/ascherer/cweb/issues/29
   license :cannot_represent
 
@@ -12,13 +12,12 @@ class Cweb < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "d213a29ad99358f7ba68cd0cf7d95ab48b758c398e9aac7572fe641736258b3d"
-    sha256 arm64_ventura:  "2d59c66d0877477a101160edc3d64e1b1ffa7e02717a1cf612ab656bc768bc77"
-    sha256 arm64_monterey: "532a14cf4276331ad6add3823946a5c3f3af9dc7f617a23a7c66cbddb0e6e86f"
-    sha256 sonoma:         "48c8f1de158417565c63e050ab37f1f09cf26f2690aa8d0a43400d887f8d1325"
-    sha256 ventura:        "4d219712b16560331e1eefab5b693c474e05a22bd45596c59af528e2903f077e"
-    sha256 monterey:       "5a29b8892e2634305d75489510495a5c54620bb550772b484921c6231c2ee91f"
-    sha256 x86_64_linux:   "256585dfdbc02977daab1a33f25bccfe486f5fcd1a47107db08743bb3b655900"
+    sha256 arm64_sequoia: "f7dc4b0a260556f278058526ff6259dd28522b1f00454d9e1790a8aaff41b7f2"
+    sha256 arm64_sonoma:  "a50c45f276cc546df324a406ddd8a2d89edb8a676c7b7e8bca29ee4dbb3e5d84"
+    sha256 arm64_ventura: "d9ac7cb438103378e55375f9ac40e1032dd0195d3a5e4a66549ec8856390d034"
+    sha256 sonoma:        "75d0b7f16f41c5cf906aa45c0ffbb6c86415efd715604d2ac8ac9cda4c8507cb"
+    sha256 ventura:       "e97d62ac332b3ae7ed53bf20c6e05605fb0409f1e8621a88821a6482322bd62b"
+    sha256 x86_64_linux:  "7a59e26b5b3569d2459442cab528f68b0a83f66db2daf4592d65cffa04298ad2"
   end
 
   conflicts_with "texlive", because: "both install `cweb` binaries"

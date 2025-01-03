@@ -64,7 +64,7 @@ class Openclonk < Formula
     end
   end
 
-  disable! date: "2024-01-16", because: "does not build since 2018"
+  disable! date: "2024-01-16", because: :does_not_build # since 2018
 
   depends_on "cmake" => :build
   depends_on "freealut"
@@ -78,7 +78,7 @@ class Openclonk < Formula
   uses_from_macos "zlib"
 
   on_linux do
-    depends_on "pkg-config" => :build
+    depends_on "pkgconf" => :build
     depends_on "libxrandr"
     depends_on "mesa"
     depends_on "openal-soft"
@@ -89,7 +89,7 @@ class Openclonk < Formula
     File.open(buildpath/"tools/osx_bundle_libs", "w") { |f| f.puts "#!/bin/bash" }
 
     # Remove unneeded bundled library to avoid default fallback in build
-    (buildpath/"thirdparty/tinyxml").rmtree
+    rm_r(buildpath/"thirdparty/tinyxml")
 
     # Modify Linux install location for openclonk binary to bin directory
     inreplace "CMakeLists.txt", "install(TARGETS openclonk DESTINATION games)",

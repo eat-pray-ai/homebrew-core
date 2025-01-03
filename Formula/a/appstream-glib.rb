@@ -6,6 +6,7 @@ class AppstreamGlib < Formula
   license "LGPL-2.1-or-later"
 
   bottle do
+    sha256 cellar: :any, arm64_sequoia:  "8b7403b1054de2416fa93563425321346b3f19e0828dc570eda83d6275892c69"
     sha256 cellar: :any, arm64_sonoma:   "436c07f995a7eebb35d00956d96b5a3a7839fe406ad2ecfcb870ba47c2fe14cf"
     sha256 cellar: :any, arm64_ventura:  "5fc017681fbd7c6900cc1a81412d922d681266fc53842b81b14b76975a4ec76e"
     sha256 cellar: :any, arm64_monterey: "ec5bcbd5802db3070ef6f9e2401608d45e1a0b26820342dab42b7b123861298e"
@@ -20,7 +21,7 @@ class AppstreamGlib < Formula
   depends_on "gobject-introspection" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => [:build, :test]
   depends_on "gdk-pixbuf"
   depends_on "glib"
   depends_on "json-glib"
@@ -44,13 +45,13 @@ class AppstreamGlib < Formula
     # Find our docbook catalog
     ENV["XML_CATALOG_FILES"] = "#{etc}/xml/catalog"
 
-    system "meson", *std_meson_args, "build", "-Dbuilder=false", "-Drpm=false", "-Ddep11=false"
+    system "meson", "setup", "build", "-Dbuilder=false", "-Drpm=false", "-Ddep11=false", *std_meson_args
     system "meson", "compile", "-C", "build", "--verbose"
     system "meson", "install", "-C", "build"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <appstream-glib.h>
 
       int main(int argc, char *argv[]) {
@@ -58,31 +59,13 @@ class AppstreamGlib < Formula
         g_assert_nonnull(screen_shot);
         return 0;
       }
-    EOS
-    gdk_pixbuf = Formula["gdk-pixbuf"]
-    gettext = Formula["gettext"]
-    glib = Formula["glib"]
-    flags = %W[
-      -I#{gdk_pixbuf.opt_include}/gdk-pixbuf-2.0
-      -I#{gettext.opt_include}
-      -I#{glib.opt_include}/gio-unix-2.0/
-      -I#{glib.opt_include}/glib-2.0
-      -I#{glib.opt_lib}/glib-2.0/include
-      -I#{include}/libappstream-glib
-      -L#{gdk_pixbuf.opt_lib}
-      -L#{gettext.opt_lib}
-      -L#{glib.opt_lib}
-      -L#{lib}
-      -lappstream-glib
-      -lgdk_pixbuf-2.0
-      -lgio-2.0
-      -lglib-2.0
-      -lgobject-2.0
-    ]
-    flags << "-lintl" if OS.mac?
+    C
+
+    ENV.prepend_path "PKG_CONFIG_PATH", Formula["libarchive"].opt_lib/"pkgconfig"
+    flags = shell_output("pkgconf --cflags --libs appstream-glib").chomp.split
     system ENV.cc, "test.c", "-o", "test", *flags
     system "./test"
-    system "#{bin}/appstream-util", "--help"
+    system bin/"appstream-util", "--help"
   end
 end
 

@@ -1,19 +1,18 @@
 class OcamlZarith < Formula
   desc "OCaml library for arbitrary-precision arithmetic"
   homepage "https://github.com/ocaml/Zarith"
-  url "https://github.com/ocaml/Zarith/archive/refs/tags/release-1.13.tar.gz"
-  sha256 "a5826d33fea0103ad6e66f92583d8e075fb77976de893ffdd73ada0409b3f83b"
+  url "https://github.com/ocaml/Zarith/archive/refs/tags/release-1.14.tar.gz"
+  sha256 "5db9dcbd939153942a08581fabd846d0f3f2b8c67fe68b855127e0472d4d1859"
   license "LGPL-2.0-only"
-  revision 2
+  revision 1
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "85b400fa6861f589bedb6f40c99848fda05ead5c4688d026782b594faa61f85b"
-    sha256 cellar: :any,                 arm64_ventura:  "8ff062fbfca3ad3c65e752c03f7d4d00cbe1825a8179b3d6b2ae8a4aff60e218"
-    sha256 cellar: :any,                 arm64_monterey: "86fd9c681ff691a68efa6832b4942c5b7ab202c6940655f66c19a53641808573"
-    sha256 cellar: :any,                 sonoma:         "5347a67f893e51944fc7d781abcca6b42af49aa86d9f590e816bbabf1fe752d5"
-    sha256 cellar: :any,                 ventura:        "7c3f79fa6b1a362ef4fca2ce9765820cdd09fb9d62da6185fd2ed7154eb3cfed"
-    sha256 cellar: :any,                 monterey:       "de7eaedd674f2af979fd9485c37efeba9f92d546800bcaae7d5dd80e31c9371a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "6cf499a4828612b8ee118b3cb9e9e38b7a2f2c79480833a729a869201fe87737"
+    sha256 cellar: :any,                 arm64_sequoia: "ed8861f99b854e2e65c9d294e01f6b8ed0788abc19ebd3d4dc3ce7cfa34db096"
+    sha256 cellar: :any,                 arm64_sonoma:  "1fef98a78a16f4a16510d4504391226ef04dae87230d44e8bc31e5b90909e8e7"
+    sha256 cellar: :any,                 arm64_ventura: "c19075b8f0aa1e49811a07157d742fb7efd44cacc40bcf4f6a333b41c90b3414"
+    sha256 cellar: :any,                 sonoma:        "3786c671d7fffb86a26e445c1da3f7144f612baf1830e53bbb45941df0b693c4"
+    sha256 cellar: :any,                 ventura:       "1ca4591569e5651a8f6dcee7e567eefa1801bda9a30e1494ef1c059aa1da7f17"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f3ab7fd9e6eb25af8bf079f8b35985320694dbba6f44c4764ba123f129d9749b"
   end
 
   depends_on "ocaml-findlib" => :build

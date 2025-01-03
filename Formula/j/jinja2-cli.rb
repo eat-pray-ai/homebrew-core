@@ -6,34 +6,33 @@ class Jinja2Cli < Formula
   url "https://files.pythonhosted.org/packages/a4/22/c922839761b311b72ccc95c2ca2239311a3e80916458878962626f96922a/jinja2-cli-0.8.2.tar.gz"
   sha256 "a16bb1454111128e206f568c95938cdef5b5a139929378f72bb8cf6179e18e50"
   license "BSD-2-Clause"
-  revision 1
+  revision 2
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "5a422900be3d065fb5cd68129cd7d702e5399c564759cf21f9bc169223c69cb6"
-    sha256 cellar: :any,                 arm64_ventura:  "80dfa76703902486f622b6de9c24e4f28fd1da701c966c2e4034b8b4ed41b7f8"
-    sha256 cellar: :any,                 arm64_monterey: "3e5e4715c5c4e8309d65131567f0288cc1e7c3fd9fcda4a290dea8afa00c6ae3"
-    sha256 cellar: :any,                 sonoma:         "8722e2649db6798374bfcbb93ad6043fcc53efda58085220ef8293e853762ca9"
-    sha256 cellar: :any,                 ventura:        "81cba3a13cd26ab9acb08dd1172ba78486b5c7f9f343f5814305f90f28afa4b3"
-    sha256 cellar: :any,                 monterey:       "1bd54d03fb909d3c75370d74fd2cdc5b76c0372b76b1ca5bb02c15d50ac2eed8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f536e019bb6ba1d365c2ce7f2e3ac84c1d2f22065e690fdbd1e8da68387de246"
+    sha256 cellar: :any,                 arm64_sequoia: "2620ee9fd5aa2da33d5fea6841d1cb77d5b630d2111a17530249ea7def9d422f"
+    sha256 cellar: :any,                 arm64_sonoma:  "132a13e406d3654c199ec4784062d26d932eed486e8ac5171bb2bb37a2b676f2"
+    sha256 cellar: :any,                 arm64_ventura: "7eea787f9991ad399d517df9e893f659ba9cbbb1ae36bdd9071d246e6a59b28f"
+    sha256 cellar: :any,                 sonoma:        "6749a16cc095372a402f64dc1db6bdafc112095a816f6ff557be0146a1d04c6d"
+    sha256 cellar: :any,                 ventura:       "d1c80d14802b51adc586580f53456c1604cab02792b65eb56eddfebd487857df"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b2369a0b06a7384ce3a8c3c2cc0b69fea4d08c6a0cd83381b349ee58b329295c"
   end
 
   depends_on "libyaml"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "jinja2" do
-    url "https://files.pythonhosted.org/packages/ed/55/39036716d19cab0747a5020fc7e907f362fbf48c984b14e62127f7e68e5d/jinja2-3.1.4.tar.gz"
-    sha256 "4a3aee7acbbe7303aede8e9648d13b8bf88a429282aa6122a993f0ac800cb369"
+    url "https://files.pythonhosted.org/packages/af/92/b3130cbbf5591acf9ade8708c365f3238046ac7cb8ccba6e81abccb0ccff/jinja2-3.1.5.tar.gz"
+    sha256 "8fefff8dc3034e27bb80d67c671eb8a9bc424c0ef4c0826edbff304cceff43bb"
   end
 
   resource "markupsafe" do
-    url "https://files.pythonhosted.org/packages/87/5b/aae44c6655f3801e81aa3eef09dbbf012431987ba564d7231722f68df02d/MarkupSafe-2.1.5.tar.gz"
-    sha256 "d283d37a890ba4c1ae73ffadf8046435c76e7bc2247bbb63c00bd1a709c6544b"
+    url "https://files.pythonhosted.org/packages/b2/97/5d42485e71dfc078108a86d6de8fa46db44a1a9295e89c5d6d4a06e23a62/markupsafe-3.0.2.tar.gz"
+    sha256 "ee55d3edf80167e48ea11a923c7386f4669df67d7994554387f84e7d8b0a2bf0"
   end
 
   resource "pyyaml" do
-    url "https://files.pythonhosted.org/packages/cd/e5/af35f7ea75cf72f2cd079c95ee16797de7cd71f29ea7c68ae5ce7be1eda0/PyYAML-6.0.1.tar.gz"
-    sha256 "bfdf460b1736c775f2ba9f6a92bca30bc2095067b8a9d77876d1fad6cc3b4a43"
+    url "https://files.pythonhosted.org/packages/54/ed/79a089b6be93607fa5cdaedf301d7dfb23af5f25c398d5ead2525b063e17/pyyaml-6.0.2.tar.gz"
+    sha256 "d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e"
   end
 
   resource "toml" do
@@ -42,8 +41,8 @@ class Jinja2Cli < Formula
   end
 
   resource "xmltodict" do
-    url "https://files.pythonhosted.org/packages/39/0d/40df5be1e684bbaecdb9d1e0e40d5d482465de6b00cbb92b84ee5d243c7f/xmltodict-0.13.0.tar.gz"
-    sha256 "341595a488e3e01a85a9d8911d8912fd922ede5fecc4dce437eb4b6c8d037e56"
+    url "https://files.pythonhosted.org/packages/50/05/51dcca9a9bf5e1bce52582683ce50980bcadbc4fa5143b9f2b19ab99958f/xmltodict-0.14.2.tar.gz"
+    sha256 "201e7c28bb210e374999d1dde6382923ab0ed1a8a5faeece48ab525b7810a553"
   end
 
   def install
@@ -51,12 +50,8 @@ class Jinja2Cli < Formula
   end
 
   test do
-    output = if OS.mac?
-      shell_output("script -q /dev/null #{bin}/jinja2 --version")
-    else
-      shell_output("script -q /dev/null -e -c \"#{bin}/jinja2 --version\"")
-    end
-    assert_match version.to_s, output
+    assert_match version.to_s, shell_output("#{bin}/jinja2 --version")
+
     expected_result = <<~EOS
       The Beatles:
       - Ringo Starr
@@ -72,7 +67,7 @@ class Jinja2Cli < Formula
       {% endfor -%}
     EOS
     template_variables_file = testpath/"my-template-variables.json"
-    template_variables_file.write <<~EOS
+    template_variables_file.write <<~JSON
       {
         "band": {
           "name": "The Beatles",
@@ -84,8 +79,8 @@ class Jinja2Cli < Formula
           ]
         }
       }
-    EOS
+    JSON
     output = shell_output("#{bin}/jinja2 #{template_file} #{template_variables_file}")
-    assert_equal output, expected_result
+    assert_equal expected_result, output
   end
 end

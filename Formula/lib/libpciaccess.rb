@@ -11,7 +11,7 @@ class Libpciaccess < Formula
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "util-macros" => :build
   depends_on :linux
   depends_on "zlib"
@@ -23,7 +23,7 @@ class Libpciaccess < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include "pciaccess.h"
       int main(int argc, char* argv[]) {
         int pci_system_init(void);
@@ -32,7 +32,7 @@ class Libpciaccess < Formula
         struct pci_device *dev;
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-lpciaccess"
   end
 end

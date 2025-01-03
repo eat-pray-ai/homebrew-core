@@ -1,8 +1,8 @@
 class Neo4j < Formula
   desc "Robust (fully ACID) transactional property graph database"
   homepage "https://neo4j.com/"
-  url "https://neo4j.com/artifact.php?name=neo4j-community-5.21.0-unix.tar.gz"
-  sha256 "3451a852a986f1502b42ac74a7ca83520bdbb519d86e4d4c60f490e425057b18"
+  url "https://neo4j.com/artifact.php?name=neo4j-community-5.26.0-unix.tar.gz"
+  sha256 "ad8ac3398606145502b8f489530bbd39333707ae4668156af16b6086b5b037d7"
   license "GPL-3.0-or-later"
 
   livecheck do
@@ -12,32 +12,30 @@ class Neo4j < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "f4d67eeaaf44a2bc2657ec635f618286e15a7989b894a1e499bfc6f20dc09ae3"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "f4d67eeaaf44a2bc2657ec635f618286e15a7989b894a1e499bfc6f20dc09ae3"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "f4d67eeaaf44a2bc2657ec635f618286e15a7989b894a1e499bfc6f20dc09ae3"
-    sha256 cellar: :any_skip_relocation, sonoma:         "a365dddd1bea0b9bc89379637b056f53d3d36ac01247309dc593473a16d6cd70"
-    sha256 cellar: :any_skip_relocation, ventura:        "a365dddd1bea0b9bc89379637b056f53d3d36ac01247309dc593473a16d6cd70"
-    sha256 cellar: :any_skip_relocation, monterey:       "a365dddd1bea0b9bc89379637b056f53d3d36ac01247309dc593473a16d6cd70"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "0b07e880091c0cbc86503d29f54f41ad6feaee07181ac6de7e3ad27da6ba648a"
+    sha256 cellar: :any_skip_relocation, all: "5e2f43d2e9779aecabac36eda98d059a391f6d3a4dc9764eb329f0ed27ccae64"
   end
 
-  depends_on "openjdk"
-
-  conflicts_with "cypher-shell", because: "both install `cypher-shell` binaries"
+  depends_on "cypher-shell"
+  depends_on "openjdk@21"
 
   def install
     env = {
-      JAVA_HOME:  Formula["openjdk"].opt_prefix,
+      JAVA_HOME:  Formula["openjdk@21"].opt_prefix,
       NEO4J_HOME: libexec,
     }
     # Remove windows files
-    rm_f Dir["bin/*.bat"]
+    rm(Dir["bin/*.bat"])
 
     # Install jars in libexec to avoid conflicts
     libexec.install Dir["*"]
 
+    bash_completion.install (libexec/"bin/completion").children
+    # Ensure uniform bottles by replacing comments that reference `/usr/local`.
+    inreplace bash_completion.children, "/usr/local", HOMEBREW_PREFIX
+    rm_r libexec/"bin/completion"
+
     # Symlink binaries
-    bin.install Dir["#{libexec}/bin/neo4j{,-shell,-import,-shared.sh,-admin}", "#{libexec}/bin/cypher-shell"]
+    bin.install libexec.glob("bin/neo4j*")
     bin.env_script_all_files(libexec/"bin", env)
 
     # Adjust UDC props

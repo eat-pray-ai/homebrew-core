@@ -1,8 +1,8 @@
 class Wazero < Formula
   desc "Zero dependency WebAssembly runtime"
   homepage "https://wazero.io"
-  url "https://github.com/tetratelabs/wazero/archive/refs/tags/v1.7.3.tar.gz"
-  sha256 "abc19b77acb6eec6a4abb33366a6b4be1ccf987496f424c64c41d90b016c4e51"
+  url "https://github.com/tetratelabs/wazero/archive/refs/tags/v1.8.2.tar.gz"
+  sha256 "dd6dca5ab206a1b6031ed977922eed225814bc5452792799e106636b25444333"
   license "Apache-2.0"
 
   livecheck do
@@ -11,13 +11,12 @@ class Wazero < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "a27d2d462c556523f0d6f471a88515140040ba687e9d5a5028715f3729e12117"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "d91a137ff4179e47f5c804a395bc9b5ae6a4794249adfdab08348ffd73c7f447"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "eb0381b7ba883a24a7aa869f208e113fefb848dba22c9fa6ad72a6b48fcce0cc"
-    sha256 cellar: :any_skip_relocation, sonoma:         "32d43543fb3920880eb9191433440583d65700c655d8108e19054ce319cf8a60"
-    sha256 cellar: :any_skip_relocation, ventura:        "0645ca371ba79f1cace6b3e469dcb33815ddcb07be358f34cc466515b45fbccc"
-    sha256 cellar: :any_skip_relocation, monterey:       "932b3ec2d41b437892679c789b1a0524e24d8029829b533a8170b1138c8905b8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "55903a92bbbdaf6eb3ef84b02a61971f819d1c39f9711125fe86bb83aa8c563f"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "18af5cc83af3be53c518c83b319ed69a25d74c57113e055e5f731f2d3995a9c7"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "18af5cc83af3be53c518c83b319ed69a25d74c57113e055e5f731f2d3995a9c7"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "18af5cc83af3be53c518c83b319ed69a25d74c57113e055e5f731f2d3995a9c7"
+    sha256 cellar: :any_skip_relocation, sonoma:        "b3c30694d930fd4d3e0893e303b60cc85d1e77cc9da06216151b65ec1f2870e3"
+    sha256 cellar: :any_skip_relocation, ventura:       "b3c30694d930fd4d3e0893e303b60cc85d1e77cc9da06216151b65ec1f2870e3"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fd26fe348b54d47f1b35a38ce1fed2b83d5f1b2cf6560cf2dee968be3d340080"
   end
 
   depends_on "go" => :build

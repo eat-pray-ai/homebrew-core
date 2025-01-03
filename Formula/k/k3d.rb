@@ -1,8 +1,8 @@
 class K3d < Formula
   desc "Little helper to run CNCF's k3s in Docker"
   homepage "https://k3d.io"
-  url "https://github.com/k3d-io/k3d/archive/refs/tags/v5.7.1.tar.gz"
-  sha256 "48603a11be7f546cbc1dafdd9f02e5f3eb97e5e54d8992792ca3974d762f950a"
+  url "https://github.com/k3d-io/k3d/archive/refs/tags/v5.7.5.tar.gz"
+  sha256 "dca2348cfc1f6a08d8d4d6a93a2cca6a77289f373a76b9f6119512ba7d66f496"
   license "MIT"
 
   livecheck do
@@ -11,13 +11,12 @@ class K3d < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "a0ba80c52cc93ac9c97bf9ddb45cdbb8a6d8c5fda4d016535559ada9a9641817"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "08f76e9e79186d02bd2b0c638415d49d86223daf5aaa29b0d08a9008d328b890"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "fe52e0dd1f9d860e55c676fab325efcdcfb0cdb1ba8fd49964fb5d1bd7d39324"
-    sha256 cellar: :any_skip_relocation, sonoma:         "28adf64d16b6cd33aa6aecc8ddc18e6c70054a8b1a72673a61a13510cb071367"
-    sha256 cellar: :any_skip_relocation, ventura:        "e7f978e6507f7139e4596196a30ab7682aae48b95d1afe428773e162fb244e5e"
-    sha256 cellar: :any_skip_relocation, monterey:       "913027a81eeefe4934759873a61aa0ea750d285f29fa5846aabb27e919660aba"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "c361b7178583f64a9bc78e636852ef782663ccfb8aa2407182776b7f29d95801"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "92022f262c5d0a84c49e2d8357934720a86e37b44a9eb758090211ef86ee705e"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "92022f262c5d0a84c49e2d8357934720a86e37b44a9eb758090211ef86ee705e"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "92022f262c5d0a84c49e2d8357934720a86e37b44a9eb758090211ef86ee705e"
+    sha256 cellar: :any_skip_relocation, sonoma:        "afa4787a7bdcabfa4464c543e942b68da07913d612719a0126102cc087073534"
+    sha256 cellar: :any_skip_relocation, ventura:       "afa4787a7bdcabfa4464c543e942b68da07913d612719a0126102cc087073534"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "311ae9dce37bd64ec04f58255636be23248473d2a8929627c7b6ab3ac6e09ca5"
   end
 
   depends_on "go" => :build

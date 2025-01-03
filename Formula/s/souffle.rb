@@ -6,6 +6,7 @@ class Souffle < Formula
   license "UPL-1.0"
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "afd929227d4b2b7a6424186c7ae61838e105eee0c1d3ef6aa8d47c9c995bb6b2"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "57c853a352feed0ea976729ac5e299b2422e122f42a9f29e264339586ee8e5a8"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "91fa45ba6431efada4dd59f7876f3ddbc7ccc6e320f1f71104f5c6be6eb97e7d"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "9c23a5cca7622755bea778b9c42645b2ffd747bb385f16e4397d359a6acdd357"
@@ -18,7 +19,7 @@ class Souffle < Formula
   depends_on "bison" => :build # Bison included in macOS is out of date.
   depends_on "cmake" => :build
   depends_on "mcpp" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on macos: :catalina
   uses_from_macos "flex" => :build
   uses_from_macos "libffi"
@@ -41,7 +42,7 @@ class Souffle < Formula
       s.gsub!(%r{-I.*?/src/include }, "")
       s.gsub!(%r{"source_include_dir": ".*?/src/include"}, "\"source_include_dir\": \"#{include}\"")
     end
-    system "cmake", "--build", "build", "-j", "--target", "install"
+    system "cmake", "--build", "build", "--target", "install"
     include.install Dir["src/include/*"]
     man1.install Dir["man/*"]
   end
@@ -59,8 +60,8 @@ class Souffle < Formula
     (testpath/"edge.facts").write <<~EOS
       1,2
     EOS
-    system "#{bin}/souffle", "-F", "#{testpath}/.", "-D", "#{testpath}/.", "#{testpath}/example.dl"
-    assert_predicate testpath/"path.csv", :exist?
+    system bin/"souffle", "-F", "#{testpath}/.", "-D", "#{testpath}/.", "#{testpath}/example.dl"
+    assert_path_exists testpath/"path.csv"
     assert_equal "1,2\n", shell_output("cat #{testpath}/path.csv")
   end
 end

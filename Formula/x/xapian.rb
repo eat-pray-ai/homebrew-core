@@ -1,8 +1,8 @@
 class Xapian < Formula
   desc "C++ search engine library"
   homepage "https://xapian.org/"
-  url "https://oligarchy.co.uk/xapian/1.4.25/xapian-core-1.4.25.tar.xz"
-  sha256 "0c99dfdd817571cb5689bc412a7e021407938313f38ea3a70fa3bf86410608ee"
+  url "https://oligarchy.co.uk/xapian/1.4.27/xapian-core-1.4.27.tar.xz"
+  sha256 "bcbc99cfbf16080119c2571fc296794f539bd542ca3926f17c2999600830ab61"
   license "GPL-2.0-or-later"
   version_scheme 1
 
@@ -12,16 +12,15 @@ class Xapian < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "a1a33a0c92d45ef59423597d95a70d73725fa523d0fb624c499397c7d4d65515"
-    sha256 cellar: :any,                 arm64_ventura:  "68e1414a9481c3369996fb37e9ad3a662b7c6228f5fa492a0cb42030a567744f"
-    sha256 cellar: :any,                 arm64_monterey: "03a24ff40c24b7809c8d67fede7602fd5f366cce0b76047968b3a1c1ce16f091"
-    sha256 cellar: :any,                 sonoma:         "50bb168f2fa15d167c499da2893f27882cec2ef523ddcbdedf61f5eb467b2539"
-    sha256 cellar: :any,                 ventura:        "64f495165dee6ae9fa3eac8316c6f38b9b94681e6291c15f737d1c34afd19ac2"
-    sha256 cellar: :any,                 monterey:       "8b8a25c34242eef32c1495abb93c679f95fac925d7f6249bb27ad4c1cb2b592f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d7ff30f5f28314f540f56ca75bd5942fc903db9de8fcf66cf5fdbe426caafbf8"
+    sha256 cellar: :any,                 arm64_sequoia: "fbb0be7be62378361f90292bc53d05d58811ad23501e8dccd026f2aedb51b9fc"
+    sha256 cellar: :any,                 arm64_sonoma:  "3c657fafac679443c1c69a9409a7dfbc281d3d29fb6f54989c3736bd0a3d227c"
+    sha256 cellar: :any,                 arm64_ventura: "7e2ae9e288f52938deff37d44c64c34071048cb86f7f4bee09c2061f0a5a0b7b"
+    sha256 cellar: :any,                 sonoma:        "c0f1ac0afa541a55adf7bacd15a107c92835cc3e131949f8553ccf767978aa3e"
+    sha256 cellar: :any,                 ventura:       "648ff983c9da6b823efef34fd26df56bc3eda5b3f8331bec01195f96807269ca"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "429452ca722ec4a435962d38d1309989b1c0df4b76900fcfa1ff106081513a1a"
   end
 
-  depends_on "python@3.12" => [:build, :test]
+  depends_on "python@3.13" => [:build, :test]
   depends_on "sphinx-doc" => :build
 
   uses_from_macos "zlib"
@@ -33,18 +32,12 @@ class Xapian < Formula
   skip_clean :la
 
   resource "bindings" do
-    url "https://oligarchy.co.uk/xapian/1.4.25/xapian-bindings-1.4.25.tar.xz"
-    sha256 "068314fca3f54524701492df432fa54c485fd4e39613ca2cd275e136964e81a9"
-  end
-
-  # Fix -flat_namespace being used on Big Sur and later.
-  patch do
-    url "https://raw.githubusercontent.com/Homebrew/formula-patches/03cf8088210822aa2c1ab544ed58ea04c897d9c4/libtool/configure-big_sur.diff"
-    sha256 "35acd6aebc19843f1a2b3a63e880baceb0f5278ab1ace661e57a502d9d78c93c"
+    url "https://oligarchy.co.uk/xapian/1.4.27/xapian-bindings-1.4.27.tar.xz"
+    sha256 "ba3b5e10809e579acd11bd165779ce3fd29a8904ea37968ef5b57ad97c3618ba"
   end
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def install

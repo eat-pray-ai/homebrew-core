@@ -1,22 +1,23 @@
 class Psalm < Formula
   desc "PHP Static Analysis Tool"
   homepage "https://psalm.dev"
-  url "https://github.com/vimeo/psalm/releases/download/5.25.0/psalm.phar"
-  sha256 "c914089a0a93e63e30365b6263b442f1abb0842896ce68267adc566fba6a4d6f"
+  # Bump to php 8.4 on the next release, if possible.
+  url "https://github.com/vimeo/psalm/releases/download/5.26.1/psalm.phar"
+  sha256 "7d68a927dd72d30ec90e574cc114dd44851d9c49e3855e3c33c2bdd021259d1a"
   license "MIT"
+  revision 1
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "c633e0ce3bcecd7b7f17a0fd797b8a2001e8a754b80a1162e347a3e970c7eebf"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "c633e0ce3bcecd7b7f17a0fd797b8a2001e8a754b80a1162e347a3e970c7eebf"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "c633e0ce3bcecd7b7f17a0fd797b8a2001e8a754b80a1162e347a3e970c7eebf"
-    sha256 cellar: :any_skip_relocation, sonoma:         "4efa33533fdf9ee99b160c971732b8e1d79bd9598f3eb220e0468878bf3a51b9"
-    sha256 cellar: :any_skip_relocation, ventura:        "4efa33533fdf9ee99b160c971732b8e1d79bd9598f3eb220e0468878bf3a51b9"
-    sha256 cellar: :any_skip_relocation, monterey:       "4efa33533fdf9ee99b160c971732b8e1d79bd9598f3eb220e0468878bf3a51b9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "2c08515655e03c77d6bf27afac93978f01ceb9ecb105045e62204a303e298f37"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "036217c9d7ae0e4dcf447575f0e44faffcc7ca84ece4376a4cd5f00628d95b8a"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "036217c9d7ae0e4dcf447575f0e44faffcc7ca84ece4376a4cd5f00628d95b8a"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "036217c9d7ae0e4dcf447575f0e44faffcc7ca84ece4376a4cd5f00628d95b8a"
+    sha256 cellar: :any_skip_relocation, sonoma:        "92d3874edda449c19be93b9936d84d863ca1e7dcca1aac98435ea393372ae30e"
+    sha256 cellar: :any_skip_relocation, ventura:       "92d3874edda449c19be93b9936d84d863ca1e7dcca1aac98435ea393372ae30e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "036217c9d7ae0e4dcf447575f0e44faffcc7ca84ece4376a4cd5f00628d95b8a"
   end
 
   depends_on "composer" => :test
-  depends_on "php"
+  depends_on "php@8.3"
 
   # Keg-relocation breaks the formula when it replaces `/usr/local` with a non-default prefix
   on_macos do
@@ -26,11 +27,16 @@ class Psalm < Formula
   end
 
   def install
-    bin.install "psalm.phar" => "psalm"
+    libexec.install "psalm.phar" => "psalm"
+
+    (bin/"psalm").write <<~EOS
+      #!#{Formula["php@8.3"].opt_bin}/php
+      <?php require '#{libexec}/psalm';
+    EOS
   end
 
   test do
-    (testpath/"composer.json").write <<~EOS
+    (testpath/"composer.json").write <<~JSON
       {
         "name": "homebrew/psalm-test",
         "description": "Testing if Psalm has been installed properly.",
@@ -46,9 +52,9 @@ class Psalm < Formula
         },
         "minimum-stability": "stable"
       }
-    EOS
+    JSON
 
-    (testpath/"src/Email.php").write <<~EOS
+    (testpath/"src/Email.php").write <<~PHP
       <?php
       declare(strict_types=1);
 
@@ -90,7 +96,7 @@ class Psalm < Formula
           }
         }
       }
-    EOS
+    PHP
 
     system "composer", "install"
 

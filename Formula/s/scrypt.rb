@@ -6,6 +6,7 @@ class Scrypt < Formula
   license "BSD-2-Clause"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "0d7e64dd207cba97c39704e864ad290bd1acf4a06f002d551d0ce61a6595e275"
     sha256 cellar: :any,                 arm64_sonoma:   "bcaf79c22f7e771cc3de6daf16bc780cd096d64c0e58a0bb3f566847e26d27ca"
     sha256 cellar: :any,                 arm64_ventura:  "c8a4497efd6560ce5f4863ddddee72f26bd40093518d2a689c84dfb55b5b07b9"
     sha256 cellar: :any,                 arm64_monterey: "d5aaaeead2e355122d8627e5eced65f890c711ab53e0e0c12ad4a2430c485b87"
@@ -24,28 +25,27 @@ class Scrypt < Formula
 
   depends_on "openssl@3"
 
-  uses_from_macos "expect" => :test
-
   def install
-    system "autoreconf", "-fvi" if build.head?
-    system "./configure", "--prefix=#{prefix}"
+    system "autoreconf", "--force", "--install", "--verbose" if build.head?
+    system "./configure", *std_configure_args
     system "make", "install"
   end
 
   test do
-    (testpath/"test.exp").write <<~EOS
-      set timeout -1
-      spawn #{bin}/scrypt enc homebrew.txt homebrew.txt.enc
-      expect -exact "Please enter passphrase: "
-      send -- "Testing\n"
-      expect -exact "\r
-      Please confirm passphrase: "
-      send -- "Testing\n"
-      expect eof
-    EOS
-    touch "homebrew.txt"
+    require "expect"
+    require "pty"
 
-    system "expect", "-f", "test.exp"
-    assert_predicate testpath/"homebrew.txt.enc", :exist?
+    touch "homebrew.txt"
+    PTY.spawn(bin/"scrypt", "enc", "homebrew.txt", "homebrew.txt.enc") do |r, w, _pid|
+      r.expect "Please enter passphrase: "
+      w.write "Testing\n"
+      r.expect "Please confirm passphrase: "
+      w.write "Testing\n"
+      r.read
+    rescue Errno::EIO
+      # GNU/Linux raises EIO when read is done on closed pty
+    end
+
+    assert_path_exists testpath/"homebrew.txt.enc"
   end
 end

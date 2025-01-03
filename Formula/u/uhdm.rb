@@ -3,24 +3,24 @@ class Uhdm < Formula
 
   desc "Universal Hardware Data Model, modeling of the SystemVerilog Object Model"
   homepage "https://github.com/chipsalliance/UHDM"
-  url "https://github.com/chipsalliance/UHDM/archive/refs/tags/v1.83.tar.gz"
-  sha256 "4b02ccf8dede2074f0906e1a447ebfd2af7e6774b518ccefcc52b6401200c658"
+  url "https://github.com/chipsalliance/UHDM/archive/refs/tags/v1.84.tar.gz"
+  sha256 "bb2acbdd294dd05660c78ba34704440032935b8bc77cae352c853533b5a7c583"
   license "Apache-2.0"
+  revision 1
   head "https://github.com/chipsalliance/UHDM.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "f01a0475c1188c359c90b7d1754bb9340f53b8f305fc72a6eb07850656d3424e"
-    sha256 cellar: :any,                 arm64_ventura:  "68018fcc5c3db759937c2176d70dcbabe385605e430f5c5549e1ebb77c993696"
-    sha256 cellar: :any,                 arm64_monterey: "9b5c9f7cf6c9fed8de1f92d2300ba4c3776b65323b3908838921a61abc52e5fa"
-    sha256 cellar: :any,                 sonoma:         "1929f703df41e2983241fb570bf0d296d3cd8f20b9c000fea3a9695483d33588"
-    sha256 cellar: :any,                 ventura:        "07948bb5417743c768bd0d78b8931874873f388eaf6b096fc60493f4a6e36d2a"
-    sha256 cellar: :any,                 monterey:       "4102e88b6b3402767479ba292e674d4cb1b73eb49dce7c476fe843cca524724f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "882a02cbaa8b7aa427abe876c397c86063020e3851ffa121b163985000248036"
+    sha256 cellar: :any,                 arm64_sequoia: "670acc688d73fba8ac6565fca378f022b5d1f6f37699df288ee5e9dc38b8b656"
+    sha256 cellar: :any,                 arm64_sonoma:  "255be8c70c052277b40458bbb152fd969c46ccf12ab9108e6f1dfad702d1ce37"
+    sha256 cellar: :any,                 arm64_ventura: "4b261cec78b1348d493ea3147509161746b1198fde4c6a5251fa346b0e3d13b5"
+    sha256 cellar: :any,                 sonoma:        "73ea9f87f818f189e140a0871d93a130f038d5c082465209c025ee4eb65517b6"
+    sha256 cellar: :any,                 ventura:       "5cbdabfcb3ea0e53e3b1682f544c1aff82613b71ce89d047fc393638ffd3a5d5"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "84b61a7b60b854c05302fcac7cf6a6fecdf54682a879f062ff31fc4bbdbad012"
   end
 
   depends_on "cmake" => :build
-  depends_on "python@3.12" => :build
-  depends_on "pkg-config" => :test
+  depends_on "python@3.13" => :build
+  depends_on "pkgconf" => :test
   depends_on "capnp"
 
   resource "orderedmultidict" do
@@ -34,7 +34,7 @@ class Uhdm < Formula
   end
 
   def python3
-    which("python3.12")
+    which("python3.13")
   end
 
   def install
@@ -55,7 +55,7 @@ class Uhdm < Formula
 
   test do
     # Create a minimal .uhdm file and ensure executables work
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <cassert>
       #include <stdlib.h>
       #include "uhdm/constant.h"
@@ -77,7 +77,7 @@ class Uhdm < Formula
         assert(vpi_get(vpiSize, vpi_handle) == 12345);
         assert(vpi_get_str(vpiDecompile, vpi_handle) == std::string("decompile"));
       }
-    EOS
+    CPP
 
     flags = shell_output("pkg-config --cflags --libs UHDM").chomp.split
     system ENV.cxx, "test.cpp", "-o", "test", "-fPIC", "-std=c++17", *flags

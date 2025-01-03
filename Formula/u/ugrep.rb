@@ -1,18 +1,17 @@
 class Ugrep < Formula
   desc "Ultra fast grep with query UI, fuzzy search, archive search, and more"
   homepage "https://ugrep.com/"
-  url "https://github.com/Genivia/ugrep/archive/refs/tags/v6.2.0.tar.gz"
-  sha256 "e7b54e8e7d2d9058167269673fd783651071ba1ace547cf6c926b833607d2e1b"
+  url "https://github.com/Genivia/ugrep/archive/refs/tags/v7.1.2.tar.gz"
+  sha256 "1e016791c09bfd44df14a7e00af64c10cb559fa7fd1fe3ba4b87b2c73be5e264"
   license "BSD-3-Clause"
 
   bottle do
-    sha256                               arm64_sonoma:   "cb7c7ce21e80b68e128d3f07d144f01b651ee7a949627981d7fe43be3773aa16"
-    sha256                               arm64_ventura:  "a4104beb439d5e5c8e6b95e4d20d6ed6670d374a944c8c58073641532ffe47dd"
-    sha256                               arm64_monterey: "9e5b61084cf0978bb12911376ceafee0712bc70b0c802e0b7dc696ca56c262f7"
-    sha256                               sonoma:         "62473a09fd7bf9fc5e8ff6e665f8dddac2ead3c89d64cfc3579ae59a6c583648"
-    sha256                               ventura:        "e9cbcff8d075e512b051505e8fa9fe7757971fdae9c128629ba9876ee5c1fab8"
-    sha256                               monterey:       "ed3fbf11229606e82af3deffa30412a590a18d90fd29526ed2ae251c46b537b3"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d47a974734d0caf5cc0ca867c6a5b22a97d79d0e9bbdfedeb6212c05cf31089e"
+    sha256                               arm64_sequoia: "e5c0d714848b2383f1e6669201b32fbf8f854c720eaa1bd85f52531f4fac11d2"
+    sha256                               arm64_sonoma:  "15a5fcc369e6f729d423cc775e9830de382b3d8a1cda314f4561e4dca5aad23f"
+    sha256                               arm64_ventura: "9257bbbddf224616c40adc161366377c9e89774089aab006fe5a0a265f11a3cf"
+    sha256                               sonoma:        "959f97fdbd50c3c23625d35f25320884424a391f71b21b46c2a985ab4e00fb8a"
+    sha256                               ventura:       "1feb3f74adeb048fc1fdc6a59c60d9ebc629b99d357899cc772be3d1259bb015"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4d53a7027e20ac6cb72fb0510214007bd3f799057960a67fe2bca3b91be84612"
   end
 
   depends_on "brotli"

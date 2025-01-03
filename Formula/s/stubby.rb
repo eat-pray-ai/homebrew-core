@@ -8,6 +8,7 @@ class Stubby < Formula
   head "https://github.com/getdnsapi/stubby.git", branch: "develop"
 
   bottle do
+    sha256 arm64_sequoia:  "7e9b965dcf689e5c31274e2d5ebe0ecc6f5aa7d4b3fc17a4abefdd65d94a64a8"
     sha256 arm64_sonoma:   "eec9c56666a83664194ac6612bba1c330a54d14ead67dba1100757fc303f8edb"
     sha256 arm64_ventura:  "ade3c36ec956feefe503081cabbb3eefb02e4dc45cb333433866e6bb46db49ac"
     sha256 arm64_monterey: "31e36e04775bf9c033db8519d2a893ee10f7a0b9fd55f394d1d6d9593a28bffa"
@@ -23,6 +24,12 @@ class Stubby < Formula
   depends_on "libtool" => :build
   depends_on "getdns"
   depends_on "libyaml"
+
+  on_macos do
+    depends_on "libidn2"
+    depends_on "openssl@3"
+    depends_on "unbound"
+  end
 
   on_linux do
     depends_on "bind" => :test
@@ -42,7 +49,7 @@ class Stubby < Formula
 
   test do
     assert_predicate etc/"stubby/stubby.yml", :exist?
-    (testpath/"stubby_test.yml").write <<~EOS
+    (testpath/"stubby_test.yml").write <<~YAML
       resolution_type: GETDNS_RESOLUTION_STUB
       dns_transport_list:
         - GETDNS_TRANSPORT_TLS
@@ -55,12 +62,12 @@ class Stubby < Formula
         - address_data: 8.8.8.8
         - address_data: 8.8.4.4
         - address_data: 1.1.1.1
-    EOS
+    YAML
     output = shell_output("#{bin}/stubby -i -C stubby_test.yml")
     assert_match "bindata for 8.8.8.8", output
 
     fork do
-      exec "#{bin}/stubby", "-C", testpath/"stubby_test.yml"
+      exec bin/"stubby", "-C", testpath/"stubby_test.yml"
     end
     sleep 2
 

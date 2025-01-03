@@ -7,6 +7,7 @@ class Marcli < Formula
   head "https://github.com/hectorcorrea/marcli.git", branch: "main"
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "5b18317e5db12756a19aa7bd1f5ee62569e0c26048056f85efe654f4826d70a1"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "63fd48b516c9d021c8ba4aec971382dd92c68fb2252b513b0a2439fbff3ad44f"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "d1fbbc916e7202b5589388b2b5c956ea8bb47c3216e65b7b6767f006f4293ea7"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "d1fbbc916e7202b5589388b2b5c956ea8bb47c3216e65b7b6767f006f4293ea7"
@@ -20,18 +21,16 @@ class Marcli < Formula
 
   depends_on "go" => :build
 
-  resource "testdata" do
-    url "https://raw.githubusercontent.com/hectorcorrea/marcli/5434a2f85c6f03771f92ad9f0d5af5241f3385a6/data/test_1a.mrc"
-    sha256 "7359455ae04b1619f3879fe39eb22ad4187fb3550510f71cb4f27693f60cf386"
-  end
-
   def install
-    cd "cmd/marcli" do
-      system "go", "build", *std_go_args
-    end
+    system "go", "build", *std_go_args(ldflags: "-s -w"), "./cmd/marcli"
   end
 
   test do
+    resource "testdata" do
+      url "https://raw.githubusercontent.com/hectorcorrea/marcli/5434a2f85c6f03771f92ad9f0d5af5241f3385a6/data/test_1a.mrc"
+      sha256 "7359455ae04b1619f3879fe39eb22ad4187fb3550510f71cb4f27693f60cf386"
+    end
+
     resource("testdata").stage do
       assert_equal "=650  \\0$aCoal$xAnalysis.\r\n=650  \\0$aCoal$xSampling.\r\n\r\n",
       shell_output("#{bin}/marcli -file test_1a.mrc -fields 650")

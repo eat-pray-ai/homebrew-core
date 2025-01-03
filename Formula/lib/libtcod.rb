@@ -7,6 +7,7 @@ class Libtcod < Formula
 
   bottle do
     rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia:  "b2c555de7f9465b453c278c706c9da6a43d7d903e8fda2b013a4c03ff209b938"
     sha256 cellar: :any,                 arm64_sonoma:   "d8385601d9030f40b547ef423f77d33ae522de513e64057a99efbe8c7c48a54b"
     sha256 cellar: :any,                 arm64_ventura:  "f7d1c2301eff1200bb7172cd81dcfd7d564b529a4381f0cf1146c8a541523dad"
     sha256 cellar: :any,                 arm64_monterey: "2b092c9be43872f96b312cfa9065db010719bbf263f78ab99d21bc0c585d8c1e"
@@ -19,7 +20,7 @@ class Libtcod < Formula
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on macos: :catalina
   depends_on "sdl2"
 
@@ -27,19 +28,17 @@ class Libtcod < Formula
 
   conflicts_with "libzip", because: "libtcod and libzip install a `zip.h` header"
 
-  fails_with gcc: "5"
-
   def install
     cd "buildsys/autotools" do
       system "autoreconf", "--force", "--install", "--verbose"
-      system "./configure", *std_configure_args, "--disable-silent-rules"
+      system "./configure", "--disable-silent-rules", *std_configure_args
       system "make"
       system "make", "install"
     end
   end
 
   test do
-    (testpath/"version-c.c").write <<~EOS
+    (testpath/"version-c.c").write <<~C
       #include <libtcod/libtcod.h>
       #include <stdio.h>
       int main()
@@ -47,10 +46,10 @@ class Libtcod < Formula
         puts(TCOD_STRVERSION);
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "-I#{include}", "-L#{lib}", "-ltcod", "version-c.c", "-o", "version-c"
     assert_equal version.to_s, shell_output("./version-c").strip
-    (testpath/"version-cc.cc").write <<~EOS
+    (testpath/"version-cc.cc").write <<~CPP
       #include <libtcod/libtcod.hpp>
       #include <iostream>
       int main()
@@ -58,7 +57,7 @@ class Libtcod < Formula
         std::cout << TCOD_STRVERSION << std::endl;
         return 0;
       }
-    EOS
+    CPP
     system ENV.cxx, "-std=c++17", "-I#{include}", "-L#{lib}", "-ltcod", "version-cc.cc", "-o", "version-cc"
     assert_equal version.to_s, shell_output("./version-cc").strip
   end

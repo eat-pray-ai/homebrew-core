@@ -4,15 +4,20 @@ class Securefs < Formula
   url "https://github.com/netheril96/securefs/archive/refs/tags/v1.0.0.tar.gz"
   sha256 "de888359734a05ca0db56d006b4c9774f18fd9e6f9253466a86739b5f6ac3753"
   license "MIT"
-  revision 2
+  revision 11
   head "https://github.com/netheril96/securefs.git", branch: "master"
 
+  livecheck do
+    url :stable
+    strategy :github_latest
+  end
+
   bottle do
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "69bd65930f628dde00b4fd981242fd75a764845dc4cb4f7fbcd797148931bc34"
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "b6cae6d9a65884351731000483ce5f6276e0d1b679d4b2a43431f04b2d36b992"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "tclap" => :build
   depends_on "abseil"
   depends_on "argon2"
@@ -38,6 +43,6 @@ class Securefs < Formula
   end
 
   test do
-    system "#{bin}/securefs", "version" # The sandbox prevents a more thorough test
+    system bin/"securefs", "version" # The sandbox prevents a more thorough test
   end
 end

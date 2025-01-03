@@ -1,19 +1,19 @@
 class Lsd < Formula
   desc "Clone of ls with colorful output, file type icons, and more"
   homepage "https://github.com/lsd-rs/lsd"
-  url "https://github.com/lsd-rs/lsd/archive/refs/tags/v1.1.2.tar.gz"
-  sha256 "cd80dae9a8f6c4c2061f79084468ea6e04c372e932e3712a165119417960e14e"
+  url "https://github.com/lsd-rs/lsd/archive/refs/tags/v1.1.5.tar.gz"
+  sha256 "120935c7e98f9b64488fde39987154a6a5b2236cb65ae847917012adf5e122d1"
   license "Apache-2.0"
   head "https://github.com/lsd-rs/lsd.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "027e3ba1d73615e16a1a74f12733841d36a32cb131a8657fb96d8ece41fcd5d4"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "657cc7ac5bff7861461b767f269fac518ff4af0642850f76ff8a797577b7d5ab"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "8e4109de20c64864e6e5fdaf9ccfbbf7f548eb61226b6051b6d55ce045dd34a3"
-    sha256 cellar: :any_skip_relocation, sonoma:         "62c1787b634e9cb9728ea4fdca9d9b8e5e87dac1d2938c2613ba0264f2fb62a2"
-    sha256 cellar: :any_skip_relocation, ventura:        "90c856e0277445914fb47e0d7d1e020e69e7cd72a675e4f73765a284d79ec924"
-    sha256 cellar: :any_skip_relocation, monterey:       "f8216e4e7492f603eca16d736209577864eadc20932cd9d4e5749836d14acc39"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "31de828a654365884713c54d7177791752505c4e01b8b71c0bbad5215772c85c"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "620e65bedbd524277a073f2469d5467c7e93e88a95c227da58b5f270966392a2"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "171fdc624eada5c1f48837e56e5f0a44139fc897de8b0c75a6637b64cfb41b87"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "0ab10dba6606d09d98086b000a07ea2c6d0573e3b6e4ffc4eba3c30260810c9d"
+    sha256 cellar: :any_skip_relocation, sonoma:        "e5a078994599902b8b972d7bf4ce14ad755a0b559f7794e08ad9e40110c8365e"
+    sha256 cellar: :any_skip_relocation, ventura:       "2cee4fdf553f67937d3df1bdbecf420ea9453de347a3b6f99aa0a03f28020063"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "da5e2e98f824400895e34655adfbc250a3140e304a0247d11a4e64a9e2c133b2"
   end
 
   depends_on "pandoc" => :build
@@ -24,7 +24,7 @@ class Lsd < Formula
   def install
     ENV["SHELL_COMPLETIONS_DIR"] = buildpath
     system "cargo", "install", *std_cargo_args
-    bash_completion.install "lsd.bash"
+    bash_completion.install "lsd.bash" => "lsd"
     fish_completion.install "lsd.fish"
     zsh_completion.install "_lsd"
 

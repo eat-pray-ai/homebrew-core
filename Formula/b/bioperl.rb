@@ -17,6 +17,7 @@ class Bioperl < Formula
   end
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "f3a040d480845d4d81f48d9b166248dbdb805892c32408bb26e79a6cfd9f83fe"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "7347de2dcd6d853ef48f4eaefb19f57965aac806dde9a9e69b0877986ad415d0"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "14640b78f907bc04201e49dc0c2e28627c81f9a0df71b2dec380ac27928ae9bf"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "2c8eb6a2300984f14864ded0694167956dbf20514efa7353ef9efa555132ec63"
@@ -27,15 +28,17 @@ class Bioperl < Formula
   end
 
   depends_on "cpanminus" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "perl"
 
-  uses_from_macos "zlib"
+  uses_from_macos "expat"
+  uses_from_macos "libxml2"
 
   def install
+    ENV["ALIEN_INSTALL_TYPE"] = "system"
     ENV.prepend_create_path "PERL5LIB", libexec/"lib/perl5"
-    system "cpanm", "--self-contained", "-l", libexec, "DBI" unless OS.mac?
-    system "cpanm", "--verbose", "--self-contained", "-l", libexec, "."
+    system "cpanm", "--notest", "--self-contained", "--local-lib", libexec, "DBI" unless OS.mac?
+    system "cpanm", "--notest", "--self-contained", "--local-lib", libexec, "."
     bin.env_script_all_files libexec, "PERL5LIB" => ENV["PERL5LIB"]
     libexec.glob("bin/bp_*") do |executable|
       (bin/executable.basename).write_env_script executable, PERL5LIB: ENV["PERL5LIB"]

@@ -16,6 +16,7 @@ class Leetup < Formula
   end
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "d1b4514ce4129a82214372e208fcc2e6d6dc746fb60ed69675d69628c7fbdd72"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "8869f57b3f3a3c9de61c30dd2ab987ec81c82b46bcaa9a6426c44ff1ca05c967"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "2310aadadf29ce3199edf0b7d749208b282916355fe00d8fb2f39bb645b355f1"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "c300dbf7a8021139b8113ca134d001ea57c2438598f7e8957807fba0966c7e15"
@@ -25,7 +26,7 @@ class Leetup < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "3f06e66d4529f7489b4ca0b9bcf9976c376015d6ea635c0c00a09adcd4439dca"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
 
   on_linux do

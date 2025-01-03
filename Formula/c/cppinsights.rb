@@ -4,47 +4,57 @@ class Cppinsights < Formula
   url "https://github.com/andreasfertig/cppinsights/archive/refs/tags/v_17.0.tar.gz"
   sha256 "2dd6bcfcdba65c0ed2e1f04ef79d57285186871ad8bd481d63269f3115276216"
   license "MIT"
-  revision 1
+  revision 2
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "a73346fbd9edb64521a44f884289097c82361f2a0a459705dad0e8981b2f74fa"
-    sha256 cellar: :any,                 arm64_ventura:  "3a1594c14be75f743a274b8f3e4093b122260d4ec82c9d67596f1141ce83d455"
-    sha256 cellar: :any,                 arm64_monterey: "a1ce431bab70c47c4ec36092a09239b4786c45d1971ea1a4b670c15f8761fb60"
-    sha256 cellar: :any,                 sonoma:         "05ebd00bb3dd6a28675df46610cb8e3713aa4a77395d7bb9dcc6ee1a70dd96e8"
-    sha256 cellar: :any,                 ventura:        "847ad399da7cd8e1041a27a49ae0045257683e898116afff9f802cde794d8cd9"
-    sha256 cellar: :any,                 monterey:       "a8abb0ff037bb8cefd1b94d7aff08f0afbc4923eb740c7bdb9cc69acc17c99c7"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "04c0af7c3a2ca0b57f47099782d2bd08ab2148ef13e84f978c4a571cc8e695e1"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "afe0e099c28067cf56276d9165c0c74d5bd60bc1198e35e48cd77a1583e37622"
+    sha256 cellar: :any,                 arm64_sonoma:  "ee190f27380bb741eb5b8227bab92af141d582de278914da3d339936cb47e7a2"
+    sha256 cellar: :any,                 arm64_ventura: "4410e7e48ebab10cabdb2090f2da11bbfe873e77807c7f3c9c85205d476633b4"
+    sha256 cellar: :any,                 sonoma:        "f4790d0acad044e7c039f5d148871c9746c7b79d87a6f66c9594628a04aade18"
+    sha256 cellar: :any,                 ventura:       "af24d6cdefa935d7cca9fbc28ae6133b4a1341a6bc3930d3e91b77c131bdd02e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d84b7f52fa94bf59a784cce74e72456b6e94436775f9895ecc96cade7b3866f2"
   end
 
   depends_on "cmake" => :build
   depends_on "llvm"
 
   fails_with :clang do
-    build 1300
-    cause "Requires C++20"
+    build 1500
+    cause "Requires Clang > 15.0"
   end
 
   # Patch from https://github.com/andreasfertig/cppinsights/pull/622
   # Support for LLVM 18, remove in next version
   patch :DATA
 
-  def install
-    ENV.llvm_clang if ENV.compiler == :clang && DevelopmentTools.clang_build_version <= 1500
+  # Support for LLVM 19, remove in next version
+  patch do
+    url "https://github.com/andreasfertig/cppinsights/commit/a84a979abdd0cd57790d0795c3642198188215e9.patch?full_index=1"
+    sha256 "fcfccbddc4e1c4b0fbb359fcd1c9dca58c4a5f15a175c53c449586b17217e079"
+  end
 
-    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
+  def install
+    ENV.llvm_clang if OS.mac? && DevelopmentTools.clang_build_version <= 1500
+
+    system "cmake", "-S", ".", "-B", "build",
+                    "-DINSIGHTS_LLVM_CONFIG=#{Formula["llvm"].opt_bin}/llvm-config",
+                    "-DINSIGHTS_USE_SYSTEM_INCLUDES=Off",
+                    *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       int main() {
         int arr[5]{2,3,4};
       }
-    EOS
+    CPP
     assert_match "{2, 3, 4, 0, 0}", shell_output("#{bin}/insights ./test.cpp")
   end
 end
+
 __END__
 diff --git a/CMakeLists.txt b/CMakeLists.txt
 index 31341709..8b7430db 100644

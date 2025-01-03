@@ -1,8 +1,8 @@
 class YubicoPivTool < Formula
   desc "Command-line tool for the YubiKey PIV application"
   homepage "https://developers.yubico.com/yubico-piv-tool/"
-  url "https://developers.yubico.com/yubico-piv-tool/Releases/yubico-piv-tool-2.5.2.tar.gz"
-  sha256 "918e76bad99463dc0a858a4771ec674a579fad284d99d90c57fb9cf44fb059b8"
+  url "https://developers.yubico.com/yubico-piv-tool/Releases/yubico-piv-tool-2.7.1.tar.gz"
+  sha256 "9813190a5c2560ef7fe8018c03614091e911e0596c5853ef25c82cd9283a444b"
   license "BSD-2-Clause"
 
   livecheck do
@@ -11,20 +11,19 @@ class YubicoPivTool < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "8820544ef87de8223558a920d256f599f96ce34345539aaf92bd306047c786ab"
-    sha256 cellar: :any,                 arm64_ventura:  "2edf06269841a82731ebaf0c12e21a8104de4ccc2ca5343d4cd4f1b9e7398fc9"
-    sha256 cellar: :any,                 arm64_monterey: "3734da6bb92f5e07eae7aa4c993074bdb707ffe52cbc5c9996408b1344656dbb"
-    sha256 cellar: :any,                 sonoma:         "68fb25543cdbc53ca1570751caba3219adab1d5fe6a3e89e8f914c6c5ae35d06"
-    sha256 cellar: :any,                 ventura:        "a200ed2f9995a807509d59896dc8fa937ca1964ff0a6921951643faee3e4c514"
-    sha256 cellar: :any,                 monterey:       "2d54e9bf8093ab0237086c81368832f7dedb3581c0937fe9bc31b8f7f6c8acbb"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "837442ffcf1748789709744e97492bdc5e84d9743cae3596a75f23622d6ed4c6"
+    sha256 cellar: :any,                 arm64_sequoia: "852e180ed2fe18fe28777716db26c09e754238744f889078b61d137d61fa6e80"
+    sha256 cellar: :any,                 arm64_sonoma:  "c7a5dc4310d0f45106800d409de0933feda9ff5cedb14fae0b0c5d73df545ffe"
+    sha256 cellar: :any,                 arm64_ventura: "5270a529dab82aaf84696ae71fedf63786d36c20209bcd701debada9e08e6e5b"
+    sha256 cellar: :any,                 sonoma:        "8f3beb1c9c8532e03fe3730b561c2d54aa98def4f5d4c9e26ba3682acba762b5"
+    sha256 cellar: :any,                 ventura:       "c31f355c89499b1e03ca9655c03e0c9e7f279d6ce236238de851ccae68d1c2bd"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e54ae29bc9056bc7763ee41cf8db4b6dbb744d43f1c7903e6d8d480d9b0014fd"
   end
 
   depends_on "check" => :build
   depends_on "cmake" => :build
   depends_on "gengetopt" => :build
   depends_on "help2man" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "openssl@3"
 
   uses_from_macos "pcsc-lite"

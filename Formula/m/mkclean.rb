@@ -6,6 +6,7 @@ class Mkclean < Formula
   license "BSD-3-Clause"
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "b4d263e75e4ccfdc7eeb90529899374a43f38bafda669dd33c906e533f1e7738"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "3d518850ce61f5e54380d36c14e6192ec43b52cc83fec9802a08e557d98a02b7"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "33ee8ae207d85761440d0bfb65995068d7de526dda7f41c7828f4853eb499bd4"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "6d88364bba58d17c5a2dcee261628dcaa7f488c65e59ba2d94470bdedf7a4315"
@@ -22,9 +23,9 @@ class Mkclean < Formula
   depends_on "cmake" => :build
 
   def install
-    system "cmake", ".", *std_cmake_args
-    system "make", "-C", "mkclean"
-    bin.install "mkclean/mkclean"
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
+    system "cmake", "--build", "build"
+    bin.install "build/mkclean/mkclean"
   end
 
   test do

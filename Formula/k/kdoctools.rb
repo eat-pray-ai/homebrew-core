@@ -1,8 +1,8 @@
 class Kdoctools < Formula
   desc "Create documentation from DocBook"
   homepage "https://api.kde.org/frameworks/kdoctools/html/index.html"
-  url "https://download.kde.org/stable/frameworks/6.3/kdoctools-6.3.0.tar.xz"
-  sha256 "4b50ed15b9dbd08a5b379bd32ed1b47ee80971abbe0c7a2570b749a665c7854a"
+  url "https://download.kde.org/stable/frameworks/6.9/kdoctools-6.9.0.tar.xz"
+  sha256 "6cc43f7db6df703cde1c6fbb24debcfb11c3df8f176be101577e21582d0209ca"
   license all_of: [
     "BSD-3-Clause",
     "GPL-2.0-or-later",
@@ -17,13 +17,11 @@ class Kdoctools < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "9320bf65976029ba2b9169a1a60193133a34b5a99fc182aa7f82bdbba478ec50"
-    sha256 cellar: :any,                 arm64_ventura:  "d82db244e991eca1f0972352a97dc6d8fdf324bf48a34d5c09bc86e5de23a56f"
-    sha256 cellar: :any,                 arm64_monterey: "7cc46d7dc3ce397fd723f7b549bbb304fed2a95fba01dc5c4a3159d23c9c507a"
-    sha256 cellar: :any,                 sonoma:         "bcd0d78ea6c83e846e235057a030e063dd3e4673e3ea369f03e698d7b0af13ac"
-    sha256 cellar: :any,                 ventura:        "9488da8eed22dfd355692442889347075d5bd125ec4cfbde72efaf10168c6455"
-    sha256 cellar: :any,                 monterey:       "d49c1082cc43818fb8587aa98b9532810a10da233c60412ffe8ea3be8d2f1de4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "8d2a7e7e6610acf4fc85e32309155655551e6b4588ac9fb1a453f69f7bec5cad"
+    sha256 cellar: :any,                 arm64_sonoma:  "e924211069e60c1cbeb8f56d25b6aba235ac8f862cc2b0a25a7474396a5225f5"
+    sha256 cellar: :any,                 arm64_ventura: "49d320dbfc76329c3cd6e071209b0049c2b450db7d6258fd4d41b1d7c694b4ba"
+    sha256 cellar: :any,                 sonoma:        "bfde63301ec3c943ba57f52525211453488890ec8b71aa51dbe5004488c1443f"
+    sha256 cellar: :any,                 ventura:       "6525d9bcc6887f3d10247e2b06597c1ed241fa4a5d951108e0e7b0c4516d1cef"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6e3eb7445ab85d7d9b79e5c6b8b8d439d3c9600314d8cc93e836bbea16a3f5c0"
   end
 
   depends_on "cmake" => [:build, :test]
@@ -38,8 +36,6 @@ class Kdoctools < Formula
   uses_from_macos "libxml2"
   uses_from_macos "libxslt"
   uses_from_macos "perl"
-
-  fails_with gcc: "5"
 
   resource "URI::Escape" do
     on_linux do
@@ -70,10 +66,10 @@ class Kdoctools < Formula
     qt = Formula["qt"]
     qt_major = qt.version.major
 
-    (testpath/"CMakeLists.txt").write <<~EOS
+    (testpath/"CMakeLists.txt").write <<~CMAKE
       cmake_minimum_required(VERSION 3.5)
       include(FeatureSummary)
-      find_package(ECM #{version unless build.head?} NO_MODULE)
+      find_package(ECM #{version} NO_MODULE)
       set_package_properties(ECM PROPERTIES TYPE REQUIRED)
       set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH} "#{pkgshare}/cmake")
       find_package(Qt#{qt_major} #{qt.version} REQUIRED Core)
@@ -101,7 +97,7 @@ class Kdoctools < Formula
       add_subdirectory(autotests)
       add_subdirectory(tests/create-from-current-dir-test)
       add_subdirectory(tests/kdoctools_install-test)
-    EOS
+    CMAKE
 
     cp_r (pkgshare/"autotests"), testpath
     cp_r (pkgshare/"tests"), testpath

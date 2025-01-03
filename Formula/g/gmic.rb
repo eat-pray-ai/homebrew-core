@@ -1,8 +1,8 @@
 class Gmic < Formula
   desc "Full-Featured Open-Source Framework for Image Processing"
   homepage "https://gmic.eu/"
-  url "https://gmic.eu/files/source/gmic_3.4.0.tar.gz"
-  sha256 "4fc0c79eed360c4f804d8110d7955bc8e0db9a14fba9483fe494f02c3640be69"
+  url "https://gmic.eu/files/source/gmic_3.5.0.tar.gz"
+  sha256 "847ddf438bbe73ec1447a8d98916571c75664bed050ac11212e45b2eb4c1cad0"
   license "CECILL-2.1"
   head "https://github.com/GreycLab/gmic.git", branch: "master"
 
@@ -12,17 +12,16 @@ class Gmic < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "2aff00789d67f96ac9769c7db736edc894d67299a951e4163184b08867c5eea8"
-    sha256 cellar: :any,                 arm64_ventura:  "1a763350b3103aa9c6082e2f8fd22ef9b10f41b9e05da970b2d703f75caab062"
-    sha256 cellar: :any,                 arm64_monterey: "0c018c3c576b2301a5a9de92c42950c5a28230b39c7501b4e5a87426485b48ba"
-    sha256 cellar: :any,                 sonoma:         "d5a768c488dc8ff9bdbb58a5e66169f239324599f1275d9164b86bf9f010ffb5"
-    sha256 cellar: :any,                 ventura:        "6990dd996965abe8c986629a932e313ad0173cfe860aaccb057485c0b50ec631"
-    sha256 cellar: :any,                 monterey:       "153dc171edb149ad53761203c5c781d4613fe4bf42c9b9885f063fcc8249dd89"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "e4475048a21c9d904eb07fc4243a93ed25726a0960022a12d146b183965d46ea"
+    sha256 cellar: :any,                 arm64_sequoia: "af7758f64e8dc5dafbea4afd4562506a0345cae23cf3826d44dee8d1a5d15ec0"
+    sha256 cellar: :any,                 arm64_sonoma:  "358dcfe6133017dec8dd73aeeff0739f3a6851e1b6a1b04e5799b4e1ddf4be23"
+    sha256 cellar: :any,                 arm64_ventura: "b53df6080acd6b4a5fc812af57eb78a9370fa7e48579a207fc52685af76ddace"
+    sha256 cellar: :any,                 sonoma:        "918a9e49aaa9f7aa4f8f4dd8f7fcb64b0a982f76839017b36b417b208abf73fd"
+    sha256 cellar: :any,                 ventura:       "eee8261136f04545d64ddd679d4ec2338f19896e32e3374dd2e3b99251ab574a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f0c3f3483b3abd4fdf4a67fae670777316344648dd6c07208dfcf4a98dabf3be"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "cimg"
   depends_on "fftw"
   depends_on "imath"
@@ -62,6 +61,6 @@ class Gmic < Formula
     end
     system bin/"gmic", "-input", test_fixtures("test.jpg"), "rodilius", "10,4,400,16",
            "smooth", "60,0,1,1,4", "normalize_local", "10,16", "-output", testpath/"test_rodilius.jpg"
-    assert_predicate testpath/"test_rodilius.jpg", :exist?
+    assert_path_exists testpath/"test_rodilius.jpg"
   end
 end

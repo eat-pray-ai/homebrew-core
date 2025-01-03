@@ -1,27 +1,19 @@
-require "language/node"
-
 class Retire < Formula
   desc "Scanner detecting the use of JavaScript libraries with known vulnerabilities"
   homepage "https://retirejs.github.io/retire.js/"
-  url "https://registry.npmjs.org/retire/-/retire-5.1.1.tgz"
-  sha256 "121d2027129f0b6d420141b3cc02f4b75a58261387bf78d01d8e94b45955dc04"
+  url "https://registry.npmjs.org/retire/-/retire-5.2.5.tgz"
+  sha256 "efe906f585495df787e7bb30a3deee5fd49604051b9673a5b5d86fb122fca492"
   license "Apache-2.0"
   head "https://github.com/RetireJS/retire.js.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "4b9729783656d9a973f99f37fdd259f5679d5f758b9082614145384d67aed759"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "4b9729783656d9a973f99f37fdd259f5679d5f758b9082614145384d67aed759"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "4b9729783656d9a973f99f37fdd259f5679d5f758b9082614145384d67aed759"
-    sha256 cellar: :any_skip_relocation, sonoma:         "4b9729783656d9a973f99f37fdd259f5679d5f758b9082614145384d67aed759"
-    sha256 cellar: :any_skip_relocation, ventura:        "4b9729783656d9a973f99f37fdd259f5679d5f758b9082614145384d67aed759"
-    sha256 cellar: :any_skip_relocation, monterey:       "4b9729783656d9a973f99f37fdd259f5679d5f758b9082614145384d67aed759"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "5b0496957c34f96fc119904291904607c3fba31e3d11ddd2b398201b24f20772"
+    sha256 cellar: :any_skip_relocation, all: "fd05ff437a7512574133be70937a718b96d935e05f3840981fb29896e34e652f"
   end
 
   depends_on "node"
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+    system "npm", "install", *std_npm_args
     bin.install_symlink Dir["#{libexec}/bin/*"]
   end
 

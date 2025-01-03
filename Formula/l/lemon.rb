@@ -1,9 +1,9 @@
 class Lemon < Formula
   desc "LALR(1) parser generator like yacc or bison"
   homepage "https://www.hwaci.com/sw/lemon/"
-  url "https://www.sqlite.org/2024/sqlite-src-3460000.zip"
-  version "3.46.0"
-  sha256 "070362109beb6899f65797571b98b8824c8f437f5b2926f88ee068d98ef368ec"
+  url "https://www.sqlite.org/2024/sqlite-src-3470200.zip"
+  version "3.47.2"
+  sha256 "e6a471f1238225f34c2c48c5601b54024cc538044368230f59ff0672be1fc623"
   license "blessing"
 
   livecheck do
@@ -11,13 +11,12 @@ class Lemon < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "a5a2322a79b805b834578b7636fd794c8a4602e541d8708040e2dda73d0ca2fe"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "fbd9f3a5d07fd62e1bc443885df04dd47c4706d821b181c225a4bb6e79b493dc"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "30ef3b8c6179193e2dbd6eb124c841c2878ceb2082da0c63a0e162ef1f185a77"
-    sha256 cellar: :any_skip_relocation, sonoma:         "2e4e0afd18377c127e7595b56a2b3a5f3b8cbe2e1bb17d5f07bd70dc2375ae65"
-    sha256 cellar: :any_skip_relocation, ventura:        "0a79fbd2c46f5add9fc8f361538a2c3e78e5d6061be2bcc7c182cfc4621c7200"
-    sha256 cellar: :any_skip_relocation, monterey:       "05ca210bb772c4a1d89c5b19beb152eec8702e3c057d4f6c3676c7cf679a5dc8"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "aa48e9309a606760ca839c1ed57f135fa9ef1ffc9972fa30330d0205002590ab"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "260cc38aebb3667c775e3c9e6d59a9a16d219093ed5d104b66b9279bc4fd0105"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "a524850f0a7bbcc06366a661688b1e36ef6247958837c6b388e393a7f8629a6f"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "abba3d37ab374c6a75909602b45cac74fd139eca02bdae6d488d895c7d7f2a38"
+    sha256 cellar: :any_skip_relocation, sonoma:        "b398efcb3389b2d70ce184076b01aa049615a77be405762b34853b450f1bf656"
+    sha256 cellar: :any_skip_relocation, ventura:       "4858d1e7657e490f322712695d2d38810a7b30333536ccb7fd55e977c9ca838f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "272456d3190cdfbd85d26d87e155a05837cab8977195fce569ea896a7b6b855b"
   end
 
   # Submitted the patch via email to the upstream
@@ -37,7 +36,7 @@ class Lemon < Formula
   end
 
   test do
-    system "#{bin}/lemon", "-d#{testpath}", "#{pkgshare}/lemon-test01.y"
+    system bin/"lemon", "-d#{testpath}", "#{pkgshare}/lemon-test01.y"
     system ENV.cc, "lemon-test01.c"
     assert_match "tests pass", shell_output("./a.out")
   end

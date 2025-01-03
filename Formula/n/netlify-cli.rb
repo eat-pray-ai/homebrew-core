@@ -1,21 +1,18 @@
-require "language/node"
-
 class NetlifyCli < Formula
   desc "Netlify command-line tool"
   homepage "https://www.netlify.com/docs/cli"
-  url "https://registry.npmjs.org/netlify-cli/-/netlify-cli-17.33.0.tgz"
-  sha256 "d9c64336c4d07c4909b2166c37e728e9edd15849630e5befdb745d30a8b6336a"
+  url "https://registry.npmjs.org/netlify-cli/-/netlify-cli-17.38.1.tgz"
+  sha256 "0f10e92bc575316b8c6dd91fcd52578194e7b6d105d4cee36947ab3e4928393d"
   license "MIT"
   head "https://github.com/netlify/cli.git", branch: "main"
 
   bottle do
-    sha256                               arm64_sonoma:   "231f964e9b2c3cad494db741ffff9f9c67605c1c6a9e062457f3b8bd99867417"
-    sha256                               arm64_ventura:  "3ce4fa505a977c5f76d550728482d3fcb5df5b91bc8a94b0c7704981e8041806"
-    sha256                               arm64_monterey: "d464f87ee47f756a84e87c67051813d1f96e4ffd4dcf34c3cfb5c52e32b8c299"
-    sha256                               sonoma:         "d7bdb4e98001c22153f340beff70a7bd5f8c0d92754a3e675a1709f1b3576cf0"
-    sha256                               ventura:        "c20abe3b1d04098021c97f2bba5cf44df80f4c78962bc033edfeec27f2eaa824"
-    sha256                               monterey:       "8731f6b0d8f5d9a15b0f78b0d5fb80d056e29bfa78d6284034288896a71f54b5"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "9cf59384c8b6490603e3826f7b20070ebdf09844a3093923f5f01a00708cb973"
+    sha256                               arm64_sequoia: "9d2c847db41c9eb7bdd5bc0f120b7f0e928752c52d9a13bddcc8fea61cbb1981"
+    sha256                               arm64_sonoma:  "3fa0d303dcdef0e17d117c58507c0a27867787f72fcdf950c9c2fc12122f5f89"
+    sha256                               arm64_ventura: "c6cc690a19ab590c2b4024ec99b2d416274ede6a29f8f87bd348b700cf2b7b68"
+    sha256                               sonoma:        "026aff42ba440e828fb4031dd75ac662981d271e61fd72fc3e0f4b0a03e058de"
+    sha256                               ventura:       "f6b4f3c12f5a06391d561b65dabc3efe902f6064825714a8d551071742b7e01c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e499bb48179384a0e838508a03bc205baf43df0ccb413dd7e258cef26b9db416"
   end
 
   depends_on "node"
@@ -28,8 +25,8 @@ class NetlifyCli < Formula
   end
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
-    bin.install_symlink Dir["#{libexec}/bin/*"]
+    system "npm", "install", *std_npm_args
+    bin.install_symlink libexec.glob("bin/*")
 
     # Remove incompatible pre-built binaries
     node_modules = libexec/"lib/node_modules/netlify-cli/node_modules"
@@ -40,7 +37,7 @@ class NetlifyCli < Formula
     end
 
     clipboardy_fallbacks_dir = node_modules/"clipboardy/fallbacks"
-    clipboardy_fallbacks_dir.rmtree # remove pre-built binaries
+    rm_r(clipboardy_fallbacks_dir) # remove pre-built binaries
     if OS.linux?
       linux_dir = clipboardy_fallbacks_dir/"linux"
       linux_dir.mkpath
@@ -52,7 +49,7 @@ class NetlifyCli < Formula
     os = OS.kernel_name.downcase
     arch = Hardware::CPU.intel? ? "x64" : Hardware::CPU.arch.to_s
     node_modules.glob("{bare-fs,bare-os}/prebuilds/*")
-                .each { |dir| dir.rmtree if dir.basename.to_s != "#{os}-#{arch}" }
+                .each { |dir| rm_r(dir) if dir.basename.to_s != "#{os}-#{arch}" }
   end
 
   test do

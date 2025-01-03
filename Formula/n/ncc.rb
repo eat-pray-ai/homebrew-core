@@ -1,25 +1,23 @@
-require "language/node"
-
 class Ncc < Formula
   desc "Compile a Node.js project into a single file"
   homepage "https://github.com/vercel/ncc"
-  url "https://registry.npmjs.org/@vercel/ncc/-/ncc-0.38.1.tgz"
-  sha256 "0633a7c007ddc69becffd112e5e8a2afa0da0fbf7d6e085122f2ae90e63847e0"
+  url "https://registry.npmjs.org/@vercel/ncc/-/ncc-0.38.3.tgz"
+  sha256 "c9f9d715af74152fd248220a43a2a09868fdab68f7438dd558bbb69aa487bb86"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "3bdd7554a42bdf4b9b98bcfd88f12b6576bd843216bb5a187dbd39da18613340"
+    sha256 cellar: :any_skip_relocation, all: "d7ae75f4531238b8bf4a1b0e6359d09c834da531093d63e8b022885435f3b09d"
   end
 
   depends_on "node"
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+    system "npm", "install", *std_npm_args
     bin.install_symlink Dir["#{libexec}/bin/*"]
   end
 
   test do
-    (testpath/"input.js").write <<~EOS
+    (testpath/"input.js").write <<~JS
       function component() {
         const element = document.createElement('div');
         element.innerHTML = 'Hello' + ' ' + 'webpack';
@@ -27,7 +25,7 @@ class Ncc < Formula
       }
 
       document.body.appendChild(component());
-    EOS
+    JS
 
     system bin/"ncc", "build", "input.js", "-o", "dist"
     assert_match "document.createElement", File.read("dist/index.js")

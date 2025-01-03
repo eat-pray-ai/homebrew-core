@@ -14,6 +14,7 @@ class Lasso < Formula
   end
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "d11f5c5002eea8bf352df2eb6d3e903a25cf985c624d764d908646b7193d7787"
     sha256 cellar: :any,                 arm64_sonoma:   "bae175f8483fcb721716c04489109384cf80f7b1b3e2dfddfe2bbb785e0cbddf"
     sha256 cellar: :any,                 arm64_ventura:  "1d90d46ff6490946d1f8e156038fb83fe63c59f7bebab3b712ee6eeaf73175c9"
     sha256 cellar: :any,                 arm64_monterey: "9b7b4aaf4ebb484bc9965c44ec60b5688bf07160fd21009b3698c9906339ceca"
@@ -23,13 +24,19 @@ class Lasso < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "9adf24a05cbf953ad5f3d3bca3f388eadb08480aaf9f100663504c2ea83ff025"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "glib"
   depends_on "libxml2"
   depends_on "libxmlsec1"
   depends_on "openssl@3"
 
   uses_from_macos "python" => :build
+  uses_from_macos "libxslt"
+  uses_from_macos "zlib"
+
+  on_macos do
+    depends_on "gettext"
+  end
 
   resource "six" do
     on_linux do
@@ -66,13 +73,13 @@ class Lasso < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <lasso/lasso.h>
 
       int main() {
         return lasso_init();
       }
-    EOS
+    C
     system ENV.cc, "test.c",
                    "-I#{Formula["glib"].include}/glib-2.0",
                    "-I#{Formula["glib"].lib}/glib-2.0/include",
@@ -82,6 +89,7 @@ class Lasso < Formula
     system "./test"
   end
 end
+
 __END__
 diff --git a/lasso/xml/tools.c b/lasso/xml/tools.c
 index 4d5fa78a..0478f3f4 100644

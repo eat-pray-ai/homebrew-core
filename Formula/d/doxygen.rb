@@ -1,9 +1,9 @@
 class Doxygen < Formula
   desc "Generate documentation for several programming languages"
   homepage "https://www.doxygen.nl/"
-  url "https://doxygen.nl/files/doxygen-1.11.0.src.tar.gz"
-  mirror "https://downloads.sourceforge.net/project/doxygen/rel-1.11.0/doxygen-1.11.0.src.tar.gz"
-  sha256 "c9edfdf8c5f3e8bee0c4c967850caead27099883ee7ff8b11044e6d63faf3607"
+  url "https://doxygen.nl/files/doxygen-1.13.1.src.tar.gz"
+  mirror "https://downloads.sourceforge.net/project/doxygen/rel-1.13.1/doxygen-1.13.1.src.tar.gz"
+  sha256 "b593a17e9f7dd00c253d5bb18f05b84632136e89753b87fe366c858ea63f6e62"
   license "GPL-2.0-only"
   head "https://github.com/doxygen/doxygen.git", branch: "master"
 
@@ -13,13 +13,12 @@ class Doxygen < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "3563bf8fb8ef84bf1bb3fbcf70cc91b35a1d6bccecc97ebeb9f6de8ce8266f74"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "62d0f4cdb2e1b99efde1ca2437b19b2532784fc50becc1ed8464544f7cad162a"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "20d0a7d6c962e71bd1191d422573621aa3f5b90f5323744e4a20d4e155b873fc"
-    sha256 cellar: :any_skip_relocation, sonoma:         "f2095539b2bc24893b171c477967e473ae7940cc7c30fb60a15bbb5d8c790b96"
-    sha256 cellar: :any_skip_relocation, ventura:        "8d4065e87a6a7e45a1f08f3da7fbdbb228f6377125907ac249f58c9ae78a6b1e"
-    sha256 cellar: :any_skip_relocation, monterey:       "03d4746629c4f60bafc6b09a4975cee0a70806cfd35bc39132c2e740e4528d2f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "cfb35d6329584d7ff43e14d2d071b37d099dbc773e513f4a5f1a6df73081d72f"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "4c8bd1f7deaa6895caddf9bcd45321f94686cc57b624530f77883e4a3cbfa7a7"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "c67d73d3875684c887aa8597cc1e78d5a8e9bda9a6ed1a7b30814ec87cd931dc"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "f0d6ccf61ed4a84e5aca1db8592d71a4be52978df9b56213c386a33e10ed19f4"
+    sha256 cellar: :any_skip_relocation, sonoma:        "c0e1cf547a323e49369b8ea569b683c2943128f8184746b428ae29f22eb96138"
+    sha256 cellar: :any_skip_relocation, ventura:       "69508b816402dbb70af58899d08044dceaba5da16b71bcb6229b9ee4a3212a23"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1ae5bac2b224ce19d3b8625b863fb5f641b915f645e0358fb6af928dca354e87"
   end
 
   depends_on "bison" => :build
@@ -28,9 +27,13 @@ class Doxygen < Formula
   uses_from_macos "flex" => :build, since: :big_sur
   uses_from_macos "python" => :build
 
-  fails_with :gcc do
-    version "6"
-    cause "Need gcc>=7.2. See https://gcc.gnu.org/bugzilla/show_bug.cgi?id=66297"
+  fails_with :clang do
+    build 1000
+    cause <<~EOS
+      doxygen-1.11.0/src/datetime.cpp:100:19: error: no viable constructor or deduction guide for deduction of template arguments of 'array'
+      static std::array g_specFormats
+                        ^
+    EOS
   end
 
   def install

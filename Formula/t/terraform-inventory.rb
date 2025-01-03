@@ -7,6 +7,7 @@ class TerraformInventory < Formula
   head "https://github.com/adammck/terraform-inventory.git", branch: "master"
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "8779884bc89245540e8bca1eae1ff1205e9dcfb406b2b306a5488cdc161547bf"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "45e0a0a0852cc89534be9dc22760628b624e1e085d25b6a30bcd6ec1f25fb9d6"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "49d755bc67a9ac995c186a4143723379d87ef43ea76018706302aad4ac135efe"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "0a1c36c1ddf616cee16ffaa7686fee0dc5043142c5aac0b95698b0caafe67c50"
@@ -27,7 +28,7 @@ class TerraformInventory < Formula
   end
 
   test do
-    example = <<~EOS
+    example = <<~JSON
       {
           "version": 1,
           "serial": 1,
@@ -54,7 +55,7 @@ class TerraformInventory < Formula
               }
           ]
       }
-    EOS
+    JSON
     (testpath/"example.tfstate").write(example)
     assert_match(/example_instance/, shell_output("#{bin}/terraform-inventory --list example.tfstate"))
   end

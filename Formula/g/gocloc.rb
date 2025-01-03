@@ -1,34 +1,34 @@
 class Gocloc < Formula
   desc "Little fast LoC counter"
   homepage "https://github.com/hhatto/gocloc"
-  url "https://github.com/hhatto/gocloc/archive/refs/tags/v0.5.2.tar.gz"
-  sha256 "c8f95201bc6042767de7059cfd6a2a37799b3bf909ec61029baffe0f6ccc509d"
+  url "https://github.com/hhatto/gocloc/archive/refs/tags/v0.5.3.tar.gz"
+  sha256 "d5f875df523bb8cc884d9e118de609f0b8eca50a3c6f6c220ad01118da3387ce"
   license "MIT"
   head "https://github.com/hhatto/gocloc.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "5d6658082d193feb28911a88898be12e99dad08122b8e4a7361c9bda70758b9d"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "5d6658082d193feb28911a88898be12e99dad08122b8e4a7361c9bda70758b9d"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "5d6658082d193feb28911a88898be12e99dad08122b8e4a7361c9bda70758b9d"
-    sha256 cellar: :any_skip_relocation, sonoma:         "b7879e256399be4c19ea6973d142153c69cc16ec1da1ddda118806337baf774f"
-    sha256 cellar: :any_skip_relocation, ventura:        "b7879e256399be4c19ea6973d142153c69cc16ec1da1ddda118806337baf774f"
-    sha256 cellar: :any_skip_relocation, monterey:       "b7879e256399be4c19ea6973d142153c69cc16ec1da1ddda118806337baf774f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "ea39420e5d5b63e1eef76ebe1240c5bd69efc689f35c262355d6ca03d3735368"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "f40f1c0fca393b31141e5c023aed4140ad794b29ba00ba0d492abd381232a05e"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "f40f1c0fca393b31141e5c023aed4140ad794b29ba00ba0d492abd381232a05e"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "f40f1c0fca393b31141e5c023aed4140ad794b29ba00ba0d492abd381232a05e"
+    sha256 cellar: :any_skip_relocation, sonoma:        "e7d4e4477d71e3e14fce82f869ad284153ca991e8718506ccb930cfd0d6daa9d"
+    sha256 cellar: :any_skip_relocation, ventura:       "e7d4e4477d71e3e14fce82f869ad284153ca991e8718506ccb930cfd0d6daa9d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b4aef5724fea748da99937ff0de07a5f6eb8a653fcaffe0685be6b91ff868b29"
   end
 
   depends_on "go" => :build
 
   def install
-    system "go", "build", *std_go_args, "./cmd/gocloc"
+    system "go", "build", *std_go_args(ldflags: "-s -w"), "./cmd/gocloc"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <stdio.h>
       int main(void) {
         return 0;
       }
-    EOS
+    C
 
     assert_equal "{\"languages\":[{\"name\":\"C\",\"files\":1,\"code\":4,\"comment\":0," \
                  "\"blank\":0}],\"total\":{\"files\":1,\"code\":4,\"comment\":0,\"blank\":0}}",

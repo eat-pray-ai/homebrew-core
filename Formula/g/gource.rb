@@ -4,15 +4,15 @@ class Gource < Formula
   url "https://github.com/acaudwell/Gource/releases/download/gource-0.55/gource-0.55.tar.gz"
   sha256 "c8239212d28b07508d9e477619976802681628fc25eb3e04f6671177013c0142"
   license "GPL-3.0-or-later"
+  revision 2
 
   bottle do
-    sha256 arm64_sonoma:   "3596c21ecd8e3c2b225d9ff98defa38a5496d52c8e9f34464a2e414f8c9ec8f6"
-    sha256 arm64_ventura:  "7356eb34bd94d8a6aefedd18cf85d09b3fd19d7ab09363e9d20c5e45eab71a81"
-    sha256 arm64_monterey: "7a59b2bf59553a8a20a83cf6a2c4dbd89438fee6d3959e06c6e27bbd84f84a3f"
-    sha256 sonoma:         "b1bfbbb3b3e6c635cea3dacf66167842135a9d6648c0eafa40d899fa7e1166cf"
-    sha256 ventura:        "c2c1c4c00db4ebb316b6b7797440f7851b08c14bbf259701c4a71e57bbcbfaaa"
-    sha256 monterey:       "ecf466f251a966b38fb9d7ddf4a7ebb234b0396205d380b39bc83ecb063400ad"
-    sha256 x86_64_linux:   "2008fd1997753832a8377facbaabcd081d96e1fa5d1128f23624d11f26e5ca5a"
+    sha256 arm64_sequoia: "45751a1641fe7d73147fe811f8ac03d01e125dc545524fc9b130ea97714ab275"
+    sha256 arm64_sonoma:  "2081d916c3ce5876f496d23ce8d6b092101aaf2750b4987c593fc52168279f2a"
+    sha256 arm64_ventura: "bb6149e22c1ca5442f9974a1079a75f6ae1def91d9439b60bfe411659b9f9ad7"
+    sha256 sonoma:        "163f2bc4d805804d54538f0b0c5e50ca98c8541bc05f2fae65d845a521da8d8c"
+    sha256 ventura:       "1fc962a7b5587a8ce44f71c98b4966460f2b929d050a3477a3f08b878dc40c8c"
+    sha256 x86_64_linux:  "01eaeab6eaaedd52c2ee0f7f7885e96357f560eb12b6b1029a5e322923128c44"
   end
 
   head do
@@ -24,7 +24,8 @@ class Gource < Formula
   end
 
   depends_on "glm" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
+
   depends_on "boost"
   depends_on "freetype"
   depends_on "glew"
@@ -32,6 +33,11 @@ class Gource < Formula
   depends_on "pcre2"
   depends_on "sdl2"
   depends_on "sdl2_image"
+
+  on_linux do
+    depends_on "mesa"
+    depends_on "mesa-glu"
+  end
 
   def install
     ENV.cxx11
@@ -51,6 +57,6 @@ class Gource < Formula
   end
 
   test do
-    system "#{bin}/gource", "--help"
+    system bin/"gource", "--help"
   end
 end

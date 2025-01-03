@@ -2,19 +2,18 @@ class Etcd < Formula
   desc "Key value store for shared configuration and service discovery"
   homepage "https://github.com/etcd-io/etcd"
   url "https://github.com/etcd-io/etcd.git",
-      tag:      "v3.5.14",
-      revision: "bf51a53a7e0452a7e44783c24ec048e6981dd2d7"
+      tag:      "v3.5.17",
+      revision: "507c0de87bd5034e3de4ab76ebf96b54dae0cd52"
   license "Apache-2.0"
   head "https://github.com/etcd-io/etcd.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "29f13588038a24465d6be1d22714e2f05502a013fda8d4a1f0102f1eeb5ec06f"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "29f13588038a24465d6be1d22714e2f05502a013fda8d4a1f0102f1eeb5ec06f"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "29f13588038a24465d6be1d22714e2f05502a013fda8d4a1f0102f1eeb5ec06f"
-    sha256 cellar: :any_skip_relocation, sonoma:         "08c2fbf15254c1fdd9a43282f89f439bbab9a79d7c1e8b58bd103d28095b6273"
-    sha256 cellar: :any_skip_relocation, ventura:        "08c2fbf15254c1fdd9a43282f89f439bbab9a79d7c1e8b58bd103d28095b6273"
-    sha256 cellar: :any_skip_relocation, monterey:       "08c2fbf15254c1fdd9a43282f89f439bbab9a79d7c1e8b58bd103d28095b6273"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "151773aa74141532c91d59cb93eac5d29d8d561431f40dba20d6dc77ac89b52a"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "d9548583e9384f27b54f8a6333ec7e2442503315aeba20f0d4f965e78b7d595d"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "d9548583e9384f27b54f8a6333ec7e2442503315aeba20f0d4f965e78b7d595d"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "d9548583e9384f27b54f8a6333ec7e2442503315aeba20f0d4f965e78b7d595d"
+    sha256 cellar: :any_skip_relocation, sonoma:        "ad72c8bba439821a1eb23a376e06a886ceb7a5b7e60dbaeb07272f26a8ae2978"
+    sha256 cellar: :any_skip_relocation, ventura:       "ad72c8bba439821a1eb23a376e06a886ceb7a5b7e60dbaeb07272f26a8ae2978"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f2c16caf93becefb3ce4f6bee026deee20ae5d158db5753fbe9299df4e009783"
   end
 
   depends_on "go" => :build

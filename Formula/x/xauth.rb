@@ -6,6 +6,7 @@ class Xauth < Formula
   license "MIT-open-group"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "d18d0f0f1e63dde3fc2c20836df3fcab78f1b877ffceaac0093fd1cab3484221"
     sha256 cellar: :any,                 arm64_sonoma:   "9a7b83983740064b18141730a40ffd71feb3d08388a091370f6a82eebbbb78b2"
     sha256 cellar: :any,                 arm64_ventura:  "57ccb291fc8506937db119ac70270ba101733e50425a719a0857ed31abbf3f72"
     sha256 cellar: :any,                 arm64_monterey: "b6f3debf7f9b937e5096c7f8c6996daccfea756ef5186ff90c0c811d37a916f3"
@@ -15,7 +16,7 @@ class Xauth < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "79c33da732dc8f9d89082193869d83fcd79d695ea8cc8f26f1f5e2c743da6633"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "util-macros" => :build
   depends_on "libx11"
   depends_on "libxau"
@@ -29,10 +30,8 @@ class Xauth < Formula
 
   def install
     args = %W[
-      --prefix=#{prefix}
       --sysconfdir=#{etc}
       --localstatedir=#{var}
-      --disable-dependency-tracking
       --disable-silent-rules
       --enable-unix-transport
       --enable-tcp-transport
@@ -40,7 +39,7 @@ class Xauth < Formula
       --enable-local-transport
     ]
 
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args
     system "make"
     system "make", "install"
   end

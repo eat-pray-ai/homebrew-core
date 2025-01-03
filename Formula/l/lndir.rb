@@ -6,6 +6,7 @@ class Lndir < Formula
   license "MIT-open-group"
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "c4ac20b2d9c5af28a153829cb9f890628143e5d025e6c45c1d41553f9e060b79"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "b81f2833d3ba3403ff4827293c28af1770b455766d407f4541c9b950b8298085"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "d0c6d45c23ed0b7b0db075165b1d86ee34add3e07c60149d2153dd57987a1a2e"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "5de50a05e4ae19512b58bcda8dc8552f9fa4c6cc62dcedd928b583b0638c5d8b"
@@ -15,7 +16,7 @@ class Lndir < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "ecf4313dfc583a1197e94925c502cdfe08d777e5aead7dd44bc3ab360f9c8b3d"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "xorgproto"  => :build
 
   def install
@@ -27,6 +28,6 @@ class Lndir < Formula
   test do
     mkdir "test"
     system bin/"lndir", bin, "test"
-    assert_predicate testpath/"test/lndir", :exist?
+    assert_path_exists testpath/"test/lndir"
   end
 end

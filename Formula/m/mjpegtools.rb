@@ -7,6 +7,7 @@ class Mjpegtools < Formula
   revision 1
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "ceffd1cacfbd70df4bc8763a63379aef688299d0d454243034964ae4d990fc87"
     sha256 cellar: :any,                 arm64_sonoma:   "819ed433976e0822f4357ab0b24f2de38f32500e169add9671ebd0fda5d1a818"
     sha256 cellar: :any,                 arm64_ventura:  "6617edf8918a64e1850a6b94627617a460dc85234bf56c2c4f0af9bd77608d3f"
     sha256 cellar: :any,                 arm64_monterey: "c7d05e5fc6d485aa298f4aa7ce6cdfb0c28f2a7792650bba2e3fda8adc030f85"
@@ -19,7 +20,7 @@ class Mjpegtools < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "7efdf0c986f0afd7094a355256ee6743f2ce7720d23f680005e53a8ae5213244"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "jpeg-turbo"
 
   # Fix -flat_namespace being used on Big Sur and later.
@@ -29,7 +30,7 @@ class Mjpegtools < Formula
   end
 
   def install
-    system "./configure", *std_configure_args, "--enable-simd-accel"
+    system "./configure", "--enable-simd-accel", *std_configure_args
     system "make", "install"
   end
 end

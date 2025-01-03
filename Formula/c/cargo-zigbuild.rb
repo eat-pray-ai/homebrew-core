@@ -1,23 +1,22 @@
 class CargoZigbuild < Formula
   desc "Compile Cargo project with zig as linker"
   homepage "https://github.com/rust-cross/cargo-zigbuild"
-  url "https://github.com/rust-cross/cargo-zigbuild/archive/refs/tags/v0.18.4.tar.gz"
-  sha256 "842422e0255b5fc5f274deaebb66f82e6a9a61b1b936869fa3453dc6f817e10c"
+  url "https://github.com/rust-cross/cargo-zigbuild/archive/refs/tags/v0.19.7.tar.gz"
+  sha256 "b445c5dcff98e327507114c6a6dbeda6fc738cacb53dbb4d1c713728985f6b2a"
   license "MIT"
   head "https://github.com/rust-cross/cargo-zigbuild.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "9eb5d769edd77dba56cac3df9ff869e88c55cdd746f3addac3cc5fb4f89a09ed"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "198a837a89d59a9bff4b7b2174f868edfc9a036b192b853b8b1433f4547df258"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "bbec8a424bbd1c6a3dc801836b1f10ca15a036c2cf88130d992e7380544e806b"
-    sha256 cellar: :any_skip_relocation, sonoma:         "3195431d5a4ffaabe17870ac3b99af9ed1161f72f6a827fbb74ca1a8a8f12806"
-    sha256 cellar: :any_skip_relocation, ventura:        "98cafd75fa6a83e4ec96ee16506c2aa275a09d53da1d7d9c1027fbc4d1f694fa"
-    sha256 cellar: :any_skip_relocation, monterey:       "4d87a9cd75936df38d50c6c22b36890273aef541282e97ce03267bda07591d7a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "6145aca7525c8a162d789641e8e8506c8d72c540e8bbd7657d38fdc6e366e90c"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "8776090018d468b0def5035ce8deeec694a28fc06f355e66b98a7875a0bf3303"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "a242010d250c64fc5a6188b24b39a60f7b7b113425dd7e4032d9e1aa5f55cb17"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "23db9a4d425313abc1b7c5d1b5861d2032d50bd59c7b48d20fc1d2820e970026"
+    sha256 cellar: :any_skip_relocation, sonoma:        "cb781cf99c555f0cf82bc31b8ef9233f35b423d79f429e6e0a813d9ef1f4748c"
+    sha256 cellar: :any_skip_relocation, ventura:       "54acf03df513b7f917949cf1dbf74d99fdb8a8312bfd4e635512244c4343b283"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9da34109aa003935918b203b6c53bb73079a52700f2c75c513829ba2e6f3cb26"
   end
 
   depends_on "rust" => :build
-  depends_on "rustup-init" => :test
+  depends_on "rustup" => :test
   depends_on "zig"
 
   def install
@@ -25,19 +24,19 @@ class CargoZigbuild < Formula
   end
 
   test do
-    # Ignore rust installation path check
-    ENV["RUSTUP_INIT_SKIP_PATH_CHECK"] = "yes"
     # Remove errant CPATH environment variable for `cargo zigbuild` test
     # https://github.com/ziglang/zig/issues/10377
     ENV.delete "CPATH"
+    ENV.delete "RUSTFLAGS"
 
-    system "#{Formula["rustup-init"].bin}/rustup-init", "-y", "--no-modify-path"
-    ENV.prepend_path "PATH", HOMEBREW_CACHE/"cargo_cache/bin"
+    ENV.prepend_path "PATH", Formula["rustup"].bin
+    system "rustup", "default", "beta"
+    system "rustup", "set", "profile", "minimal"
     system "rustup", "target", "add", "aarch64-unknown-linux-gnu"
 
     system "cargo", "new", "hello_world", "--bin"
     cd "hello_world" do
-      system "cargo", "zigbuild", "--target", "aarch64-unknown-linux-gnu.2.17"
+      system "cargo", "zigbuild", "--target", "aarch64-unknown-linux-gnu"
     end
   end
 end

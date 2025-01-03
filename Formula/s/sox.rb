@@ -8,6 +8,7 @@ class Sox < Formula
 
   bottle do
     rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia:  "87d0fedd63d061dcce9a85a218415c57301aa6b7d0a2846c133b8773ad730b7c"
     sha256 cellar: :any,                 arm64_sonoma:   "15d7b75e38dbcf26b77356f79a1c184293bf664521098254f8279f417fe6ed9c"
     sha256 cellar: :any,                 arm64_ventura:  "1669b614365ee6f54c3b974aa2e25c6e88353caeb73a2763f31c5f71d7032705"
     sha256 cellar: :any,                 arm64_monterey: "170cf704ff002b6d97b5c5f081e3dda5d87a9860860a13b1e8a7efbb4b4dba53"
@@ -19,14 +20,18 @@ class Sox < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "7bb06054835fa3a2be758935d05d245b9edb5330b484b6f1e57d77ab60f772ad"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "flac"
   depends_on "lame"
+  depends_on "libogg"
   depends_on "libpng"
   depends_on "libsndfile"
   depends_on "libvorbis"
   depends_on "mad"
   depends_on "opusfile"
+
+  uses_from_macos "zlib"
+
   on_linux do
     depends_on "alsa-lib"
   end
@@ -47,11 +52,12 @@ class Sox < Formula
   end
 
   def install
-    args = std_configure_args
+    ENV.append_to_cflags "-Wno-incompatible-function-pointer-types" if DevelopmentTools.clang_build_version >= 1500
 
+    args = []
     args << "--with-alsa" if OS.linux?
 
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args
     system "make", "install"
   end
 
@@ -60,6 +66,6 @@ class Sox < Formula
     output = testpath/"concatenated.wav"
     cp test_fixtures("test.wav"), input
     system bin/"sox", input, input, output
-    assert_predicate output, :exist?
+    assert_path_exists output
   end
 end

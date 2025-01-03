@@ -1,36 +1,47 @@
-require "language/node"
-
 class BitwardenCli < Formula
   desc "Secure and free password manager for all of your devices"
   homepage "https://bitwarden.com/"
-  # Do not use npmjs for the next release as it will contain non-open-source code.
-  # https://github.com/Homebrew/homebrew-core/pull/175702
-  url "https://registry.npmjs.org/@bitwarden/cli/-/cli-2024.6.0.tgz"
-  sha256 "c6cc40900db37dd7653eb24bb095dbedbe00bb27a1024642dbf12c31a03dceeb"
+  url "https://github.com/bitwarden/clients/archive/refs/tags/cli-v2024.12.0.tar.gz"
+  sha256 "e0bd25b6be3fe5d8f97a8c3a030bb0a7bd7a01d14403414438ba93b891c30690"
   license "GPL-3.0-only"
 
+  livecheck do
+    url :stable
+    regex(/^cli[._-]v?(\d+(?:\.\d+)+)$/i)
+  end
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "fb752136fdb18ceea631e6626e260b6385691af02663e0e31c97ac5a963d59b7"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "20c64724b8206cbf15c90a05c7d16104ff894215f7941512ded8229994d84f98"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "b1ff22ce78035dfcbc6ffb446bc18dcf1d9cc8f3863c2d6f181be32c1fbf36bc"
-    sha256 cellar: :any_skip_relocation, sonoma:         "2bc9e93b9a543900829ab80f0b8ef6a8c7273e228092203bfaaab88946119296"
-    sha256 cellar: :any_skip_relocation, ventura:        "3133beeb8430b0f86e8fbde85b5fb0c45926b60b790ef86189b425cffd5aced7"
-    sha256 cellar: :any_skip_relocation, monterey:       "f434edb274e170149b485f8608dc1659186b693bbf563dc6b2a99332ec0c5be2"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f627fb9dd646f59e47d1182aadd9e9f3b4214f220c247adb49c48371f6f9db81"
+    sha256                               arm64_sequoia: "0c599333015c2dd62b748ac58018b9c6023fde504bd5fb6b0c37bb4649fc8294"
+    sha256                               arm64_sonoma:  "ba074b871ccfffc0bbccfcef08683180a5e5350f3d846929857ac2d1959a4967"
+    sha256                               arm64_ventura: "42b7b79b95e81a6ba681757e9d082ed057fd9fe7d22dea79e57e490ff8807d64"
+    sha256                               sonoma:        "40cafc543e207d0935c892d291b6e369e4fcd7487c6f418471de04863c784b68"
+    sha256                               ventura:       "d14312a64978352d422aaaa86c5c0165ab6e120edcaa12d9b33f406f80d824d3"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3993dcd6661df7b3741aea79355637d5abe2f4dccc59fd4bf295fa304f4cc998"
   end
 
   depends_on "node"
 
   def install
-    raise "Formula requires changes to only use GPL assets." if version > "2024.6.0"
+    system "npm", "ci", "--ignore-scripts"
 
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
-    bin.install_symlink Dir[libexec/"bin/*"]
+    cd buildpath/"apps/cli" do
+      # The `oss` build of Bitwarden is a GPL backed build
+      system "npm", "run", "build:oss:prod", "--ignore-scripts"
+      cd "./build" do
+        system "npm", "install", *std_npm_args
+        bin.install_symlink Dir[libexec/"bin/*"]
+      end
+    end
 
-    generate_completions_from_executable(
-      bin/"bw", "completion",
-      base_name: "bw", shell_parameter_format: :arg, shells: [:zsh]
-    )
+    # Remove incompatible pre-built `argon2` binaries
+    os = OS.kernel_name.downcase
+    arch = Hardware::CPU.intel? ? "x64" : Hardware::CPU.arch.to_s
+    node_modules = libexec/"lib/node_modules/@bitwarden/cli/node_modules"
+    (node_modules/"argon2/prebuilds/linux-arm64/argon2.armv8.musl.node").unlink
+    (node_modules/"argon2/prebuilds/linux-x64/argon2.musl.node").unlink
+    (node_modules/"argon2/prebuilds").each_child { |dir| rm_r(dir) if dir.basename.to_s != "#{os}-#{arch}" }
+
+    generate_completions_from_executable(bin/"bw", "completion", shells: [:zsh], shell_parameter_format: :arg)
   end
 
   test do

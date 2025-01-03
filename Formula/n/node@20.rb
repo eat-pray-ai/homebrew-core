@@ -1,8 +1,8 @@
 class NodeAT20 < Formula
   desc "Platform built on V8 to build network applications"
   homepage "https://nodejs.org/"
-  url "https://nodejs.org/dist/v20.15.1/node-v20.15.1.tar.xz"
-  sha256 "fdd53a5729d936691a2a1151046fb4897721cb8b0fca2af957823a9b40fe0c34"
+  url "https://nodejs.org/dist/v20.18.1/node-v20.18.1.tar.xz"
+  sha256 "91df43f8ab6c3f7be81522d73313dbdd5634bbca228ef0e6d9369fe0ab8cccd0"
   license "MIT"
 
   livecheck do
@@ -11,13 +11,12 @@ class NodeAT20 < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "1911390b46b6cc6cf313446a8a22a1de070aa9328310300314e57c5bf7405354"
-    sha256 arm64_ventura:  "92997a824bf71f1bc928f8e89cf03c92c1d7ff7ebfd464cd8ae42b5c23e0be25"
-    sha256 arm64_monterey: "9282365e94c9e5b3221d47f90b610ef5ec34856c0d8e130a52eaa92356149841"
-    sha256 sonoma:         "8b20f8368bd910ddbff579324718410584d8dded8b527d80c0b7aaf8963c5bf2"
-    sha256 ventura:        "2fab9a22d37155cf38e04b2032c063728a8e395a244961c4fd037bda4a65a8e1"
-    sha256 monterey:       "441f2d2d4e0a09665cfdc1633c3c2e1e6008ba0f04ceee4967b4a5bc461e436c"
-    sha256 x86_64_linux:   "c70db76ef2ee409a649b406b7e90eb6791f83be5c3caafe52a193bc23a382ef4"
+    sha256 arm64_sequoia: "21e897f2567b1ae53a45c8e0aa83ce5fd9d16c93b629cb7bcca1966ac33c50b2"
+    sha256 arm64_sonoma:  "ecbadb6730e5e2e48fae9eb862eff5708c042aeca5f070d8d142442598d22983"
+    sha256 arm64_ventura: "c0c6b86e63acc5d9c7d970e949be20769f4476b6e078526ece659305dc4d1ce8"
+    sha256 sonoma:        "ea1914965541a63519aa3b73ec19df6514bf0c7eaa19424e87b3d4e6c6080496"
+    sha256 ventura:       "266e3f955be8cae42f3f64bbedc39eba8e55ce4dfc4ad571e1c0aa1887997716"
+    sha256 x86_64_linux:  "9a6d6eacfca8ec8311ffa7fb3acfea668fff9250fe364a0555d30e027089eca3"
   end
 
   keg_only :versioned_formula
@@ -26,11 +25,11 @@ class NodeAT20 < Formula
   # disable! date: "2026-04-30", because: :unsupported
   deprecate! date: "2025-10-28", because: :unsupported
 
-  depends_on "pkg-config" => :build
-  depends_on "python@3.12" => :build
+  depends_on "pkgconf" => :build
+  depends_on "python@3.13" => :build
   depends_on "brotli"
   depends_on "c-ares"
-  depends_on "icu4c"
+  depends_on "icu4c@76"
   depends_on "libnghttp2"
   depends_on "libuv"
   depends_on "openssl@3"
@@ -49,7 +48,11 @@ class NodeAT20 < Formula
     EOS
   end
 
-  fails_with gcc: "5"
+  # Backport support for ICU 76+
+  patch do
+    url "https://github.com/nodejs/node/commit/81517faceac86497b3c8717837f491aa29a5e0f9.patch?full_index=1"
+    sha256 "79a5489617665c5c88651a7dc364b8967bebdea5bdf361b85572d041a4768662"
+  end
 
   def install
     ENV.llvm_clang if OS.mac? && (DevelopmentTools.clang_build_version <= 1100)
@@ -58,7 +61,7 @@ class NodeAT20 < Formula
     ENV.append "LDFLAGS", "-Wl,-ld_classic" if DevelopmentTools.clang_build_version >= 1500
 
     # make sure subprocesses spawned by make are using our Python 3
-    ENV["PYTHON"] = which("python3.12")
+    ENV["PYTHON"] = which("python3.13")
 
     args = %W[
       --prefix=#{prefix}
@@ -119,7 +122,7 @@ class NodeAT20 < Formula
     assert_predicate bin/"npm", :executable?, "npm must be executable"
     npm_args = ["-ddd", "--cache=#{HOMEBREW_CACHE}/npm_cache", "--build-from-source"]
     system bin/"npm", *npm_args, "install", "npm@latest"
-    system bin/"npm", *npm_args, "install", "ref-napi" unless head?
+    system bin/"npm", *npm_args, "install", "ref-napi"
     assert_predicate bin/"npx", :exist?, "npx must exist"
     assert_predicate bin/"npx", :executable?, "npx must be executable"
     assert_match "< hello >", shell_output("#{bin}/npx --yes cowsay hello")

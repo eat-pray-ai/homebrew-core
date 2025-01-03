@@ -1,41 +1,42 @@
 class SbomTool < Formula
   desc "Scalable and enterprise ready tool to create SBOMs for any variety of artifacts"
   homepage "https://github.com/microsoft/sbom-tool"
-  url "https://github.com/microsoft/sbom-tool/archive/refs/tags/v2.2.6.tar.gz"
-  sha256 "2f4f9f624c5bd4881bee920e5c2a8801c23889da9b61935912f28e27c7fc6aaf"
+  url "https://github.com/microsoft/sbom-tool/archive/refs/tags/v3.0.1.tar.gz"
+  sha256 "90085ab1f134f83d43767e46d6952be42a62dbb0f5368e293437620a96458867"
   license "MIT"
+  revision 1
   head "https://github.com/microsoft/sbom-tool.git", branch: "main"
 
-  bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "a74e432d437d743783f196da854c1978eeb523cb09f82ca40189fe7d6ac1dc4f"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "e2d245a508f38f49dbcd3fb7e00e5ebd9d4a4c3e3a9ec6e7fbfe82d4e8d1b46e"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "1c8bca177ee182cdb2c110868b32a6d0f19b96b0c1017ec111accf9ac20936d9"
-    sha256 cellar: :any_skip_relocation, sonoma:         "c189d8a5cdc6612bc40f3896d61c1b2fc8af2619f8cd86a03c133c08dc54fa90"
-    sha256 cellar: :any_skip_relocation, ventura:        "bf33692f2d9f549eb6827c05f94119decaa90548d06a992f25f3f099da426e2b"
-    sha256 cellar: :any_skip_relocation, monterey:       "72d777eaf070fd70ec865f41b8fbda10efee33428e423fc50564810aa045efa0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "4336d259bb08ed15dffaa793fb63d26b8bd063342b6daa8d484abe6c2510d9ac"
+  # There can be a notable gap between when a version is tagged and a
+  # corresponding release is created, so we check the "latest" release instead
+  # of the Git tags.
+  livecheck do
+    url :stable
+    strategy :github_latest
   end
 
-  depends_on "dotnet"
+  bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "6bf387a8034456bb65d63d4f864ec3b81748652ad39dd38d3d3807d02b437433"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "8c0d07a6e89a1f372531636ca561f2e5af41910ecc5791cf931730503f063795"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "67a77a8352820d51e87c58b88aa7e696a3ab97694866dffb3e8875c8fe208b89"
+    sha256 cellar: :any_skip_relocation, ventura:       "844c19d372a7fab9e4c596a4e36c61bf8c42a5d820cc683923d5b24bd6636b17"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9fd6bee59cbb61af9efeb983811f7f6e418395efc5bbc2ba3796c118c743f663"
+  end
 
-  uses_from_macos "icu4c" => :test
+  depends_on "dotnet@8"
+
   uses_from_macos "zlib"
 
   def install
-    bin.mkdir
-
     ENV["DOTNET_CLI_TELEMETRY_OPTOUT"] = "true"
 
-    dotnet = Formula["dotnet"]
-    os = OS.mac? ? "osx" : OS.kernel_name.downcase
-    arch = Hardware::CPU.intel? ? "x64" : Hardware::CPU.arch.to_s
-
+    dotnet = Formula["dotnet@8"]
     args = %W[
       --configuration Release
       --framework net#{dotnet.version.major_minor}
-      --output #{libexec}
-      --runtime #{os}-#{arch}
       --no-self-contained
+      --output #{libexec}
+      --use-current-runtime
       -p:OFFICIAL_BUILD=true
       -p:MinVerVersionOverride=#{version}
       -p:PublishSingleFile=true
@@ -46,8 +47,7 @@ class SbomTool < Formula
     ]
 
     system "dotnet", "publish", "src/Microsoft.Sbom.Tool/Microsoft.Sbom.Tool.csproj", *args
-    (bin/"sbom-tool").write_env_script libexec/"Microsoft.Sbom.Tool",
-                                       DOTNET_ROOT: "${DOTNET_ROOT:-#{dotnet.opt_libexec}}"
+    (bin/"sbom-tool").write_env_script libexec/"Microsoft.Sbom.Tool", DOTNET_ROOT: dotnet.opt_libexec
   end
 
   test do

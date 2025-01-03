@@ -1,9 +1,10 @@
 class Mise < Formula
   desc "Polyglot runtime manager (asdf rust clone)"
   homepage "https://mise.jdx.dev/"
-  url "https://github.com/jdx/mise/archive/refs/tags/v2024.7.0.tar.gz"
-  sha256 "f5196d410a5ee4e2509c6c34aa2bc7ff94ea226eaa444a5a003e1f93a069dc47"
+  url "https://github.com/jdx/mise/archive/refs/tags/v2025.1.0.tar.gz"
+  sha256 "51e56a831cbedece92b1e3e5eaad92afae9d133503881ad18f229ea41e24a618"
   license "MIT"
+  revision 1
   head "https://github.com/jdx/mise.git", branch: "main"
 
   livecheck do
@@ -12,19 +13,26 @@ class Mise < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "4228f110f4d6c20c134518bb906a5df4819edcebcbb414a0a9a1b5f0de677fd5"
-    sha256 cellar: :any,                 arm64_ventura:  "263f20ff73a6b2080042a932df95e48d058a6c54d419249bd0114098701cc412"
-    sha256 cellar: :any,                 arm64_monterey: "a3999a0028e8599008c5a1270b6915f0db854ccc2e04afe8ac39558e68431384"
-    sha256 cellar: :any,                 sonoma:         "ef919826800e7ab9c2d385be0da97a8a827e90afc6274994591ba6fe18f5f3ce"
-    sha256 cellar: :any,                 ventura:        "4991444e35d59e0a511f9fc40c02423f9c7cdf11e74d09de9ad250dc854df84e"
-    sha256 cellar: :any,                 monterey:       "28fee14f5d9dc5966fcbb98c68ca2cdd0d3519988db97e156366c8494681fa83"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "5a78354d1be8683eb8d8e60767e254f98d9560ec91efde0f07c5b13a61af25ed"
+    sha256 cellar: :any,                 arm64_sequoia: "46bcc766c5d6d7da4c937d40850d787d1cfb11e013e104a18b258a617cd2f2bb"
+    sha256 cellar: :any,                 arm64_sonoma:  "49cda77fdf35ed092bb3a4fbd2843bc0526b93958a367fe541e333a7cd9b531a"
+    sha256 cellar: :any,                 arm64_ventura: "a45b8c3e5faaff7fcc6ea15a96bfe4c35b9c75a263f9f86f9e87ee514b7b459b"
+    sha256 cellar: :any,                 sonoma:        "6d41f8d3fcb638391bd8d90ed3957c935fadcba6360918821f984a605f4d66ed"
+    sha256 cellar: :any,                 ventura:       "48326d6d80a44a2a38c35e976e864c391f226374d616b9b4c7962340bf5dbce7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ee943f018a705141bdc9d7673938c6658de88c46a915ded8eb6b31cc5ca20004"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
-  depends_on "libgit2"
+
+  depends_on "libgit2@1.8" # needs https://github.com/rust-lang/git2-rs/issues/1109 to support libgit2 1.9
   depends_on "openssl@3"
+  depends_on "usage"
+
+  uses_from_macos "bzip2"
+
+  on_linux do
+    depends_on "xz" # for liblzma
+  end
 
   def install
     ENV["LIBGIT2_NO_VENDOR"] = "1"
@@ -38,11 +46,11 @@ class Mise < Formula
     generate_completions_from_executable(bin/"mise", "completion")
     lib.mkpath
     touch lib/".disable-self-update"
-    (share/"fish"/"vendor_conf.d"/"mise-activate.fish").write <<~EOS
+    (share/"fish"/"vendor_conf.d"/"mise-activate.fish").write <<~FISH
       if [ "$MISE_FISH_AUTO_ACTIVATE" != "0" ]
         #{opt_bin}/mise activate fish | source
       end
-    EOS
+    FISH
   end
 
   def caveats
@@ -60,11 +68,12 @@ class Mise < Formula
   end
 
   test do
-    system "#{bin}/mise", "install", "terraform@1.5.7"
-    assert_match "1.5.7", shell_output("#{bin}/mise exec terraform@1.5.7 -- terraform -v")
+    system bin/"mise", "settings", "set", "experimental", "true"
+    system bin/"mise", "use", "go@1.23"
+    assert_match "1.23", shell_output("#{bin}/mise exec -- go version")
 
     [
-      Formula["libgit2"].opt_lib/shared_library("libgit2"),
+      Formula["libgit2@1.8"].opt_lib/shared_library("libgit2"),
       Formula["openssl@3"].opt_lib/shared_library("libssl"),
       Formula["openssl@3"].opt_lib/shared_library("libcrypto"),
     ].each do |library|

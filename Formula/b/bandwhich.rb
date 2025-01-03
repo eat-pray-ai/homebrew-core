@@ -1,24 +1,31 @@
 class Bandwhich < Formula
   desc "Terminal bandwidth utilization tool"
   homepage "https://github.com/imsnif/bandwhich"
-  url "https://github.com/imsnif/bandwhich/archive/refs/tags/v0.22.2.tar.gz"
-  sha256 "4c41719549e05dbaac1bc84828269e59b2f2032e76ae646da9b9e3b87e5a5fd1"
+  url "https://github.com/imsnif/bandwhich/archive/refs/tags/v0.23.1.tar.gz"
+  sha256 "aafb96d059cf9734da915dca4f5940c319d2e6b54e2ffb884332e9f5e820e6d7"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "0f3f15380a7d6e7b258c6cfc0aabdec96d83f84dd343dbf21e2d7a19f2db2ca9"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "8f69228c71a0d92a2bab223e2dfd845d50b50cd4f922de8c4efa36c15955cece"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "5578899d497324582e0dab5723cee3d8661d972ae6260c117f0362e97080deb9"
-    sha256 cellar: :any_skip_relocation, sonoma:         "91e8905c02015c1d4c416ae542fabd6fbe48ec38ae53d5505d6fda9eebfd1a57"
-    sha256 cellar: :any_skip_relocation, ventura:        "0d6ec804c0da275d59daeee1e09a9c2be17490b903bb3697385e9e0fc6360db1"
-    sha256 cellar: :any_skip_relocation, monterey:       "2993f719b6d663bed57f10ee5ff9e120cc9806d07f0d4ccb41f012d3d7a9aaf7"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "fa42cc40eedeafde73d6470da6dd0f304bccc561aaa719d6baceb334f54ad812"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "c15e7fef87ef65a7978559fbae64620eeb81447c7d36b75f61d7b38b7550d6f5"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "7979b9c76cfc69fdc8a04c9d73d3e2eb971f80d97a2b001c0070dbd3b7f35a25"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "1b3d6ba9e64f04836694b7fdc561898f574acdc7a9a16748c9cc7e3a55837779"
+    sha256 cellar: :any_skip_relocation, sonoma:        "20cc25bd2086b5641e01ddab375f3c1011f53ca385cb19f8cfb4b46a46e5b878"
+    sha256 cellar: :any_skip_relocation, ventura:       "960376206b857195c7d7c4640719b3e242fe1c06728eeb46ec441d517706fa7f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7f381d378861391d73194970be1237864d4ef6acb6d508db75502da5981647d7"
   end
 
   depends_on "rust" => :build
 
   def install
     system "cargo", "install", *std_cargo_args
+
+    out_dir = Dir["target/release/build/bandwhich-*/out"].first
+    bash_completion.install "#{out_dir}/bandwhich.bash" => "bandwhich"
+    fish_completion.install "#{out_dir}/bandwhich.fish"
+    zsh_completion.install "#{out_dir}/_bandwhich"
+
+    man1.install "#{out_dir}/bandwhich.1"
   end
 
   test do

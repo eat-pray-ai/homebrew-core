@@ -1,30 +1,25 @@
-require "language/node"
-
 class Cdktf < Formula
   desc "Cloud Development Kit for Terraform"
   homepage "https://github.com/hashicorp/terraform-cdk"
-  url "https://registry.npmjs.org/cdktf-cli/-/cdktf-cli-0.20.4.tgz"
-  sha256 "a2e5c935958828154ce736888a4259a5e782130a6cc628baab91050686c2fe42"
+  url "https://registry.npmjs.org/cdktf-cli/-/cdktf-cli-0.20.10.tgz"
+  sha256 "2ee1c87374d435b1fa649d2f0d5131adf28d14c4d8bd1c29004ea16e4a9e9f40"
   license "MPL-2.0"
 
   bottle do
-    sha256                               arm64_sonoma:   "c6c3fd92fa6fb45295ee9753873e04d226ddd633dcb639eb89d18ebd4a375caf"
-    sha256                               arm64_ventura:  "a8292a25b7d45df4ba791f40872165dee2785efe0d753a1d9888e742fab9250c"
-    sha256                               arm64_monterey: "0e511a319c8ee3169b04f1305945c5307aee19bbad9f2890cc33fa35de9cfd5c"
-    sha256                               sonoma:         "ab6caaa54e6917839f4ae365d69981097f2e2037d2e8169538a4220d9aefb29d"
-    sha256                               ventura:        "a492ddf71a3f462cc5ad66e991c28b0135073b37c144cd679ae4e1f45cc3f87a"
-    sha256                               monterey:       "d303976fa24b5cd3ff52542fd6e94ff11c0515398c2e9b285c9b67f754883848"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3672caff49c3eedaa4014e4da69d7bc198d68344000473d45305716352e4fc00"
+    sha256                               arm64_sequoia: "4aa6a8cb4fb6e32664ed6cc3dad95132786c8a8739991a7286c66b6f80be4749"
+    sha256                               arm64_sonoma:  "3f64f620e6a2cf797f259e6c51edb9c06a3b57aa9ade23cba4d84cf850b111e0"
+    sha256                               arm64_ventura: "f97805ce21d9ee697081078e212bd880c319fe81ba530e1aa7208d3b566d040a"
+    sha256                               sonoma:        "cf6f498eb9c7164d696886f42606f10e67d95a97e6c3021ecd6a060086ebbc0d"
+    sha256                               ventura:       "1b5ead114d0513ed8f97fdd858f06322331aa5dd3a407e6f1daf574524ad3b8a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "44b00d34cd932fb66bad4803608d785f5935ec6c40358354686c4164b21eef42"
   end
 
-  deprecate! date: "2024-03-13", because: "uses soon-to-be deprecated terraform"
-
+  depends_on "opentofu" => :test
   depends_on "node"
-  depends_on "terraform"
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
-    bin.install_symlink Dir["#{libexec}/bin/*"]
+    system "npm", "install", *std_npm_args
+    bin.install_symlink libexec.glob("bin/*")
 
     # remove non-native architecture pre-built binaries
     os = OS.kernel_name.downcase
@@ -32,14 +27,17 @@ class Cdktf < Formula
     node_modules = libexec/"lib/node_modules/cdktf-cli/node_modules"
     node_pty_prebuilds = node_modules/"@cdktf/node-pty-prebuilt-multiarch/prebuilds"
     (node_pty_prebuilds/"linux-x64").glob("node.abi*.musl.node").map(&:unlink)
-    node_pty_prebuilds.each_child { |dir| dir.rmtree if dir.basename.to_s != "#{os}-#{arch}" }
+    node_pty_prebuilds.each_child { |dir| rm_r(dir) if dir.basename.to_s != "#{os}-#{arch}" }
 
     generate_completions_from_executable(libexec/"bin/cdktf", "completion",
                                          shells: [:bash, :zsh], shell_parameter_format: :none)
   end
 
   test do
-    assert_match "ERROR: Cannot initialize a project in a non-empty directory",
-      shell_output("#{bin}/cdktf init --template='python' 2>&1", 1)
+    ENV["TERRAFORM_BINARY_NAME"] = "tofu"
+
+    touch "unwanted-file"
+    output = shell_output("#{bin}/cdktf init --template='python' 2>&1", 1)
+    assert_match "ERROR: Cannot initialize a project in a non-empty directory", output
   end
 end

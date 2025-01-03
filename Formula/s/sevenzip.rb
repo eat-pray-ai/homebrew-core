@@ -1,9 +1,9 @@
 class Sevenzip < Formula
   desc "7-Zip is a file archiver with a high compression ratio"
   homepage "https://7-zip.org"
-  url "https://7-zip.org/a/7z2407-src.tar.xz"
-  version "24.07"
-  sha256 "d1b0874a3f1c26df21c761a4a30691dc1213e8577f18ee78326c14ca4d683e2b"
+  url "https://7-zip.org/a/7z2409-src.tar.xz"
+  version "24.09"
+  sha256 "49c05169f49572c1128453579af1632a952409ced028259381dac30726b6133a"
   license all_of: ["LGPL-2.1-or-later", "BSD-3-Clause"]
   head "https://github.com/ip7z/7zip.git", branch: "main"
 
@@ -13,23 +13,15 @@ class Sevenzip < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "4b05d82402484962cfe0e5e0c979bb6fc638b5866198688db847e6239059e05b"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "f415f2eed462d1178abb38a0a86423bfc97e317efc3e62fd827eae639cdd398a"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "9bfba9b031710ffa58befc04947dddb39f45bf2ec6e9ca700d9b666899b9981c"
-    sha256 cellar: :any_skip_relocation, sonoma:         "28ba9a09837fec00daa083d5a63a204822d44e46bff7d9ab063b760942745557"
-    sha256 cellar: :any_skip_relocation, ventura:        "07d25d1de1e5220aec2ac15dd91bf439873541a728199c5d51963dc3c7d55c73"
-    sha256 cellar: :any_skip_relocation, monterey:       "8cb24df5e3b465203966432107c87feaebd104216cc50eaf831081e76c506c2a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "ada311cc2dfe95891f06f392cc11f488e4cea5ff87e834a92edf258f96456fe7"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "8af70077a765a3b8932830f8ac0bffe756ab09a01e9c4f1cceaf4b6ff67b73b6"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "f43517abad06c408e8e4d3b9d49d7984223f3181d44e9c9582ffd1be047fb191"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "f2a07519bf07398a2b7a2837561bc672240b7718df55cf94c4d788039942add6"
+    sha256 cellar: :any_skip_relocation, sonoma:        "eae8b36ca70c587255c68afcdb34ebebd616c7be3efd7b40facea0bff43ff826"
+    sha256 cellar: :any_skip_relocation, ventura:       "604cd24f7bd8da0e64d6c35cf4b747544af1e720f30946967da1697b3599c915"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a0cdef8851bfaa08e67e779e854b4c063cbc619e2b4c844baf04e12594545957"
   end
 
   def install
-    # See https://sourceforge.net/p/sevenzip/discussion/45797/thread/9c2d9061ce/#01e7
-    if OS.mac?
-      inreplace ["Common/FileStreams.cpp", "UI/Common/UpdateCallback.cpp"].map { |d| buildpath/"CPP/7zip"/d },
-                "sysmacros.h",
-                "types.h"
-    end
-
     cd "CPP/7zip/Bundles/Alone2" do
       mac_suffix = Hardware::CPU.intel? ? "x64" : Hardware::CPU.arch
       mk_suffix, directory = if OS.mac?

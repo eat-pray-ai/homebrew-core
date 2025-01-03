@@ -1,8 +1,8 @@
 class Ooniprobe < Formula
   desc "Network interference detection tool"
   homepage "https://ooni.org/"
-  url "https://github.com/ooni/probe-cli/archive/refs/tags/v3.22.0.tar.gz"
-  sha256 "07b03ee7e23dfbd125616c8b565009a1dde736d28f731eca722c98d7a5b67e91"
+  url "https://github.com/ooni/probe-cli/archive/refs/tags/v3.24.0.tar.gz"
+  sha256 "4c2dad0367cfe3924ca45c9f484660a132e843d6c55259ff375efadeb6d518c3"
   license "GPL-3.0-or-later"
 
   livecheck do
@@ -11,13 +11,12 @@ class Ooniprobe < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "3783269edee47bb7d75a49195b274f9e21fb43d4e486b3099277420b0568ca42"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "d16418fc489fb7a207fc9afabe749e8d124de71b30c82393422fc5715b16435e"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "556d4bef6004d77bd695448416d5fbee076090d30a5e317b0f801201d85caab7"
-    sha256 cellar: :any_skip_relocation, sonoma:         "21058caffc9deb3181a1bbf48f2ccb10975017cd271d2c19f247be23bff65900"
-    sha256 cellar: :any_skip_relocation, ventura:        "bc0d31be3cc58c7e7e6f309ef63c7791a91fbcdacf9bb538fdf6475d398eabb1"
-    sha256 cellar: :any_skip_relocation, monterey:       "6e18787946b83987395feed2c4d236e7f9869271b80083bb603ba6efe1108681"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "da08c0378bf2b1e0e64a7d285dfc2e3c7b4d0e66d3d568b3b32cce14c4030c47"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "90f3093d1c71c3f456e024eb6c15624a9fa94b13a580463de7894359a3c12cb1"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "f8d137f2874730e7c9b6e9f7f38033de9211d026700ff8c3b99a1aad28dd52c8"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "efee84f0b4d279db5bfb2da593dcaecde4c74bfee07f4a0d6c8aea6b6c52c0e9"
+    sha256 cellar: :any_skip_relocation, sonoma:        "3a9029ea95fe11a5fde169d1ff1eb902ee7ac469e3f28a88bc5460772cd2ee7d"
+    sha256 cellar: :any_skip_relocation, ventura:       "a2591ef98c36d99c6b25622077754f0fbef671bdc37660e689c6933d5988ed2e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1b013f9418249c12c12209166817ef7d1a32161acc09c9d3d41b8939f0fcb730"
   end
 
   depends_on "go" => :build
@@ -34,7 +33,7 @@ class Ooniprobe < Formula
     # failed to sufficiently increase receive buffer size (was: 208 kiB, wanted: 2048 kiB, got: 416 kiB).
     return if OS.linux?
 
-    (testpath/"config.json").write <<~EOS
+    (testpath/"config.json").write <<~JSON
       {
         "_version": 3,
         "_informed_consent": false,
@@ -54,7 +53,7 @@ class Ooniprobe < Formula
           "collect_usage_stats": false
         }
       }
-    EOS
+    JSON
 
     mkdir_p "#{testpath}/ooni_home"
     ENV["OONI_HOME"] = "#{testpath}/ooni_home"

@@ -1,26 +1,20 @@
 class Tomcat < Formula
   desc "Implementation of Java Servlet and JavaServer Pages"
   homepage "https://tomcat.apache.org/"
-  url "https://www.apache.org/dyn/closer.lua?path=tomcat/tomcat-10/v10.1.25/bin/apache-tomcat-10.1.25.tar.gz"
-  mirror "https://archive.apache.org/dist/tomcat/tomcat-10/v10.1.25/bin/apache-tomcat-10.1.25.tar.gz"
-  sha256 "f1240a32b879c445a4a4419c9b6dd87581bdb96f8a51f7b0ca1935164bb1e842"
+  url "https://www.apache.org/dyn/closer.lua?path=tomcat/tomcat-11/v11.0.2/bin/apache-tomcat-11.0.2.tar.gz"
+  mirror "https://archive.apache.org/dist/tomcat/tomcat-11/v11.0.2/bin/apache-tomcat-11.0.2.tar.gz"
+  sha256 "c1b31a6989d30a7344c1a3655da74679ce9f9b48a271e864647a141de3b78cb8"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "7b15db51b6c1c4d53f05d8376a62187f8398e92b33604c2e3feed0f57251471e"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "7b15db51b6c1c4d53f05d8376a62187f8398e92b33604c2e3feed0f57251471e"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "7b15db51b6c1c4d53f05d8376a62187f8398e92b33604c2e3feed0f57251471e"
-    sha256 cellar: :any_skip_relocation, sonoma:         "7b15db51b6c1c4d53f05d8376a62187f8398e92b33604c2e3feed0f57251471e"
-    sha256 cellar: :any_skip_relocation, ventura:        "7b15db51b6c1c4d53f05d8376a62187f8398e92b33604c2e3feed0f57251471e"
-    sha256 cellar: :any_skip_relocation, monterey:       "7b15db51b6c1c4d53f05d8376a62187f8398e92b33604c2e3feed0f57251471e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "15e4dfae152d0351443d173ab3044ea64afd6889db41c6e45a3adf4b7a726df2"
+    sha256 cellar: :any_skip_relocation, all: "71c14e8939230e4b7b4b9e8e716a5920c89c68c68ffa16288574d156355f1461"
   end
 
   depends_on "openjdk"
 
   def install
     # Remove Windows scripts
-    rm_rf Dir["bin/*.bat"]
+    rm_r(Dir["bin/*.bat"])
 
     # Install files
     prefix.install %w[NOTICE LICENSE RELEASE-NOTES RUNNING.txt]

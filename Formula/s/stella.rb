@@ -7,6 +7,7 @@ class Stella < Formula
   head "https://github.com/stella-emu/stella.git", branch: "master"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "bf73b864a71f23c25b17f649fa7b90c2d946e5decd1413d105470ef98e9b4b34"
     sha256 cellar: :any,                 arm64_sonoma:   "cfac144680c89c52742d8a596eec4918feebdb7a3e875a6c526084c8bc08ae80"
     sha256 cellar: :any,                 arm64_ventura:  "6b5af4f6e25d26c7b4706601f88c4949137d4c3a821c8bc3401cd8c0ecf53ae8"
     sha256 cellar: :any,                 arm64_monterey: "8ec8e1b06fc15774fe03b7892ab6144e76b98762a0c697c359501678634d02de"
@@ -16,15 +17,13 @@ class Stella < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "7689d9dae573a6288fe3be94adabad8791c2075d210faa27c82e624c4c6c6689"
   end
 
-  depends_on "pkg-config" => :build
-  depends_on xcode: :build
+  depends_on "pkgconf" => :build
+  depends_on xcode: :build # for xcodebuild
   depends_on "libpng"
   depends_on "sdl2"
 
   uses_from_macos "sqlite"
   uses_from_macos "zlib"
-
-  fails_with gcc: "5"
 
   def install
     sdl2 = Formula["sdl2"]

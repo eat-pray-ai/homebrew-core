@@ -1,9 +1,9 @@
 class Mpg123 < Formula
   desc "MP3 player for Linux and UNIX"
   homepage "https://www.mpg123.de/"
-  url "https://www.mpg123.de/download/mpg123-1.32.6.tar.bz2"
-  mirror "https://downloads.sourceforge.net/project/mpg123/mpg123/1.32.6/mpg123-1.32.6.tar.bz2"
-  sha256 "ccdd1d0abc31d73d8b435fc658c79049d0a905b30669b6a42a03ad169dc609e6"
+  url "https://www.mpg123.de/download/mpg123-1.32.10.tar.bz2"
+  mirror "https://downloads.sourceforge.net/project/mpg123/mpg123/1.32.10/mpg123-1.32.10.tar.bz2"
+  sha256 "87b2c17fe0c979d3ef38eeceff6362b35b28ac8589fbf1854b5be75c9ab6557c"
   license "LGPL-2.1-only"
 
   livecheck do
@@ -12,13 +12,12 @@ class Mpg123 < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "b9a8b819e65b8bb7fa2d4909faa589c9301d052f04eb00186effef23112a39d9"
-    sha256 arm64_ventura:  "f424509cc8bf121b69f37a3ff36bfeff5ad1a0057879e9f08be90c3b63978341"
-    sha256 arm64_monterey: "baa625d0c093b90eb99a5226946d2f3be2c47df626d159f2f61117dc99f09cd7"
-    sha256 sonoma:         "dd426cc673801c0515ded4f30ff54274a7d8bde6b36d4ef1e06433a85e6e10a3"
-    sha256 ventura:        "e0fd266ec58b02f0fd32b4927daea37f72bec491da77dc5465f0ea10671c807b"
-    sha256 monterey:       "1ed57deb295473caedd0fc43f2d620137c724364c81cfa780349d7d57758bde7"
-    sha256 x86_64_linux:   "377959a0f976c54deaaa93aae99c2200987d6d56a675c55bd9264653611000a3"
+    sha256 arm64_sequoia: "a7e88250498abc0521be5e43103aa1d411f33ccc08d55bbb37fd34b42015e38e"
+    sha256 arm64_sonoma:  "af9d70581ff2cb103d8d4ef92b63ed8e3568687b5a505a145653a50b9277b78f"
+    sha256 arm64_ventura: "bc9e0b6ff94df269e8741e8f1ba0234adec63445498f008c93eca30860373188"
+    sha256 sonoma:        "8368344c162b5b09a4e270c7bec9bc3356744c32d4375fac5fde9ec09ac366bb"
+    sha256 ventura:       "870777a32e3bcdca0eaffde89a3d968b21aba3bae9047c7e36b76ca23a5b7721"
+    sha256 x86_64_linux:  "ceea33a9d7ec86a51a6c26936b253ce738915e344d0e577b628d70065829596a"
   end
 
   def install

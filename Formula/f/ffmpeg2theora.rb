@@ -8,6 +8,7 @@ class Ffmpeg2theora < Formula
   head "https://gitlab.xiph.org/xiph/ffmpeg2theora.git", branch: "master"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "386bcf4220cfa4e2aa06f1a9fa920cbd028d321bf622f3b7c1010d63502ce584"
     sha256 cellar: :any,                 arm64_sonoma:   "db8c87aecac7f8ee1585140a11fba27cbc9f570662c646403b3a1363c3ae65d4"
     sha256 cellar: :any,                 arm64_ventura:  "ef0f30079f953e5f616f0033ceca1b46d7fa0152977890fa27da10b11de53998"
     sha256 cellar: :any,                 arm64_monterey: "23e95a08aeabf87d68743c06cffd1d27d054cc9aa7805fe5ab1f6eab1b121fe8"
@@ -17,7 +18,7 @@ class Ffmpeg2theora < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "3965a87c59f7e76f5440130868ad518c5e770a786e5074bb3803cc88c627c024"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "scons" => :build
   depends_on "ffmpeg@4"
   depends_on "libkate"
@@ -56,6 +57,6 @@ class Ffmpeg2theora < Formula
   end
 
   test do
-    system "#{bin}/ffmpeg2theora", "--help"
+    system bin/"ffmpeg2theora", "--help"
   end
 end

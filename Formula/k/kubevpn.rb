@@ -1,18 +1,17 @@
 class Kubevpn < Formula
   desc "Offers a Cloud-Native Dev Environment that connects to your K8s cluster network"
   homepage "https://www.kubevpn.cn"
-  url "https://github.com/kubenetworks/kubevpn/archive/refs/tags/v2.2.13.tar.gz"
-  sha256 "2f21b7188333a2cdaaa23246b3b2d08e6e4a236b6d28c2dc85c306f690e57e0a"
+  url "https://github.com/kubenetworks/kubevpn/archive/refs/tags/v2.3.9.tar.gz"
+  sha256 "23893691e9e34aab86b2cd047e68a69eb414e7e37c3d7826fed41124afecc4b0"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "0842067e972a76bbc9bf15162e6c427bb98eb1f4337d1e33f38a7936126b0d25"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "8a6593d839e7f10489170c44b4ca4032d13663c5b505f4b68b5c5e211de73c42"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "a9c47b9e89c24a97c11ce49c7546286f82e0c27e8d8405cd462c25b91b4eef5e"
-    sha256 cellar: :any_skip_relocation, sonoma:         "eaa94b31c97bc457f98c76bd4ad9468eba960f356610ae19477b86c05f60da00"
-    sha256 cellar: :any_skip_relocation, ventura:        "6df470fbe03744ce24f6721df4e62d3bddc40689a84821c42170d6d04c767084"
-    sha256 cellar: :any_skip_relocation, monterey:       "789d474522c05bbb1b551b7563a18ee2dafcc31e590360bb4a8f5b033a04f8e6"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "2112f97ed93ae78257f8e3553528315b53b753a8148e8a921bebbe6cee7d04f9"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "4d383d8689b408bee818b4ef6385315972636fccca72d73cee392701a1808cd2"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "0d83193caf4f2b53ca40d930bdf864eac149e2ba7f1df51fbd130a8defd5b781"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "56a77ab2a88212076f88a938ffceef53aa6fb3b3c53ccde29939fa985e624a84"
+    sha256 cellar: :any_skip_relocation, sonoma:        "c58b183872dfd22205b79cb31139f5d274cdba0b5efd0ca9baad97c16f5b00eb"
+    sha256 cellar: :any_skip_relocation, ventura:       "3e229aad92c53793b006a51554caeb1ebc773573130b5f3d31a19a0741ad37a8"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d200dbc5d56ea288db4d401a5bbaf9eea8875456b3f4b531dd44972c9b763cd0"
   end
 
   depends_on "go" => :build

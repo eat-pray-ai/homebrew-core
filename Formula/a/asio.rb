@@ -1,6 +1,6 @@
 class Asio < Formula
   desc "Cross-platform C++ Library for asynchronous programming"
-  homepage "https://think-async.com/Asio"
+  homepage "https://think-async.com/Asio/"
   url "https://downloads.sourceforge.net/project/asio/asio/1.30.2%20%28Stable%29/asio-1.30.2.tar.bz2"
   sha256 "9f12cef05c0477eace9c68ccabd19f9e3a04b875d4768c323714cbd3a5fa3c2b"
   license "BSL-1.0"
@@ -11,6 +11,7 @@ class Asio < Formula
   end
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "8c235792e528e6a97c2973ab94be18a14911e7af9280ba1436e8a4685a015483"
     sha256 cellar: :any,                 arm64_sonoma:   "8904055a14a4247b64b0b0109092dc16ec9b041a80b5575d41b19f4f68fa948d"
     sha256 cellar: :any,                 arm64_ventura:  "5f54e51a9617b78d98d5460432535ddbedd49c4f0a06b5674e9b4f4c4ccca2d5"
     sha256 cellar: :any,                 arm64_monterey: "671a310b49125e7690a9d3a5c11b98497b38146c59cc4d102addbc854e766b51"

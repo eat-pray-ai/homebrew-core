@@ -1,10 +1,9 @@
 class Gpgme < Formula
   desc "Library access to GnuPG"
   homepage "https://www.gnupg.org/related_software/gpgme/"
-  url "https://www.gnupg.org/ftp/gcrypt/gpgme/gpgme-1.23.2.tar.bz2"
-  sha256 "9499e8b1f33cccb6815527a1bc16049d35a6198a6c5fae0185f2bd561bce5224"
+  url "https://www.gnupg.org/ftp/gcrypt/gpgme/gpgme-1.24.1.tar.bz2"
+  sha256 "ea05d0258e71061d61716584ec34cef59330a91340571edc46b78374973ba85f"
   license "LGPL-2.1-or-later"
-  revision 1
 
   livecheck do
     url "https://gnupg.org/ftp/gcrypt/gpgme/"
@@ -12,24 +11,23 @@ class Gpgme < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "eedb9535788809e98ab8feebae75fabd5ffa39f89ec5fcc50b5d7b36ad612e69"
-    sha256 cellar: :any,                 arm64_ventura:  "148a6fdda6b21c51ede9d5885488d8d2b84180d3f7c1a557d5141b510b433c82"
-    sha256 cellar: :any,                 arm64_monterey: "2098f6407f43115f8b8309d5e75b0a7b40351bb60f0e8d6eba9d70026d587778"
-    sha256 cellar: :any,                 sonoma:         "b7454a4447fb551431c9a922af388721cc817f4d2f6e676b6f0e938c00bf70d7"
-    sha256 cellar: :any,                 ventura:        "e01422542cb10489454f6138817c7864ce951af1cc2cc2d05c09065f612cb1aa"
-    sha256 cellar: :any,                 monterey:       "f74f4bb89b250e4b2f7a50863f87129ea34bffdad74a52440e05a0a4233f78ee"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d9b08fc6006ba8ef398c061eea1af523a7855924c12940913849524b87a88e52"
+    sha256 cellar: :any,                 arm64_sequoia: "4817886d1fd2a4bfaa9b895ef0a57ae83b2728ed2ccf4430a6c46ea130764a14"
+    sha256 cellar: :any,                 arm64_sonoma:  "647b8377a6821214e63e6367692acf707217c2f961cc682727dd855a5a1ae13e"
+    sha256 cellar: :any,                 arm64_ventura: "25c16405a157103f48b918a8205c2bc6329a58de7ac1a40e6d47c63ab76e5763"
+    sha256 cellar: :any,                 sonoma:        "ada24cc3c379aab878c538753ce1d112d2a5d7ac43a521755ade797eb984100d"
+    sha256 cellar: :any,                 ventura:       "9654900d27991ce8b5f69d2ef5010237b2a47b5d12fd108ae9da8adc94654646"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7484caa7a112dc0d76711a3861dcac6cd8c48d3125317b8330e03dbca15e0c0a"
   end
 
   depends_on "python-setuptools" => :build
-  depends_on "python@3.12" => [:build, :test]
+  depends_on "python@3.13" => [:build, :test]
   depends_on "swig" => :build
   depends_on "gnupg"
   depends_on "libassuan"
   depends_on "libgpg-error"
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def install
@@ -48,9 +46,9 @@ class Gpgme < Formula
               /^\s*\$\$PYTHON setup\.py\s*\\/,
               "$$PYTHON -m pip install --use-pep517 #{std_pip_args.join(" ")} . && : \\"
 
-    system "./configure", *std_configure_args,
-                          "--disable-silent-rules",
-                          "--enable-static"
+    system "./configure", "--disable-silent-rules",
+                          "--enable-static",
+                          *std_configure_args
     system "make"
     system "make", "install"
 

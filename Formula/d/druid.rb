@@ -1,9 +1,9 @@
 class Druid < Formula
   desc "High-performance, column-oriented, distributed data store"
   homepage "https://druid.apache.org/"
-  url "https://dlcdn.apache.org/druid/30.0.0/apache-druid-30.0.0-bin.tar.gz"
-  mirror "https://archive.apache.org/dist/druid/30.0.0/apache-druid-30.0.0-bin.tar.gz"
-  sha256 "991628ad590dcccf782cfe771bbf1e5b6d0de54b2f30fecbbf8ac0cac98fc17c"
+  url "https://dlcdn.apache.org/druid/31.0.1/apache-druid-31.0.1-bin.tar.gz"
+  mirror "https://archive.apache.org/dist/druid/31.0.1/apache-druid-31.0.1-bin.tar.gz"
+  sha256 "8c20158c9fb50c3429083324ecf448df48f4f2313a0cd5f89a68708a6615b204"
   license "Apache-2.0"
 
   livecheck do
@@ -12,13 +12,7 @@ class Druid < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "ce41d8a91d03ea17758ff0a6863445d2aa03a7b0b7ae8dbc6d27e7424ff6fccc"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "ce41d8a91d03ea17758ff0a6863445d2aa03a7b0b7ae8dbc6d27e7424ff6fccc"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "ce41d8a91d03ea17758ff0a6863445d2aa03a7b0b7ae8dbc6d27e7424ff6fccc"
-    sha256 cellar: :any_skip_relocation, sonoma:         "0a7868c902c4f25f309b4492d78d1b17b07c4de23b80c34d7ec886c88583be70"
-    sha256 cellar: :any_skip_relocation, ventura:        "0a7868c902c4f25f309b4492d78d1b17b07c4de23b80c34d7ec886c88583be70"
-    sha256 cellar: :any_skip_relocation, monterey:       "0a7868c902c4f25f309b4492d78d1b17b07c4de23b80c34d7ec886c88583be70"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "77dfff322944b9b0c613078eff65dc3b59260af309ba990e761a974fe3c329e6"
+    sha256 cellar: :any_skip_relocation, all: "ebaae455f183a3e0c68085f2de51aa7371b1c06dd8d977cff2c77d1dda9c7878"
   end
 
   depends_on "zookeeper" => :test
@@ -30,6 +24,7 @@ class Druid < Formula
   end
 
   def install
+    rm_r "quickstart/tutorial"
     libexec.install Dir["*"]
 
     %w[

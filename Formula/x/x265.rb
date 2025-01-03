@@ -1,19 +1,18 @@
 class X265 < Formula
   desc "H.265/HEVC encoder"
   homepage "https://bitbucket.org/multicoreware/x265_git"
-  url "https://bitbucket.org/multicoreware/x265_git/get/3.6.tar.gz"
-  sha256 "206329b9599c78d06969a1b7b7bb939f7c99a459ab283b2e93f76854bd34ca7b"
+  url "https://bitbucket.org/multicoreware/x265_git/downloads/x265_4.1.tar.gz"
+  sha256 "a31699c6a89806b74b0151e5e6a7df65de4b49050482fe5ebf8a4379d7af8f29"
   license "GPL-2.0-only"
   head "https://bitbucket.org/multicoreware/x265_git.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "ab1b8982179412855def72a0bff980132f6540c6f068070b1c6b90734ddc9357"
-    sha256 cellar: :any,                 arm64_ventura:  "e8edbb9ad48bd30b4ccb2f7c00910bb70350d494821e91afe964fe2cd4ffa14c"
-    sha256 cellar: :any,                 arm64_monterey: "fd6642c6d2cc8d79d681ab0fc0653b809d121f9c86480841b3e747cd2a4d89d2"
-    sha256 cellar: :any,                 sonoma:         "58e2a262d8b390c5a1c61cbfb0b13e8444f9b7f238df45de743345f1cb74c950"
-    sha256 cellar: :any,                 ventura:        "f490eb7249f069ed6eca04205ac8807d8cbd27aa33399a0e5b00789abcb59d2c"
-    sha256 cellar: :any,                 monterey:       "8824a782a3c8a6f7b319751292ff3a9074e02ba6e54b4e80fec01fdb6aff254c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "2d876f2d12e9eaff8c98a01af67852e864e75fc9f6a1f818164c7b1d8d6688dc"
+    sha256 cellar: :any,                 arm64_sequoia: "b8a5e68579e954f4bfd2917891880f5861537f87c6787caaf72af7419747450f"
+    sha256 cellar: :any,                 arm64_sonoma:  "b778a0d02445f7fdd4e638dc457540e7851be9a3a1662efcec5d031b59e43573"
+    sha256 cellar: :any,                 arm64_ventura: "eaff65e197b22f708f4d44d12b9baf6ed8efeec1439460311ea3ba7722d8d2b3"
+    sha256 cellar: :any,                 sonoma:        "103cc33efc4711d856fa765897140ca1348ebc82e8f8563c5fe3ad3eea3c6d4e"
+    sha256 cellar: :any,                 ventura:       "a274accceee40a1139224b31963b31e15ee22eaab83dc76689035006aa995852"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "113a201d79f39fee805c280eba2dcc786f9153efaf71839ccc0c5d3a69592ce6"
   end
 
   depends_on "cmake" => :build
@@ -23,6 +22,7 @@ class X265 < Formula
   end
 
   def install
+    ENV.runtime_cpu_detection
     # Build based off the script at ./build/linux/multilib.sh
     args = std_cmake_args + %W[
       -DLINKED_10BIT=ON
@@ -68,11 +68,18 @@ class X265 < Formula
   end
 
   test do
-    yuv_path = testpath/"raw.yuv"
+    resource "homebrew-test_video" do
+      url "https://raw.githubusercontent.com/fraunhoferhhi/vvenc/master/test/data/RTn23_80x44p15_f15.yuv"
+      sha256 "ecd2ef466dd2975f4facc889e0ca128a6bea6645df61493a96d8e7763b6f3ae9"
+    end
+
+    resource("homebrew-test_video").stage testpath
+    yuv_path = testpath/"RTn23_80x44p15_f15.yuv"
     x265_path = testpath/"x265.265"
-    yuv_path.binwrite "\xCO\xFF\xEE" * 3200
-    system bin/"x265", "--input-res", "80x80", "--fps", "1", yuv_path, x265_path
+    system bin/"x265", "--input-res", "360x640", "--fps", "60", "--input", yuv_path, "-o", x265_path
     header = "AAAAAUABDAH//w=="
     assert_equal header.unpack("m"), [x265_path.read(10)]
+
+    assert_match "version #{version}", shell_output("#{bin}/x265 -V 2>&1")
   end
 end

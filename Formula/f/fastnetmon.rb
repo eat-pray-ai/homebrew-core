@@ -1,24 +1,23 @@
 class Fastnetmon < Formula
   desc "DDoS detection tool with sFlow, Netflow, IPFIX and port mirror support"
   homepage "https://github.com/pavel-odintsov/fastnetmon/"
-  url "https://github.com/pavel-odintsov/fastnetmon/archive/refs/tags/v1.2.6.tar.gz"
-  sha256 "b6a7d1e9ba98c1c042d774bff82ea3e8bbf03085e0be43a2676e41d590f668cf"
+  url "https://github.com/pavel-odintsov/fastnetmon/archive/refs/tags/v1.2.7.tar.gz"
+  sha256 "c21fcbf970214dd48ee8aa11e6294e16bea86495085315e7b370a84b316d0af9"
   license "GPL-2.0-only"
-  revision 13
+  revision 11
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "fa74c8af0c445163ce5b2d4b5d5fe7723d04d79fa2a8dbe54bd29661b69f2c0a"
-    sha256 cellar: :any,                 arm64_ventura:  "88b081f8be5a98df8b0ed0375d96889b8a1680f97ada4a493c2a664cb04bdcf6"
-    sha256 cellar: :any,                 arm64_monterey: "f43e32e6f15b68622419711f146eff4a40cb842aaa905d8acde1750c7772a101"
-    sha256 cellar: :any,                 sonoma:         "1517cbab5085b4d34e7b12c876aca3471b4664f0645cdc3afab21515d974b290"
-    sha256 cellar: :any,                 ventura:        "79fe68fecd2a16821d131b93aff465e1c108a408d998db5c2b5bef5e04c6288b"
-    sha256 cellar: :any,                 monterey:       "95e9fd6fb0be10fac036c7bd17200375f820e33246b9702bd038757f38820dca"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "24cc6b09a6f2acb365ace771389ed5905c0f6f60fd18f62de5181637daf7016d"
+    sha256 cellar: :any,                 arm64_sequoia: "c9299b17e960a0a658eb30f446e0ab73844347c3cfbc47d23a83cfac265bad54"
+    sha256 cellar: :any,                 arm64_sonoma:  "ce88a842e3dd91f51e77177329a98140cedfbc56eb29ee817fc607aef4c4d999"
+    sha256 cellar: :any,                 arm64_ventura: "d0555ae5c9470e421f2f34dcd3e132758a18a3b36a2f6467be87c1fb1dbe8834"
+    sha256 cellar: :any,                 sonoma:        "f099031849eaade4336780175c076e494393be12ffe340e62927c1be849a5024"
+    sha256 cellar: :any,                 ventura:       "280c6e9153debe69a71513af6fc47a65a520a1af76842265a32493531fa23b47"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d5d6eef3e64d59b152ae60f728174f2a87c5a6518cc17925c9756e53855a1676"
   end
 
   depends_on "cmake" => :build
   depends_on "abseil"
-  depends_on "boost"
+  depends_on "boost@1.85" # Boost 1.87+ issue: https://github.com/pavel-odintsov/fastnetmon/issues/1027
   depends_on "capnp"
   depends_on "grpc"
   depends_on "hiredis"
@@ -35,13 +34,11 @@ class Fastnetmon < Formula
     depends_on "libpcap"
   end
 
-  fails_with gcc: "5"
-
-  # Fix build with newer `protobuf` using open PR.
-  # PR ref: https://github.com/pavel-odintsov/fastnetmon/pull/997
+  # Fix build failure with gRPC 1.67.
+  # https://github.com/pavel-odintsov/fastnetmon/pull/1023
   patch do
-    url "https://github.com/pavel-odintsov/fastnetmon/commit/fad8757b8986226024d549a6dfb40abbab01643e.patch?full_index=1"
-    sha256 "2da8dbdf9dc63df9f17067aef20d198123ce1338559d394f29461761e6b85f85"
+    url "https://github.com/pavel-odintsov/fastnetmon/commit/b6cf2e7222c24343b868986e867ddb7adad0bf30.patch?full_index=1"
+    sha256 "3a3f719f7434e52db01a512ed3891cf0e3794d4576323e3c2fd3b31c69fb39be"
   end
 
   def install
@@ -69,30 +66,17 @@ class Fastnetmon < Formula
 
   test do
     cp etc/"fastnetmon.conf", testpath
+    inreplace "fastnetmon.conf", %r{/tmp/(fastnetmon(?:_ipv6)?\.dat)}, "#{testpath}/\\1"
 
-    inreplace testpath/"fastnetmon.conf", "/tmp/fastnetmon.dat", (testpath/"fastnetmon.dat").to_s
-
-    inreplace testpath/"fastnetmon.conf", "/tmp/fastnetmon_ipv6.dat", (testpath/"fastnetmon_ipv6.dat").to_s
-
-    fastnetmon_pid = fork do
-      exec opt_sbin/"fastnetmon",
-           "--configuration_file",
-           testpath/"fastnetmon.conf",
-           "--log_to_console"
-    end
-
-    sleep 15
+    pid = spawn opt_sbin/"fastnetmon", "--configuration_file", testpath/"fastnetmon.conf", "--log_to_console"
+    sleep 60
+    sleep 30 if OS.mac? && Hardware::CPU.intel?
 
     assert_path_exists testpath/"fastnetmon.dat"
-
-    ipv4_stats_output = (testpath/"fastnetmon.dat").read
-    assert_match("Incoming traffic", ipv4_stats_output)
-
     assert_path_exists testpath/"fastnetmon_ipv6.dat"
-
-    ipv6_stats_output = (testpath/"fastnetmon_ipv6.dat").read
-    assert_match("Incoming traffic", ipv6_stats_output)
+    assert_match "Incoming traffic", (testpath/"fastnetmon.dat").read
+    assert_match "Incoming traffic", (testpath/"fastnetmon_ipv6.dat").read
   ensure
-    Process.kill "SIGTERM", fastnetmon_pid
+    Process.kill "SIGTERM", pid
   end
 end

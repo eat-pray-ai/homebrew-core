@@ -7,6 +7,7 @@ class Libhttpserver < Formula
   head "https://github.com/etr/libhttpserver.git", branch: "master"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "a52ab6c0ede296608a7aa71640485e6295b72ae13cfdbb14cbd91c032d9c0af7"
     sha256 cellar: :any,                 arm64_sonoma:   "8656daf385c457a28484c8bff0d6271a5271980ab97899b249c1890274617fb7"
     sha256 cellar: :any,                 arm64_ventura:  "b11af50845ce2a87984d6240d3d7db441be82f84fde6fc6447866cc0dd5e6236"
     sha256 cellar: :any,                 arm64_monterey: "ce9d31e81bfbc06990ae1b57b295278e341d5917e157688d999f48c102ec4fba"
@@ -21,21 +22,15 @@ class Libhttpserver < Formula
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "libmicrohttpd"
 
   uses_from_macos "curl" => :test
 
   def install
-    args = [
-      "--disable-dependency-tracking",
-      "--disable-silent-rules",
-      "--prefix=#{prefix}",
-    ]
-
     system "./bootstrap"
     mkdir "build" do
-      system "../configure", *args
+      system "../configure", "--disable-silent-rules", *std_configure_args
       system "make", "install"
     end
     pkgshare.install "examples"
@@ -51,7 +46,7 @@ class Libhttpserver < Formula
     system ENV.cxx, "minimal_hello_world.cpp",
       "-std=c++17", "-o", "minimal_hello_world", "-L#{lib}", "-lhttpserver", "-lcurl"
 
-    fork { exec "./minimal_hello_world" }
+    spawn "./minimal_hello_world"
     sleep 3 # grace time for server start
 
     assert_match "Hello, World!", shell_output("curl http://127.0.0.1:#{port}/hello")

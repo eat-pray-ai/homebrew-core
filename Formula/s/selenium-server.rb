@@ -1,8 +1,8 @@
 class SeleniumServer < Formula
   desc "Browser automation for testing purposes"
   homepage "https://www.selenium.dev/"
-  url "https://github.com/SeleniumHQ/selenium/releases/download/selenium-4.22.0/selenium-server-4.22.0.jar"
-  sha256 "fb8a6a8c08fcdc0f8134235d3204e5df1b3ab17eeedea3126766759619e98ae8"
+  url "https://github.com/SeleniumHQ/selenium/releases/download/selenium-4.27.0/selenium-server-4.27.0.jar"
+  sha256 "5481ca09814fc0ec8c2b8ff07b8574a467f49f0c285107b1525325d535408d6a"
   license "Apache-2.0"
 
   livecheck do
@@ -11,13 +11,7 @@ class SeleniumServer < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "4c1824c6de86ef1868bcc790c188bc4d75d5a7b5432aa9422f32c333894781af"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "4c1824c6de86ef1868bcc790c188bc4d75d5a7b5432aa9422f32c333894781af"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "4c1824c6de86ef1868bcc790c188bc4d75d5a7b5432aa9422f32c333894781af"
-    sha256 cellar: :any_skip_relocation, sonoma:         "4c1824c6de86ef1868bcc790c188bc4d75d5a7b5432aa9422f32c333894781af"
-    sha256 cellar: :any_skip_relocation, ventura:        "4c1824c6de86ef1868bcc790c188bc4d75d5a7b5432aa9422f32c333894781af"
-    sha256 cellar: :any_skip_relocation, monterey:       "4c1824c6de86ef1868bcc790c188bc4d75d5a7b5432aa9422f32c333894781af"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "ca34fb3b68b2f5a77c6e4b15204cb1106f792d813ea2fdc272536883c76ff5b4"
+    sha256 cellar: :any_skip_relocation, all: "2fe9aee9a357a5490b042d4396e41ca190b78fa34d1c9b86eb737b43a6976295"
   end
 
   depends_on "openjdk"
@@ -36,7 +30,7 @@ class SeleniumServer < Formula
 
   test do
     port = free_port
-    fork { exec "#{bin}/selenium-server standalone --selenium-manager true --port #{port}" }
+    spawn "#{bin}/selenium-server standalone --selenium-manager true --port #{port}"
 
     parsed_output = nil
 
@@ -56,7 +50,7 @@ class SeleniumServer < Formula
       break if parsed_output["value"]["ready"]
     end
 
-    assert !parsed_output.nil?
+    refute_nil parsed_output
     assert parsed_output["value"]["ready"]
     assert_match version.to_s, parsed_output["value"]["nodes"].first["version"]
   end

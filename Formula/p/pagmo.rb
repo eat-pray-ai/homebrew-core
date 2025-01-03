@@ -1,19 +1,18 @@
 class Pagmo < Formula
   desc "Scientific library for massively parallel optimization"
   homepage "https://esa.github.io/pagmo2/"
-  url "https://github.com/esa/pagmo2/archive/refs/tags/v2.19.0.tar.gz"
-  sha256 "701ada528de7d454201e92a5d88903dd1c22ea64f43861d9694195ddfef82a70"
+  url "https://github.com/esa/pagmo2/archive/refs/tags/v2.19.1.tar.gz"
+  sha256 "ecc180e669fa6bbece959429ac7d92439e89e1fd1c523aa72b11b6c82e414a1d"
   license any_of: ["LGPL-3.0-or-later", "GPL-3.0-or-later"]
-  revision 4
+  revision 2
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "74848a6d33ff15f49535e54fd072888884fe03326d28be62b57a1ff3987359be"
-    sha256 cellar: :any,                 arm64_ventura:  "d7b9590b8add425a5524e691bc9581c8e18ca4fd4ae021eacc8c9d357d9b7c3a"
-    sha256 cellar: :any,                 arm64_monterey: "c4b3f119dae48013dbfa64fa78d9d20daff88b410ad66191053aa0ce98b7f3d9"
-    sha256 cellar: :any,                 sonoma:         "889ccd3f2801d85a95995559d98cd31baecb2242f048bf73cedc4a3bc0a92e50"
-    sha256 cellar: :any,                 ventura:        "f036624926ec42eee682d1183d1df793bf4c497e36a7814c741df16a4b71e7c4"
-    sha256 cellar: :any,                 monterey:       "1521d43fcb56388acd8ea97d349d7bb40b980356f4ff186370e724a6c981f085"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "5dbf74152c4aa9ee8a8d209899e586ff093c83f5d6c32dcf891442e05303e7c7"
+    sha256 cellar: :any,                 arm64_sequoia: "0a031d339069e2a7e9c7ff555af7115bd8006e7173bf63b7ca9e98b98fcd3307"
+    sha256 cellar: :any,                 arm64_sonoma:  "0d6d3d94b2a82cd212bdefb87a42be22bb49aaa78c4da81f8dd840f25a2b4a80"
+    sha256 cellar: :any,                 arm64_ventura: "35b1e055788d6f1182d369c07e941e86936987d3b57a186b6412a6a7ead8c776"
+    sha256 cellar: :any,                 sonoma:        "ac51821a1e4d156ab8b81f70ba3587e0a91cd7fa3ee803e4084f5c09a0cc404d"
+    sha256 cellar: :any,                 ventura:       "a532bd3297ff9107bdfb50e4113f75f9d603b970ac214734945e26baa213fd16"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "125a255a07d86ad58c44317d4e17c75b8ddd957b3392c2e0992b50d95cea368e"
   end
 
   depends_on "cmake" => :build
@@ -22,17 +21,19 @@ class Pagmo < Formula
   depends_on "nlopt"
   depends_on "tbb"
 
-  fails_with gcc: "5"
-
   def install
-    system "cmake", ".", "-DPAGMO_WITH_EIGEN3=ON", "-DPAGMO_WITH_NLOPT=ON",
-                         *std_cmake_args,
-                         "-DCMAKE_CXX_STANDARD=17"
-    system "make", "install"
+    args = %w[
+      -DPAGMO_WITH_EIGEN3=ON
+      -DPAGMO_WITH_NLOPT=ON
+    ]
+
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <iostream>
 
       #include <pagmo/algorithm.hpp>
@@ -70,7 +71,7 @@ class Pagmo < Formula
 
           return 0;
       }
-    EOS
+    CPP
 
     system ENV.cxx, "test.cpp", "-I#{include}", "-L#{lib}", "-lpagmo",
                     "-std=c++17", "-o", "test"

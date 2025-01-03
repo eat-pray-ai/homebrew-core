@@ -7,6 +7,7 @@ class Libstrophe < Formula
   head "https://github.com/strophe/libstrophe.git", branch: "master"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "36c9cef915123528efb7d774ae976c386b4c58e0c64e757e63895c5042241d69"
     sha256 cellar: :any,                 arm64_sonoma:   "902dcba315b0ce926f99a15f5f7dc0ac802a13a24dee1f5e1492af9bc65e12ae"
     sha256 cellar: :any,                 arm64_ventura:  "923cf6f7907fe086f31956910790a9585f643b11566b4a832f8e31bd3fc5b85c"
     sha256 cellar: :any,                 arm64_monterey: "fdcba4273478eed63187409bde68ee5027126ff9b3a77d79547c143e06a016e4"
@@ -19,22 +20,21 @@ class Libstrophe < Formula
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "openssl@3"
 
   uses_from_macos "expat"
   uses_from_macos "libxml2"
+  uses_from_macos "zlib"
 
   def install
     system "./bootstrap.sh"
-    system "./configure", "--disable-dependency-tracking",
-                          "--disable-silent-rules",
-                          "--prefix=#{prefix}"
+    system "./configure", "--disable-silent-rules", *std_configure_args
     system "make", "install"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <strophe.h>
       #include <assert.h>
 
@@ -53,7 +53,7 @@ class Libstrophe < Formula
         xmpp_shutdown();
         return 0;
       }
-    EOS
+    C
     flags = ["-I#{include}/", "-L#{lib}", "-lstrophe"]
     system ENV.cc, "-o", "test", "test.c", *(flags + ENV.cflags.to_s.split)
     system "./test"

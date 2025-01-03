@@ -7,6 +7,7 @@ class Mdsh < Formula
   head "https://github.com/zimbatm/mdsh.git", branch: "main"
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "5bef5cf5387264ba779d84ad53391a311573cd9a59cbc678b6a0fab6c4219f00"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "7cb6ad949b1853f9d378b1677bafe46d2eefdce5fa236789ba20b41f86a9d6ab"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "fd1175a75d3a77ae26605493aeac7473025081b7b962c3c1b9c9a587e6b3100a"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "f59e1fed6183d5910b70de5cb5aa1b6663456cdbbed62f160fac931944d6cbd7"
@@ -25,7 +26,7 @@ class Mdsh < Formula
   test do
     (testpath/"README.md").write "`$ seq 4 | sort -r`"
     system bin/"mdsh"
-    assert_equal <<~EOS.strip, (testpath/"README.md").read
+    assert_equal <<~MARKDOWN.strip, (testpath/"README.md").read
       `$ seq 4 | sort -r`
 
       ```
@@ -34,7 +35,7 @@ class Mdsh < Formula
       2
       1
       ```
-    EOS
+    MARKDOWN
 
     assert_match version.to_s, shell_output("#{bin}/mdsh --version")
   end

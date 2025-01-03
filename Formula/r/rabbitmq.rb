@@ -1,8 +1,8 @@
 class Rabbitmq < Formula
   desc "Messaging and streaming broker"
   homepage "https://www.rabbitmq.com"
-  url "https://github.com/rabbitmq/rabbitmq-server/releases/download/v3.13.4/rabbitmq-server-generic-unix-3.13.4.tar.xz"
-  sha256 "d8595e6406baba6da3005fcbd1f0dbe0905c73b77c74c851dbfaa8ae0b53adf8"
+  url "https://github.com/rabbitmq/rabbitmq-server/releases/download/v4.0.5/rabbitmq-server-generic-unix-4.0.5.tar.xz"
+  sha256 "2027f93b275454295d869e637e09f5cc690603d1a2e1c8273780a84bdaf57827"
   license "MPL-2.0"
 
   livecheck do
@@ -11,13 +11,7 @@ class Rabbitmq < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "9cf7a139c48be0a9cfddd11e7da2a281dfdc17690bf6ed560c7abcc05735635d"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "9cf7a139c48be0a9cfddd11e7da2a281dfdc17690bf6ed560c7abcc05735635d"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "9cf7a139c48be0a9cfddd11e7da2a281dfdc17690bf6ed560c7abcc05735635d"
-    sha256 cellar: :any_skip_relocation, sonoma:         "9cf7a139c48be0a9cfddd11e7da2a281dfdc17690bf6ed560c7abcc05735635d"
-    sha256 cellar: :any_skip_relocation, ventura:        "9cf7a139c48be0a9cfddd11e7da2a281dfdc17690bf6ed560c7abcc05735635d"
-    sha256 cellar: :any_skip_relocation, monterey:       "9cf7a139c48be0a9cfddd11e7da2a281dfdc17690bf6ed560c7abcc05735635d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "aa2f35d322e2816afb7e87e1409610221739b6b4d559015123a6a74cb3c23b98"
+    sha256 cellar: :any_skip_relocation, all: "a7b89e72a86b835a272ee1c2cdae82dce15dd7b7ff272f27285fc83c79526663"
   end
 
   depends_on "erlang"
@@ -56,10 +50,16 @@ class Rabbitmq < Formula
                                  "rabbitmq_mqtt,rabbitmq_stream]."
     end
 
-    sbin.install prefix/"plugins/rabbitmq_management-#{version}/priv/www/cli/rabbitmqadmin"
+    rabbitmqadmin = prefix.glob("plugins/rabbitmq_management-*/priv/www/cli/rabbitmqadmin")
+    if (rabbitmqadmin_count = rabbitmqadmin.count) > 1
+      odie "Expected only one `rabbitmqadmin`, got #{rabbitmqadmin_count}"
+    end
+
+    sbin.install rabbitmqadmin
     (sbin/"rabbitmqadmin").chmod 0755
-    generate_completions_from_executable(sbin/"rabbitmqadmin", "--bash-completion", shells: [:bash],
-                                         base_name: "rabbitmqadmin", shell_parameter_format: :none)
+    generate_completions_from_executable(sbin/"rabbitmqadmin", "--bash-completion",
+                                         shells:                 [:bash],
+                                         shell_parameter_format: :none)
   end
 
   def caveats

@@ -4,22 +4,22 @@ class Criterion < Formula
   url "https://github.com/Snaipe/Criterion/releases/download/v2.4.2/criterion-2.4.2.tar.xz"
   sha256 "e3c52fae0e90887aeefa1d45066b1fde64b82517d7750db7a0af9226ca6571c0"
   license "MIT"
+  revision 2
   head "https://github.com/Snaipe/Criterion.git", branch: "bleeding"
 
   bottle do
-    sha256 cellar: :any, arm64_sonoma:   "dfcc1663c7ca47642db565c77773a3e68866cfc0d5d353629e20ef47649191d0"
-    sha256 cellar: :any, arm64_ventura:  "5ae290e70fc07f3c78d8827027b70232c87ff07bb7297161bde71c9792fb407c"
-    sha256 cellar: :any, arm64_monterey: "f8e3b622a0cd0dbcb169d7595cd15acbe81cc666fb3344f0f0a560fd5740afbf"
-    sha256 cellar: :any, sonoma:         "ec1932cc75323624c4d43a5eb3d54b02b3ec0d016cb111695488b681eb67874e"
-    sha256 cellar: :any, ventura:        "3e7ad78fdf43eddaa64dce5caf15fc28806e8066adc8625720a7bfa2fc9fe795"
-    sha256 cellar: :any, monterey:       "4a591b4b9f37f8343dc5900ad42b8daff1703fa9b7e03b5957b2b94476ea8d89"
-    sha256               x86_64_linux:   "cbb32a2c8d32f1c0611d3194c03190bd9f61bcfd6c6052d03fcf9d5f201139c9"
+    sha256 cellar: :any, arm64_sequoia: "87e4b6050b97f8c93ffa634a013392a08dd9ca6ccde834ab0b38ef960bdbbb3c"
+    sha256 cellar: :any, arm64_sonoma:  "cd2f6e03ef7b2bf9e3ba7e6620fc3f7971a98bba90ada27302ac84e1e0019ac4"
+    sha256 cellar: :any, arm64_ventura: "c6f8a68eba64dd89f2a9748e37b7739919ef51f24c065495c1804b682bf507b5"
+    sha256 cellar: :any, sonoma:        "85c669acf3f38a5a905425ece8bc92f8a845c9af1dcf569a4d9c18da99a4e507"
+    sha256 cellar: :any, ventura:       "b43ee024021a2a0ae8ad6c1a246790b0990544cbe288d16bd6a21af517afab97"
+    sha256               x86_64_linux:  "c0801143d8501a7af0e73b559b3af2d4877edf4cf2a9f5adb1f622915738f9e4"
   end
 
   depends_on "cmake" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "libgit2"
   depends_on "nanomsg"
   depends_on "nanopb"
@@ -27,20 +27,20 @@ class Criterion < Formula
   uses_from_macos "libffi"
 
   def install
-    system "meson", "setup", *std_meson_args, "--force-fallback-for=boxfort,debugbreak,klib", "build"
+    system "meson", "setup", "build", "--force-fallback-for=boxfort,debugbreak,klib", *std_meson_args
     system "meson", "compile", "-C", "build"
     system "meson", "install", "--skip-subprojects", "-C", "build"
   end
 
   test do
-    (testpath/"test-criterion.c").write <<~EOS
+    (testpath/"test-criterion.c").write <<~C
       #include <criterion/criterion.h>
 
       Test(suite_name, test_name)
       {
         cr_assert(1);
       }
-    EOS
+    C
 
     system ENV.cc, "test-criterion.c", "-I#{include}", "-L#{lib}", "-lcriterion", "-o", "test-criterion"
     system "./test-criterion"

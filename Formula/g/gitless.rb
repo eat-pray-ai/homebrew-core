@@ -6,26 +6,28 @@ class Gitless < Formula
   url "https://files.pythonhosted.org/packages/9c/2e/457ae38c636c5947d603c84fea1cf51b7fcd0c8a5e4a9f2899b5b71534a0/gitless-0.8.8.tar.gz"
   sha256 "590d9636d2ca743fdd972d9bf1f55027c1d7bc2ab1d5e877868807c3359b78ef"
   license "MIT"
-  revision 15
+  revision 16
 
   bottle do
-    rebuild 3
-    sha256 cellar: :any,                 arm64_sonoma:   "5a34588024e77b81bb4159be66a1cd88ac9b1fc6cf2fe4e38304ffdc8c7e257b"
-    sha256 cellar: :any,                 arm64_ventura:  "3962cf0338bd55bd51c56105f66b9b61c13108b43741c933c0f22bee9aef1ae2"
-    sha256 cellar: :any,                 arm64_monterey: "b38610d904c03a9cc861c465667da9702f65ffb66e2e57a5110152f5c072fb71"
-    sha256 cellar: :any,                 sonoma:         "4ec25c83e7b3d13501d74c80984ff77fcc36c6b271529102eb248cccd8ea2811"
-    sha256 cellar: :any,                 ventura:        "98ce8f01cc7cf04682efb27b14cdbea6c5a02838b27136912ea4fed092be0b58"
-    sha256 cellar: :any,                 monterey:       "33cd664f810a9ef2571c2444ab85b51a828a1d71c13bbe72fb0db404a9960e63"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "c245e63afd7c27ce7ce170cb89179054d81d68421f87fdba927ba0042c58ce1e"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "1c40014729e41a0a003e1ee46e5bb19a36f009c711b62ce4fb2e231f8734115a"
+    sha256 cellar: :any,                 arm64_sonoma:  "386dd69aab3a33cea5cd627b012a470fda787e36e874d0a9906fb5aee4bc3cc0"
+    sha256 cellar: :any,                 arm64_ventura: "e8fbf4d8f756335b3561196b5719f8423976b856eccd9947e9516dd0aaa242f6"
+    sha256 cellar: :any,                 sonoma:        "4ec5cff232a3f893b45b29764e50c274ef294acae3ae67e39a8794f3a1f87e1e"
+    sha256 cellar: :any,                 ventura:       "42dbacc0c5716aaf7a7670bbbb3aaf56b1dfd35322e79ebe354da998f70d663f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "622c76bbb49845b2917a374693a0f6d0043fdb6f2d83b29e8a79bd2678ab90b5"
   end
 
-  depends_on "libgit2"
-  depends_on "python@3.12"
+  # https://github.com/gitless-vcs/gitless/issues/248
+  deprecate! date: "2024-07-17", because: :unmaintained
+
+  depends_on "libgit2@1.7"
+  depends_on "python@3.13"
 
   uses_from_macos "libffi"
 
   on_linux do
-    depends_on "pkg-config" => :build
+    depends_on "pkgconf" => :build
   end
 
   resource "args" do
@@ -34,8 +36,8 @@ class Gitless < Formula
   end
 
   resource "cffi" do
-    url "https://files.pythonhosted.org/packages/68/ce/95b0bae7968c65473e1298efb042e10cafc7bafc14d9e4f154008241c91d/cffi-1.16.0.tar.gz"
-    sha256 "bcb3ef43e58665bbda2fb198698fcae6776483e0c4a631aa5647806c25e02cc0"
+    url "https://files.pythonhosted.org/packages/fc/97/c783634659c2920c3fc70419e3af40972dbaf758daa229a7d6ea6135c90d/cffi-1.17.1.tar.gz"
+    sha256 "1c39c6016c32bc48dd54561950ebd6836e1670f2ae46128f67cf49e789c52824"
   end
 
   resource "clint" do
@@ -44,8 +46,8 @@ class Gitless < Formula
   end
 
   resource "pycparser" do
-    url "https://files.pythonhosted.org/packages/5e/0b/95d387f5f4433cb0f53ff7ad859bd2c6051051cebbb564f139a999ab46de/pycparser-2.21.tar.gz"
-    sha256 "e644fdec12f7872f86c58ff790da456218b10f863970249516d60a5eaca77206"
+    url "https://files.pythonhosted.org/packages/1d/b2/31537cf4b1ca988837256c910a668b553fceb8f069bedc4b1c826024b52c/pycparser-2.22.tar.gz"
+    sha256 "491c8be9c040f5390f5bf44a5b07752bd07f56edf992381b05c701439eec10f6"
   end
 
   resource "pygit2" do

@@ -1,8 +1,8 @@
 class Cimg < Formula
   desc "C++ toolkit for image processing"
   homepage "https://cimg.eu/"
-  url "https://cimg.eu/files/CImg_3.4.0.zip"
-  sha256 "d6b8e2ff696750d85d41eb4e6d692676584dfdf32a078caee18708f88789b6a6"
+  url "https://cimg.eu/files/CImg_3.5.0.zip"
+  sha256 "6126e66e44b447748fb8cd97246707ac90b598e36ca1575e58104b03aa834c62"
   license "CECILL-2.0"
 
   livecheck do
@@ -11,16 +11,13 @@ class Cimg < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "da0d47b2cbfaefc4b8f87ee053bb8308d6b9375969ef7ab7902a9c62526f761c"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "da0d47b2cbfaefc4b8f87ee053bb8308d6b9375969ef7ab7902a9c62526f761c"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "da0d47b2cbfaefc4b8f87ee053bb8308d6b9375969ef7ab7902a9c62526f761c"
-    sha256 cellar: :any_skip_relocation, sonoma:         "7dff1257405256c85c26e39024064c76c621bbc33edefebb617893db023d65e5"
-    sha256 cellar: :any_skip_relocation, ventura:        "7dff1257405256c85c26e39024064c76c621bbc33edefebb617893db023d65e5"
-    sha256 cellar: :any_skip_relocation, monterey:       "7dff1257405256c85c26e39024064c76c621bbc33edefebb617893db023d65e5"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "da0d47b2cbfaefc4b8f87ee053bb8308d6b9375969ef7ab7902a9c62526f761c"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "f5a8bda491f815b8b397fd314a42e73fccf4ba33a88bbe0f40650166632d6890"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "f5a8bda491f815b8b397fd314a42e73fccf4ba33a88bbe0f40650166632d6890"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "f5a8bda491f815b8b397fd314a42e73fccf4ba33a88bbe0f40650166632d6890"
+    sha256 cellar: :any_skip_relocation, sonoma:        "698fbcbf0794dfbd76b3932a0af7b5eeb3fa35cdc08035ab5680907a586d3c7e"
+    sha256 cellar: :any_skip_relocation, ventura:       "698fbcbf0794dfbd76b3932a0af7b5eeb3fa35cdc08035ab5680907a586d3c7e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f5a8bda491f815b8b397fd314a42e73fccf4ba33a88bbe0f40650166632d6890"
   end
-
-  fails_with gcc: "5" # C++ 17 is required
 
   def install
     include.install "CImg.h"

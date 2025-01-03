@@ -1,8 +1,8 @@
 class InfluxdbAT1 < Formula
   desc "Time series, events, and metrics database"
   homepage "https://influxdata.com/time-series-platform/influxdb/"
-  url "https://github.com/influxdata/influxdb/archive/refs/tags/v1.11.5.tar.gz"
-  sha256 "11942f7f4637f80565832c41455dfae29ed78f283bffc0ca48bd7843535e8bd5"
+  url "https://github.com/influxdata/influxdb/archive/refs/tags/v1.11.8.tar.gz"
+  sha256 "c53e9390ca3c513c508aafc7b91d169fb5200ba741ac9756e59b2f674ae53738"
   # 1.x is using MIT license while 1.x and 3.x is using dual license (Apache-2.0/MIT)
   license "MIT"
 
@@ -12,19 +12,19 @@ class InfluxdbAT1 < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "75be190d61c02849845df24418dc2a48bc595cabc45be5925ca5ea48147f0761"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "8fe4ae9072404bab4a67d7e9f2574ee32c71eab5f7d0b709f07261859c0d55bb"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "66ef665e64323d706fd7c65d7fbc7e55a418e9434577f2ead8b36353d45a790d"
-    sha256 cellar: :any_skip_relocation, sonoma:         "7ac23ac260f7b87440c27ffea82063d3eb4a768c7a6c9e8e87a78d8d864e118c"
-    sha256 cellar: :any_skip_relocation, ventura:        "88ba046b54e3bd0d304cbd886f357c47b0ada9b4b0529d63705358b99cfe4881"
-    sha256 cellar: :any_skip_relocation, monterey:       "b8146e1164a56daf0f31e97c49fb08df7d162c6e350b20aae2ffbae04c4fdfbf"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "94f3c5e28cb587a1ae4c5e0cae2634f2fe7546d5c3ba4075fd8e0a39cf09755e"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "a16ab41c6f874c7b1f4a3270f330737ab97bca896bd0ebc16959b98ca9d4508d"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "d883510e1b2a7ce917bcda970363dcfe5fb8d7b5470ff139c5ba4cb8cfbed8d9"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "feb8a53d3796b3a3f6db169cfcfbff22ea1f4640c6dfa4bcef7279229e898913"
+    sha256 cellar: :any_skip_relocation, sonoma:        "22571e63d45311ce6b79114d1ffbeba4d2afc9c04e15200ad799dae9078bdd54"
+    sha256 cellar: :any_skip_relocation, ventura:       "575068844d81e6c2623d995aaf2f3891e0d19ba3ad555db6575b76bb2cb56274"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4b659d515984209fb912df2e58ab96f2ac9b93240f89885f85e4c6d57ece1e30"
   end
 
   keg_only :versioned_formula
 
   depends_on "go" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
 
   # NOTE: The version here is specified in the go.mod of influxdb.
@@ -33,6 +33,14 @@ class InfluxdbAT1 < Formula
   resource "pkg-config-wrapper" do
     url "https://github.com/influxdata/pkg-config/archive/refs/tags/v0.2.11.tar.gz"
     sha256 "52b22c151163dfb051fd44e7d103fc4cde6ae8ff852ffc13adeef19d21c36682"
+  end
+
+  # update flux dep to fix rust build issue
+  # upstream bug report, https://github.com/influxdata/influxdb/issues/25440
+  # upstream rust 1.83 build patch, https://github.com/influxdata/flux/pull/5516
+  patch do
+    url "https://raw.githubusercontent.com/Homebrew/formula-patches/a2f5c7e20f69eabde99098e6480d2b29faaf2638/influxdb%401/1.11.8-rust.patch"
+    sha256 "f24a5021b72a3ebd9b7234c35f033fa0f5d5f10377257af09dcfdbd84fcf5ed4"
   end
 
   def install
@@ -77,9 +85,7 @@ class InfluxdbAT1 < Formula
     end
 
     begin
-      pid = fork do
-        exec "#{bin}/influxd -config #{testpath}/config.toml"
-      end
+      pid = spawn "#{bin}/influxd -config #{testpath}/config.toml"
       sleep 6
       output = shell_output("curl -Is localhost:8086/ping")
       assert_match "X-Influxdb-Version:", output

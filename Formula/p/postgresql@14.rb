@@ -1,8 +1,8 @@
 class PostgresqlAT14 < Formula
   desc "Object-relational database system"
   homepage "https://www.postgresql.org/"
-  url "https://ftp.postgresql.org/pub/source/v14.12/postgresql-14.12.tar.bz2"
-  sha256 "6118d08f9ddcc1bd83cf2b7cc74d3b583bdcec2f37e6245a8ac003b8faa80923"
+  url "https://ftp.postgresql.org/pub/source/v14.15/postgresql-14.15.tar.bz2"
+  sha256 "02e891e314b4e9ee24cbd78028dab7c73f9c1ba3e30835bcbef71fe220401fc5"
   license "PostgreSQL"
 
   livecheck do
@@ -11,20 +11,19 @@ class PostgresqlAT14 < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "8e468dba4092ff6c8af082517894e9a2ffaa9c2c8916dca14d4d3890faaac321"
-    sha256 arm64_ventura:  "444019bb85e0a4785dae3e40b4035b3db7518808bed5cc35d3e03375991c6eaa"
-    sha256 arm64_monterey: "03d6aed53552f1b0db20159bed9310501e754cb10cc2e0623408ae6625d02e0a"
-    sha256 sonoma:         "0f836e92846e8dd82ee096340c88f847652b7b348caa04f31b861e742a83fb17"
-    sha256 ventura:        "33cc4b0ccd0173689d4607edfa9d28eaaca95696e16c4642c239d93579f071b8"
-    sha256 monterey:       "b358565c3b3f99729bd133e42d1542d09047fdc4ddff9c90f7b8353fbb769e0c"
-    sha256 x86_64_linux:   "9060e47b47e32a644658410198653750ec591a80d44aecbf4466b82edb301162"
+    sha256 arm64_sequoia: "98f8b1b18ad13b8ad8e07a1087ee457dbadb60a317ac77e71025e18ef65a1d72"
+    sha256 arm64_sonoma:  "e06e4275448de050feb2dfd89aded87b710beef7f0e56f78fe4d3ef143611c57"
+    sha256 arm64_ventura: "4c5c775bc9a1e8eca606ee23723a7a6e711696295dfa212e57807bd537842c67"
+    sha256 sonoma:        "821c9f71749f0b5adc8775ff47298fa1480f8362dfa6c3175c6bc43f1095716f"
+    sha256 ventura:       "35c483187065c59241192fb80fb5030c95275caa393891fbb258568e874bc6df"
+    sha256 x86_64_linux:  "1bde7950bb79ebc8232bae9498550fdb173fec30fc90cb2ea395158ab7acf018"
   end
 
   # https://www.postgresql.org/support/versioning/
   deprecate! date: "2026-11-12", because: :unsupported
 
-  depends_on "pkg-config" => :build
-  depends_on "icu4c"
+  depends_on "pkgconf" => :build
+  depends_on "icu4c@76"
 
   # GSSAPI provided by Kerberos.framework crashes when forked.
   # See https://github.com/Homebrew/homebrew-core/issues/47494.
@@ -38,6 +37,7 @@ class PostgresqlAT14 < Formula
   uses_from_macos "libxslt"
   uses_from_macos "openldap"
   uses_from_macos "perl"
+  uses_from_macos "zlib"
 
   on_linux do
     depends_on "linux-pam"
@@ -67,12 +67,7 @@ class PostgresqlAT14 < Formula
       --with-uuid=e2fs
       --with-extra-version=\ (#{tap.user})
     ]
-    if OS.mac?
-      args += %w[
-        --with-bonjour
-        --with-tcl
-      ]
-    end
+    args += %w[--with-bonjour --with-tcl] if OS.mac?
 
     # PostgreSQL by default uses xcodebuild internally to determine this,
     # which does not work on CLT-only installs.
@@ -87,12 +82,11 @@ class PostgresqlAT14 < Formula
                                     "pkgincludedir=#{include}/#{name}",
                                     "includedir_server=#{include}/#{name}/server",
                                     "includedir_internal=#{include}/#{name}/internal"
+    return unless OS.linux?
 
-    if OS.linux?
-      inreplace lib/name/"pgxs/src/Makefile.global",
-                "LD = #{HOMEBREW_PREFIX}/Homebrew/Library/Homebrew/shims/linux/super/ld",
-                "LD = #{HOMEBREW_PREFIX}/bin/ld"
-    end
+    inreplace lib/name/"pgxs/src/Makefile.global",
+              "LD = #{Superenv.shims_path}/ld",
+              "LD = #{HOMEBREW_PREFIX}/bin/ld"
   end
 
   def post_install
@@ -104,7 +98,7 @@ class PostgresqlAT14 < Formula
     # Don't initialize database, it clashes when testing other PostgreSQL versions.
     return if ENV["HOMEBREW_GITHUB_ACTIONS"]
 
-    system "#{bin}/initdb", "--locale=C", "-E", "UTF-8", postgresql_datadir unless pg_version_exists?
+    system bin/"initdb", "--locale=C", "-E", "UTF-8", postgresql_datadir unless pg_version_exists?
   end
 
   def postgresql_datadir
@@ -160,8 +154,6 @@ class PostgresqlAT14 < Formula
     caveats += <<~EOS
       This formula has created a default database cluster with:
         initdb --locale=C -E UTF-8 #{postgresql_datadir}
-      For more details, read:
-        https://www.postgresql.org/docs/#{version.major}/app-initdb.html
     EOS
 
     caveats

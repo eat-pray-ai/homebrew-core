@@ -18,7 +18,7 @@ class Wayland < Formula
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "expat"
   depends_on "libffi"
   depends_on "libxml2"
@@ -31,7 +31,7 @@ class Wayland < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include "wayland-server.h"
       #include "wayland-client.h"
 
@@ -40,7 +40,7 @@ class Wayland < Formula
         struct wl_protocol_logger *logger;
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-o", "test", "-I#{include}"
     system "./test"
   end

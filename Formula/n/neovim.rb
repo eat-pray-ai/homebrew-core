@@ -4,17 +4,26 @@ class Neovim < Formula
   license "Apache-2.0"
 
   stable do
-    url "https://github.com/neovim/neovim/archive/refs/tags/v0.10.0.tar.gz"
-    sha256 "372ea2584b0ea2a5a765844d95206bda9e4a57eaa1a2412a9a0726bab750f828"
+    url "https://github.com/neovim/neovim/archive/refs/tags/v0.10.3.tar.gz"
+    sha256 "39fab47d241da7b9418823cc563c689d522c1c4b2def04036393834f3f1ca94c"
+
+    # TODO: Remove when the following commit lands in a release.
+    # https://github.com/neovim/neovim/commit/fa79a8ad6deefeea81c1959d69aa4c8b2d993f99
+    depends_on "libvterm"
+    # TODO: Remove when the following commit lands in a release.
+    # https://github.com/neovim/neovim/commit/1247684ae14e83c5b742be390de8dee00fd4e241
+    depends_on "msgpack"
 
     # Keep resources updated according to:
     # https://github.com/neovim/neovim/blob/v#{version}/cmake.deps/CMakeLists.txt
 
     # TODO: Consider shipping these as separate formulae instead. See discussion at
     #       https://github.com/orgs/Homebrew/discussions/3611
+    # NOTE: The `install` method assumes that the parser name follows the final `-`.
+    #       Please name the resources accordingly.
     resource "tree-sitter-c" do
-      url "https://github.com/tree-sitter/tree-sitter-c/archive/refs/tags/v0.21.0.tar.gz"
-      sha256 "6f0f5d1b71cf8ffd8a37fb638c6022fa1245bd630150b538547d52128ce0ea7e"
+      url "https://github.com/tree-sitter/tree-sitter-c/archive/refs/tags/v0.21.3.tar.gz"
+      sha256 "75a3780df6114cd37496761c4a7c9fd900c78bee3a2707f590d78c0ca3a24368"
     end
 
     resource "tree-sitter-lua" do
@@ -28,23 +37,13 @@ class Neovim < Formula
     end
 
     resource "tree-sitter-vimdoc" do
-      url "https://github.com/neovim/tree-sitter-vimdoc/archive/refs/tags/v2.5.1.tar.gz"
-      sha256 "063645096504b21603585507c41c6d8718ff3c11b2150c5bfc31e8f3ee9afea3"
+      url "https://github.com/neovim/tree-sitter-vimdoc/archive/refs/tags/v3.0.0.tar.gz"
+      sha256 "a639bf92bf57bfa1cdc90ca16af27bfaf26a9779064776dd4be34c1ef1453f6c"
     end
 
     resource "tree-sitter-query" do
-      url "https://github.com/nvim-treesitter/tree-sitter-query/archive/refs/tags/v0.3.0.tar.gz"
-      sha256 "f878ff37abcb83250e31a6569e997546f3dbab74dcb26683cb2d613f7568cfc0"
-    end
-
-    resource "tree-sitter-python" do
-      url "https://github.com/tree-sitter/tree-sitter-python/archive/refs/tags/v0.21.0.tar.gz"
-      sha256 "720304a603271fa89e4430a14d6a81a023d6d7d1171b1533e49c0ab44f1e1c13"
-    end
-
-    resource "tree-sitter-bash" do
-      url "https://github.com/tree-sitter/tree-sitter-bash/archive/refs/tags/v0.21.0.tar.gz"
-      sha256 "f0515efda839cfede851adb24ac154227fbc0dfb60c6c11595ecfa9087d43ceb"
+      url "https://github.com/nvim-treesitter/tree-sitter-query/archive/refs/tags/v0.4.0.tar.gz"
+      sha256 "d3a423ab66dc62b2969625e280116678a8a22582b5ff087795222108db2f6a6e"
     end
 
     resource "tree-sitter-markdown" do
@@ -59,13 +58,12 @@ class Neovim < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "29f56efa4ef3ad9826c6166ae3ff703143038f9b771928cb90927b88bd234e32"
-    sha256 arm64_ventura:  "031b5ec26e73d2523c561bf54ffb9984012f6fd4a8610a41dbf73048713d2060"
-    sha256 arm64_monterey: "5204adbe762b797feb2f8ca3005182eeef43e89bfe753ed8ad8c533cba6805f1"
-    sha256 sonoma:         "2415920449c19c1b50ae5c91e0aff2b54a2c20e10c6bdacfcd77f9f09defce90"
-    sha256 ventura:        "64de1ffb23f9ef9f8f51dd0d33ab19d31a290d33b1d62a422be1d4a4047820f2"
-    sha256 monterey:       "fe5c86b90ee70689f94bfe05ec95f064053ad7223090f64749de8f86b3b8465c"
-    sha256 x86_64_linux:   "77883d08b74050e4a609865c8e113f07b847e6eacc657b9597cf002bbc97395e"
+    sha256 arm64_sequoia: "cff4a5b9d8a43c7883d6cbe28c4d9a76a77b80942bc44f4974caf5d44c975f50"
+    sha256 arm64_sonoma:  "3443a1e6d8a4618822ef9d96c2e4d09c18d3ea23343d0a5399ea35622d224b96"
+    sha256 arm64_ventura: "148ecb401c4da22bc4f66753cf82b090a4d08236794c5cb09e7a94db2aef25af"
+    sha256 sonoma:        "8befbbbf1e3af9afc48248656b4476244b46d991c7c1eeab422c083aa1d72cd8"
+    sha256 ventura:       "8e3b425449704ef817028ae19384f5087e947d0d303ab072a49f32708915a2c4"
+    sha256 x86_64_linux:  "82310cdd97cb60b9158b7f935c6a05d0994cfc457a595d69f54c33172a17c27f"
   end
 
   head do
@@ -76,41 +74,46 @@ class Neovim < Formula
   depends_on "cmake" => :build
   depends_on "gettext"
   depends_on "libuv"
-  depends_on "libvterm"
   depends_on "lpeg"
   depends_on "luajit"
   depends_on "luv"
-  depends_on "msgpack"
   depends_on "tree-sitter"
   depends_on "unibilium"
 
-  uses_from_macos "unzip" => :build
-
-  on_linux do
-    depends_on "libnsl"
-  end
-
   def install
-    resources.each do |r|
-      r.stage(buildpath/"deps-build/build/src"/r.name)
-    end
+    if build.head?
+      cmake_deps = (buildpath/"cmake.deps/deps.txt").read.lines
+      cmake_deps.each do |line|
+        next unless line.match?(/TREESITTER_[^_]+_URL/)
 
-    if build.stable?
-      cd "deps-build/build/src" do
-        Dir["tree-sitter-*"].each do |ts_dir|
-          cd ts_dir do
-            if ts_dir == "tree-sitter-markdown"
-              cp buildpath/"cmake.deps/cmake/MarkdownParserCMakeLists.txt", "CMakeLists.txt"
-            else
-              cp buildpath/"cmake.deps/cmake/TreesitterParserCMakeLists.txt", "CMakeLists.txt"
-            end
-            parser_name = ts_dir[/^tree-sitter-(\w+)$/, 1]
-            system "cmake", "-S", ".", "-B", "build", "-DPARSERLANG=#{parser_name}", *std_cmake_args
-            system "cmake", "--build", "build"
-            system "cmake", "--install", "build"
-          end
+        parser, parser_url = line.split
+        parser_name = parser.delete_suffix("_URL")
+        parser_sha256 = cmake_deps.find { |l| l.include?("#{parser_name}_SHA256") }.split.last
+        parser_name = parser_name.downcase.tr("_", "-")
+
+        resource parser_name do
+          url parser_url
+          sha256 parser_sha256
         end
       end
+    end
+
+    resources.each do |r|
+      source_directory = buildpath/"deps-build/build/src"/r.name
+      build_directory = buildpath/"deps-build/build"/r.name
+
+      parser_name = r.name.split("-").last
+      cmakelists = case parser_name
+      when "markdown" then "MarkdownParserCMakeLists.txt"
+      else "TreesitterParserCMakeLists.txt"
+      end
+
+      r.stage(source_directory)
+      cp buildpath/"cmake.deps/cmake"/cmakelists, source_directory/"CMakeLists.txt"
+
+      system "cmake", "-S", source_directory, "-B", build_directory, "-DPARSERLANG=#{parser_name}", *std_cmake_args
+      system "cmake", "--build", build_directory
+      system "cmake", "--install", build_directory
     end
 
     # Point system locations inside `HOMEBREW_PREFIX`.
@@ -125,23 +128,14 @@ class Neovim < Formula
     # Replace `-dirty` suffix in `--version` output with `-Homebrew`.
     inreplace "cmake/GenerateVersion.cmake", "--dirty", "--dirty=-Homebrew"
 
-    system "cmake", "-S", ".", "-B", "build",
-                    "-DLUV_LIBRARY=#{Formula["luv"].opt_lib/shared_library("libluv")}",
-                    "-DLIBUV_LIBRARY=#{Formula["libuv"].opt_lib/shared_library("libuv")}",
-                    "-DLPEG_LIBRARY=#{Formula["lpeg"].opt_lib/shared_library("liblpeg")}",
-                    *std_cmake_args
-
+    args = [
+      "-DLUV_LIBRARY=#{Formula["luv"].opt_lib/shared_library("libluv")}",
+      "-DLIBUV_LIBRARY=#{Formula["libuv"].opt_lib/shared_library("libuv")}",
+      "-DLPEG_LIBRARY=#{Formula["lpeg"].opt_lib/shared_library("liblpeg")}",
+    ]
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
-  end
-
-  def caveats
-    return if latest_head_version.blank?
-
-    <<~EOS
-      HEAD installs of Neovim do not include any tree-sitter parsers.
-      You can use the `nvim-treesitter` plugin to install them.
-    EOS
   end
 
   test do

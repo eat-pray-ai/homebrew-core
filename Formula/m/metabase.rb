@@ -1,8 +1,8 @@
 class Metabase < Formula
   desc "Business intelligence report server"
   homepage "https://www.metabase.com/"
-  url "https://downloads.metabase.com/v0.50.10/metabase.jar"
-  sha256 "6dd9c3ee5228deaf23228d26e8ec741d6b03c98b697ce9cdaa13db6a47775f98"
+  url "https://downloads.metabase.com/v0.52.4/metabase.jar"
+  sha256 "b03961f3687b2dea982b11b4822d5c47864230389ce49d673f004f43de7c48b6"
   license "AGPL-3.0-only"
 
   livecheck do
@@ -11,13 +11,7 @@ class Metabase < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "e9de2ddbf2bd6464277696c6b0676867fe5e515d2c86aef26665378112a0824f"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "e9de2ddbf2bd6464277696c6b0676867fe5e515d2c86aef26665378112a0824f"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "e9de2ddbf2bd6464277696c6b0676867fe5e515d2c86aef26665378112a0824f"
-    sha256 cellar: :any_skip_relocation, sonoma:         "e9de2ddbf2bd6464277696c6b0676867fe5e515d2c86aef26665378112a0824f"
-    sha256 cellar: :any_skip_relocation, ventura:        "e9de2ddbf2bd6464277696c6b0676867fe5e515d2c86aef26665378112a0824f"
-    sha256 cellar: :any_skip_relocation, monterey:       "e9de2ddbf2bd6464277696c6b0676867fe5e515d2c86aef26665378112a0824f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "dc153716a86cae13a38a4cf44d7e60ffeecc677fcd232befc2b086d652d6915f"
+    sha256 cellar: :any_skip_relocation, all: "9c1b59132401472ad8f657a8917e4ff704b29e4f3f11b131f39e240c7a86feb5"
   end
 
   head do
@@ -47,7 +41,7 @@ class Metabase < Formula
     require_root true
     working_dir var/"metabase"
     log_path var/"metabase/server.log"
-    error_log_path "/dev/null"
+    error_log_path File::NULL
   end
 
   test do

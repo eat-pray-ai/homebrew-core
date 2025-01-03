@@ -1,8 +1,8 @@
 class Wcslib < Formula
   desc "Library and utilities for the FITS World Coordinate System"
-  homepage "https://www.atnf.csiro.au/people/mcalabre/WCS/"
-  url "https://www.atnf.csiro.au/people/mcalabre/WCS/wcslib-8.2.2.tar.bz2"
-  sha256 "6298220ae817f4e5522643ac4c3da2623be70a3484b1a4f37060bee3e4bd7833"
+  homepage "https://www.atnf.csiro.au/computing/software/wcs/"
+  url "https://www.atnf.csiro.au/computing/software/wcs/wcslib-8.4.tar.bz2"
+  sha256 "960b844426d14a8b53cdeed78258aa9288cded99a7732c0667c64fa6a50126dc"
   license "GPL-3.0-or-later"
 
   livecheck do
@@ -11,13 +11,12 @@ class Wcslib < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "2857bd84c076a018a1f0e67c6b5d5a581cfb7bc41181286f70bd3d76bf611efa"
-    sha256 cellar: :any,                 arm64_ventura:  "0a9273876cb5fc1be0e558bc831861250c047fe090430f759f3942059f8cbe30"
-    sha256 cellar: :any,                 arm64_monterey: "36e9f26e57a04edf21666eb0d3d50051048b375af13a5dc23cf50d8e4d0d1c7a"
-    sha256 cellar: :any,                 sonoma:         "c9097a8fd99d6c709a39a9b02eb194c49f2177112c977d1acc09623eb5e5723a"
-    sha256 cellar: :any,                 ventura:        "5c50086dec7068ed77665b94fd069d442b5a37964504079cad4b447a5f789ef9"
-    sha256 cellar: :any,                 monterey:       "e2988f3c63a643f9d2d1bd1a69cfe279084f22228fdecd725cda2022d4754496"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "ed4de50b36ab18e862f52c91aa0ab5c6087094d29d1cdea65bda3c6027eca854"
+    sha256 cellar: :any,                 arm64_sequoia: "9b4c893d06fdc0f35e6d0068cd2c0f8e310bcc21fcd80242c8096895ef6bbdc5"
+    sha256 cellar: :any,                 arm64_sonoma:  "9d19f46e3c4eccaf8a8f0e47b15650a0d597fb7b1a0e41523f98c225733f79cd"
+    sha256 cellar: :any,                 arm64_ventura: "a8a2219881ba618ed874d2d8e398c6014e0acc2a8116f2786fa44354950d0050"
+    sha256 cellar: :any,                 sonoma:        "1e11d5347b5aabd5a8be7b58f255b296b32a27daea37dd6f1c96d58e05a099f9"
+    sha256 cellar: :any,                 ventura:       "7ad6caa1fcc73ee40853218467f7c69063672b81c9f57168c2fc3fe36a352581"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5b4796b96042e9131506aaacb702c1e6cb372fddc463b0e328b5f46ea49bf342"
   end
 
   depends_on "cfitsio"

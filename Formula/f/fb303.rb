@@ -1,19 +1,18 @@
 class Fb303 < Formula
   desc "Thrift functions for querying information from a service"
   homepage "https://github.com/facebook/fb303"
-  url "https://github.com/facebook/fb303/archive/refs/tags/v2024.07.01.00.tar.gz"
-  sha256 "91dc419bed9fa2cc9093172cd28414f432117a4ef59197328979432894284225"
+  url "https://github.com/facebook/fb303/archive/refs/tags/v2024.12.02.00.tar.gz"
+  sha256 "5dd2c37f2de67bcf0442818442bfa3c9439ce38d4316dbf9365e3b1732de537e"
   license "Apache-2.0"
   head "https://github.com/facebook/fb303.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "2b2ff31605f878a0044744947b42f80ed4928795e16d6d0152e9b6887f4106d8"
-    sha256 cellar: :any,                 arm64_ventura:  "2a0bad1236ae7c512535f72a54bd95cac748bcada2f252df3cb81d4a63d6bdfd"
-    sha256 cellar: :any,                 arm64_monterey: "503a0ca9a145a68e17869425780a3cca40908f6c4ae3b54bc5a773a32a38826f"
-    sha256 cellar: :any,                 sonoma:         "18784db69b153f6f6f9173ec0715fdc6e5f79a17eabb11c8ec2a7bafc3e1167d"
-    sha256 cellar: :any,                 ventura:        "85336a929065947c14c5cef30641adb67265264c54d7be7b58b9e084d7fc909f"
-    sha256 cellar: :any,                 monterey:       "515a9be7eb953cb30a604907c41d63ec5fa4a5fe497992fb35385d23119128d5"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "a4060c368850d6cdbf4e4c342f477a39f3557dc9f9c146a0691ce63285f56a2b"
+    sha256 cellar: :any,                 arm64_sequoia: "ab7fa461822d474d9f0d6c2b74f66c947755d49be5f94b51271ab0cf79c315e7"
+    sha256 cellar: :any,                 arm64_sonoma:  "961478be2f4e9c8685fec0ba28b99e2fa59fc95fe1193ff83732a41d16f60fac"
+    sha256 cellar: :any,                 arm64_ventura: "4b5f17bc8f33fa2e1140b2c87acea01853d035c2e051b3d1395c649463cd4abc"
+    sha256 cellar: :any,                 sonoma:        "fa3c8654097ed4b5d96f415ecf8075ad7c249d87fb4f9995f8c6ceb94df50cfa"
+    sha256 cellar: :any,                 ventura:       "665a72ace1f64a1c8d946ffef58ce3c62b43bc81dd45d544724e7d503f6f52fb"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f4d3d13bb568b771c1bf903f451cea8abdf4e676efa36c7f1d4905124beaa56a"
   end
 
   depends_on "cmake" => :build
@@ -25,8 +24,6 @@ class Fb303 < Formula
   depends_on "glog"
   depends_on "openssl@3"
 
-  fails_with gcc: "5" # C++17
-
   def install
     shared_args = ["-DBUILD_SHARED_LIBS=ON", "-DCMAKE_INSTALL_RPATH=#{rpath}"]
     shared_args << "-DCMAKE_SHARED_LINKER_FLAGS=-Wl,-dead_strip_dylibs" if OS.mac?
@@ -37,7 +34,7 @@ class Fb303 < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include "fb303/thrift/gen-cpp2/BaseService.h"
       #include <iostream>
       int main() {
@@ -45,7 +42,7 @@ class Fb303 < Formula
         std::cout << service.getGeneratedName() << std::endl;
         return 0;
       }
-    EOS
+    CPP
 
     if Tab.for_formula(Formula["folly"]).built_as_bottle
       ENV.remove_from_cflags "-march=native"
@@ -59,7 +56,6 @@ class Fb303 < Formula
                     "-L#{Formula["folly"].opt_lib}", "-lfolly",
                     "-L#{Formula["glog"].opt_lib}", "-lglog",
                     "-L#{Formula["fbthrift"].opt_lib}", "-lthriftprotocol", "-lthriftcpp2",
-                    "-L#{Formula["boost"].opt_lib}", "-lboost_context-mt",
                     "-ldl"
     assert_equal "BaseService", shell_output("./test").strip
   end

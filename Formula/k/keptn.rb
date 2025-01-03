@@ -6,6 +6,7 @@ class Keptn < Formula
   license "Apache-2.0"
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "6890b7bf9d1147ffb7b3399b83f07fe7302594687bdc560e61ff94bcbcd01483"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "423b33841420a90882c5969217d114ab5deab10ef1c06c79b32b4629daff77ca"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "c1b1139e9d32bcf7c1cc2f576952aae560568efcb57267267d682944945f0345"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "736007fe68b58bc08c475c4cfe1297c609216eb289d507b746652a3737511abb"
@@ -15,7 +16,7 @@ class Keptn < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "9fc0beacc9f716d912ecc6cb638b023c98a87cb079ea782e787f6de36b50b2c1"
   end
 
-  deprecate! date: "2023-12-21", because: :repo_archived
+  disable! date: "2024-12-21", because: :repo_archived
 
   depends_on "go" => :build
 

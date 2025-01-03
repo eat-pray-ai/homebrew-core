@@ -1,8 +1,8 @@
 class ImagemagickAT6 < Formula
   desc "Tools and libraries to manipulate images in many formats"
   homepage "https://legacy.imagemagick.org/"
-  url "https://imagemagick.org/archive/releases/ImageMagick-6.9.13-12.tar.xz"
-  sha256 "cc6189a5999c00f2fb8a0cdd2cddd8207c64bac5146639b8106e56e277c763bf"
+  url "https://imagemagick.org/archive/releases/ImageMagick-6.9.13-21.tar.xz"
+  sha256 "985b9bf373c8b67c9df66d53247bdbb44aa79d133e75fb84d73179b238af8471"
   license "ImageMagick"
   head "https://github.com/imagemagick/imagemagick6.git", branch: "main"
 
@@ -12,18 +12,17 @@ class ImagemagickAT6 < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "f76756292de52e317a58b4440500e43cf8449ce2a1cb150bef9b7b30c951ab5a"
-    sha256 arm64_ventura:  "838ef20ea7c633260526ef435480716750c0ca6d5408df9d0de18b99de5ca797"
-    sha256 arm64_monterey: "afd4afffb4db78fa09ec69d6c0cc49a76ec757c4b08645c2ec3b661768664edf"
-    sha256 sonoma:         "31ea028d7fbf01fe129eaec4c93490b1329f295345144751bb65b4d54626af7e"
-    sha256 ventura:        "e06276c1ac9fe19819090f6d450fbc4a442eb1c6b23b43ab44bf2a7087b35847"
-    sha256 monterey:       "947f68f69faadf79d2ab061487afa3a72fd8a9caaf0d1622c213ccdbdb1e7d7a"
-    sha256 x86_64_linux:   "49644afbc7bc6df0d0a4ea3942ba3f7b2c652dbf249bd52d2422818cfa401e74"
+    sha256 arm64_sequoia: "883d833cc4b4d73394462e670b2045dadb5fd72890139be300fc3afe7c3e2290"
+    sha256 arm64_sonoma:  "71dc5227c21a696569df729aa7244c63d365ab29b8af623b80709a2eb966e93c"
+    sha256 arm64_ventura: "0a79d069a2133bd49f8f123c1d53153a8918a32e144b84c06605cf59d1fdb7eb"
+    sha256 sonoma:        "65eec90889e97d8de48e25f795286f206c8168f23e7dc94124da50d2d14a525c"
+    sha256 ventura:       "618129f7759c73dc98b5c80049c47ed017a62439194ac69be758c9e751519529"
+    sha256 x86_64_linux:  "dc7fae28370c80192f7c0e798beb80067eebb563af9cba904f9b39a6925bd1bb"
   end
 
   keg_only :versioned_formula
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   depends_on "fontconfig"
   depends_on "freetype"
@@ -69,7 +68,7 @@ class ImagemagickAT6 < Formula
       --without-wmf
     ]
 
-    system "./configure", *std_configure_args, *args
+    system "./configure", *args, *std_configure_args
     system "make", "install"
   end
 

@@ -7,7 +7,13 @@ class Glulxe < Formula
   license "MIT"
   head "https://github.com/erkyrath/glulxe.git", branch: "master"
 
+  livecheck do
+    url :homepage
+    regex(/href=.*?glulxe[._-]v?\d+(?:\.\d+)*\.t[^>]+?>\s*Glulxe\s+v?(\d+(?:\.\d+)+)\s*</im)
+  end
+
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "bdc5dcc5eba9d4e5417b56c4cdee27958bd6ba76e5cecc60e46fff7aa4b754ef"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "6605dc4b713cf75ff1e2082b4e515bbb3ec36dbb2846da6786538e1449fcef8b"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "d5559708d83a18e07bffde1b0c645a1efab90d28ea53b7d527d4a5c7b33601f0"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "9d08fff0e271fd5f05d5ef30215914fc7429e9b81f54255b7acea3f1350ddd29"

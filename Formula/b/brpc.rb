@@ -1,27 +1,48 @@
 class Brpc < Formula
   desc "Better RPC framework"
   homepage "https://brpc.apache.org/"
-  url "https://dlcdn.apache.org/brpc/1.9.0/apache-brpc-1.9.0-src.tar.gz"
-  sha256 "2ed6090845cf9f36bd267de7f151970881340ad775eeba65aec448db47fa25b9"
   license "Apache-2.0"
+  revision 3
   head "https://github.com/apache/brpc.git", branch: "master"
 
+  stable do
+    url "https://dlcdn.apache.org/brpc/1.11.0/apache-brpc-1.11.0-src.tar.gz"
+    sha256 "7076b564bf3d4e1f9ed248ba7051ae42e9c63340febccea5005efc89d068f339"
+
+    # Backport support for newer protobuf
+    patch do
+      url "https://github.com/apache/brpc/commit/282776acaf2c894791d2b5d4c294a28cfa2d4138.patch?full_index=1"
+      sha256 "ce55b0d5df5b8aaf1c54cd7d80f32c01e8fd35c97f12b864ea6618b38d2db547"
+    end
+  end
+
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "247d6bf51d3ec6b518eb5a16b8cacc9317632d6aa372c0e701d710a230ee4600"
-    sha256 cellar: :any,                 arm64_ventura:  "1da49dbe63d077c5ac9d40d27d1090d3c124cf8f149e42b523e9d68fb6fa7bf1"
-    sha256 cellar: :any,                 arm64_monterey: "8f58bfea674a387f3396fd4a3b4b4b2e7cccef845e2cb7ebd4315f6d19baab70"
-    sha256 cellar: :any,                 sonoma:         "4cc82ac052e3510b72973368dbaac87d74113bf5327d389423cad5c64ef93821"
-    sha256 cellar: :any,                 ventura:        "9e70411141f630972996c893ed65768bbaf28e9c2fa9c2f5863aa9f67caa2919"
-    sha256 cellar: :any,                 monterey:       "afc9e82b8e7d11ffe0ec178810fbb64ae3918c0afcc0a622ccfda9084f2b24cb"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "fc0c6a2ff650f8ac797b665e4a257019428ddf7eb11a7b2e7cde5e4aa829915e"
+    sha256 cellar: :any,                 arm64_sequoia: "936ae5d786f34fa6a42ec96490e3b755a11a9d8629115068e8351fb4d67d52e3"
+    sha256 cellar: :any,                 arm64_sonoma:  "3da1715944951eb5d0804c46b8af9b91e542e344dd2b61c7bc577d25da52679c"
+    sha256 cellar: :any,                 arm64_ventura: "ec604fabcd98acf3278497d1a6123c1d02d426c55d38d249584aa08daec1ac11"
+    sha256 cellar: :any,                 sonoma:        "d5b5088575f73b50330fc29390de7cf5a9ec1465d50a732255b7db9e89ad86dd"
+    sha256 cellar: :any,                 ventura:       "6139f7f3cae9e2b5e52327f2645a49fd0aadf7e28a17fead4284397e3d202dde"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9858a95aa4eb0ddc2fcee3efbad34632079bd1d4ae273510130d581eeed4a1fc"
   end
 
   depends_on "cmake" => :build
+  depends_on "abseil"
   depends_on "gflags"
   depends_on "gperftools"
   depends_on "leveldb"
   depends_on "openssl@3"
-  depends_on "protobuf@21"
+  depends_on "protobuf"
+
+  on_linux do
+    depends_on "pkgconf" => :test
+  end
+
+  # Apply open PR commit to fix compile with Protobuf 29+.
+  # PR ref: https://github.com/apache/brpc/pull/2830
+  patch do
+    url "https://github.com/apache/brpc/commit/8d1ee6d06ffdf84a33bd083463663ece5fb9e7a9.patch?full_index=1"
+    sha256 "9602c9200bd53b58e359cdf408775c21584ce613404097f6f3832f4df3bcba9c"
+  end
 
   def install
     inreplace "CMakeLists.txt", "/usr/local/opt/openssl",
@@ -46,7 +67,7 @@ class Brpc < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <iostream>
 
       #include <brpc/channel.h>
@@ -72,8 +93,9 @@ class Brpc < Formula
         std::cout << cntl.http_response().status_code();
         return 0;
       }
-    EOS
-    protobuf = Formula["protobuf@21"]
+    CPP
+
+    protobuf = Formula["protobuf"]
     gperftools = Formula["gperftools"]
     flags = %W[
       -I#{include}
@@ -85,7 +107,11 @@ class Brpc < Formula
       -lprotobuf
       -ltcmalloc
     ]
-    system ENV.cxx, "-std=c++11", testpath/"test.cpp", "-o", "test", *flags
+    # Work around for undefined reference to symbol
+    # '_ZN4absl12lts_2024072212log_internal21CheckOpMessageBuilder7ForVar2Ev'
+    flags += shell_output("pkgconf --libs absl_log_internal_check_op").chomp.split if OS.linux?
+
+    system ENV.cxx, "-std=c++17", "test.cpp", "-o", "test", *flags
     assert_equal "200", shell_output("./test")
   end
 end

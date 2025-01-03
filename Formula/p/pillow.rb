@@ -1,24 +1,23 @@
 class Pillow < Formula
   desc "Friendly PIL fork (Python Imaging Library)"
-  homepage "https://python-pillow.org"
-  url "https://files.pythonhosted.org/packages/cd/74/ad3d526f3bf7b6d3f408b73fde271ec69dfac8b81341a318ce825f2b3812/pillow-10.4.0.tar.gz"
-  sha256 "166c1cd4d24309b30d61f79f4a9114b7b2313d7450912277855ff5dfd7cd4a06"
+  homepage "https://python-pillow.github.io/"
+  url "https://files.pythonhosted.org/packages/f3/af/c097e544e7bd278333db77933e535098c259609c4eb3b85381109602fb5b/pillow-11.1.0.tar.gz"
+  sha256 "368da70808b36d73b4b390a8ffac11069f8a5c85f29eff1f1b01bcf3ef5b2a20"
   license "HPND"
   head "https://github.com/python-pillow/Pillow.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any, arm64_sonoma:   "ccb180b86306c317c1bb86d0851af16db3cd9201ec73075a3f41de4ff45bf671"
-    sha256 cellar: :any, arm64_ventura:  "2c597522196c225fe2894826aeb6383dfc2238aed96434b9070c214f5957e97c"
-    sha256 cellar: :any, arm64_monterey: "ebe4315cc2b641f01e16b0935903ff67b468a6f9bef8d6e765a312f34429fc47"
-    sha256 cellar: :any, sonoma:         "144bb6d5a53ee094cd62bd3afb170e56a504b11f7473a09d66e8a3cb4a645bd8"
-    sha256 cellar: :any, ventura:        "b7a6bd36c51f17bdfa08b70e28043c17d03ce684c4b8386ff239c8a2d9d36051"
-    sha256 cellar: :any, monterey:       "e33f426090c7351563c784b9f7553e57d91648ae296d7240a0ae38592ee97f0d"
-    sha256               x86_64_linux:   "87f4aaed2277535ec83f77355fa3c3351c1b56ed688bd4225a87b2b54b1ef038"
+    sha256 cellar: :any, arm64_sequoia: "5d49ed0a569baa6f8ab2ed69e298922986b3594a4ad76fccc964e8155b79a59a"
+    sha256 cellar: :any, arm64_sonoma:  "b68e9e35e9f90f5d48086c7e50b74e2f5db18c9ff0661fe9a644cd24e3c3a977"
+    sha256 cellar: :any, arm64_ventura: "8dbac4d14ba6f12abe29a96bea760d2623078b317300ee3230f18c102e7d85d8"
+    sha256 cellar: :any, sonoma:        "5d3f32665e5228bdef42573b35c94aecee1a34446acd562ae10599bdc4a900fc"
+    sha256 cellar: :any, ventura:       "f5c9181ce709dd44815a7dc56b2fe670bffefc033e9df7f0c9fa5286836e0cee"
+    sha256               x86_64_linux:  "d19161ff9a9c0cf9d660d05761bac9450d4a5086c9f54d7bb6ac7fe327e401fd"
   end
 
-  depends_on "pkg-config" => :build
-  depends_on "python@3.11" => [:build, :test]
+  depends_on "pkgconf" => :build
   depends_on "python@3.12" => [:build, :test]
+  depends_on "python@3.13" => [:build, :test]
   depends_on "freetype"
   depends_on "jpeg-turbo"
   depends_on "libimagequant"
@@ -27,7 +26,6 @@ class Pillow < Formula
   depends_on "libxcb"
   depends_on "little-cms2"
   depends_on "openjpeg"
-  depends_on "tcl-tk"
   depends_on "webp"
 
   uses_from_macos "zlib"
@@ -60,11 +58,11 @@ class Pillow < Formula
   end
 
   test do
-    (testpath/"test.py").write <<~EOS
+    (testpath/"test.py").write <<~PYTHON
       from PIL import Image
       im = Image.open("#{test_fixtures("test.jpg")}")
       print(im.format, im.size, im.mode)
-    EOS
+    PYTHON
 
     pythons.each do |python|
       assert_equal "JPEG (1, 1) RGB", shell_output("#{python} test.py").chomp

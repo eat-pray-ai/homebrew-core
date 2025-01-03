@@ -1,9 +1,9 @@
 class Glassfish < Formula
   desc "Java EE application server"
   homepage "https://glassfish.org/"
-  url "https://download.eclipse.org/ee4j/glassfish/glassfish-7.0.15.zip"
-  mirror "https://github.com/eclipse-ee4j/glassfish/releases/download/7.0.15/glassfish-7.0.15.zip"
-  sha256 "5bb3eb534cb1fbbb0df40d9b872351849c52f7fa8226cc6521288a4ca7fa4f03"
+  url "https://download.eclipse.org/ee4j/glassfish/glassfish-7.0.20.zip"
+  mirror "https://github.com/eclipse-ee4j/glassfish/releases/download/7.0.20/glassfish-7.0.20.zip"
+  sha256 "b56c5f2e86a38c822dc3549585d4967ec5a2cbf2becd703ad0d3bbeede9814dc"
   license "EPL-2.0"
 
   livecheck do
@@ -12,13 +12,7 @@ class Glassfish < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "b07289d1264ca7424b461c91615da75efe7e838c55a0d0ff1570418629489806"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "b07289d1264ca7424b461c91615da75efe7e838c55a0d0ff1570418629489806"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "b07289d1264ca7424b461c91615da75efe7e838c55a0d0ff1570418629489806"
-    sha256 cellar: :any_skip_relocation, sonoma:         "b07289d1264ca7424b461c91615da75efe7e838c55a0d0ff1570418629489806"
-    sha256 cellar: :any_skip_relocation, ventura:        "b07289d1264ca7424b461c91615da75efe7e838c55a0d0ff1570418629489806"
-    sha256 cellar: :any_skip_relocation, monterey:       "b07289d1264ca7424b461c91615da75efe7e838c55a0d0ff1570418629489806"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "0468d3fc76d5a897d00521edc756ef5a419bd1c732c68bad9f5c7570eda9f3ed"
+    sha256 cellar: :any_skip_relocation, all: "3aece59d237464a752b30fcf2d461a566c7ec00eeebe55a3e12154a059a4e4ca"
   end
 
   # no java 22 support for glassfish 7.x
@@ -29,7 +23,7 @@ class Glassfish < Formula
 
   def install
     # Remove all windows files
-    rm_rf Dir["bin/*.bat", "glassfish/bin/*.bat"]
+    rm_r(Dir["bin/*.bat", "glassfish/bin/*.bat"])
 
     libexec.install Dir["*"]
     bin.install Dir["#{libexec}/bin/*"]

@@ -1,8 +1,8 @@
 class PopplerQt5 < Formula
   desc "PDF rendering library (based on the xpdf-3.0 code base)"
   homepage "https://poppler.freedesktop.org/"
-  url "https://poppler.freedesktop.org/poppler-24.04.0.tar.xz"
-  sha256 "1e804ec565acf7126eb2e9bb3b56422ab2039f7e05863a5dfabdd1ffd1bb77a7"
+  url "https://poppler.freedesktop.org/poppler-24.12.0.tar.xz"
+  sha256 "1cf374c3146f3f685d9257701bf0c2866c61d6c202c14d1f5c01a1f3a089028a"
   license "GPL-2.0-only"
   head "https://gitlab.freedesktop.org/poppler/poppler.git", branch: "master"
 
@@ -11,20 +11,20 @@ class PopplerQt5 < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "f08fe036629f6df0514218e89c7f0dae4c686aa5caea6e9641f365ae47114760"
-    sha256 arm64_ventura:  "f20dca04b250d5f9e26355d308c1d48fb9abcb1e577f38846577a7a35303afa8"
-    sha256 arm64_monterey: "67331be704b6fdf64250926f0217843b9c50cf1f3dff215e4c1abf5fbbc5f107"
-    sha256 sonoma:         "39a49e6863eb8207d2f448ab281e8ed1e430b11b086ce3f4a6db27576c8544d5"
-    sha256 ventura:        "086bd249c3350ff3c488fde1897e05bf09583c1c20771a6d95eb1a32b60fbc97"
-    sha256 monterey:       "0a07395ab099f762e5a1b79f2197acb956dc440ccfc901dd49a1bef7c3d58905"
-    sha256 x86_64_linux:   "ff41c11021bcd1a25038892a82678ce35409055f76947b163eaf1772e4707cf7"
+    sha256 arm64_sequoia: "98a95a4f2bb8e317344407392e38d4e7018ab4ee1de0e250ecd22ef631e8d374"
+    sha256 arm64_sonoma:  "c49b9b8a7f06bcbebcaf7ebc33cd53d13f3fdae8bff4fa13710ddbe2d23ffa5c"
+    sha256 arm64_ventura: "6255e6e2c33e24aa054e7276b116eec90823385b2d8cf6694a4e802bf96229ef"
+    sha256 sonoma:        "9f9a48cd88a83a8c5c60165109b769b021641ce07ea73f348dd8782ce9f9c565"
+    sha256 ventura:       "2374ad5a70b9f65a088fe59fe63cdafe641f644e897f7bf8bf86ffdaca94d6fa"
+    sha256 x86_64_linux:  "19444d8b79fccd4fdf34d86f045f8be7d2179a5d415a8dd62ce6ab47d0e7d32e"
   end
 
   keg_only "it conflicts with poppler"
 
   depends_on "cmake" => :build
   depends_on "gobject-introspection" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
+
   depends_on "cairo"
   depends_on "fontconfig"
   depends_on "freetype"
@@ -35,14 +35,18 @@ class PopplerQt5 < Formula
   depends_on "libpng"
   depends_on "libtiff"
   depends_on "little-cms2"
+  depends_on "nspr"
   depends_on "nss"
   depends_on "openjpeg"
   depends_on "qt@5"
 
   uses_from_macos "gperf" => :build
   uses_from_macos "curl"
+  uses_from_macos "zlib"
 
-  fails_with gcc: "5"
+  on_macos do
+    depends_on "libassuan"
+  end
 
   resource "font-data" do
     url "https://poppler.freedesktop.org/poppler-data-0.4.12.tar.gz"
@@ -64,20 +68,22 @@ class PopplerQt5 < Formula
       -DCMAKE_INSTALL_RPATH=#{rpath}
     ]
 
-    system "cmake", ".", *args
-    system "make", "install"
-    system "make", "clean"
-    system "cmake", ".", "-DBUILD_SHARED_LIBS=OFF", *args
-    system "make"
-    lib.install "libpoppler.a"
-    lib.install "cpp/libpoppler-cpp.a"
-    lib.install "glib/libpoppler-glib.a"
+    system "cmake", "-S", ".", "-B", "build_shared", *args
+    system "cmake", "--build", "build_shared"
+    system "cmake", "--install", "build_shared"
+
+    system "cmake", "-S", ".", "-B", "build_static", *args, "-DBUILD_SHARED_LIBS=OFF"
+    system "cmake", "--build", "build_static"
+    lib.install "build_static/libpoppler.a"
+    lib.install "build_static/cpp/libpoppler-cpp.a"
+    lib.install "build_static/glib/libpoppler-glib.a"
+
     resource("font-data").stage do
       system "make", "install", "prefix=#{prefix}"
     end
   end
 
   test do
-    system "#{bin}/pdfinfo", test_fixtures("test.pdf")
+    system bin/"pdfinfo", test_fixtures("test.pdf")
   end
 end

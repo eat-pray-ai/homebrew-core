@@ -2,22 +2,21 @@ class Pc6001vx < Formula
   desc "PC-6001 emulator"
   # http://eighttails.seesaa.net/ gives 405 error
   homepage "https://github.com/eighttails/PC6001VX"
-  url "https://eighttails.up.seesaa.net/bin/PC6001VX_4.2.8_src.tar.gz"
-  sha256 "18d33c364f8d28c06de9df67c5fa46fe4c14dacbe5f56d2c64af8403e64d64c0"
+  url "https://eighttails.up.seesaa.net/bin/PC6001VX_4.2.10_src.tar.gz"
+  sha256 "82dfae60462770b1497a6131d9420cc32fb23beb44733c98f8e97eaa8df39a26"
   license "LGPL-2.1-or-later"
   head "https://github.com/eighttails/PC6001VX.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any, arm64_sonoma:   "6b5e394c0c5e4cc3ff91ed130256e6bcbf42fc95e982ba074dcf7fcb38e56ce0"
-    sha256 cellar: :any, arm64_ventura:  "8127057088cbe8fbb33525ab5fbaa73fef600ed551bc5aa2983b066bb6e3ec58"
-    sha256 cellar: :any, arm64_monterey: "8f4dd14bf5027483bd5ffdd610375fbd0bd31490b69cf5fc70b5cb34a8e34b0b"
-    sha256 cellar: :any, sonoma:         "bb40a0aad2d32b91819cd7b240b6b514265490f5965b60a7e18cf6766265ee94"
-    sha256 cellar: :any, ventura:        "835bd689bb35e2d7e63c17f4e514044cb5185684a3c459c1748faf2e225499e8"
-    sha256 cellar: :any, monterey:       "9ba8b6b9087109613b97bd799b969838abaf1de03280a9268c7f7833df058048"
+    sha256 cellar: :any,                 arm64_sonoma:  "89277f30e85f0c53b33f4af245efe70e12620d8135d5c6bf96b85847b8577eff"
+    sha256 cellar: :any,                 arm64_ventura: "f5eba22f7175f65796d9a1f69b5c1d6af1e0b571a09b0a142f278ddcb07320f9"
+    sha256 cellar: :any,                 sonoma:        "0f6e6d416491e74e23b8ea156b98e161879c81aed4dd48c70f16c1d474e5fae3"
+    sha256 cellar: :any,                 ventura:       "9b5ef2f68413dd80f20a9605ce7954bd696711e706fa3b5f89c4e0bcda96ffff"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7e936c5feed6738d8cb60c4b6a94ce0652beba32c096eded43a7a994625dab1e"
   end
 
-  depends_on "pkg-config" => :build
-  depends_on "ffmpeg@6"
+  depends_on "pkgconf" => :build
+  depends_on "ffmpeg"
   depends_on "qt"
   depends_on "sdl2"
 
@@ -25,32 +24,40 @@ class Pc6001vx < Formula
     depends_on "gettext"
   end
 
-  fails_with gcc: "5" # ffmpeg is compiled with GCC
+  on_linux do
+    depends_on "libx11"
+  end
 
   def install
     mkdir "build" do
       system "qmake", "PREFIX=#{prefix}",
-                                 "QMAKE_CXXFLAGS=#{ENV.cxxflags}",
-                                 "CONFIG+=no_include_pwd",
-                                 ".."
+                      "QMAKE_CXXFLAGS=#{ENV.cxxflags}",
+                      "CONFIG+=no_include_pwd",
+                      ".."
       system "make"
 
-      prefix.install "PC6001VX.app"
-      bin.write_exec_script "#{prefix}/PC6001VX.app/Contents/MacOS/PC6001VX"
+      if OS.mac?
+        prefix.install "PC6001VX.app"
+        bin.write_exec_script prefix/"PC6001VX.app/Contents/MacOS/PC6001VX"
+      else
+        bin.install "PC6001VX"
+      end
     end
   end
 
   test do
+    # Set QT_QPA_PLATFORM to minimal to avoid error:
+    # "This application failed to start because no Qt platform plugin could be initialized."
+    ENV["QT_QPA_PLATFORM"] = "minimal" if OS.linux? && ENV["HOMEBREW_GITHUB_ACTIONS"]
     # locales aren't set correctly within the testing environment
     ENV["LC_ALL"] = "en_US.UTF-8"
+
     user_config_dir = testpath/".pc6001vx4"
     user_config_dir.mkpath
-    pid = fork do
-      exec bin/"PC6001VX"
-    end
+    pid = spawn bin/"PC6001VX"
     sleep 30
-    assert_predicate user_config_dir/"rom",
-                     :exist?, "User config directory should exist"
+    sleep 45 if OS.mac? && Hardware::CPU.intel?
+    assert_path_exists user_config_dir/"rom", "User config directory should exist"
   ensure
     # the first SIGTERM signal closes a window which spawns another immediately
     # after 5 seconds, send a second SIGTERM signal to ensure the process is fully stopped

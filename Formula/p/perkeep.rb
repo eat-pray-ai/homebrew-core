@@ -35,7 +35,7 @@ class Perkeep < Formula
 
   # This should match what gopherjs supports.
   depends_on "go@1.18" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   conflicts_with "hello", because: "both install `hello` binaries"
 
@@ -48,7 +48,7 @@ class Perkeep < Formula
 
       # Vendored version of gopherjs requires go 1.10, so use the newest available gopherjs, which
       # supports newer Go versions.
-      rm_rf buildpath/"src/perkeep.org/vendor/github.com/gopherjs/gopherjs"
+      rm_r(buildpath/"src/perkeep.org/vendor/github.com/gopherjs/gopherjs")
       resource("gopherjs").stage buildpath/"src/perkeep.org/vendor/github.com/gopherjs/gopherjs"
 
       cd "src/perkeep.org" do

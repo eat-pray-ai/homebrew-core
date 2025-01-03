@@ -1,25 +1,25 @@
 class Rtorrent < Formula
   desc "Ncurses BitTorrent client based on libtorrent-rakshasa"
   homepage "https://github.com/rakshasa/rtorrent"
-  url "https://github.com/rakshasa/rtorrent/releases/download/v0.9.8/rtorrent-0.9.8.tar.gz"
-  sha256 "9edf0304bf142215d3bc85a0771446b6a72d0ad8218efbe184b41e4c9c7542af"
-  license "GPL-2.0"
-  revision 3
+  url "https://github.com/rakshasa/rtorrent/releases/download/v0.15.1/rtorrent-0.15.1.tar.gz"
+  sha256 "1d5437d7a6828f2f72a6c309f25f136eda1be69b059d250bc52e0d4185420506"
+  license "GPL-2.0-or-later"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "7b55a418e1ae243cd062ac5e3e1171ee082814623a15fd3898ecc3172b9a7fe4"
-    sha256 cellar: :any,                 arm64_ventura:  "f2c7a8bd2f77caffa6fef4f0fa85f9e598fc8e8e0129562f6ebeb9fda9e84064"
-    sha256 cellar: :any,                 arm64_monterey: "85c38e502a8c6ec4b20c973b4d79785436925776ae26db29461931f8221d2d8b"
-    sha256 cellar: :any,                 sonoma:         "a7f53e049ba9dd7af4ab89fd49f909654c0492e25dc9c0bc88719d2f7969de63"
-    sha256 cellar: :any,                 ventura:        "c5a27e4139d425afe95746a83dd9cc77d97655a02a10eb02882bde897daaf57e"
-    sha256 cellar: :any,                 monterey:       "b2a247f5cfba3c8b16326a82055d80e10bc494c3c7db8ace77dc4cee75460bbf"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "0c12f9d685c1f2702ecefa0eca8d926e4baf71a7935a469a81b864aadac396a6"
+    sha256 cellar: :any,                 arm64_sequoia: "e7fd8876fa905a4e5c0048075d04a061fb28147e727eecfd4b80ce994c96d885"
+    sha256 cellar: :any,                 arm64_sonoma:  "a67c258fef8075692db56f63c63eada71a8fc5b66c513762953457f074530149"
+    sha256 cellar: :any,                 arm64_ventura: "acc2ee7afe587f3ed97e379cd2ad238af586483d3783571d2a6fea90a2eaaf3d"
+    sha256 cellar: :any,                 sonoma:        "48e01478a36cdcdff32d78a2effa418e00b3ce838cdb02b092bdd26729c873ef"
+    sha256 cellar: :any,                 ventura:       "5f269d47486ddc79fe24ece2dff35cbe16abd3a3210dc899abd64c682b352fe3"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2107b8aeefe50f463128299c7a26549f060c85e788dfdbd4b55020cb8f45f24a"
   end
 
   depends_on "autoconf" => :build
+  depends_on "autoconf-archive" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
+
   depends_on "libtorrent-rakshasa"
   depends_on "xmlrpc-c"
 
@@ -27,21 +27,16 @@ class Rtorrent < Formula
   uses_from_macos "ncurses"
 
   def install
-    args = ["--prefix=#{prefix}", "--with-xmlrpc-c",
-            "--disable-debug", "--disable-dependency-tracking"]
-
-    system "sh", "autogen.sh"
-    system "./configure", *args
+    system "autoreconf", "--force", "--install", "--verbose"
+    system "./configure", "--with-xmlrpc-c", *std_configure_args
     system "make"
     system "make", "install"
   end
 
   test do
-    pid = fork do
-      exec "#{bin}/rtorrent", "-n", "-s", testpath
-    end
-    sleep 3
-    assert_predicate testpath/"rtorrent.lock", :exist?
+    pid = spawn bin/"rtorrent", "-n", "-s", testpath
+    sleep 10
+    assert_path_exists testpath/"rtorrent.lock"
   ensure
     Process.kill("HUP", pid)
   end

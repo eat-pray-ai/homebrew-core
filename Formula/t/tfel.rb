@@ -1,26 +1,25 @@
 class Tfel < Formula
   desc "Code generation tool dedicated to material knowledge for numerical mechanics"
   homepage "https://thelfer.github.io/tfel/web/index.html"
-  url "https://github.com/thelfer/tfel/archive/refs/tags/TFEL-4.2.1.tar.gz"
-  sha256 "14f27257014a992a4e511f35390e4b9a086f6a5ed74087f891f8c00306f1758f"
+  url "https://github.com/thelfer/tfel/archive/refs/tags/TFEL-4.2.2.tar.gz"
+  sha256 "021864ad5b27ffce1915bcacc8f39f3e8a72ce6bd32e80a61ea0998a060180e5"
   license "GPL-1.0-or-later"
+  revision 2
   head "https://github.com/thelfer/tfel.git", using: :git, branch: "master"
 
   bottle do
-    sha256 arm64_sonoma:   "cb36d0506055650920db939f3e87a978dab2bec265b8140ed3772a1c85d80a59"
-    sha256 arm64_ventura:  "42dfba6fe15040f587f144fd846496ae3b71b677fe8a2d03e50cc3e75327882c"
-    sha256 arm64_monterey: "b0809b93eecab7dac90b8c2cee91f7edbc70b720f5fdb9ab4f6943fdf68e28c1"
-    sha256 sonoma:         "56a6c8012212df0257ec9d6a054c7d86cb9f20b29a3d262ad0c29e259555c1cf"
-    sha256 ventura:        "a8ab10d3ea152f2fff777f969180d3f18d9469fd14d4cac912f38a02b12b8259"
-    sha256 monterey:       "6d0654f25e5a7fa4893a5ab4307b3e17a86192a7530cb2973c3331e0a3ac63f6"
-    sha256 x86_64_linux:   "ce7346f2ba72a463e6345f7f97448fd60fe14f2fe1bdc746e82b12310bd4e0a3"
+    sha256 arm64_sequoia: "46bf238c2aa38c1ede704b6917f0807ae4a5476185d8f4524c041a3ee759e3f7"
+    sha256 arm64_sonoma:  "b9efab41fc7ff12edad2c817fee8d77e8ddf49e58e4879fd4280672a7adb76b1"
+    sha256 arm64_ventura: "6f40599f35dc778b08c063e53ff873974cc039e260727742ba1a06be381a2697"
+    sha256 sonoma:        "5bae20c8304234ed4d6e32ae2e1d59a6bda2d5131c9fecd1a57f303a5f662104"
+    sha256 ventura:       "d565d5a66446cb42cea96e3d43717843dc467effdd35da20feedd40af1bf92fe"
+    sha256 x86_64_linux:  "f50822c3b76af3fc81d41e238eb5ce256f0588a30bcbb884399231253d977ce3"
   end
 
   depends_on "cmake" => :build
   depends_on "gcc" => :build
   depends_on "boost-python3"
-  depends_on "python@3.12"
-  fails_with gcc: "5"
+  depends_on "python@3.13"
 
   def install
     args = [

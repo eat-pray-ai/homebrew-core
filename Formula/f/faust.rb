@@ -1,10 +1,9 @@
 class Faust < Formula
   desc "Functional programming language for real time signal processing"
   homepage "https://faust.grame.fr"
-  url "https://github.com/grame-cncm/faust/releases/download/2.72.14/faust-2.72.14.tar.gz"
-  sha256 "dcd5aaf263c59d34c385e65c4f4c5b85b0e9435e57cbfd79bb67a01e5780acf0"
+  url "https://github.com/grame-cncm/faust/releases/download/2.77.3/faust-2.77.3.tar.gz"
+  sha256 "3685348ba2482547fc7675b345caea490ff380814c5dcabc8a5f772682617c0e"
   license "GPL-2.0-or-later"
-  revision 1
 
   # Upstream creates releases that use a stable tag (e.g., `v1.2.3`) but are
   # labeled as "pre-release" on GitHub before the version is released, so it's
@@ -15,22 +14,20 @@ class Faust < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "cbf99a14a52325f082f45f20b76bac55f04dbb5f151ca7e8182312af4bc75174"
-    sha256 cellar: :any,                 arm64_ventura:  "ba73a779340c6013df8ddb47a52bd46c2d9ff1b2c682b9a33a22f1c2efcbb1ed"
-    sha256 cellar: :any,                 arm64_monterey: "dc57cb1d1bd2bcb8d642b4977f4de43f4c55392e0ab3b2fc980bfbc66c1bd4cb"
-    sha256 cellar: :any,                 sonoma:         "d1a43ccf29d84a1ab5ad6790d5896de3006af509c184ca0d17c615451053e3cc"
-    sha256 cellar: :any,                 ventura:        "23fb89b9c938fe74ce66ed2d24b33ce5d6aebb38e30d8e579852489b9a331e23"
-    sha256 cellar: :any,                 monterey:       "5eef8064dd9e09b88df7962119f2ce8d70841ed837e20cdd50591056e4a2b05f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "de5e4644e62bd918cf8f66c90b4a006a3f398f6f7368f0fe4fc24920e2449b06"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "72afaf325ad50d677fa9741080501a3ea25e71f3413e1495434a0427544bb7b4"
+    sha256 cellar: :any,                 arm64_sonoma:  "d556688303764f6645d20301a1a47669e337240a12ca715d7702c97016577411"
+    sha256 cellar: :any,                 arm64_ventura: "4bd907b439c79eb53981e3f83fd168527eaf4955b25c0246ab7bfd5275a10ce0"
+    sha256 cellar: :any,                 sonoma:        "c297a021412fd064f8d790b19d6da9f08edbcd752e760cc2f1ab4affe8396ed2"
+    sha256 cellar: :any,                 ventura:       "bd3dbd54042efc8a83f64cec75325e8fb21f944bd51d684141306a59768cb323"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "40d93a0c90132426d4087657e4ba77c64f47c180ca4dc08ea748e36f5e64a5d3"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "libmicrohttpd"
   depends_on "libsndfile"
   depends_on "llvm"
-
-  fails_with gcc: "5"
 
   def install
     system "cmake", "-S", "build", "-B", "homebrew_build",
@@ -60,6 +57,7 @@ class Faust < Formula
                     "-DHTTPDYNAMIC=ON",
                     "-DINCLUDE_ITP=OFF",
                     "-DITPDYNAMIC=ON",
+                    "-DLINK_LLVM_STATIC=OFF",
                     *std_cmake_args
     system "cmake", "--build", "homebrew_build"
     system "cmake", "--install", "homebrew_build"

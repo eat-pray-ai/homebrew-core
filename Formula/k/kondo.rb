@@ -7,6 +7,7 @@ class Kondo < Formula
 
   bottle do
     rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "7f7ed792db60c8e6dab1cd65a717e23443a509f37fc9a5c3fc2c5b2be86fdf65"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "ef1a8de9ec5ee7d8099bee48808e2472f8f7c328771b356961d1e3d901e247ad"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "6bbcb5abe74d2fb632d317a608adde42f9bbf59bec13eb3895f19811d6169ff3"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "b919fa810c7d632db59ab6b58757794eefae749feb39707fe7051d6bd95922ae"
@@ -19,10 +20,7 @@ class Kondo < Formula
   depends_on "rust" => :build
 
   def install
-    # The kondo command line program in in the kondo subfolder, so we navigate there.
-    cd "kondo" do
-      system "cargo", "install", *std_cargo_args
-    end
+    system "cargo", "install", *std_cargo_args(path: "kondo")
     generate_completions_from_executable(bin/"kondo", "--completions")
   end
 

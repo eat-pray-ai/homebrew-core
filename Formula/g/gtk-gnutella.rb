@@ -15,19 +15,35 @@ class GtkGnutella < Formula
     sha256 x86_64_linux:   "70a5946bf77166b5076fe6fa1d45b69c6f512260451c96758c4cde02fbb983df"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
+
+  depends_on "at-spi2-core"
+  depends_on "dbus"
+  depends_on "gdk-pixbuf"
+  depends_on "glib"
   depends_on "gtk+"
+  depends_on "pango"
+
+  uses_from_macos "zlib"
+
+  on_macos do
+    depends_on "gettext"
+    depends_on "harfbuzz"
+  end
 
   def install
+    # Work-around for build issue with Xcode 15.3: https://sourceforge.net/p/gtk-gnutella/bugs/583/
+    ENV.append_to_cflags "-Wno-incompatible-function-pointer-types" if DevelopmentTools.clang_build_version >= 1500
+
     ENV.deparallelize
 
     system "./build.sh", "--prefix=#{prefix}", "--disable-nls"
     system "make", "install"
-    rm_rf share/"pixmaps"
-    rm_rf share/"applications"
+    rm_r(share/"pixmaps")
+    rm_r(share/"applications")
   end
 
   test do
-    system "#{bin}/gtk-gnutella", "--version"
+    system bin/"gtk-gnutella", "--version"
   end
 end

@@ -1,6 +1,6 @@
 class Arangodb < Formula
   desc "Multi-Model NoSQL Database"
-  homepage "https://www.arangodb.com/"
+  homepage "https://arangodb.com/"
   url "https://download.arangodb.com/Source/ArangoDB-3.10.4.tar.bz2"
   sha256 "bc9cfaac5747995a6185d2cfea452b9fea8461bf91d2996dd75af75eef3cfddd"
   license "Apache-2.0"
@@ -35,7 +35,7 @@ class Arangodb < Formula
   end
 
   fails_with :clang do
-    cause <<-EOS
+    cause <<~EOS
       .../arangod/IResearch/AqlHelper.h:563:40: error: no matching constructor
       for initialization of 'std::string_view' (aka 'basic_string_view<char>')
               std::forward<Visitor>(visitor)(std::string_view{prev, begin});
@@ -141,7 +141,7 @@ class Arangodb < Formula
     assert_equal "it works!", output.chomp
 
     ohai "#{bin}/arangodb --starter.instance-up-timeout 1m --starter.mode single"
-    PTY.spawn("#{bin}/arangodb", "--starter.instance-up-timeout", "1m",
+    PTY.spawn(bin/"arangodb", "--starter.instance-up-timeout", "1m",
               "--starter.mode", "single", "--starter.disable-ipv6",
               "--server.arangod", "#{sbin}/arangod",
               "--server.js-dir", "#{share}/arangodb3/js") do |r, _, pid|

@@ -1,8 +1,8 @@
 class Scotch < Formula
   desc "Package for graph partitioning, graph clustering, and sparse matrix ordering"
   homepage "https://gitlab.inria.fr/scotch/scotch"
-  url "https://gitlab.inria.fr/scotch/scotch/-/archive/v7.0.4/scotch-v7.0.4.tar.bz2"
-  sha256 "97dbe0445231a7ad818ad3615c0128814c9b3e2514d10af0a9a89840888a487e"
+  url "https://gitlab.inria.fr/scotch/scotch/-/archive/v7.0.6/scotch-v7.0.6.tar.bz2"
+  sha256 "8168bf3f8025bb27be6dc9e055c4ceb58c09979c1c04a50ca251da021f12dbbe"
   license "CECILL-C"
   head "https://gitlab.inria.fr/scotch/scotch.git", branch: "master"
 
@@ -12,14 +12,12 @@ class Scotch < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any,                 arm64_sonoma:   "f6bce88b78f49b9f33c68675efa69e49379df081679c5135f7347602e764da10"
-    sha256 cellar: :any,                 arm64_ventura:  "cbf36bbffe46bb98b7b101c53f35238994abeb78535c8a4e98b1dc9d38529928"
-    sha256 cellar: :any,                 arm64_monterey: "156ee83b684825108b5b6a4b1368d6681e5035365b55cec3632a6c77b066d330"
-    sha256 cellar: :any,                 sonoma:         "3e45a16d9ff91376af5027bb7b5ca361464cc90c363aa3e9c6afdd7dde6d61ee"
-    sha256 cellar: :any,                 ventura:        "3c2a33c230cef7dbe330e18402b3290a53d6a49b56c783f273997aa4c49f18e5"
-    sha256 cellar: :any,                 monterey:       "ea1481ca62aea2b1179db614db867ba0bfcec8615fc1b3f3ccf48b9d5b553248"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "33b79e44801a0b931873eb74d46ad381514eb656d66a0122c408cd0ed97c2d5f"
+    sha256 cellar: :any,                 arm64_sequoia: "fa74c50a1469fde1b144b987d8aa871c56220e602f8ec10ebe0b3493f1ffeacd"
+    sha256 cellar: :any,                 arm64_sonoma:  "45d597bca844e4713c3909fc1219bbdca26441e8a47b4b6cfeafae565e087828"
+    sha256 cellar: :any,                 arm64_ventura: "68c2d938e7ffef5ab09d03f863f2ab8ee6df0b0dc2d9e82d9689bdfa3eafb1bc"
+    sha256 cellar: :any,                 sonoma:        "1e356a3c6921c1c6fd027ee3b312abef34ed5f330a2cb698f219ebfe07d67ecd"
+    sha256 cellar: :any,                 ventura:       "55e06bba192398b13847cbda00c18a7c22a761a0b1ac47a287a82fc3547ed850"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "eb56e29272dc3efded5b734acf714bb129bb8837d7a7c4ca267f870355e6a773"
   end
 
   depends_on "bison" => :build
@@ -73,7 +71,7 @@ class Scotch < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <stdlib.h>
       #include <stdio.h>
       #include <scotch.h>
@@ -83,7 +81,7 @@ class Scotch < Formula
         printf("%d.%d.%d", major, minor, patch);
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-L#{lib}", "-lscotch", "-lscotcherr",
                              "-pthread", "-L#{Formula["zlib"].opt_lib}", "-lz", "-lm"
     assert_match version.to_s, shell_output("./a.out")

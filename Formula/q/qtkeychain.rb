@@ -19,10 +19,9 @@ class Qtkeychain < Formula
   depends_on "qt"
 
   on_linux do
+    depends_on "glib"
     depends_on "libsecret"
   end
-
-  fails_with gcc: "5"
 
   def install
     args = %w[-DBUILD_TRANSLATIONS=OFF -DBUILD_WITH_QT6=ON]
@@ -32,13 +31,13 @@ class Qtkeychain < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <qt6keychain/keychain.h>
       int main() {
         QKeychain::ReadPasswordJob job(QLatin1String(""));
         return 0;
       }
-    EOS
+    CPP
     flags = ["-I#{Formula["qt"].opt_include}"]
     flags += if OS.mac?
       [

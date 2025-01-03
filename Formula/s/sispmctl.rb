@@ -6,6 +6,7 @@ class Sispmctl < Formula
   license "GPL-2.0-or-later"
 
   bottle do
+    sha256 arm64_sequoia:  "4550ae3f2066c6806e0f0805feba3128544530eec07f0a5c50bf95e24d9e2454"
     sha256 arm64_sonoma:   "583417f1421c804a4c9f8bfcd9b07da96206bb90f37bb9c7983b3813a5700f25"
     sha256 arm64_ventura:  "6f9a22d3ada050881c644cf1191f0bd3b102949428169c1ac27478ed33b343e8"
     sha256 arm64_monterey: "aa41c0da8beb340c22c9eadaadddd5af20dc05fb4e6efdd2b86e10118d4fcef9"
@@ -15,12 +16,11 @@ class Sispmctl < Formula
     sha256 x86_64_linux:   "db43f15862bbace1e2af6f17b257da7d3522011d82f00fa581d78fea1faa47db"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "libusb-compat"
 
   def install
-    system "./configure", "--disable-dependency-tracking",
-                          "--prefix=#{prefix}"
+    system "./configure", *std_configure_args
     system "make", "install"
   end
 

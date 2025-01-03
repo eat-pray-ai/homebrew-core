@@ -1,9 +1,10 @@
 class Graphicsmagick < Formula
   desc "Image processing tools collection"
   homepage "http://www.graphicsmagick.org/"
-  url "https://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/1.3.43/GraphicsMagick-1.3.43.tar.xz"
-  sha256 "2b88580732cd7e409d9e22c6116238bef4ae06fcda11451bf33d259f9cbf399f"
+  url "https://downloads.sourceforge.net/project/graphicsmagick/graphicsmagick/1.3.45/GraphicsMagick-1.3.45.tar.xz"
+  sha256 "dcea5167414f7c805557de2d7a47a9b3147bcbf617b91f5f0f4afe5e6543026b"
   license "MIT"
+  revision 1
   head "http://hg.code.sf.net/p/graphicsmagick/code", using: :hg
 
   livecheck do
@@ -12,16 +13,16 @@ class Graphicsmagick < Formula
 
   bottle do
     rebuild 1
-    sha256 arm64_sonoma:   "4327a8a8fd2f1c697fb3d0ca2c701a9a66e295becf43c0a10c5add67907f44a3"
-    sha256 arm64_ventura:  "c6c12c57731a5d6bd7a70da86e0a9cb468db8f7d8350a2ab07f22b630635a4e7"
-    sha256 arm64_monterey: "c8d23bbcbe9421ad513d5455391e58f2ec8fc07967fc86660a683555436f38f8"
-    sha256 sonoma:         "1a79f2ad8c106b7120cfb33f0f8208a0f392c39898b5549937aa52d680c2dab1"
-    sha256 ventura:        "6f966005ea5b5482d131dacb7b3760340d99d1c922dd7ae57628276992fb5dcb"
-    sha256 monterey:       "369d05d9066c18073da869dea68b0b7c6f20768bdcb9efb03ed7eea38dd755ae"
-    sha256 x86_64_linux:   "340cf9139695b165618523c21eff0e0448950e6e05e965328c4142e85169f182"
+    sha256 arm64_sequoia: "f950843cfad9376677acb179ad6553531249d9e79b37a830eba929591beaac46"
+    sha256 arm64_sonoma:  "8b521ea1cf171f8fdb14b43f3b3d06699280569791a25d64aa73684062e06ed0"
+    sha256 arm64_ventura: "e0c9b6972e74fcc2d74037d907671ad6a2073553816beb11b8aacb9b554ec689"
+    sha256 sonoma:        "15ad3752ebc129fe21f9da7b729c2d90cf8c40ce824dc42f6725d31c139d2896"
+    sha256 ventura:       "104380c258558a7469b1b7133222740d00af867fe8d8a1dc36a419e6294a58b7"
+    sha256 x86_64_linux:  "b6e2fea1abc3ea05bc6c9a7837b1e5fb2257a35155fe0c539d1e3008d257879d"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
+
   depends_on "freetype"
   depends_on "jasper"
   depends_on "jpeg-turbo"
@@ -32,6 +33,7 @@ class Graphicsmagick < Formula
   depends_on "libtool"
   depends_on "little-cms2"
   depends_on "webp"
+  depends_on "zstd"
 
   uses_from_macos "bzip2"
   uses_from_macos "libxml2"
@@ -41,8 +43,6 @@ class Graphicsmagick < Formula
 
   def install
     args = %W[
-      --prefix=#{prefix}
-      --disable-dependency-tracking
       --disable-openmp
       --disable-static
       --enable-shared
@@ -55,11 +55,13 @@ class Graphicsmagick < Formula
       --without-wmf
       --with-jxl
     ]
-
     # versioned stuff in main tree is pointless for us
     inreplace "configure", "${PACKAGE_NAME}-${PACKAGE_VERSION}", "${PACKAGE_NAME}"
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args
     system "make", "install"
+
+    # Avoid rebuilding dependents that hard-code the prefix.
+    inreplace (lib/"pkgconfig").glob("*.pc"), prefix, opt_prefix
   end
 
   test do

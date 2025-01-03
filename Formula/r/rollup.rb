@@ -1,44 +1,39 @@
-require "language/node"
-
 class Rollup < Formula
   desc "Next-generation ES module bundler"
   homepage "https://rollupjs.org/"
-  url "https://registry.npmjs.org/rollup/-/rollup-4.18.1.tgz"
-  sha256 "ca6e167277641dfddcf2312a751f9e9bf28f94acfca91f18cbee729599453f9d"
+  url "https://registry.npmjs.org/rollup/-/rollup-4.29.1.tgz"
+  sha256 "653b9922b4d9a4872ad0c6e607e8f17fac4a1a8e7dccba882a4f976a28585f94"
   license all_of: ["ISC", "MIT"]
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "7b5b4115ba3caea7b8006ba271d8d24f7bc96fcded48de61da281b0fb348695f"
-    sha256 cellar: :any,                 arm64_ventura:  "7b5b4115ba3caea7b8006ba271d8d24f7bc96fcded48de61da281b0fb348695f"
-    sha256 cellar: :any,                 arm64_monterey: "7b5b4115ba3caea7b8006ba271d8d24f7bc96fcded48de61da281b0fb348695f"
-    sha256 cellar: :any,                 sonoma:         "e799d2e3d662b4a798a7e8533a6ac7ce59aada58796185085d9682cd3bf09fed"
-    sha256 cellar: :any,                 ventura:        "e799d2e3d662b4a798a7e8533a6ac7ce59aada58796185085d9682cd3bf09fed"
-    sha256 cellar: :any,                 monterey:       "e799d2e3d662b4a798a7e8533a6ac7ce59aada58796185085d9682cd3bf09fed"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "bce20c76b42dad9a66649c3636d3bc5374ec397c52eb2d5d977888ff24b3e6f3"
+    sha256 cellar: :any,                 arm64_sequoia: "ae9c4043ffcb3bbc40b211d6d2fc643585245a3a8ebab8b8a75aff698db6d8f7"
+    sha256 cellar: :any,                 arm64_sonoma:  "ae9c4043ffcb3bbc40b211d6d2fc643585245a3a8ebab8b8a75aff698db6d8f7"
+    sha256 cellar: :any,                 arm64_ventura: "ae9c4043ffcb3bbc40b211d6d2fc643585245a3a8ebab8b8a75aff698db6d8f7"
+    sha256 cellar: :any,                 sonoma:        "ccefd869f741a96a61736d9278cd651921907b2aa0873370ee1105ef71293f8a"
+    sha256 cellar: :any,                 ventura:       "ccefd869f741a96a61736d9278cd651921907b2aa0873370ee1105ef71293f8a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "356d327507f286abc0be4df5e008edc3ebb426e96d9eeb0f9ceb2d45c3cc79de"
   end
 
   depends_on "node"
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+    system "npm", "install", *std_npm_args
     bin.install_symlink Dir["#{libexec}/bin/*"]
-
-    deuniversalize_machos
   end
 
   test do
-    (testpath/"test/main.js").write <<~EOS
+    (testpath/"test/main.js").write <<~JS
       import foo from './foo.js';
       export default function () {
         console.log(foo);
       }
-    EOS
+    JS
 
-    (testpath/"test/foo.js").write <<~EOS
+    (testpath/"test/foo.js").write <<~JS
       export default 'hello world!';
-    EOS
+    JS
 
-    expected = <<~EOS
+    expected = <<~JS
       'use strict';
 
       var foo = 'hello world!';
@@ -48,7 +43,7 @@ class Rollup < Formula
       }
 
       module.exports = main;
-    EOS
+    JS
 
     assert_equal expected, shell_output("#{bin}/rollup #{testpath}/test/main.js -f cjs")
   end

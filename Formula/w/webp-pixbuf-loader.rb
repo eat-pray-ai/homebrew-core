@@ -7,6 +7,7 @@ class WebpPixbufLoader < Formula
   head "https://github.com/aruiz/webp-pixbuf-loader.git", branch: "mainline"
 
   bottle do
+    sha256 cellar: :any, arm64_sequoia:  "ca50f5b5377da497519c76eed66b5d8fda150e604846c7e1b711ce4e72284966"
     sha256 cellar: :any, arm64_sonoma:   "dfdb762a8de403d1f746042b9cd3fd5bfdff4af69c2d9d3667e9926846bc2948"
     sha256 cellar: :any, arm64_ventura:  "21bcb300a9b98ea69b084a507c0bbc369ae53c56c6ac5baa0e010ea9593d1043"
     sha256 cellar: :any, arm64_monterey: "9840b14ad81937500f2f3b2e19efc9b057ad5f9cd436277d45bc62df486030ec"
@@ -18,8 +19,9 @@ class WebpPixbufLoader < Formula
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => [:build, :test]
+  depends_on "pkgconf" => [:build, :test]
   depends_on "gdk-pixbuf"
+  depends_on "glib"
   depends_on "webp"
 
   # Constants for gdk-pixbuf's multiple version numbers, which are the same as
@@ -38,7 +40,7 @@ class WebpPixbufLoader < Formula
   end
 
   def install
-    system "meson", "setup", "build", *std_meson_args, "-Dgdk_pixbuf_moduledir=#{prefix}/#{module_subdir}"
+    system "meson", "setup", "build", "-Dgdk_pixbuf_moduledir=#{prefix}/#{module_subdir}", *std_meson_args
     system "meson", "compile", "-C", "build", "--verbose"
     system "meson", "install", "-C", "build"
   end
@@ -46,15 +48,15 @@ class WebpPixbufLoader < Formula
   # After the loader is linked in, update the global cache of pixbuf loaders
   def post_install
     ENV["GDK_PIXBUF_MODULEDIR"] = "#{HOMEBREW_PREFIX}/#{module_subdir}"
-    system "#{Formula["gdk-pixbuf"].opt_bin}/gdk-pixbuf-query-loaders", "--update-cache"
+    system Formula["gdk-pixbuf"].opt_bin/"gdk-pixbuf-query-loaders", "--update-cache"
   end
 
   test do
     # Generate a .webp file to test with.
-    system "#{Formula["webp"].opt_bin}/cwebp", test_fixtures("test.png"), "-o", "test.webp"
+    system Formula["webp"].opt_bin/"cwebp", test_fixtures("test.png"), "-o", "test.webp"
 
     # Sample program to load a .webp file via gdk-pixbuf.
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <gdk-pixbuf/gdk-pixbuf.h>
 
       gint main (gint argc, gchar **argv)  {
@@ -70,9 +72,9 @@ class WebpPixbufLoader < Formula
         g_object_unref(pixbuf);
         return 0;
       }
-    EOS
+    C
 
-    flags = shell_output("pkg-config --cflags --libs gdk-pixbuf-#{gdk_so_ver}").chomp.split
+    flags = shell_output("pkgconf --cflags --libs gdk-pixbuf-#{gdk_so_ver}").chomp.split
     system ENV.cc, "test.c", "-o", "test_loader", *flags
     system "./test_loader", "test.webp"
   end

@@ -11,6 +11,7 @@ class LibxmlxxAT3 < Formula
   end
 
   bottle do
+    sha256 cellar: :any, arm64_sequoia:  "7ce50fce8fe1b14be32287b69d5216ad21c121f07cf4fe654520906f023ba329"
     sha256 cellar: :any, arm64_sonoma:   "24048f05e398ac690679138eea7b2ae75ad039aa0dc7616ab51c314a82cfb7a8"
     sha256 cellar: :any, arm64_ventura:  "b01bd711325b71e9252edd6c8f82b5469bfeb5a397543d8a4fd3c59899ed5147"
     sha256 cellar: :any, arm64_monterey: "7804cbaa7dbf277c45f5b9809c7d5297a4e9837fee3cb543b3ceba8fbef04740"
@@ -22,7 +23,7 @@ class LibxmlxxAT3 < Formula
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => [:build, :test]
+  depends_on "pkgconf" => [:build, :test]
   depends_on "glibmm@2.66"
 
   uses_from_macos "libxml2"
@@ -34,7 +35,7 @@ class LibxmlxxAT3 < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <libxml++/libxml++.h>
 
       int main(int argc, char *argv[])
@@ -44,8 +45,8 @@ class LibxmlxxAT3 < Formula
          xmlpp::Element *rootnode = document.create_root_node("homebrew");
          return 0;
       }
-    EOS
-    command = "#{Formula["pkg-config"].opt_bin}/pkg-config --cflags --libs libxml++-3.0"
+    CPP
+    command = "#{Formula["pkgconf"].opt_bin}/pkgconf --cflags --libs libxml++-3.0"
     flags = shell_output(command).strip.split
     system ENV.cxx, "-std=c++11", "test.cpp", "-o", "test", *flags
     system "./test"

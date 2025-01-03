@@ -12,6 +12,7 @@ class WithReadline < Formula
   end
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "64699e89e796bf016bb6754677c5a76f881111becdbbea0ae532de8e9f398932"
     sha256 cellar: :any,                 arm64_sonoma:   "5aeb8225f4f4897af246a0e1b4042375539336d0b80721968d50f4760157b5e2"
     sha256 cellar: :any,                 arm64_ventura:  "b3277d7237d984e25ce8eea7a479b7ac6c68c929fbcfcee627d68e2748eb955d"
     sha256 cellar: :any,                 arm64_monterey: "d0fbb8e109734765f470ff267c0c45f3ae958615bc162f3e541b9e4f219d7ec9"
@@ -29,7 +30,7 @@ class WithReadline < Formula
 
   depends_on "readline"
 
-  uses_from_macos "expect" => :test
+  uses_from_macos "tcl-tk" => :test
 
   def install
     system "./configure", *std_configure_args
@@ -37,7 +38,7 @@ class WithReadline < Formula
   end
 
   test do
-    expect = OS.mac? ? "/usr/bin/expect" : Formula["expect"].bin/"expect"
-    pipe_output("#{bin}/with-readline #{expect}", "exit", 0)
+    tclsh = OS.mac? ? "/usr/bin/tclsh" : Formula["tcl-tk"].bin/"tclsh"
+    pipe_output("#{bin}/with-readline #{tclsh}", "exit", 0)
   end
 end

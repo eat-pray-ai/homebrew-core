@@ -6,6 +6,7 @@ class Libxvmc < Formula
   license "MIT"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "b98800f4d24c2f04f9ac826ed9365195847f7bd3c5aa758abf5ae6c2748256b0"
     sha256 cellar: :any,                 arm64_sonoma:   "ec6119429cbf4d4812c6b9aca9cfd33f1b63802d7536b886f5b4454a55241ecd"
     sha256 cellar: :any,                 arm64_ventura:  "e2990ee70324b5caa16cfb356d2066da14e66c7a9b4ed5c9e5da7867b779d618"
     sha256 cellar: :any,                 arm64_monterey: "7ee479ebc065e0587284e698515087d1f9187ae4b88640d01a333f5d38638d18"
@@ -15,7 +16,7 @@ class Libxvmc < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "7bb9249003ad6c7905548d56c1863abf21b9a0f07407139d8060e6a553eff45e"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "util-macros" => :build
   depends_on "xorgproto" => :build
   depends_on "libx11"
@@ -24,20 +25,18 @@ class Libxvmc < Formula
 
   def install
     args = %W[
-      --prefix=#{prefix}
       --sysconfdir=#{etc}
       --localstatedir=#{var}
-      --disable-dependency-tracking
       --disable-silent-rules
     ]
 
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args
     system "make"
     system "make", "install"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include "X11/Xlib.h"
       #include "X11/extensions/XvMClib.h"
 
@@ -45,7 +44,7 @@ class Libxvmc < Formula
         XvPortID *port_id;
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c"
     assert_equal 0, $CHILD_STATUS.exitstatus
   end

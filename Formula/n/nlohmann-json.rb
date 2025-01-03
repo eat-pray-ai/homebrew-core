@@ -7,7 +7,8 @@ class NlohmannJson < Formula
   head "https://github.com/nlohmann/json.git", branch: "develop"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "f171485a9f51d41eff592f4bf49bd14d09fa041c89370c00c4674211e15fddd6"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, all: "3ebd5da2b7596028e92c6a82226aaa026a84fcca8a85db96b064b70e5426e810"
   end
 
   depends_on "cmake" => :build
@@ -20,7 +21,7 @@ class NlohmannJson < Formula
   end
 
   test do
-    (testpath/"test.cc").write <<~EOS
+    (testpath/"test.cc").write <<~CPP
       #include <iostream>
       #include <nlohmann/json.hpp>
 
@@ -38,12 +39,12 @@ class NlohmannJson < Formula
         };
         std::cout << j << std::endl;
       }
-    EOS
+    CPP
 
     system ENV.cxx, "test.cc", "-I#{include}", "-std=c++11", "-o", "test"
-    std_output = <<~EOS
+    std_output = <<~JSON
       {"list":[1,0,2],"name":"Niels","object":{"happy":true,"nothing":null},"pi":3.141}
-    EOS
+    JSON
     assert_match std_output, shell_output("./test")
   end
 end

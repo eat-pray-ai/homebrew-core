@@ -1,9 +1,9 @@
 class Riscv64ElfGdb < Formula
   desc "GNU debugger for riscv64-elf cross development"
   homepage "https://www.gnu.org/software/gdb/"
-  url "https://ftp.gnu.org/gnu/gdb/gdb-15.1.tar.xz"
-  mirror "https://ftpmirror.gnu.org/gdb/gdb-15.1.tar.xz"
-  sha256 "38254eacd4572134bca9c5a5aa4d4ca564cbbd30c369d881f733fb6b903354f2"
+  url "https://ftp.gnu.org/gnu/gdb/gdb-15.2.tar.xz"
+  mirror "https://ftpmirror.gnu.org/gdb/gdb-15.2.tar.xz"
+  sha256 "83350ccd35b5b5a0cba6b334c41294ea968158c573940904f00b92f76345314d"
   license "GPL-3.0-or-later"
   head "https://sourceware.org/git/binutils-gdb.git", branch: "master"
 
@@ -12,21 +12,23 @@ class Riscv64ElfGdb < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "69e827ae4d9fb2557b7a0633b8fd465a8865f6c4f6368c06ab523f966a4d22fb"
-    sha256 arm64_ventura:  "b730c8115a9690e20c5e1c98c65d54098a786aabb522ef0e7fc05d369bcc368f"
-    sha256 arm64_monterey: "3ea7e8dd30bc0201ff6e193f36a2e393d62c279d7b18d93827ab6e789bf4e16f"
-    sha256 sonoma:         "98ef12be27a6faeb51b4e17a678f32c0efd916583669b9154dee85f7369fe2a9"
-    sha256 ventura:        "37720faaae0e249d4277efc26bf009d4689bd25d1f77a1cde0a6ada1d82374da"
-    sha256 monterey:       "75e0735658e3cc2a7ee2c12937c644f0eed406753bcaa28055f0bb48153daf2b"
-    sha256 x86_64_linux:   "fe6e9f6868e419a65137cbc5f71de460657c53f424c45a704810013356291286"
+    rebuild 1
+    sha256 arm64_sequoia: "36c1f632bb7f40828e5ec403a478b162d0e4fa015fc0cd7efc9bbd00334d4e59"
+    sha256 arm64_sonoma:  "c403475f420f839a525d0aff4e2908a8e64cb70b98872caaa1746ebb10e95399"
+    sha256 arm64_ventura: "94d073109b7cc60087e9e9b984f8bd87d80770290b6967bec45a97d89ba10109"
+    sha256 sonoma:        "9c5d7038a86482cc060aa65463ccce10d6b0c858a0e9ad5f583a43610f4a1826"
+    sha256 ventura:       "39ca5b921fb532d4f8dac268e68da3c52268097315b976e38af40442997e9172"
+    sha256 x86_64_linux:  "37e929ea261d07835fc69b99999ba092b6da10fe7024d4053fc43c5f7882cc55"
   end
 
   depends_on "riscv64-elf-gcc" => :test
   depends_on "gmp"
   depends_on "mpfr"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "xz" # required for lzma support
 
+  uses_from_macos "expat"
+  uses_from_macos "ncurses"
   uses_from_macos "zlib"
 
   on_system :linux, macos: :ventura_or_newer do
@@ -42,7 +44,7 @@ class Riscv64ElfGdb < Formula
       --infodir=#{info}/#{target}
       --mandir=#{man}
       --with-lzma
-      --with-python=#{which("python3.12")}
+      --with-python=#{which("python3.13")}
       --with-system-zlib
       --disable-binutils
     ]
@@ -59,7 +61,7 @@ class Riscv64ElfGdb < Formula
 
   test do
     (testpath/"test.c").write "void _start(void) {}"
-    system "#{Formula["riscv64-elf-gcc"].bin}/riscv64-elf-gcc", "-g", "-nostdlib", "test.c"
+    system Formula["riscv64-elf-gcc"].bin/"riscv64-elf-gcc", "-g", "-nostdlib", "test.c"
     assert_match "Symbol \"_start\" is a function at address 0x",
           shell_output("#{bin}/riscv64-elf-gdb -batch -ex 'info address _start' a.out")
   end

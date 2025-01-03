@@ -6,6 +6,7 @@ class Libxmu < Formula
   license "MIT"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "b44c421e544a4a88eacaec0155108a9ce86a7d6aebf39e735d7d8656b2c7d768"
     sha256 cellar: :any,                 arm64_sonoma:   "cf78ddb72afdc7e39ad0aa9421ef8c6ef215a588311fff8d7924fb7dfe33d644"
     sha256 cellar: :any,                 arm64_ventura:  "06a9985ef9c93b62954e604491eda08c17ff0121c4db57e816ecdd0a89fc0b9a"
     sha256 cellar: :any,                 arm64_monterey: "e95b65aa281742d32783fe3e81a791f83740724c6a67b47196ef8c0c3ead9bc9"
@@ -15,27 +16,26 @@ class Libxmu < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "1da14c69af817c5faa1fc53dcf66a32a9319c75769562941f7e0ac20dbe2347b"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
+  depends_on "libx11"
   depends_on "libxext"
   depends_on "libxt"
 
   def install
     args = %W[
-      --prefix=#{prefix}
       --sysconfdir=#{etc}
       --localstatedir=#{var}
-      --disable-dependency-tracking
       --disable-silent-rules
       --enable-docs=no
     ]
 
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args
     system "make"
     system "make", "install"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include "X11/Xlib.h"
       #include "X11/Xmu/Xmu.h"
 
@@ -43,7 +43,7 @@ class Libxmu < Formula
         XmuArea area;
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-lXmu"
     assert_equal 0, $CHILD_STATUS.exitstatus
   end

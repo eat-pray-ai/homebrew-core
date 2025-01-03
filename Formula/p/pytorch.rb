@@ -3,10 +3,10 @@ class Pytorch < Formula
 
   desc "Tensors and dynamic neural networks"
   homepage "https://pytorch.org/"
-  url "https://github.com/pytorch/pytorch/releases/download/v2.2.0/pytorch-v2.2.0.tar.gz"
-  sha256 "e12d18c3dbb12d7ae2f61f5ab9a21023e3dd179d67ed87279ef96600b9ac08c5"
+  url "https://github.com/pytorch/pytorch/releases/download/v2.5.1/pytorch-v2.5.1.tar.gz"
+  sha256 "740eb5fff95e33cfe699bad43be83523f569c7cc7f9c285c2a255416443dd266"
   license "BSD-3-Clause"
-  revision 6
+  revision 3
 
   livecheck do
     url :stable
@@ -14,18 +14,17 @@ class Pytorch < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "2ce0c2c997fe49524dc77db68e07a68899b6e6e2fd646bba1a576884486e11b7"
-    sha256 cellar: :any,                 arm64_ventura:  "027deccaa19afe466fb3cb27007c8c2c9974dea430dda3aa3f42cc1e59668c73"
-    sha256 cellar: :any,                 arm64_monterey: "64d191f257885820a2570407a5241297aa002ccaf0ca744a5408ffc0c9be181f"
-    sha256 cellar: :any,                 sonoma:         "a8366c033d59728a450a360b70f3719d9f5d61425728303421dc734f16b8819a"
-    sha256 cellar: :any,                 ventura:        "2de520a5b202acdbb3db837d48e233837d1ce294f403790fd8e4bf6d9131636d"
-    sha256 cellar: :any,                 monterey:       "c8ffe8854466c3797273caf32e6bc364738936cfa6895fe1f7303d862c883ef1"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "c71ba6cb22a006da7a25ac01791d60d8b633359ead5eec463834150affdb0ad9"
+    sha256 cellar: :any,                 arm64_sequoia: "63fa9f32fdc1ad8ccf8df2a7dcde7e0abb67336b2f4c33cd613c4dfda736438f"
+    sha256 cellar: :any,                 arm64_sonoma:  "da20035d9a1813735459cb044ef541aa2c55078e50d948b919d550d68b8ca3e2"
+    sha256 cellar: :any,                 arm64_ventura: "0b10b0fe15b2352e3d02d82ca3fb97b1806da8485a3b5355d0dcea51b60fe7f3"
+    sha256 cellar: :any,                 sonoma:        "1132c68ecb8865a2b3865112f9e135e5d11ed2f12a2486d18c032ec2373292f5"
+    sha256 cellar: :any,                 ventura:       "f847674dfb721254cc4b7f41f243e02aea2ebe46808ed70b97296421dfac2107"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2e5e98938d7d124e2fce406b552f828f2fc1b3b052b5e4db96ae1144d36a3222"
   end
 
   depends_on "cmake" => :build
   depends_on "ninja" => :build
-  depends_on "python@3.12" => [:build, :test]
+  depends_on "python@3.13" => [:build, :test]
   depends_on xcode: :build
   depends_on "abseil"
   depends_on "eigen"
@@ -43,23 +42,23 @@ class Pytorch < Formula
   end
 
   resource "filelock" do
-    url "https://files.pythonhosted.org/packages/70/70/41905c80dcfe71b22fb06827b8eae65781783d4a14194bce79d16a013263/filelock-3.13.1.tar.gz"
-    sha256 "521f5f56c50f8426f5e03ad3b281b490a87ef15bc6c526f168290f0c7148d44e"
+    url "https://files.pythonhosted.org/packages/9d/db/3ef5bb276dae18d6ec2124224403d1d67bccdbefc17af4cc8f553e341ab1/filelock-3.16.1.tar.gz"
+    sha256 "c249fbfcd5db47e5e2d6d62198e565475ee65e4831e2561c8e313fa7eb961435"
   end
 
   resource "fsspec" do
-    url "https://files.pythonhosted.org/packages/28/d3/c2e0403c735548abf991bba3f45ba39194dff4569f76a99fbe77078ba7c5/fsspec-2024.2.0.tar.gz"
-    sha256 "b6ad1a679f760dda52b1168c859d01b7b80648ea6f7f7c7f5a8a91dc3f3ecb84"
+    url "https://files.pythonhosted.org/packages/62/7c/12b0943011daaaa9c35c2a2e22e5eb929ac90002f08f1259d69aedad84de/fsspec-2024.9.0.tar.gz"
+    sha256 "4b0afb90c2f21832df142f292649035d80b421f60a9e1c027802e5a0da2b04e8"
   end
 
   resource "jinja2" do
-    url "https://files.pythonhosted.org/packages/b2/5e/3a21abf3cd467d7876045335e681d276ac32492febe6d98ad89562d1a7e1/Jinja2-3.1.3.tar.gz"
-    sha256 "ac8bd6544d4bb2c9792bf3a159e80bba8fda7f07e81bc3aed565432d5925ba90"
+    url "https://files.pythonhosted.org/packages/ed/55/39036716d19cab0747a5020fc7e907f362fbf48c984b14e62127f7e68e5d/jinja2-3.1.4.tar.gz"
+    sha256 "4a3aee7acbbe7303aede8e9648d13b8bf88a429282aa6122a993f0ac800cb369"
   end
 
   resource "markupsafe" do
-    url "https://files.pythonhosted.org/packages/87/5b/aae44c6655f3801e81aa3eef09dbbf012431987ba564d7231722f68df02d/MarkupSafe-2.1.5.tar.gz"
-    sha256 "d283d37a890ba4c1ae73ffadf8046435c76e7bc2247bbb63c00bd1a709c6544b"
+    url "https://files.pythonhosted.org/packages/b2/97/5d42485e71dfc078108a86d6de8fa46db44a1a9295e89c5d6d4a06e23a62/markupsafe-3.0.2.tar.gz"
+    sha256 "ee55d3edf80167e48ea11a923c7386f4669df67d7994554387f84e7d8b0a2bf0"
   end
 
   resource "mpmath" do
@@ -68,53 +67,40 @@ class Pytorch < Formula
   end
 
   resource "networkx" do
-    url "https://files.pythonhosted.org/packages/c4/80/a84676339aaae2f1cfdf9f418701dd634aef9cc76f708ef55c36ff39c3ca/networkx-3.2.1.tar.gz"
-    sha256 "9f1bb5cf3409bf324e0a722c20bdb4c20ee39bf1c30ce8ae499c8502b0b5e0c6"
+    url "https://files.pythonhosted.org/packages/36/2b/20ad9eecdda3f1b0dc63fb8f82d2ea99163dbca08bfa392594fc2ed81869/networkx-3.4.1.tar.gz"
+    sha256 "f9df45e85b78f5bd010993e897b4f1fdb242c11e015b101bd951e5c0e29982d8"
   end
 
   resource "opt-einsum" do
-    url "https://files.pythonhosted.org/packages/7d/bf/9257e53a0e7715bc1127e15063e831f076723c6cd60985333a1c18878fb8/opt_einsum-3.3.0.tar.gz"
-    sha256 "59f6475f77bbc37dcf7cd748519c0ec60722e91e63ca114e68821c0c54a46549"
-
-    # Backport ConfigParser fix for Python 3.12 support
-    patch do
-      url "https://github.com/dgasmith/opt_einsum/commit/7c8f193f90b6771a6b3065bb5cf6ec2747af8209.patch?full_index=1"
-      sha256 "7c90ac470278deca8aa9d7ecb4bb2b31a2f79928e1783ae1316fcc3aa81f348a"
-    end
+    url "https://files.pythonhosted.org/packages/8c/b9/2ac072041e899a52f20cf9510850ff58295003aa75525e58343591b0cbfb/opt_einsum-3.4.0.tar.gz"
+    sha256 "96ca72f1b886d148241348783498194c577fa30a8faac108586b14f1ba4473ac"
   end
 
   resource "pyyaml" do
-    url "https://files.pythonhosted.org/packages/cd/e5/af35f7ea75cf72f2cd079c95ee16797de7cd71f29ea7c68ae5ce7be1eda0/PyYAML-6.0.1.tar.gz"
-    sha256 "bfdf460b1736c775f2ba9f6a92bca30bc2095067b8a9d77876d1fad6cc3b4a43"
+    url "https://files.pythonhosted.org/packages/54/ed/79a089b6be93607fa5cdaedf301d7dfb23af5f25c398d5ead2525b063e17/pyyaml-6.0.2.tar.gz"
+    sha256 "d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e"
   end
 
   resource "setuptools" do
-    url "https://files.pythonhosted.org/packages/c8/1f/e026746e5885a83e1af99002ae63650b7c577af5c424d4c27edcf729ab44/setuptools-69.1.1.tar.gz"
-    sha256 "5c0806c7d9af348e6dd3777b4f4dbb42c7ad85b190104837488eab9a7c945cf8"
+    url "https://files.pythonhosted.org/packages/07/37/b31be7e4b9f13b59cde9dcaeff112d401d49e0dc5b37ed4a9fc8fb12f409/setuptools-75.2.0.tar.gz"
+    sha256 "753bb6ebf1f465a1912e19ed1d41f403a79173a9acf66a42e7e6aec45c3c16ec"
   end
 
   resource "sympy" do
-    url "https://files.pythonhosted.org/packages/e5/57/3485a1a3dff51bfd691962768b14310dae452431754bfc091250be50dd29/sympy-1.12.tar.gz"
-    sha256 "ebf595c8dac3e0fdc4152c51878b498396ec7f30e7a914d6071e674d49420fb8"
+    url "https://files.pythonhosted.org/packages/ca/99/5a5b6f19ff9f083671ddf7b9632028436167cd3d33e11015754e41b249a4/sympy-1.13.1.tar.gz"
+    sha256 "9cebf7e04ff162015ce31c9c6c9144daa34a93bd082f54fd8f12deca4f47515f"
   end
 
   resource "typing-extensions" do
-    url "https://files.pythonhosted.org/packages/0c/1d/eb26f5e75100d531d7399ae800814b069bc2ed2a7410834d57374d010d96/typing_extensions-4.9.0.tar.gz"
-    sha256 "23478f88c37f27d76ac8aee6c905017a143b0b1b886c3c9f66bc2fd94f9f5783"
+    url "https://files.pythonhosted.org/packages/df/db/f35a00659bc03fec321ba8bce9420de607a1d37f8342eee1863174c69557/typing_extensions-4.12.2.tar.gz"
+    sha256 "1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8"
   end
-
-  # Support numpy 2.0: https://github.com/pytorch/pytorch/pull/121880
-  patch do
-    url "https://github.com/pytorch/pytorch/commit/38d9bb5abcc31ba97927a5399b88afe2cf60bf64.patch?full_index=1"
-    sha256 "c9bf84d154e5f3f9b67a68d25765f32a08b9deb3127254971ed6351231eba228"
-  end
-
-  # Backport usage of SLEEF_CONST from upstream commit
-  # Ref: https://github.com/pytorch/pytorch/commit/2b060983809e5fe8706acd085fff67b6a27bfb5f
-  patch :DATA
 
   def install
-    python3 = "python3.12"
+    python3 = "python3.13"
+
+    # Avoid building AVX512 code
+    inreplace "cmake/Modules/FindAVX.cmake", /^CHECK_SSE\(CXX "AVX512"/, "#\\0"
 
     ENV["ATEN_NO_TEST"] = "ON"
     ENV["BLAS"] = "OpenBLAS"
@@ -122,9 +108,11 @@ class Pytorch < Formula
     ENV["BUILD_PYTHON"] = "ON"
     ENV["BUILD_TEST"] = "OFF"
     ENV["PYTHON_EXECUTABLE"] = which(python3)
+    ENV["PYTORCH_BUILD_VERSION"] = version.to_s
+    ENV["PYTORCH_BUILD_NUMBER"] = "1"
+    ENV["USE_CCACHE"] = "OFF"
     ENV["USE_CUDA"] = "OFF"
     ENV["USE_DISTRIBUTED"] = "ON"
-    ENV["USE_METAL"] = "OFF"
     ENV["USE_MKLDNN"] = "OFF"
     ENV["USE_NNPACK"] = "OFF"
     ENV["USE_OPENMP"] = "ON"
@@ -132,11 +120,6 @@ class Pytorch < Formula
     ENV["USE_SYSTEM_PYBIND11"] = "ON"
     ENV["USE_SYSTEM_SLEEF"] = "ON"
     ENV["USE_MPS"] = "ON" if OS.mac?
-
-    # Work around superenv removing `-Werror=` but leaving `-Wno-error=` breaking flag detection
-    if ENV.compiler.to_s.start_with?("gcc")
-      inreplace "CMakeLists.txt", 'append_cxx_flag_if_supported("-Wno-error=inconsistent-missing-', "# \\0"
-    end
 
     # Avoid references to Homebrew shims
     inreplace "caffe2/core/macros.h.in", "${CMAKE_CXX_COMPILER}", ENV.cxx
@@ -146,7 +129,7 @@ class Pytorch < Formula
     venv.pip_install_and_link(buildpath, build_isolation: false)
 
     # Expose C++ API
-    torch = libexec/Language::Python.site_packages(python3)/"torch"
+    torch = venv.site_packages/"torch"
     include.install_symlink (torch/"include").children
     lib.install_symlink (torch/"lib").children
     (share/"cmake").install_symlink (torch/"share/cmake").children
@@ -154,7 +137,7 @@ class Pytorch < Formula
 
   test do
     # test that C++ libraries are available
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <torch/torch.h>
       #include <iostream>
 
@@ -162,56 +145,25 @@ class Pytorch < Formula
         torch::Tensor tensor = torch::rand({2, 3});
         std::cout << tensor << std::endl;
       }
-    EOS
+    CPP
     system ENV.cxx, "-std=c++17", "test.cpp", "-o", "test",
                     "-I#{include}/torch/csrc/api/include",
                     "-L#{lib}", "-ltorch", "-ltorch_cpu", "-lc10"
     system "./test"
 
     # test that the `torch` Python module is available
-    system libexec/"bin/python", "-c", <<~EOS
+    system libexec/"bin/python", "-c", <<~PYTHON
       import torch
       t = torch.rand(5, 3)
       assert isinstance(t, torch.Tensor), "not a tensor"
       assert torch.distributed.is_available(), "torch.distributed is unavailable"
-    EOS
+    PYTHON
+    return unless OS.mac?
 
-    if OS.mac?
-      # test that we have the MPS backend
-      system libexec/"bin/python", "-c", <<~EOS
-        import torch
-        assert torch.backends.mps.is_built(), "MPS backend is not built"
-      EOS
-    end
+    # test that we have the MPS backend
+    system libexec/"bin/python", "-c", <<~PYTHON
+      import torch
+      assert torch.backends.mps.is_built(), "MPS backend is not built"
+    PYTHON
   end
 end
-
-__END__
-diff --git a/aten/src/ATen/cpu/vec/vec256/vec256_bfloat16.h b/aten/src/ATen/cpu/vec/vec256/vec256_bfloat16.h
-index 3e26213d6d26609b2cda7bde2d026fc92c626db2..edda0210746530bb60765939e90899083f8be595 100644
---- a/aten/src/ATen/cpu/vec/vec256/vec256_bfloat16.h
-+++ b/aten/src/ATen/cpu/vec/vec256/vec256_bfloat16.h
-@@ -265,7 +266,8 @@ static_assert(
-     }
-     return b;
-   }
--  Vectorized<T> map(const __m256 (*const vop)(__m256)) const {
-+
-+  Vectorized<T> map(SLEEF_CONST __m256 (*vop)(__m256)) const {
-     __m256 lo, hi;
-     cvt_to_fp32<T>(values, lo, hi);
-     const auto o1 = vop(lo);
-diff --git a/aten/src/ATen/cpu/vec/vec512/vec512_bfloat16.h b/aten/src/ATen/cpu/vec/vec512/vec512_bfloat16.h
-index f9fc92d52bfe0c8ea594384beecf4da47961faa0..6513455283e2be3e588fd15131c5d48a17e107bb 100644
---- a/aten/src/ATen/cpu/vec/vec512/vec512_bfloat16.h
-+++ b/aten/src/ATen/cpu/vec/vec512/vec512_bfloat16.h
-@@ -362,7 +363,8 @@ static_assert(
-   }
-   #pragma clang diagnostic push
-   #pragma clang diagnostic ignored "-Wignored-qualifiers"
--  Vectorized<T> map(const __m512 (*const vop)(__m512)) const {
-+
-+  Vectorized<T> map(SLEEF_CONST __m512 (*vop)(__m512)) const {
-     __m512 lo, hi;
-     cvt_to_fp32<T>(values, lo, hi);
-     const auto o1 = vop(lo);

@@ -3,10 +3,11 @@ class Mg < Formula
   homepage "https://github.com/ibara/mg"
   url "https://github.com/ibara/mg/releases/download/mg-7.3/mg-7.3.tar.gz"
   sha256 "1fd52feed9a96b93ef16c28ec4ff6cb25af85542ec949867bffaddee203d1e95"
-  license all_of: [:public_domain, "ISC", :cannot_represent]
+  license all_of: [:public_domain, "ISC", "BSD-2-Clause", "BSD-3-Clause", "BSD-4-Clause"]
   version_scheme 1
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "14c363b5eeea07b8f117cb74b9676ae6a92dc26a9f1f39d9d9169fda5577a242"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "31940ad999d42c596d86df83651fea272faf4da53ec9b69b71b05165ec01d5bb"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "22b26617c6ce69d7c1e5e69a0628aac1db8f60e164c788bb7784841fd02818a5"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "f367179c081b6bd5f234d68d8134466d1d7a7e457b3258053da668e454b087bb"
@@ -18,7 +19,6 @@ class Mg < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "df7547e37e627c0504896e045d8c8df6adc3ea3dbdade674b1b964fcf333397f"
   end
 
-  uses_from_macos "expect" => :test
   uses_from_macos "ncurses"
 
   def install
@@ -29,14 +29,18 @@ class Mg < Formula
   end
 
   test do
-    (testpath/"command.exp").write <<~EOS
-      set timeout -1
-      spawn #{bin}/mg
-      match_max 100000
-      send -- "\u0018\u0003"
-      expect eof
-    EOS
-
-    system "expect", "-f", "command.exp"
+    require "pty"
+    PTY.spawn({ "TERM" => "xterm" }, bin/"mg", "test") do |r, w, pid|
+      sleep 1
+      w.write "brew\n\u0018\u0003y"
+      r.read
+    rescue Errno::EIO
+      # GNU/Linux raises EIO when read is done on closed pty
+    ensure
+      r.close
+      w.close
+      Process.wait(pid)
+    end
+    assert_equal "brew\n", (testpath/"test").read
   end
 end

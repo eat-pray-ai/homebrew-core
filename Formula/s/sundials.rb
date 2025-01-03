@@ -1,8 +1,8 @@
 class Sundials < Formula
   desc "Nonlinear and differential/algebraic equations solver"
   homepage "https://computing.llnl.gov/projects/sundials"
-  url "https://github.com/LLNL/sundials/releases/download/v7.0.0/sundials-7.0.0.tar.gz"
-  sha256 "d762a7950ef4097fbe9d289f67a8fb717a0b9f90f87ed82170eb5c36c0a07989"
+  url "https://github.com/LLNL/sundials/releases/download/v7.2.1/sundials-7.2.1.tar.gz"
+  sha256 "3781e3f7cdf372ca12f7fbe64f561a8b9a507b8a8b2c4d6ce28d8e4df4befbea"
   license "BSD-3-Clause"
 
   livecheck do
@@ -11,13 +11,12 @@ class Sundials < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "7208f87472bd2536634aaaacfeaa580266003ef141510c62c0ea9401ff3d4a04"
-    sha256 cellar: :any,                 arm64_ventura:  "bdfcea838f79480648789dd9349ad3502ec53c061d5ef8ffb06fe6798397fc49"
-    sha256 cellar: :any,                 arm64_monterey: "f25cd67634fa31f63bef781c30d06eeebde0d003fab4b1473d64e360e80409da"
-    sha256 cellar: :any,                 sonoma:         "9f3f553036bfade6369e0aed568bdfcd70ee014a633524be71cd964e92314c63"
-    sha256 cellar: :any,                 ventura:        "5de190c8408154be40b2334dad1fc29a2b36bfb5137bb476492790d214405917"
-    sha256 cellar: :any,                 monterey:       "c3187ac2f5810cf679310284d633f3279ca7482fb5d7cc8e3297b2e717a381eb"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "b23b45865cf92bc32038125ccf7aa06b56a26cb048f1ef137c0d7350c89bcc03"
+    sha256 cellar: :any,                 arm64_sequoia: "db1ede463b5ac940844d33fddb8d3a5a482c5a86c696bc7f4c35c9fccc44ce0f"
+    sha256 cellar: :any,                 arm64_sonoma:  "35090ef4269eec7b77c60f030a2918df9699a1c4f6ea9fe3783def9ba6c816bc"
+    sha256 cellar: :any,                 arm64_ventura: "c88629bb65b804f8a36751d4d7b38ba7ef00eba7fa27853a26ca9c8f2a8b8306"
+    sha256 cellar: :any,                 sonoma:        "b1842b88bb89d15e7e2f1fcf549b2a48f4e5b3f7c9275c86fd4421d5f22c611d"
+    sha256 cellar: :any,                 ventura:       "734bb3a415f6647d7fe6482fa6958fe967455a8c050a356cfd3d038593d727df"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7ee65d6f4c0ca10da972dbbe5304ca7b39918776395fddb197a2e16908de1dfa"
   end
 
   depends_on "cmake" => :build
@@ -45,9 +44,12 @@ class Sundials < Formula
     system "cmake", "--install", "build"
 
     # Only keep one example for testing purposes
-    (pkgshare/"examples").install Dir[prefix/"examples/nvector/serial/*"] \
-                                  - Dir[prefix/"examples/nvector/serial/{CMake*,Makefile}"]
-    (prefix/"examples").rmtree
+    (pkgshare/"examples").install Dir[
+      "test/unit_tests/nvector/test_nvector.c",
+      "test/unit_tests/nvector/test_nvector.h",
+      "test/unit_tests/nvector/serial/test_nvector_serial.c",
+    ]
+    rm_r(prefix/"examples")
   end
 
   test do

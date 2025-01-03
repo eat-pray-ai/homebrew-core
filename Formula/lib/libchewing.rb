@@ -1,18 +1,17 @@
 class Libchewing < Formula
   desc "Intelligent phonetic input method library"
   homepage "https://chewing.im/"
-  url "https://github.com/chewing/libchewing/releases/download/v0.8.5/libchewing-0.8.5.tar.zst"
-  sha256 "472881fc7df7f1bc90383937c504589d80d542b5f2c4c5c007017c13a21f534e"
+  url "https://github.com/chewing/libchewing/releases/download/v0.9.1/libchewing-0.9.1.tar.zst"
+  sha256 "e98b76c306552148b7d85f0e596860751d9eef4bc8f2dfc053177b14f421c31f"
   license "LGPL-2.1-only"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "3ef7e71d5b7443cf3c7fc08bd33bf376f6cb54bf6af203069a83edcbffef5d95"
-    sha256 cellar: :any,                 arm64_ventura:  "85b945e2ba6468408b69a15137ddc54eaf29b4a1682673b4eecf3acaf3c69448"
-    sha256 cellar: :any,                 arm64_monterey: "b96e58c16950027d036241cc80ee4e2615c811df431aa366378f519bf478b31f"
-    sha256 cellar: :any,                 sonoma:         "0b839bec70a2463b55443ae89b148df676a79f92ca24ee535aca0d5e9861d791"
-    sha256 cellar: :any,                 ventura:        "7b2998fe365dfb04a93bd7dfe5aae92207f204dc12fd94cded6cd2447414a2bc"
-    sha256 cellar: :any,                 monterey:       "8c195f94098a82571cf630a570d4ea86e461637cd3b8d8cd1b5d7d21a7edf8ce"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d3e9cf90e8ccfcf31f2a02fe375e5e3d3b02540bcfb61d0f8b56128ae8c49faa"
+    sha256 cellar: :any,                 arm64_sequoia: "32135dee630c01d5a8d9a4e9bbaaa2d162d1487b422a71b7c9df375c95d54f5f"
+    sha256 cellar: :any,                 arm64_sonoma:  "dda2fc0363058909c7de62a6cfdd59db89f30c6b6a6bf291da227d8beb045b7d"
+    sha256 cellar: :any,                 arm64_ventura: "2698f929ef06c474f8f08f5729a6a923c89aef36b572163f353360158188f51d"
+    sha256 cellar: :any,                 sonoma:        "a8bb15dfebb22f402c3bd8182b90324c273f363474c9d7ebc170e1c672e800a8"
+    sha256 cellar: :any,                 ventura:       "99d2a65e3971de39db1e15f8c63c8b2b944cc25f762c903a6f161fae2d15c33f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d104abaa34a16aeb177b1c644b01bf8480b372405c3ca4d02ff90b9aad661196"
   end
 
   depends_on "cmake" => :build
@@ -25,21 +24,14 @@ class Libchewing < Formula
     depends_on "texinfo" => :build
   end
 
-  # cmake build patch, https://github.com/chewing/libchewing/pull/575
-  # remove in 0.9.0 release
-  patch do
-    url "https://github.com/chewing/libchewing/commit/b21ff8f118e6138b795da4d37026712516a12676.patch?full_index=1"
-    sha256 "13d64e23d42c0549117bc2f6239cd09da03d17d2f8015a81fb1a3307aeaf708f"
-  end
-
   def install
-    system "cmake", "-S", ".", "-B", "build", "-DBUILD_TESTING=OFF", *std_cmake_args
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <stdlib.h>
       #include <chewing/chewing.h>
       int main()
@@ -57,7 +49,7 @@ class Libchewing < Formula
           chewing_delete(ctx);
           return 0;
       }
-    EOS
+    CPP
     system ENV.cc, "test.cpp", "-L#{lib}", "-lchewing", "-o", "test"
     system "./test"
   end

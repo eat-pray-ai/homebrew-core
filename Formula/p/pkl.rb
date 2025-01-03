@@ -1,20 +1,20 @@
 class Pkl < Formula
   desc "CLI for the Pkl programming language"
   homepage "https://pkl-lang.org"
-  url "https://github.com/apple/pkl/archive/refs/tags/0.26.1.tar.gz"
-  sha256 "a97d15c200c042dbc064726a773cb533e52cd608de317347de8617a0661d07ee"
+  url "https://github.com/apple/pkl/archive/refs/tags/0.27.1.tar.gz"
+  sha256 "e77f27b40484922bd1f29802c8b518c4d5515a9485fe4e7da8b488d9e80537f5"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "dbfc9a419712873503965e7114765022ca8a152a13a4bbc43f4968d3a7f22f53"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "624cc6cb59910d2831760b1df251bb587e54fa636883ebf9cc3a385720e37cb9"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "8e5f30519896cb854b646242b1c46cdbfcd9f4eebc8aa41450fbfabaae8e872f"
-    sha256 cellar: :any_skip_relocation, sonoma:         "f472b74588437d38e6c02b82592caf05ea5edb8a21c784b72d1b5d6050c08f53"
-    sha256 cellar: :any_skip_relocation, ventura:        "77a7dbd1ef6be9444c3239cf4b56b854705b2bd67f60cd8d8582239a4acc6a7e"
-    sha256 cellar: :any_skip_relocation, monterey:       "4c97a8d6647eb614233799529ecdb473b9ae6760f559eea0157abe2c29fa1030"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "8b59a6831782eddad29748958f497e041fdd38d036027b15aafb14be5eb15f00"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "055ab7e3be1a5b7e8e4a76070c6ad8d8ab8fadbb9f12c8e7edaf2b894d0eb9c2"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "27793fa8c369d76d0dd6f50591a5deecd0e1b0887901ea5f39988da36205ad57"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "e16f133baab7561b442354abfb5f6fdf4696b2adcbcadbe2c7803f02abff98e0"
+    sha256 cellar: :any_skip_relocation, sonoma:        "c5ef056c3ca7f5d6f4a78ca5af1f44a51ab7672bd9aba5fbcea30e28d7df867c"
+    sha256 cellar: :any_skip_relocation, ventura:       "510a2fcab8690b73f9ccf952c77414cf8189afef33f348298e96ec14ab43c5c0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6def9e38b933c65a6913bd40a9efca3803c69e4e7a23eab9adb271c60d08d419"
   end
 
+  depends_on "gradle" => :build
   # Can change this to 21 in later releases.
   depends_on "openjdk@17" => :build
 
@@ -22,13 +22,11 @@ class Pkl < Formula
 
   def install
     ENV["JAVA_HOME"] = Formula["openjdk@17"].opt_prefix
-    # Need to set this so that native-image passes through env vars when calling out to the C toolchain.
-    ENV["NATIVE_IMAGE_DEPRECATED_BUILDER_SANITATION"] = "true"
 
     arch = Hardware::CPU.arm? ? "aarch64" : "amd64"
     job_name = "#{OS.mac? ? "mac" : "linux"}Executable#{arch.capitalize}"
 
-    system "./gradlew", "-DreleaseBuild=true", job_name
+    system "gradle", "--no-daemon", "-DreleaseBuild=true", job_name
     bin.install "pkl-cli/build/executable/pkl-#{OS.mac? ? "macos" : "linux"}-#{arch}" => "pkl"
   end
 

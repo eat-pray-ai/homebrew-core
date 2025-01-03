@@ -1,19 +1,18 @@
 class Hysteria < Formula
   desc "Feature-packed proxy & relay tool optimized for lossy, unstable connections"
   homepage "https://hysteria.network/"
-  url "https://github.com/apernet/hysteria/archive/refs/tags/app/v2.5.0.tar.gz"
-  sha256 "78afca9c9c3f2c1a89c2356c66e70489bba74d3b4ede42f4194d179a09959d8c"
+  url "https://github.com/apernet/hysteria/archive/refs/tags/app/v2.6.0.tar.gz"
+  sha256 "c9d878ea81c78e71fcb07d47e3366cb4ae2ef5bce62f0ad81e58923db4995366"
   license "MIT"
   head "https://github.com/apernet/hysteria.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "0c647673a6bd199ea525057ade48070d1f01d16f953ac337ef0a55d76d185413"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "ad75984493b3b9a491b39d56c95a749eb58a3676aa2c5f5513a597d82322f851"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "6841dbcc258e55304dcee33e501cf07ef6c47a5859a3c24735d495d313edcb42"
-    sha256 cellar: :any_skip_relocation, sonoma:         "ad7eefbfc8003121e425dab68191ca78fcea809f09999b7b5893f732ec4ccd78"
-    sha256 cellar: :any_skip_relocation, ventura:        "8c6753bad01bfff8cded6804e8cfaadbc96b79170cb00fed239d36da1a95049f"
-    sha256 cellar: :any_skip_relocation, monterey:       "a2422aed41d0e50337d90612e7e77b39838aa1f84dda4c7df0f191065aabb18e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "5c50f20179676899896fa400beff51885ce33445852f246f3de7143126316323"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "701efaa73fea07a87e95806bdbc193a2b9ef2fa3cdb68a72a3bd889b3cd5cdee"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "701efaa73fea07a87e95806bdbc193a2b9ef2fa3cdb68a72a3bd889b3cd5cdee"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "701efaa73fea07a87e95806bdbc193a2b9ef2fa3cdb68a72a3bd889b3cd5cdee"
+    sha256 cellar: :any_skip_relocation, sonoma:        "b92d5f89e70fd4d2fb0bb9e4840f07f6500e3db203f3bd12540529aa267da5b4"
+    sha256 cellar: :any_skip_relocation, ventura:       "b92d5f89e70fd4d2fb0bb9e4840f07f6500e3db203f3bd12540529aa267da5b4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "21782ec948c6ce774c402a0c2729884f9fa7a2ed97c3ffaa09e53325201a6669"
   end
 
   depends_on "go" => :build
@@ -42,7 +41,7 @@ class Hysteria < Formula
 
   test do
     port = free_port
-    (testpath/"config.yaml").write <<~EOS
+    (testpath/"config.yaml").write <<~YAML
       listen: :#{port}
       acme:
         domains:
@@ -53,7 +52,7 @@ class Hysteria < Formula
         type: salamander
         salamander:
           password: cry_me_a_r1ver
-    EOS
+    YAML
     output = shell_output("#{bin}/hysteria server --disable-update-check -c #{testpath}/config.yaml 2>&1", 1)
     assert_match "maintenance	started background certificate maintenance", output
 

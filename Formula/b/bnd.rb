@@ -1,8 +1,8 @@
 class Bnd < Formula
   desc "Swiss Army Knife for OSGi bundles"
   homepage "https://bnd.bndtools.org/"
-  url "https://search.maven.org/remotecontent?filepath=biz/aQute/bnd/biz.aQute.bnd/7.0.0/biz.aQute.bnd-7.0.0.jar"
-  sha256 "674080fc8bb766af9bd721f4847467c6a7a25de3ea6a444525241b34126688b1"
+  url "https://search.maven.org/remotecontent?filepath=biz/aQute/bnd/biz.aQute.bnd/7.1.0/biz.aQute.bnd-7.1.0.jar"
+  sha256 "d68703e97d0950ced1610f8ff5c37c11cc68e67b96d746c3c7375eaa4980210d"
   license any_of: ["Apache-2.0", "EPL-2.0"]
 
   livecheck do
@@ -11,13 +11,7 @@ class Bnd < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "8549e3e61e7f749cac5e80e09fd3a66a2f8cf38fc370fe3f27866b48694c61a4"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "8549e3e61e7f749cac5e80e09fd3a66a2f8cf38fc370fe3f27866b48694c61a4"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "8549e3e61e7f749cac5e80e09fd3a66a2f8cf38fc370fe3f27866b48694c61a4"
-    sha256 cellar: :any_skip_relocation, sonoma:         "8549e3e61e7f749cac5e80e09fd3a66a2f8cf38fc370fe3f27866b48694c61a4"
-    sha256 cellar: :any_skip_relocation, ventura:        "8549e3e61e7f749cac5e80e09fd3a66a2f8cf38fc370fe3f27866b48694c61a4"
-    sha256 cellar: :any_skip_relocation, monterey:       "8549e3e61e7f749cac5e80e09fd3a66a2f8cf38fc370fe3f27866b48694c61a4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "874833d2f3ad7da2c19ae2c0218b793e9c34d8067a4de1f3dbd18d6ae43b1d35"
+    sha256 cellar: :any_skip_relocation, all: "7d052030c8ad5e158aed2587be01436bb0ec5d3f6133646108ee435bc46a7651"
   end
 
   depends_on "openjdk"
@@ -34,7 +28,7 @@ class Bnd < Formula
     test_version = "1.0.0"
     test_version_next = "1.0.1"
     test_file_name = "#{test_bsn}-#{test_version}.jar"
-    (testpath/"index.xml").write <<~EOS
+    (testpath/"index.xml").write <<~XML
       <?xml version="1.0" encoding="utf-8"?>
       <repository increment="0" name="Untitled" xmlns="http://www.osgi.org/xmlns/repository/v1.0.0">
         <resource>
@@ -49,7 +43,7 @@ class Bnd < Formula
           </capability>
         </resource>
       </repository>
-    EOS
+    XML
 
     (testpath/"launch.bndrun").write <<~EOS
       -standalone: ${.}/index.xml

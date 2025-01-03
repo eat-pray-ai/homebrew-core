@@ -11,6 +11,7 @@ class Xorgproto < Formula
   end
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "91066363512e4a3b01644398886815eb370bc8f62611f7ee20c23c7350b4422e"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "3307601f0a03f6c51b640fb11064ef2c2264cc9c20de0604a255370edee3f7f4"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "3307601f0a03f6c51b640fb11064ef2c2264cc9c20de0604a255370edee3f7f4"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "3307601f0a03f6c51b640fb11064ef2c2264cc9c20de0604a255370edee3f7f4"
@@ -20,19 +21,17 @@ class Xorgproto < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "fc1ef8db0fe244a7a47541fe8494131a281814a4110d3af41d76226274601df7"
   end
 
-  depends_on "pkg-config" => [:build, :test]
+  depends_on "pkgconf" => [:build, :test]
   depends_on "util-macros" => :build
 
   def install
     args = %W[
-      --prefix=#{prefix}
       --sysconfdir=#{etc}
       --localstatedir=#{var}
-      --disable-dependency-tracking
       --disable-silent-rules
     ]
 
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args
     system "make", "install"
   end
 

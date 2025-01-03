@@ -1,18 +1,22 @@
 class Lego < Formula
   desc "Let's Encrypt client and ACME library"
   homepage "https://go-acme.github.io/lego/"
-  url "https://github.com/go-acme/lego/archive/refs/tags/v4.17.4.tar.gz"
-  sha256 "27f873708c904ce6c6347f47cae1eba3a00a7948e2b915982f8a209f069c1277"
+  url "https://github.com/go-acme/lego/archive/refs/tags/v4.21.0.tar.gz"
+  sha256 "21204483e62bff3e762583e42044183dbe6efe6b401772bb186be821501d9463"
   license "MIT"
 
+  livecheck do
+    url :stable
+    strategy :github_latest
+  end
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "c04b1dd9e57859157db1226957d9cec85944b1804fb1b7f6233225b30832359a"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "c164df873603b8818de77a86a45878ee7872a724d60acf1d5b700ee49027882c"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "8a6a7d6ba7082aae0c5c97593318c2326ac917ab32be70656fc7911b7cf26b86"
-    sha256 cellar: :any_skip_relocation, sonoma:         "724859b8eda97dfb8cf4b2acf561a6e918d681f67f41231480b047e14cd64b13"
-    sha256 cellar: :any_skip_relocation, ventura:        "e031b684d3c701a810f3cbdcac6faa673f8a17be478a59b000616598f423df61"
-    sha256 cellar: :any_skip_relocation, monterey:       "dfd089961abbf5207ff031a108a03f27b9753c5d4594b2166ec6639041f7b8c9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "cff363cddfc732bbf38bc1c7f393eb4ce0bba58aea70695f7997963edfc58baf"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "22a130780af1ae4102daeb202ed9b06df799d8fba4ee24595709f6a3e928471f"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "22a130780af1ae4102daeb202ed9b06df799d8fba4ee24595709f6a3e928471f"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "22a130780af1ae4102daeb202ed9b06df799d8fba4ee24595709f6a3e928471f"
+    sha256 cellar: :any_skip_relocation, sonoma:        "9e4935c9943b0b018fa7835873f9d3ebb592de50fee14302580e75117de92263"
+    sha256 cellar: :any_skip_relocation, ventura:       "9e4935c9943b0b018fa7835873f9d3ebb592de50fee14302580e75117de92263"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "728dfd9eca049126a1d3b30e9cf78360b8c1721951c3272f01a98b7f87e647d7"
   end
 
   depends_on "go" => :build

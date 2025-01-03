@@ -1,26 +1,25 @@
 class Lychee < Formula
   desc "Fast, async, resource-friendly link checker"
   homepage "https://lychee.cli.rs/"
-  url "https://github.com/lycheeverse/lychee/archive/refs/tags/v0.15.1.tar.gz"
-  sha256 "21c52aab5eefb0fda578f8192dffc5b776954e585f5692b87079cbb52ac1d89c"
+  url "https://github.com/lycheeverse/lychee/archive/refs/tags/lychee-v0.18.0.tar.gz"
+  sha256 "56127481c8684b6f611a22e3940dacb06abf6db6ea24d1af38ccefe91bc09dbe"
   license any_of: ["Apache-2.0", "MIT"]
   head "https://github.com/lycheeverse/lychee.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "924b3ce2bfaee2a6bbe294de6f330be63bf35a16377f7f3fd1d17bd8bea233ca"
-    sha256 cellar: :any,                 arm64_ventura:  "c6521df6fdf60325b68a4ba3e8e54f43491716a8a8f656b54b9c00d0e319e803"
-    sha256 cellar: :any,                 arm64_monterey: "c87eb977a24d7c493ce1647593a4509deac9a5485acf48c35521ccc209cef3a7"
-    sha256 cellar: :any,                 sonoma:         "25c1855e06584cc7a09b1f0f197a0500206435e0046fa6311aedbe9d4f8e8a86"
-    sha256 cellar: :any,                 ventura:        "20646313a781d98048858aea8655c5799135622158bddf49fde21da4bc4d14b8"
-    sha256 cellar: :any,                 monterey:       "a0e1eb289a41db8c30191e08f77709ed634d97fb2e503e7e40bd78cb4bfc9ff3"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "7be7a8b341023b5b6538713fbd6eecf6a1ee9bdbef07fc08e31be67fae8cb925"
+    sha256 cellar: :any,                 arm64_sequoia: "f01661ebbdc9d7eb66c8f9699a8a96c2afb661ab2f77eb1743de6cac3a556948"
+    sha256 cellar: :any,                 arm64_sonoma:  "66069fbc154c6043a20a8e1f8e790ba643a3b10fb20b04ee8f37c77be1c0b1e1"
+    sha256 cellar: :any,                 arm64_ventura: "a6cb858c378dc4aae9301e2021b8867e6e0f406022135da98529fcbc41438553"
+    sha256 cellar: :any,                 sonoma:        "fb589459ee6a636e4121a2e7e67e8cb62f485f455ce7d81eef652eec8393c23e"
+    sha256 cellar: :any,                 ventura:       "56c93a6348c63e31fd910bea61d9ff6d31786fcfc042ec9000238eb1835b9ce6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8b438c0a8636f69aa3a00f92ddc19a708ad691e7ff18a0efc90b856aa7dc0c6c"
   end
 
   depends_on "rust" => :build
   depends_on "openssl@3"
 
   on_linux do
-    depends_on "pkg-config" => :build
+    depends_on "pkgconf" => :build
   end
 
   def install
@@ -30,6 +29,6 @@ class Lychee < Formula
   test do
     (testpath/"test.md").write "[This](https://example.com) is an example.\n"
     output = shell_output(bin/"lychee #{testpath}/test.md")
-    assert_match "✅ 0 OK 🚫 0 Errors 💤 1 Excluded", output
+    assert_match "🔍 1 Total (in 0s) ✅ 0 OK 🚫 0 Errors 👻 1 Excluded", output
   end
 end

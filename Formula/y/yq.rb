@@ -1,8 +1,8 @@
 class Yq < Formula
   desc "Process YAML, JSON, XML, CSV and properties documents from the CLI"
   homepage "https://github.com/mikefarah/yq"
-  url "https://github.com/mikefarah/yq/archive/refs/tags/v4.44.2.tar.gz"
-  sha256 "eb741c2d41351537aa42d563d0fccf16b3195c352b33e0ef111fd448232da911"
+  url "https://github.com/mikefarah/yq/archive/refs/tags/v4.44.6.tar.gz"
+  sha256 "c0acef928168e5fdb26cd7e8320eddde822f30cf1942817f3f6b854dd721653f"
   license "MIT"
   head "https://github.com/mikefarah/yq.git", branch: "master"
 
@@ -12,13 +12,12 @@ class Yq < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "977679430d5dafca5fcb26f8c0f085ca4d6b0378a8ba6e948a4bf77ac210093d"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "398c8ab340dbff5808bbd4b03b9abe6c6c2898577cd1a01d276bee8750749519"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "308f642333ed2b98edc08cd9949a4be30b68077e4a094cc44388f1a5c42e5e5c"
-    sha256 cellar: :any_skip_relocation, sonoma:         "6e5ef90594c34eaff5beb3474d28a12dc593f63695518b2e762ef837323a6ffa"
-    sha256 cellar: :any_skip_relocation, ventura:        "1ffca458716ecbce38c8c66758af3dc3b2e365299305ba5c5ce9e5fa604ffd61"
-    sha256 cellar: :any_skip_relocation, monterey:       "03059d9e8e1fd024e4dd27d72e82b2f5b38fae67a0d0c0e72d8fd79ac68a337c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "03a1e8274841cb3122204e9e637bcf81b393de0efd8cc17a3201dea362a29808"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "895efd8c8aa9ec322d9cd45849e68dcfe6888a75968f50ae6e045bad830a65f5"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "895efd8c8aa9ec322d9cd45849e68dcfe6888a75968f50ae6e045bad830a65f5"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "895efd8c8aa9ec322d9cd45849e68dcfe6888a75968f50ae6e045bad830a65f5"
+    sha256 cellar: :any_skip_relocation, sonoma:        "bb82f632ebd0305b79d05f7c24ef6658ceb7b6eaa746f2625a1e9a2a4c76b453"
+    sha256 cellar: :any_skip_relocation, ventura:       "bb82f632ebd0305b79d05f7c24ef6658ceb7b6eaa746f2625a1e9a2a4c76b453"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4cdfc29fd95e76f9b292575b41d1eebc981ec81644c071f771a7ab56b1b97790"
   end
 
   depends_on "go" => :build

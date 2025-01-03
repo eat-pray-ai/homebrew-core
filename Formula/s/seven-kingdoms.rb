@@ -11,6 +11,7 @@ class SevenKingdoms < Formula
   end
 
   bottle do
+    sha256 arm64_sequoia:  "032a3a0307bd45b73dd33ebaf29a83670fe45ddaa8db0e5043cb49d45c9ff625"
     sha256 arm64_sonoma:   "0538f01561c991e0ef25767624f8128516e2886fff6892c045163add87b82b03"
     sha256 arm64_ventura:  "7f964ac849ddfcb41f1deb913ac3f87e4d426a0caabb2f327ef2aa9f1820d29c"
     sha256 arm64_monterey: "368104c0637397af096cf0c77a02c16360e94e7007906a910f2d32588876a597"
@@ -22,14 +23,14 @@ class SevenKingdoms < Formula
     sha256 x86_64_linux:   "b3ba3202ca789169da6b0eb0173e686b97866e37ac12f0f10429e747c4ce0751"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "enet"
-  depends_on "gettext"
   depends_on "sdl2"
   uses_from_macos "curl"
 
   on_macos do
     depends_on "gcc"
+    depends_on "gettext"
   end
 
   on_linux do
@@ -45,7 +46,7 @@ class SevenKingdoms < Formula
   end
 
   test do
-    pid = fork { exec bin/"7kaa", "-win", "-demo" }
+    pid = spawn bin/"7kaa", "-win", "-demo"
     sleep 5
     system "kill", "-9", pid
   end

@@ -1,13 +1,13 @@
 class SpirvCross < Formula
   desc "Performing reflection and disassembling SPIR-V"
   homepage "https://github.com/KhronosGroup/SPIRV-Cross"
-  url "https://github.com/KhronosGroup/SPIRV-Cross/archive/refs/tags/vulkan-sdk-1.3.283.0.tar.gz"
-  sha256 "3376a58abe186a695a50ff12697d210ce27673cea5de1a5090cb2b092b261414"
+  url "https://github.com/KhronosGroup/SPIRV-Cross/archive/refs/tags/vulkan-sdk-1.3.296.0.tar.gz"
+  sha256 "4f7f9a8a643e6694f155712016b9b572c13a9444e65b3f43b27bb464c0ab76e0"
   license all_of: [
     "Apache-2.0",
     "MIT",
     "CC-BY-4.0",
-    :cannot_represent, # LicenseRef-KhronosFreeUse
+    "MIT-Khronos-old",
   ]
   version_scheme 1
   head "https://github.com/KhronosGroup/SPIRV-Cross.git", branch: "main"
@@ -18,13 +18,12 @@ class SpirvCross < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "822c5fb08e99ff16844410ea490adc460476fe802e910b571081cf2b77092ea8"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "fc59b176849f94330d358bbe4a64d4114b84a731c757ac593e0db100a5a04024"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "959455ba86727a6f1e53d6fe1e8572febb30546ead99f182e4c0a697cc7e304f"
-    sha256 cellar: :any_skip_relocation, sonoma:         "cf74559e1e9212cc01c8da988d4b45311014f6d7e3745a7ba282ee409b0898c5"
-    sha256 cellar: :any_skip_relocation, ventura:        "37063cdce3dfc19c1921adf00ed5b8bed80791d857dd221da477a898ea696c8b"
-    sha256 cellar: :any_skip_relocation, monterey:       "46299e221e669c42deca29f4f0dae8aa0b9a7d67b6012878ee64a3b64758de73"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "78c8f08c7f157c98ee17f6dfde6a009978f687f4a8a37aee29048b72d6ce326d"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "94d2fa1830967dcf20e19901f13518fbe51c0625f29fc9509813b5200ebdcee9"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "afbd2b3aca191e95c3205df6d234c06f67c9505faebd78090cf466ee857fc98a"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "6f614f93680d87ee7c48124d01f4a9bc731b655199ed588d41a193d43caa621e"
+    sha256 cellar: :any_skip_relocation, sonoma:        "1848ddb46b8c90a582d6369ad7fae6d4c3f8decd78372b82fff1f8dcdf5160f5"
+    sha256 cellar: :any_skip_relocation, ventura:       "3eedd1eb6700688cd58ab559a078251308a15a98cdcda8dc041c02c2829edf34"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "fcb20807bc4ee7b77f5c240c758d2f2085873b0a52c3f6b535b24c6ca184c0d5"
   end
 
   depends_on "cmake" => :build
@@ -32,10 +31,10 @@ class SpirvCross < Formula
   depends_on "glslang" => :test
 
   def install
-    mkdir "build" do
-      system "cmake", "..", *std_cmake_args
-      system "make", "install"
-    end
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
+
     # required for tests
     prefix.install "samples"
     (include/"spirv_cross").install Dir["include/spirv_cross/*"]
@@ -43,6 +42,7 @@ class SpirvCross < Formula
 
   test do
     cp_r Dir[prefix/"samples/cpp/*"], testpath
+
     inreplace "Makefile", "-I../../include", "-I#{include}"
     inreplace "Makefile", "../../spirv-cross", bin/"spirv-cross"
     inreplace "Makefile", "glslangValidator", Formula["glslang"].bin/"glslangValidator"
@@ -55,12 +55,14 @@ class SpirvCross < Formula
 
       #version 310 es
     EOS
+
     after = <<~EOS
       #version 310 es
       // Copyright 2016-2021 The Khronos Group Inc.
       // SPDX-License-Identifier: Apache-2.0
 
     EOS
+
     (Dir["*.comp"]).each do |shader_file|
       inreplace shader_file, before, after
     end

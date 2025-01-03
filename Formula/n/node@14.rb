@@ -23,13 +23,14 @@ class NodeAT14 < Formula
   # https://nodejs.org/en/about/releases/
   disable! date: "2024-02-20", because: :unsupported
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   # Build support for Python 3.11 was not backported.
   # Ref: https://github.com/nodejs/node/pull/45231
   depends_on "python@3.10" => :build
   depends_on "brotli"
   depends_on "c-ares"
-  depends_on "icu4c"
+  # Re-add an ICU4C dependency if extracting formula
+  # TODO: depends_on "icu4c"
   depends_on "libnghttp2"
   depends_on "libuv"
   depends_on "openssl@1.1"
@@ -80,7 +81,7 @@ class NodeAT14 < Formula
     end
 
     term_size_vendor_dir = lib/"node_modules/npm/node_modules/term-size/vendor"
-    term_size_vendor_dir.rmtree # remove pre-built binaries
+    rm_r(term_size_vendor_dir) # remove pre-built binaries
 
     if OS.mac?
       macos_dir = term_size_vendor_dir/"macos"
@@ -113,8 +114,8 @@ class NodeAT14 < Formula
     assert_predicate bin/"npm", :exist?, "npm must exist"
     assert_predicate bin/"npm", :executable?, "npm must be executable"
     npm_args = ["-ddd", "--cache=#{HOMEBREW_CACHE}/npm_cache", "--build-from-source"]
-    system "#{bin}/npm", *npm_args, "install", "npm@latest"
-    system "#{bin}/npm", *npm_args, "install", "ref-napi"
+    system bin/"npm", *npm_args, "install", "npm@latest"
+    system bin/"npm", *npm_args, "install", "ref-napi"
     assert_predicate bin/"npx", :exist?, "npx must exist"
     assert_predicate bin/"npx", :executable?, "npx must be executable"
     assert_match "< hello >", shell_output("#{bin}/npx cowsay hello")

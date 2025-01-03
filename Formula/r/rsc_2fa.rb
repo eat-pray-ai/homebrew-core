@@ -6,6 +6,7 @@ class Rsc2fa < Formula
   license "BSD-3-Clause"
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "075220c900e04b25fb10ce49bfe0b762de933b9b235084c7bf1457460f9f0a10"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "4d16796c1727ca9ef2310ec669216fc6ec64053e28781431aaf4cc4186828dad"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "c88d62abe74ed6cc04cc70f5c4b86a9fce044672beda3e026aff13cbe68a28ac"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "f832afe87766e2847eadb453848ebf881c0c60bb608a71640b6c237ec44b9069"
@@ -22,7 +23,7 @@ class Rsc2fa < Formula
   depends_on "go" => :build
 
   def install
-    system "go", "build", *std_go_args, "-mod=mod", "-o", bin/"2fa"
+    system "go", "build", "-mod=mod", *std_go_args(ldflags: "-s -w", output: bin/"2fa")
   end
 
   test do

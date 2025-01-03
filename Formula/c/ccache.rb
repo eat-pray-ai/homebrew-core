@@ -1,26 +1,26 @@
 class Ccache < Formula
   desc "Object-file caching compiler wrapper"
   homepage "https://ccache.dev/"
-  url "https://github.com/ccache/ccache/releases/download/v4.10.1/ccache-4.10.1.tar.xz"
-  sha256 "3a43442ce3916ea48bb6ccf6f850891cbff01d1feddff7cd4bbd49c5cf1188f6"
+  url "https://github.com/ccache/ccache/releases/download/v4.10.2/ccache-4.10.2.tar.xz"
+  sha256 "c0b85ddfc1a3e77b105ec9ada2d24aad617fa0b447c6a94d55890972810f0f5a"
   license "GPL-3.0-or-later"
+  revision 3
   head "https://github.com/ccache/ccache.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "430b224f19756fc5d226cf68ce209b4450738b47127a05a3089e255f59721b74"
-    sha256 cellar: :any,                 arm64_ventura:  "27f66da31f0b7c0874a0a5c736f3427ba5576279a5548f5c701ea634f8a66c62"
-    sha256 cellar: :any,                 arm64_monterey: "9625bf6777aba2d25a406ef62fdbb7b8f70cbeb7c47bfdea7054c5dd3c24cd21"
-    sha256 cellar: :any,                 sonoma:         "2e97103e91c45076427780d4d3f00b2c4aa127292ae5fb4cb79487d47da007e5"
-    sha256 cellar: :any,                 ventura:        "b927910be81371b99234bc6035ea750b1b7a661bb5f001c12bb3d95e7ed47119"
-    sha256 cellar: :any,                 monterey:       "65662794d7d69a1db73d53a37dcb55d3945b6afcdf2d65af6cf72811cbfc4722"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "29bd86ce0666b328b52a5f3c4e4c982041aac5f8e3cb6efe3fb4da750f4f4561"
+    sha256 cellar: :any, arm64_sequoia: "1637e115c7ad8076b28d4390668cb53ba62dd0212b63ea04651ae5f1dd8fd6e8"
+    sha256 cellar: :any, arm64_sonoma:  "87b642aef800b89a2c9b3d5b42c29d11460712dbe0191b35bec0c9866a58d3fb"
+    sha256 cellar: :any, arm64_ventura: "5d8db605c9242c99c0f59a84aef01913d92def6ace4ea7f86fd2f6aaac384ee0"
+    sha256               sonoma:        "ecf556f969e1862e016805662661e2abb54313adbd79721715e04203bd857c5b"
+    sha256               ventura:       "dc2fb6d9b4c9afdc86c94752c1da42e0c92e2a7bf6a6469fffb45af91d28e34e"
+    sha256               x86_64_linux:  "f68fec802336b5c30194b627a06b0fc06bbda4459d2f88beab863766910c950f"
   end
 
   depends_on "asciidoctor" => :build
   depends_on "cmake" => :build
   depends_on "cpp-httplib" => :build
   depends_on "doctest" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "span-lite" => :build
   depends_on "tl-expected" => :build
   depends_on "blake3"
@@ -29,10 +29,9 @@ class Ccache < Formula
   depends_on "xxhash"
   depends_on "zstd"
 
-  fails_with gcc: "5"
-
   def install
     system "cmake", "-S", ".", "-B", "build",
+                    "-DCMAKE_INSTALL_SYSCONFDIR=#{etc}",
                     "-DENABLE_IPO=TRUE",
                     "-DREDIS_STORAGE_BACKEND=ON",
                     "-DDEPS=LOCAL",
@@ -90,6 +89,39 @@ class Ccache < Formula
   test do
     ENV.prepend_path "PATH", opt_libexec
     assert_equal "#{opt_libexec}/gcc", shell_output("which gcc").chomp
-    system "#{bin}/ccache", "-s"
+    assert_match etc.to_s, shell_output("#{bin}/ccache --show-stats --verbose")
+
+    # Calling `--help` can catch issues with fmt upgrades.
+    # https://github.com/orgs/Homebrew/discussions/5830
+    system bin/"ccache", "--help"
+
+    (testpath/"test.c").write <<~C
+      #include <stdio.h>
+      int main(void) {
+        printf("hello, world");
+        return 0;
+      }
+    C
+
+    # Test that we link with xxhash correctly.
+    assert_equal "6ef4b356229ca145dca726e94e88ad10", shell_output("#{bin}/ccache --checksum-file test.c").chomp
+    # Test that we link with blake3 correctly.
+    file_hash = shell_output("#{bin}/ccache --hash-file test.c").chomp
+    assert_equal "5af3d23skapbcgbs975geemfqv6r6utsu", file_hash
+
+    system bin/"ccache", ENV.cc, "-c", "test.c"
+    system bin/"ccache", "debug=true", ENV.cc, "-c", "test.c"
+
+    input_text = testpath.glob("test.o.*.ccache-input-text").first.read
+    assert_match File.basename(ENV.cc), input_text
+    assert_match "test.c", input_text
+    assert_match file_hash, input_text
+
+    # The format of the log file seems to differ on Linux.
+    # It's not clear how to make the assertion below work for it.
+    return unless OS.mac?
+
+    log = testpath.glob("test.o.*.ccache-log").first
+    assert_match "cache hit", log.read
   end
 end

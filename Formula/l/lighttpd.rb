@@ -11,6 +11,7 @@ class Lighttpd < Formula
   end
 
   bottle do
+    sha256 arm64_sequoia:  "19af568eb1e5ab74d431fdc07f2148d520c815742e1f0ecf9828d391e297ddd6"
     sha256 arm64_sonoma:   "091059b0ac1e2356912caf2fe85f5bb0d88ebde56c43579d28c9a68b5eac1075"
     sha256 arm64_ventura:  "00fb719b4328a1b7593452f8f6bae234a595ca089492f192bc309bdab055502f"
     sha256 arm64_monterey: "aa6d7a5fe4662bdbbae1389091aec850c99d47f851dca621a55f9fcf7e5e7844"
@@ -23,21 +24,21 @@ class Lighttpd < Formula
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "openldap"
   depends_on "openssl@3"
   depends_on "pcre2"
 
+  uses_from_macos "bzip2"
   uses_from_macos "libxcrypt"
+  uses_from_macos "zlib"
 
   # default max. file descriptors; this option will be ignored if the server is not started as root
   MAX_FDS = 512
 
   def install
     args = %W[
-      --disable-dependency-tracking
       --disable-silent-rules
-      --prefix=#{prefix}
       --sbindir=#{bin}
       --with-bzip2
       --with-ldap
@@ -50,7 +51,7 @@ class Lighttpd < Formula
     # autogen must be run, otherwise prebuilt configure may complain
     # about a version mismatch between included automake and Homebrew's
     system "./autogen.sh"
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args
     system "make", "install"
 
     unless File.exist? etc/"lighttpd"
@@ -98,6 +99,6 @@ class Lighttpd < Formula
   end
 
   test do
-    system "#{bin}/lighttpd", "-t", "-f", etc/"lighttpd/lighttpd.conf"
+    system bin/"lighttpd", "-t", "-f", etc/"lighttpd/lighttpd.conf"
   end
 end

@@ -17,6 +17,7 @@ class OsmGpsMap < Formula
   end
 
   bottle do
+    sha256                               arm64_sequoia:  "86a72e93e60138253d415f0f8350e2a08f01cf670631f159cbcb9aef453991f0"
     sha256                               arm64_sonoma:   "4e99312645cad4b62bce40d08360aaf0071a7a5fce6e8331c3940fc9956d6a30"
     sha256                               arm64_ventura:  "2bc5f12b6808b31bbc6fb791a90a8561c33eb88ac4d937d9d48df795570fe2fb"
     sha256                               arm64_monterey: "8dddb7d2eee3341e52742fb0d9d2503a081dcf53777048e614ee0d873314af3a"
@@ -37,19 +38,28 @@ class OsmGpsMap < Formula
   end
 
   depends_on "gobject-introspection" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => [:build, :test]
+
+  depends_on "cairo"
   depends_on "gdk-pixbuf"
   depends_on "glib"
   depends_on "gtk+3"
 
+  on_macos do
+    depends_on "at-spi2-core"
+    depends_on "gettext"
+    depends_on "harfbuzz"
+    depends_on "pango"
+  end
+
   def install
     configure = build.head? ? "./autogen.sh" : "./configure"
-    system configure, *std_configure_args, "--disable-silent-rules", "--enable-introspection"
+    system configure, "--disable-silent-rules", "--enable-introspection", *std_configure_args
     system "make", "install"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <osm-gps-map.h>
 
       int main(int argc, char *argv[]) {
@@ -58,42 +68,10 @@ class OsmGpsMap < Formula
         map = g_object_new (OSM_TYPE_GPS_MAP, NULL);
         return 0;
       }
-    EOS
-    atk = Formula["atk"]
-    cairo = Formula["cairo"]
-    glib = Formula["glib"]
-    gdk_pixbuf = Formula["gdk-pixbuf"]
-    gtkx3 = Formula["gtk+3"]
-    harfbuzz = Formula["harfbuzz"]
-    pango = Formula["pango"]
-    flags = %W[
-      -I#{atk.opt_include}/atk-1.0
-      -I#{cairo.opt_include}/cairo
-      -I#{gdk_pixbuf.opt_include}/gdk-pixbuf-2.0
-      -I#{glib.opt_include}/glib-2.0
-      -I#{glib.opt_lib}/glib-2.0/include
-      -I#{gtkx3.opt_include}/gtk-3.0
-      -I#{harfbuzz.opt_include}/harfbuzz
-      -I#{pango.opt_include}/pango-1.0
-      -I#{include}/osmgpsmap-1.0
-      -D_REENTRANT
-      -L#{atk.opt_lib}
-      -L#{cairo.opt_lib}
-      -L#{gdk_pixbuf.opt_lib}
-      -L#{glib.opt_lib}
-      -L#{gtkx3.opt_lib}
-      -L#{lib}
-      -L#{pango.opt_lib}
-      -latk-1.0
-      -lcairo
-      -lgdk-3
-      -lgdk_pixbuf-2.0
-      -lglib-2.0
-      -lgtk-3
-      -lgobject-2.0
-      -lpango-1.0
-      -losmgpsmap-1.0
-    ]
+    C
+
+    ENV.prepend_path "PKG_CONFIG_PATH", Formula["libsoup@2"].opt_lib/"pkgconfig"
+    flags = shell_output("pkgconf --cflags --libs osmgpsmap-1.0").chomp.split
     system ENV.cc, "test.c", "-o", "test", *flags
 
     # (test:40601): Gtk-WARNING **: 23:06:24.466: cannot open display

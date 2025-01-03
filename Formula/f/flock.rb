@@ -6,6 +6,7 @@ class Flock < Formula
   license "ISC"
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "b3e9f9fbebb4256a845dd8db15993c3cd7c17cabac188c0695780c5b2b8a06d8"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "81934a5818c68542712a6d8b56c6b92f303308394a39cdaf8618c057f6c75b93"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "37a4abe9f2dc5ad5297a5dfdcb10fc1aeafe587b06a7a275231d05a3dd48b572"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "0a65c4619ce6f133e7a5b9e82d7648b7da9ace48a09f89d69eb66f38bd6e2b6a"
@@ -23,19 +24,14 @@ class Flock < Formula
   end
 
   def install
-    system "./configure", *std_configure_args,
-                          "--disable-debug",
-                          "--disable-dependency-tracking",
-                          "--disable-silent-rules"
+    system "./configure", "--disable-silent-rules", *std_configure_args
     system "make", "install"
   end
 
   test do
-    pid = fork do
-      exec bin/"flock", "tmpfile", "sleep", "5"
-    end
+    pid = spawn bin/"flock", "tmpfile", "sleep", "5"
     sleep 1
-    assert shell_output("#{bin}/flock --nonblock tmpfile true", 1).empty?
+    assert_empty shell_output("#{bin}/flock --nonblock tmpfile true", 1)
   ensure
     Process.wait pid
   end

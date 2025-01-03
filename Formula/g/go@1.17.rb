@@ -35,7 +35,7 @@ class GoAT117 < Formula
       system "./make.bash", "--no-clean"
     end
 
-    (buildpath/"pkg/obj").rmtree
+    rm_r(buildpath/"pkg/obj")
     libexec.install Dir["*"]
     bin.install_symlink Dir[libexec/"bin/go*"]
 
@@ -43,13 +43,13 @@ class GoAT117 < Formula
 
     # Remove useless files.
     # Breaks patchelf because folder contains weird debug/test files
-    (libexec/"src/debug/elf/testdata").rmtree
+    rm_r(libexec/"src/debug/elf/testdata")
     # Binaries built for an incompatible architecture
-    (libexec/"src/runtime/pprof/testdata").rmtree
+    rm_r(libexec/"src/runtime/pprof/testdata")
   end
 
   test do
-    (testpath/"hello.go").write <<~EOS
+    (testpath/"hello.go").write <<~GO
       package main
 
       import "fmt"
@@ -57,7 +57,7 @@ class GoAT117 < Formula
       func main() {
         fmt.Println("Hello World")
       }
-    EOS
+    GO
     # Run go fmt check for no errors then run the program.
     # This is a a bare minimum of go working as it uses fmt, build, and run.
     system bin/"go", "fmt", "hello.go"

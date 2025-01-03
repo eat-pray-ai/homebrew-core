@@ -1,8 +1,8 @@
 class Zmap < Formula
   desc "Network scanner for Internet-wide network studies"
   homepage "https://zmap.io"
-  url "https://github.com/zmap/zmap/archive/refs/tags/v4.1.1.tar.gz"
-  sha256 "b37c4e70e4f9c12091ee10dc7f6f3518cbb7bc291b5b81a451a37632c9440047"
+  url "https://github.com/zmap/zmap/archive/refs/tags/v4.3.1.tar.gz"
+  sha256 "a281eaeac415f49734e22f9219e36454843de494ab8f9723a3de7f123142050f"
   license "Apache-2.0"
   head "https://github.com/zmap/zmap.git", branch: "main"
 
@@ -12,19 +12,18 @@ class Zmap < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "e9f03756e05b6bd6055211bc3c680c7e6422f05544eabe3c462ccd62f4cd00b6"
-    sha256 arm64_ventura:  "6fb686af14dca29842ccf0a77215baf561a3f41ffbc5cc90260f531cc826e0b4"
-    sha256 arm64_monterey: "ea1b3672030301806e53512723c4c62c8c9e6f063e3f5f9720c15db76edd86bd"
-    sha256 sonoma:         "ea802d444ef3e913eb5318ff5d577048a5212dbdb53bfe55665646d53c59ffe6"
-    sha256 ventura:        "0c3ec340ec8f5a5a74ffefc1c94b6e32cecf560cbf1cea5e40777f169363cf6f"
-    sha256 monterey:       "8e07fcf05542f8bd748a07daa4f7e05420b29ff450995936b00ba55ef4fece8b"
-    sha256 x86_64_linux:   "89c9278354e1726ed6bda01e19c6f8830ce1a5e90965d71709e0e44414ae4d0c"
+    sha256 arm64_sequoia: "214e3c5e737f7e24e43a862d6a406783a26849dfce5397968d1f82f271916011"
+    sha256 arm64_sonoma:  "e9a052baa17629a915d316f4c60ecdc0bc74d4053aa2170274ca6cff52938b01"
+    sha256 arm64_ventura: "1c9c999c1502428fb651060fcf141e99c4f0ad9a543486a7b0f8ca638bca47da"
+    sha256 sonoma:        "c55f89e68237932793dd1b797d69bcaf31de04f7bcdb56e9f843bcdf0a284fd2"
+    sha256 ventura:       "5b17c50001640bb28f32f894aa24669d399d721bdabdfbaf5e722e4b1e40c345"
+    sha256 x86_64_linux:  "551d0ecdb223d03ae41d02350daccacca6863cd169895621e63b299bcca3f380"
   end
 
   depends_on "byacc" => :build
   depends_on "cmake" => :build
   depends_on "gengetopt" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "gmp"
   depends_on "json-c"
   depends_on "judy"

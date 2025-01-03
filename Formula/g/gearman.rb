@@ -1,22 +1,21 @@
 class Gearman < Formula
   desc "Application framework to farm out work to other machines or processes"
-  homepage "http://gearman.org/"
+  homepage "https://gearman.org/"
   url "https://github.com/gearman/gearmand/releases/download/1.1.21/gearmand-1.1.21.tar.gz"
   sha256 "2688b83e48f26fdcd4fbaef2413ff1a76c9ecb067d1621d0e0986196efecd308"
   license "BSD-3-Clause"
-  revision 2
+  revision 4
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "74f5aa57dbcf69a26944221ef18fba6b822087ea7b39277763014c48e38bd400"
-    sha256 cellar: :any,                 arm64_ventura:  "22708e244f0929d56c2d2a51c6c3aed5d696374836fac0d35cbd7a1e9292b8ad"
-    sha256 cellar: :any,                 arm64_monterey: "1bd6ee6cc9c64a344a0b5c0a19d6acc72abbe6ca4522ba82f6e95e84540f6854"
-    sha256 cellar: :any,                 sonoma:         "e13aa47f17d1aa91e3879baaf4a9ed56714b2ebf2fc0f9be3efe17e02b068156"
-    sha256 cellar: :any,                 ventura:        "69e8a9f74ab27c7625227fbb074d263dab038d5bb6ab1bcffeb816d142d18b62"
-    sha256 cellar: :any,                 monterey:       "eb6cb5c35772f870d9b09c899a9359625edb47d0fa1283997ac9832987aa4267"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d1a082418fa3b4fc4be651b4e8237b46f1a2b5c681e32553a144241323dce57e"
+    sha256 cellar: :any,                 arm64_sequoia: "4467566d914682138283953f1311ddf23572a4afd959d82ac0b2a603549e0cee"
+    sha256 cellar: :any,                 arm64_sonoma:  "4b67a0129dce2a868d5079867cbdb4d115d9eae56ec52a41c9b562a509415599"
+    sha256 cellar: :any,                 arm64_ventura: "008c71b1e3df7004c782f0278295b7b3a7e664ffba761a30975e4913134ad2b2"
+    sha256 cellar: :any,                 sonoma:        "6c5c2cace944c91f0306e7f4ec3ee247fa9af89b8b9b24c2ce66a6c9ce1260de"
+    sha256 cellar: :any,                 ventura:       "6fc4431c7fab994717bb3a95f4b0f716398a4ebd83a5c677ea9776f7df211600"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4c855de1197c2a51653daf11305124821fe5fa2283f604dfbc332f6cee4e4236"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "sphinx-doc" => :build
   depends_on "boost"
   depends_on "libevent"

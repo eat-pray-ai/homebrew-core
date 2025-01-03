@@ -6,7 +6,8 @@ class Libosmium < Formula
   license "BSL-1.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "92236115d6e8583f16317be92d5e5f33591466cd38c1475f08b73b6cf3b41135"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, all: "9bcbab472389e69a2ad172a5505c6183b7f2a120116bff9ba0b45c4840840b36"
   end
 
   depends_on "boost" => :build
@@ -24,11 +25,16 @@ class Libosmium < Formula
 
   def install
     resource("protozero").stage { libexec.install "include" }
-    system "cmake", ".", "-DINSTALL_GDALCPP=ON",
-                         "-DINSTALL_UTFCPP=ON",
-                         "-DPROTOZERO_INCLUDE_DIR=#{libexec}/include",
-                         *std_cmake_args
-    system "make", "install"
+
+    args = %W[
+      -DINSTALL_GDALCPP=ON
+      -DINSTALL_UTFCPP=ON
+      -DPROTOZERO_INCLUDE_DIR=#{libexec}/include
+    ]
+
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do
@@ -49,7 +55,7 @@ class Libosmium < Formula
       </osm>
     EOS
 
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <cstdlib>
       #include <iostream>
       #include <osmium/io/xml_input.hpp>
@@ -60,7 +66,7 @@ class Libosmium < Formula
         while (osmium::memory::Buffer buffer = reader.read()) {}
         reader.close();
       }
-    EOS
+    CPP
 
     system ENV.cxx, "test.cpp", "-std=c++11", "-lexpat", "-o", "libosmium_read", "-pthread"
     system "./libosmium_read", "test.osm"

@@ -2,9 +2,9 @@ class PhpAT82 < Formula
   desc "General-purpose scripting language"
   homepage "https://www.php.net/"
   # Should only be updated if the new version is announced on the homepage, https://www.php.net/
-  url "https://www.php.net/distributions/php-8.2.21.tar.xz"
-  mirror "https://fossies.org/linux/www/php-8.2.21.tar.xz"
-  sha256 "8cc44d51bb2506399ec176f70fe110f0c9e1f7d852a5303a2cd1403402199707"
+  url "https://www.php.net/distributions/php-8.2.27.tar.xz"
+  mirror "https://fossies.org/linux/www/php-8.2.27.tar.xz"
+  sha256 "3eec91294d8c09b3df80b39ec36d574ed9b05de4c8afcb25fa215d48f9ecbc6b"
   license "PHP-3.01"
 
   livecheck do
@@ -13,13 +13,12 @@ class PhpAT82 < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "2a3e3089aa10590714b7a966133ef1b76fa34ae00a4fb04e8407666295b9dbd3"
-    sha256 arm64_ventura:  "a1e9b80d82d1b042dd4d2b0988a040c4028c6e92a7f5b602d008dded9b4b4dbc"
-    sha256 arm64_monterey: "35fcf2a95fa3517edcc7fe9ad12a5bfa86c8f4ad30f55a083db4b0bd7c3c40a4"
-    sha256 sonoma:         "755fc4dad2f9cd2aa1e7995597b9e0183da92d7dde970021d587406017d81a1f"
-    sha256 ventura:        "2ab4c05124e1c1df9a007ff8d908d748cea10a0e03bdce1641d69177c74aab9f"
-    sha256 monterey:       "624dc80c422b7dbf43d264d830a9266ac5f9d09d0053acb8a3ec23b74888725a"
-    sha256 x86_64_linux:   "febbc712643fdc14b09f4be3510da73a46b95c1d25d545bef8325c59d2d302b3"
+    sha256 arm64_sequoia: "852a432d874662ce4fcbaea8a776b57234f8c88846f4a028b286fe2bdf11f674"
+    sha256 arm64_sonoma:  "c472f30e848d5a0691d42bdc52e8492842f5d902ee864463b50445a23e3a6ed4"
+    sha256 arm64_ventura: "298ca30a9044eab32a76e09b8b40a4d55d0680fa66c08e9e331fd4dfcb48bef4"
+    sha256 sonoma:        "29ca7a96057f4c598e63b79e89806addf7a6f48ad7746e1859f440f269a39a53"
+    sha256 ventura:       "fa8782917d3e510390469eebe92149a16f8024f56e4c124a63ccb53c47dbcc3c"
+    sha256 x86_64_linux:  "ac74b3be0f519752cd179b9c3cd2ac928cb4ef7baf80c94095354eb09db5f1e9"
   end
 
   keg_only :versioned_formula
@@ -29,7 +28,7 @@ class PhpAT82 < Formula
   deprecate! date: "2026-12-31", because: :unsupported
 
   depends_on "httpd" => [:build, :test]
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "apr"
   depends_on "apr-util"
   depends_on "argon2"
@@ -40,7 +39,7 @@ class PhpAT82 < Formula
   depends_on "gd"
   depends_on "gettext"
   depends_on "gmp"
-  depends_on "icu4c"
+  depends_on "icu4c@76"
   depends_on "krb5"
   depends_on "libpq"
   depends_on "libsodium"
@@ -205,7 +204,7 @@ class PhpAT82 < Formula
     system "make", "install"
 
     # Allow pecl to install outside of Cellar
-    extension_dir = Utils.safe_popen_read("#{bin}/php-config", "--extension-dir").chomp
+    extension_dir = Utils.safe_popen_read(bin/"php-config", "--extension-dir").chomp
     orig_ext_dir = File.basename(extension_dir)
     inreplace bin/"php-config", lib/"php", prefix/"pecl"
     %w[development production].each do |mode|
@@ -263,7 +262,7 @@ class PhpAT82 < Formula
     pecl_path = HOMEBREW_PREFIX/"lib/php/pecl"
     pecl_path.mkpath
     ln_s pecl_path, prefix/"pecl" unless (prefix/"pecl").exist?
-    extension_dir = Utils.safe_popen_read("#{bin}/php-config", "--extension-dir").chomp
+    extension_dir = Utils.safe_popen_read(bin/"php-config", "--extension-dir").chomp
     php_basename = File.basename(extension_dir)
     php_ext_dir = opt_prefix/"lib/php"/php_basename
 
@@ -340,8 +339,8 @@ class PhpAT82 < Formula
                     (Formula["libpq"].opt_lib/shared_library("libpq", 5)).to_s
 
     system "#{sbin}/php-fpm", "-t"
-    system "#{bin}/phpdbg", "-V"
-    system "#{bin}/php-cgi", "-m"
+    system bin/"phpdbg", "-V"
+    system bin/"php-cgi", "-m"
     # Prevent SNMP extension to be added
     refute_match(/^snmp$/, shell_output("#{bin}/php -m"),
       "SNMP extension doesn't work reliably with Homebrew on High Sierra")
@@ -350,11 +349,11 @@ class PhpAT82 < Formula
       port_fpm = free_port
 
       expected_output = /^Hello world!$/
-      (testpath/"index.php").write <<~EOS
+      (testpath/"index.php").write <<~PHP
         <?php
         echo 'Hello world!' . PHP_EOL;
         var_dump(ldap_connect());
-      EOS
+      PHP
       main_config = <<~EOS
         Listen #{port}
         ServerName localhost:#{port}
@@ -402,7 +401,7 @@ class PhpAT82 < Formula
       pid = fork do
         exec Formula["httpd"].opt_bin/"httpd", "-X", "-f", "#{testpath}/httpd.conf"
       end
-      sleep 3
+      sleep 10
 
       assert_match expected_output, shell_output("curl -s 127.0.0.1:#{port}")
 
@@ -415,7 +414,7 @@ class PhpAT82 < Formula
       pid = fork do
         exec Formula["httpd"].opt_bin/"httpd", "-X", "-f", "#{testpath}/httpd-fpm.conf"
       end
-      sleep 3
+      sleep 10
 
       assert_match expected_output, shell_output("curl -s 127.0.0.1:#{port}")
     ensure

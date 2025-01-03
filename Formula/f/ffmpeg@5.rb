@@ -1,11 +1,12 @@
 class FfmpegAT5 < Formula
   desc "Play, record, convert, and stream audio and video"
   homepage "https://ffmpeg.org/"
-  url "https://ffmpeg.org/releases/ffmpeg-5.1.5.tar.xz"
-  sha256 "b822357b5a2c0542cdf284ef8f303ba007aea435e337af05c300c82f5a9858bc"
+  url "https://ffmpeg.org/releases/ffmpeg-5.1.6.tar.xz"
+  sha256 "f4fa066278f7a47feab316fef905f4db0d5e9b589451949740f83972b30901bd"
   # None of these parts are used by default, you have to explicitly pass `--enable-gpl`
   # to configure to activate them. In this case, FFmpeg's license changes to GPL v2+.
   license "GPL-2.0-or-later"
+  revision 4
 
   livecheck do
     url "https://ffmpeg.org/download.html"
@@ -13,18 +14,17 @@ class FfmpegAT5 < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "0504a6c45310d44f2db61927bab74cd68dfb67eee15cc8eddedc205f7e6d13a7"
-    sha256 arm64_ventura:  "9700c91b151f61b37bcd066aba9b41ca07e003fefa5034c8e62a66c3e5dd6d26"
-    sha256 arm64_monterey: "d2057e19e78ca7313baa54f87a9516b206add3e6cbad273a9bc19162b4879dc3"
-    sha256 sonoma:         "c50b45688988cb8874032bfc7feb3198eaf82c4e2a343cba9a720402ee1c3a97"
-    sha256 ventura:        "de2b38b9ecf302540fe2d76d9578dbf70c69a63566355e02e2dbc29d7e6cc219"
-    sha256 monterey:       "5c5be6a726fde1e1d39f3408549201ff3f3ce7c4ba4b7cc4df303f1000e92632"
-    sha256 x86_64_linux:   "193048a0d975fa68f20c83f80c9cd0fedb696415b65c7cd5238fe720aca5371d"
+    sha256 arm64_sequoia: "3988bf0dfbed9f55fd1b386c066ff9ddc3133fbb307405f58af154f6defde9a8"
+    sha256 arm64_sonoma:  "95c63f626cacb578bac611a3bc40714588938ea6344c203d20d1f5c91644eeab"
+    sha256 arm64_ventura: "ff70836190ebc527b8417a86d1cec53f3932c504cc0385fb6b1c6013713af198"
+    sha256 sonoma:        "e571b23582432fc8f6bf35a566588a551d52c3ca71a646c5908856e23dc6e0f5"
+    sha256 ventura:       "d6f80719856ad35e74fce8b213c678847e04b16801ff50b75f0015bca6c1ee93"
+    sha256 x86_64_linux:  "e41c1ed0ffaf17bdde8c7a3a0cfce5c299ec0bf4fe3bed234aa8c2a139e05f6d"
   end
 
   keg_only :versioned_formula
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "aom"
   depends_on "aribb24"
   depends_on "dav1d"
@@ -82,8 +82,6 @@ class FfmpegAT5 < Formula
   on_intel do
     depends_on "nasm" => :build
   end
-
-  fails_with gcc: "5"
 
   def install
     # The new linker leads to duplicate symbol issue https://github.com/homebrew-ffmpeg/homebrew-ffmpeg/issues/140
@@ -157,6 +155,6 @@ class FfmpegAT5 < Formula
     # Create an example mp4 file
     mp4out = testpath/"video.mp4"
     system bin/"ffmpeg", "-filter_complex", "testsrc=rate=1:duration=1", mp4out
-    assert_predicate mp4out, :exist?
+    assert_path_exists mp4out
   end
 end

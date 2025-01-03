@@ -18,12 +18,12 @@ class Reminiscence < Formula
   end
 
   # also the repo is archived
-  disable! date: "2024-01-06", because: "missing license"
+  disable! date: "2024-01-06", because: :no_license
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "libmodplug"
   depends_on "libogg"
   depends_on "sdl2"

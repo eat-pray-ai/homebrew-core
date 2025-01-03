@@ -1,31 +1,29 @@
 class Binaryen < Formula
   desc "Compiler infrastructure and toolchain library for WebAssembly"
   homepage "https://webassembly.org/"
-  url "https://github.com/WebAssembly/binaryen/archive/refs/tags/version_118.tar.gz"
-  sha256 "58a2fbad5aa986b52f8044c99fa7780e0a524e3d1bcc4f588ccda62bc33498a7"
+  url "https://github.com/WebAssembly/binaryen/archive/refs/tags/version_121.tar.gz"
+  sha256 "93f3b3d62def4aee6d09b11e6de75b955d29bc37878117e4ed30c3057a2ca4b4"
   license "Apache-2.0"
   head "https://github.com/WebAssembly/binaryen.git", branch: "main"
 
+  livecheck do
+    url :stable
+    regex(/^version[._-](\d+(?:\.\d+)*)$/i)
+  end
+
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "d830972b691fcbeee7ff7cefa704ad252c047f0c70b96b8f209b6fd798c8335b"
-    sha256 cellar: :any,                 arm64_ventura:  "02be9783ad59dcf431c96dc04e5e278bfa603530751366208eba57c48d581591"
-    sha256 cellar: :any,                 arm64_monterey: "38c45fe90f26ee0c9fef4d7d59b5753c33108d8f777f4aff400bcc8d512b02e2"
-    sha256 cellar: :any,                 sonoma:         "d69dd35df278a2901814dc401de689e3016003ad6bacaf30df4e0f7de3340aef"
-    sha256 cellar: :any,                 ventura:        "439ce7950daecef27a7716c77f63133334337160f507f2afc8502110b795d4cd"
-    sha256 cellar: :any,                 monterey:       "94602460d789580b5d932cd8190bee0f5eff90c68b09d91599a6f41920f392f5"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "5d3b74a1000f4627eae869a0a98a29772cc8e3ed10e99fa49dd735ec31d512fa"
+    sha256 cellar: :any,                 arm64_sequoia: "dd9de93a74b980cdd52ff316af71357e9c0431330a367366c44fecad0c662016"
+    sha256 cellar: :any,                 arm64_sonoma:  "5b320f5944d7e5d1d9ba331a54867ca34186e75617756e617982671524ef85dd"
+    sha256 cellar: :any,                 arm64_ventura: "2230ec3ab24197fb2ea483460f9ea9e4454bea70823e6b012dd7e8080d5cf1f1"
+    sha256 cellar: :any,                 sonoma:        "b51ad87aa9815014c10d03e0f71f05ad994dd921d616a1640906a9cb93391e4d"
+    sha256 cellar: :any,                 ventura:       "bf465f9ffebc2e6d550bc466256cd2639a3eddde35e6830df2f4edadd131f334"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f7e0cc56b6117d0040efdb1aa0cab6a15a3bda5c3c991f00be2917298cc8598c"
   end
 
   depends_on "cmake" => :build
-  depends_on macos: :mojave # needs std::variant
-
-  fails_with :gcc do
-    version "6"
-    cause "needs std::variant"
-  end
 
   def install
-    system "cmake", "-S", ".", "-B", "build", *std_cmake_args, "-DBUILD_TESTS=false"
+    system "cmake", "-S", ".", "-B", "build", "-DBUILD_TESTS=false", *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
 

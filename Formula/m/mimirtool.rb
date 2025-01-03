@@ -2,8 +2,8 @@ class Mimirtool < Formula
   desc "CLI for interacting with Grafana Mimir"
   homepage "https://grafana.com/docs/mimir/latest/operators-guide/tools/mimirtool/"
   url "https://github.com/grafana/mimir.git",
-        tag:      "mimir-2.12.0",
-        revision: "c7aab9e039d63397d2293114ad063b03626e247b"
+        tag:      "mimir-2.14.2",
+        revision: "2db2c4d9de8565c52fcef3050b95b8a2808b407e"
   license "AGPL-3.0-only"
   head "https://github.com/grafana/mimir.git", branch: "main"
 
@@ -17,13 +17,12 @@ class Mimirtool < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "3b967360bc0346708e1de7ae249fedf042b7d8d61d769c4eb8ca5d9c354d8f8e"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "37467612c9dcf1d237d9e3be8adac84f4ac15fea111b76bacd8718a2ff682133"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "9f97b9daf7035b922af157612a5d44c01d11056f026dd98d8c67d90fbda7570b"
-    sha256 cellar: :any_skip_relocation, sonoma:         "ac028623f9e6389ee58301a3af4a4a8d408a89770650c93eef5aa667249e043d"
-    sha256 cellar: :any_skip_relocation, ventura:        "1bd9ee652203f30229c3258523623f6eeedeee23d775cb569ed5e1e4240583d1"
-    sha256 cellar: :any_skip_relocation, monterey:       "d1090fa72ae73af88133ed42e9b8c9f0eeb10fcbca36e2d7e611d03caa70cd60"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "93fb3820968f5723fd6f472ec23e4a2ae643c78002c5aeed903f75f2fabd0a9e"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "3abd5840c227d7988dfc5db4e981acd6a707c7f5d50b69d616302ed7ea32edef"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "1d78c51021842d6c9d0f38fca782b7fe488f267c00134b0c3450068a2a0007d1"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "76a7490e63b9c523f733b2d58845294162e7b010be31caacf7fe183a98492f8f"
+    sha256 cellar: :any_skip_relocation, sonoma:        "7109d9d397c08d3a878e72afd974695e87dace96902d647882afeca6f1c71021"
+    sha256 cellar: :any_skip_relocation, ventura:       "9b72abe29d092897fa274a8721d0384019a0aa54b6ee3d948d285f2a722b3682"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "02f4e83812fa70f6f78390e5a90b9385aabfe12fa37d118fbef270b7310061d7"
   end
 
   depends_on "go" => :build
@@ -38,7 +37,7 @@ class Mimirtool < Formula
     assert_match version.to_s, shell_output("#{bin}/mimirtool version")
 
     # Check that the binary runs as expected by testing the 'rules check' command
-    test_rule = <<~EOF
+    test_rule = <<~YAML
       namespace: my_namespace
       groups:
         - name: example
@@ -46,7 +45,7 @@ class Mimirtool < Formula
           rules:
             - record: job_http_inprogress_requests_sum
               expr: sum by (job) (http_inprogress_requests)
-    EOF
+    YAML
 
     (testpath/"rule.yaml").write(test_rule)
 

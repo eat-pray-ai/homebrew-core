@@ -1,5 +1,3 @@
-require "language/node"
-
 class Iconsur < Formula
   include Language::Python::Virtualenv
 
@@ -12,13 +10,12 @@ class Iconsur < Formula
   license "MIT"
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "7e67e0fa5d12b5598bb3f6755547a50e20da472da57a7df5c68d2ca3380f7140"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "cdfdf024544f90244bfefea1697a7100c7e2adde6a05fd51a4e4e54c5f3ebc98"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "11889c0c42c2a044fe9dc081f50cf332f606e922837b5a765141ef2340e0cdb6"
-    sha256 cellar: :any_skip_relocation, sonoma:         "488565e07e909605382b2ed833216e8b87ac499225443e2b2ace61f1508b6a6b"
-    sha256 cellar: :any_skip_relocation, ventura:        "1a1f49255b7376a223d04e38c2dbd0ef278376e161670b0fca923b94e4d12227"
-    sha256 cellar: :any_skip_relocation, monterey:       "f9a727a3148a71fdda8a537c85028002fb33f7ff9a91db86a4d50971db5b4a42"
+    rebuild 3
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "ba4be0ff656530a2a787c34d2b8c9502a0bb6448dd3d76198ff9d9a295769303"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "4c5b0753cf7a6dd13ecc8fa8ca6d8e511f1f8658a907e793e8cce001164f669a"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "81f49f558f09ca338470b0599e6c8e2254a85b31e7a098dada4dac32bd5f2de5"
+    sha256 cellar: :any_skip_relocation, sonoma:        "80a8c9d1251b6015fa7070d4a07a82fe39b6b70d2a1bf148a468cf8f28dd9467"
+    sha256 cellar: :any_skip_relocation, ventura:       "652b5bdaa7162f802914ec320be23b44f1984f58a967cb5488dfa354a46b678c"
   end
 
   depends_on :macos
@@ -29,29 +26,36 @@ class Iconsur < Formula
   # this causes issues if a user has Homebrew Python installed (EXTERNALLY-MANAGED).
   # We instead prepare a virtualenv with all missing packages.
   on_monterey :or_newer do
-    depends_on "python@3.12"
+    depends_on "python@3.13"
   end
 
   resource "pyobjc-core" do
-    url "https://files.pythonhosted.org/packages/50/d5/0b93cb9dc94ab4b78b2b7aa54c80f037e4de69897fff81a5ededa91d2704/pyobjc-core-10.1.tar.gz"
-    sha256 "1844f1c8e282839e6fdcb9a9722396c1c12fb1e9331eb68828a26f28a3b2b2b1"
+    url "https://files.pythonhosted.org/packages/b7/40/a38d78627bd882d86c447db5a195ff307001ae02c1892962c656f2fd6b83/pyobjc_core-10.3.1.tar.gz"
+    sha256 "b204a80ccc070f9ab3f8af423a3a25a6fd787e228508d00c4c30f8ac538ba720"
   end
 
   resource "pyobjc-framework-cocoa" do
-    url "https://files.pythonhosted.org/packages/5d/1d/964a0da846d49511489bd99ed705f9d85c5081fc832d0dba384c4c0d2fb2/pyobjc-framework-Cocoa-10.1.tar.gz"
-    sha256 "8faaf1292a112e488b777d0c19862d993f3f384f3927dc6eca0d8d2221906a14"
+    url "https://files.pythonhosted.org/packages/a7/6c/b62e31e6e00f24e70b62f680e35a0d663ba14ff7601ae591b5d20e251161/pyobjc_framework_cocoa-10.3.1.tar.gz"
+    sha256 "1cf20714daaa986b488fb62d69713049f635c9d41a60c8da97d835710445281a"
+
+    # Backport commit to avoid Xcode.app dependency. Remove in the next release
+    # https://github.com/ronaldoussoren/pyobjc/commit/864a21829c578f6479ac6401d191fb759215175e
+    patch :DATA
   end
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+    system "npm", "install", *std_npm_args
 
     if MacOS.version >= :monterey
-      venv = virtualenv_create(libexec/"venv", "python3.12")
+      # Help `pyobjc-framework-cocoa` pick correct SDK after removing -isysroot from Python formula
+      ENV.append_to_cflags "-isysroot #{MacOS.sdk_path}"
+
+      venv = virtualenv_create(libexec/"venv", "python3.13")
       venv.pip_install resources
-      bin.install Dir["#{libexec}/bin/*"]
+      bin.install libexec.glob("bin/*")
       bin.env_script_all_files libexec/"bin", PATH: "#{venv.root}/bin:${PATH}"
     else
-      bin.install_symlink Dir["#{libexec}/bin/*"]
+      bin.install_symlink libexec.glob("bin/*")
     end
   end
 
@@ -62,3 +66,22 @@ class Iconsur < Formula
     system bin/"iconsur", "unset", testpath/"Test.app"
   end
 end
+
+__END__
+--- a/pyobjc_setup.py
++++ b/pyobjc_setup.py
+@@ -510,15 +510,6 @@ def Extension(*args, **kwds):
+             % (tuple(map(int, os_level.split(".")[:2])))
+         )
+ 
+-    # XCode 15 has a bug w.r.t. weak linking for older macOS versions,
+-    # fall back to older linker when using that compiler.
+-    # XXX: This should be in _fixup_compiler but doesn't work there...
+-    lines = subprocess.check_output(["xcodebuild", "-version"], text=True).splitlines()
+-    if lines[0].startswith("Xcode"):
+-        xcode_vers = int(lines[0].split()[-1].split(".")[0])
+-        if xcode_vers >= 15:
+-            ldflags.append("-Wl,-ld_classic")
+-
+     if os_level == "10.4":
+         cflags.append("-DNO_OBJC2_RUNTIME")

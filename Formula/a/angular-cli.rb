@@ -1,26 +1,23 @@
-require "language/node"
-
 class AngularCli < Formula
   desc "CLI tool for Angular"
-  homepage "https://angular.dev/cli"
-  url "https://registry.npmjs.org/@angular/cli/-/cli-18.0.7.tgz"
-  sha256 "863145e2357ae0f5469218a8bd6050d280c60f00eac70da5395ff106a79bd4e1"
+  homepage "https://angular.dev/cli/"
+  url "https://registry.npmjs.org/@angular/cli/-/cli-19.0.6.tgz"
+  sha256 "e5196bb939084209d5e93809a80f2ce31c212b44ba0420c833f8aee9dd998624"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "e93ff500e44cd40bbbe5f452555c8c4dc0a01852c2e8c826c33bdc329b660d7a"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "e93ff500e44cd40bbbe5f452555c8c4dc0a01852c2e8c826c33bdc329b660d7a"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "e93ff500e44cd40bbbe5f452555c8c4dc0a01852c2e8c826c33bdc329b660d7a"
-    sha256 cellar: :any_skip_relocation, sonoma:         "0428a90e5925f7f8da7ad78da01e989f0131dd77c5d5cb4683c39c9dad9c5fc3"
-    sha256 cellar: :any_skip_relocation, ventura:        "0428a90e5925f7f8da7ad78da01e989f0131dd77c5d5cb4683c39c9dad9c5fc3"
-    sha256 cellar: :any_skip_relocation, monterey:       "0428a90e5925f7f8da7ad78da01e989f0131dd77c5d5cb4683c39c9dad9c5fc3"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "860cbd8f9538f4d3b31118a92f1d123898a807406669cf566ceea407c2116165"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "eade932aaf439387b96fdee2e820657beb124907893cacfaaa97c0368b4b95ed"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "eade932aaf439387b96fdee2e820657beb124907893cacfaaa97c0368b4b95ed"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "eade932aaf439387b96fdee2e820657beb124907893cacfaaa97c0368b4b95ed"
+    sha256 cellar: :any_skip_relocation, sonoma:        "2f02871dd499750f5b603fa2739be1287cfd3e08ea4987a11abbd4a62dbddd90"
+    sha256 cellar: :any_skip_relocation, ventura:       "2f02871dd499750f5b603fa2739be1287cfd3e08ea4987a11abbd4a62dbddd90"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "eade932aaf439387b96fdee2e820657beb124907893cacfaaa97c0368b4b95ed"
   end
 
   depends_on "node"
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+    system "npm", "install", *std_npm_args
     bin.install_symlink Dir["#{libexec}/bin/*"]
   end
 

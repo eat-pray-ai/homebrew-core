@@ -11,6 +11,7 @@ class Usbredir < Formula
   end
 
   bottle do
+    sha256 cellar: :any, arm64_sequoia:  "93df364f6c6aa2060c888db35acdedb3b77ca4a4ba52a27178cdc1524ac48982"
     sha256 cellar: :any, arm64_sonoma:   "630fbbf88672a673a284c1abc36a9a0dc1d0e12272423c39ebf0a1820f581756"
     sha256 cellar: :any, arm64_ventura:  "c38d15165e427c870dcb1a831cc703bee4abecc5975fa36987efe63a3c070a14"
     sha256 cellar: :any, arm64_monterey: "d1a04df082293fbe993458d742001dfd17dba76b7e13ea2df7867e75617750f0"
@@ -22,27 +23,24 @@ class Usbredir < Formula
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "glib"
   depends_on "libusb"
 
   def install
-    system "meson", *std_meson_args, ".", "build"
-    system "ninja", "-C", "build", "-v"
-    system "ninja", "-C", "build", "install"
+    system "meson", "setup", "build", *std_meson_args
+    system "meson", "compile", "-C", "build", "--verbose"
+    system "meson", "install", "-C", "build"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <usbredirparser.h>
       int main() {
         return usbredirparser_create() ? 0 : 1;
       }
-    EOS
-    system ENV.cc, "test.c",
-                   "-L#{lib}",
-                   "-lusbredirparser",
-                   "-o", "test"
+    C
+    system ENV.cc, "test.c", "-L#{lib}", "-lusbredirparser", "-o", "test"
     system "./test"
   end
 end

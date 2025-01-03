@@ -1,10 +1,9 @@
 class Halide < Formula
   desc "Language for fast, portable data-parallel computation"
   homepage "https://halide-lang.org"
-  url "https://github.com/halide/Halide/archive/refs/tags/v17.0.1.tar.gz"
-  sha256 "beb18331d9e4b6f69943bcc75fb9d923a250ae689f09f6940a01636243289727"
+  url "https://github.com/halide/Halide/archive/refs/tags/v19.0.0.tar.gz"
+  sha256 "83bae1f0e24dc44d9d85014d5cd0474df2dd03975680894ce3fafd6e97dffee2"
   license "MIT"
-  revision 1
   head "https://github.com/halide/Halide.git", branch: "main"
 
   livecheck do
@@ -13,13 +12,12 @@ class Halide < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "acfb233ba9a4fe0dbf9cc356ce05089e4898e2a704bd042eb63adc834d06ee7f"
-    sha256 cellar: :any,                 arm64_ventura:  "255b0a6cee8ff2e5da7911bc7e2d5bd3c4f9ee1b40341b9bafc0babc005bf02c"
-    sha256 cellar: :any,                 arm64_monterey: "911f16993b0b0dd7e6663afb595b7f37a8260330ebda522a302931b7ae7b0772"
-    sha256 cellar: :any,                 sonoma:         "20ba24f50c8e9ac478b9f8c95a2eea9f14ab969a5705908aa2a926c499a8897f"
-    sha256 cellar: :any,                 ventura:        "52ca13bb0b1db321ef034e694197024ba66feffe89c78bb1ba0aa742d6df1825"
-    sha256 cellar: :any,                 monterey:       "98510b52e0ca95f63ca49860d123d6b8ecf8ecb51d294bb7505968795bcc80a5"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "fd4cc8f18056d83d9ac55a7a3616cfd66ca9495e034a56af7074eceb70a09d5a"
+    sha256 cellar: :any,                 arm64_sequoia: "63e0a77f37e9db89b85ee69af56a4c48af67f4131acc439d103c834c973b696e"
+    sha256 cellar: :any,                 arm64_sonoma:  "95a7b448f9ed4e23d48603ae2a63b92e5d0cf4729ee5e3bda4128234d3861baa"
+    sha256 cellar: :any,                 arm64_ventura: "57bae5cff5b521cc42a80f786411acf9cadc049ab5f7100d71e429c8986be6f4"
+    sha256 cellar: :any,                 sonoma:        "51ffd96b6e358f9e53ad81f0d3e9987c72d2ba2c19f85563fcd334baf0f25cf0"
+    sha256 cellar: :any,                 ventura:       "53888029c3c797b57577bb390dbcc34a4fe909b6aac219c81be9f55555764d3d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2a0bf8651e7a1c027c38776e0df09d4117156145efbacbc0fbbf00e0806cea21"
   end
 
   depends_on "cmake" => :build
@@ -27,44 +25,32 @@ class Halide < Formula
   depends_on "flatbuffers"
   depends_on "jpeg-turbo"
   depends_on "libpng"
-  depends_on "llvm@17"
-  depends_on "python@3.12"
+  depends_on "lld"
+  depends_on "llvm"
+  depends_on "python@3.13"
+  depends_on "wabt"
 
-  fails_with :gcc do
-    version "6"
-    cause "Requires C++17"
-  end
-
-  # Check wabt version in `dependencies/wasm/CMakeLists.txt`.
-  # TODO: Ask upstream to support usage of a system-provided wabt.
-  # TODO: Do we really need a git checkout here?
-  resource "wabt" do
-    url "https://github.com/WebAssembly/wabt.git",
-        tag:      "1.0.33",
-        revision: "963f973469b45969ce198e0c86d3af316790a780"
+  on_macos do
+    depends_on "openssl@3"
   end
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def install
-    # Work around an Xcode 15 linker issue which causes linkage against LLVM's
-    # libunwind due to it being present in a library search path.
-    ENV.remove "HOMEBREW_LIBRARY_PATHS", Formula["llvm@17"].opt_lib if DevelopmentTools.clang_build_version >= 1500
-
-    builddir = buildpath/"build"
-    (builddir/"_deps/wabt-src").install resource("wabt")
-
-    system "cmake", "-S", ".", "-B", builddir,
-                    "-DCMAKE_INSTALL_RPATH=#{rpath}",
-                    "-DHalide_INSTALL_PYTHONDIR=#{prefix/Language::Python.site_packages(python3)}",
-                    "-DHalide_SHARED_LLVM=ON",
-                    "-DPYBIND11_USE_FETCHCONTENT=OFF",
-                    "-DFLATBUFFERS_USE_FETCHCONTENT=OFF",
-                    *std_cmake_args
-    system "cmake", "--build", builddir
-    system "cmake", "--install", builddir
+    site_packages = prefix/Language::Python.site_packages(python3)
+    rpaths = [rpath, rpath(source: site_packages/"halide")]
+    args = [
+      "-DCMAKE_INSTALL_RPATH=#{rpaths.join(";")}",
+      "-DHalide_INSTALL_PYTHONDIR=#{site_packages}/halide",
+      "-DHalide_LLVM_SHARED_LIBS=ON",
+      "-DHalide_USE_FETCHCONTENT=OFF",
+      "-DWITH_TESTS=NO",
+    ]
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do

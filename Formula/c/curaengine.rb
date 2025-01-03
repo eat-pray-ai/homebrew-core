@@ -26,8 +26,6 @@ class Curaengine < Formula
 
   depends_on "cmake" => :build
 
-  fails_with gcc: "5"
-
   # The version tag in these resources (e.g., `/1.2.3/`) should be changed as
   # part of updating this formula to a new version.
   resource "fdmextruder_defaults" do
@@ -53,7 +51,7 @@ class Curaengine < Formula
   test do
     testpath.install resource("fdmextruder_defaults")
     testpath.install resource("fdmprinter_defaults")
-    (testpath/"t.stl").write <<~EOS
+    (testpath/"t.stl").write <<~STL
       solid t
         facet normal 0 -1 0
          outer loop
@@ -63,8 +61,8 @@ class Curaengine < Formula
          endloop
         endfacet
       endsolid Star
-    EOS
+    STL
 
-    system "#{bin}/CuraEngine", "slice", "-j", "fdmprinter.def.json", "-l", "#{testpath}/t.stl"
+    system bin/"CuraEngine", "slice", "-j", "fdmprinter.def.json", "-l", "#{testpath}/t.stl"
   end
 end

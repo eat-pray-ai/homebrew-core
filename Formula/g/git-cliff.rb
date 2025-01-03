@@ -1,23 +1,23 @@
 class GitCliff < Formula
   desc "Highly customizable changelog generator"
   homepage "https://github.com/orhun/git-cliff"
-  url "https://github.com/orhun/git-cliff/archive/refs/tags/v2.3.0.tar.gz"
-  sha256 "a234fa1b78f7d9807ef1e41e6c36e56f178e65aa0f6e1fb7100cf144def2f180"
+  url "https://github.com/orhun/git-cliff/archive/refs/tags/v2.7.0.tar.gz"
+  sha256 "7b9a74f0871983bf5c326ffd7358ba46925f14a6feb1638c8c1e5d6b36448eae"
   license all_of: ["Apache-2.0", "MIT"]
+  revision 1
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "0671857570d54832691f72961ed13e4a7ba7427a62173a1900a03f5185c00ca2"
-    sha256 cellar: :any,                 arm64_ventura:  "11d4d46ef6112ff352dba65cbd16682f33d8ce935530f1778c106f20c6813d61"
-    sha256 cellar: :any,                 arm64_monterey: "c6a4548c6f9de17f28d00cd49edaced9578d7850632e058ef240930068a2dfbc"
-    sha256 cellar: :any,                 sonoma:         "504ddfe5b54dd637a6db093816c8a79b01aaa97945ed295ea9ebcdb46d7ac8ae"
-    sha256 cellar: :any,                 ventura:        "a741b3bba2777733488207a929bed589779051dd773a84730d9fb85ec7920190"
-    sha256 cellar: :any,                 monterey:       "eeef9104cdc38294a62ce38f8a02b2848f23869fd3ad3ebf0231f073a2205bc2"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "b92548599ce8164a49641809cc092682db0380880d5226b109f95c97e97e2538"
+    sha256 cellar: :any,                 arm64_sequoia: "aedb37147d3717146ef417f2250aa77e73ec5f728b33376e37fe5d1dd05cbfff"
+    sha256 cellar: :any,                 arm64_sonoma:  "13f0ec24c3b22b8eb69ff5b383c6efb31a44a2e63f5024bc1b4aa564501d9d1e"
+    sha256 cellar: :any,                 arm64_ventura: "a25395c75240a577fc7a6c07a38230b151dded1ad86f298ce9bda9391e9c4678"
+    sha256 cellar: :any,                 sonoma:        "86fcc21689a42c144baa68d22288e76d1e84b7161586b5271b1c407758e9e4eb"
+    sha256 cellar: :any,                 ventura:       "33909965790ebad4b95b7439df2902232c0541aba3d4ab930d09f57b00952004"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "65783fb1e6349664f752ab2d87c3dcd9efae6193ce25f353e9ffd09dfb3f1641"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
-  depends_on "libgit2"
+  depends_on "libgit2@1.8" # needs https://github.com/rust-lang/git2-rs/issues/1109 to support libgit2 1.9
 
   def install
     ENV["LIBGIT2_NO_VENDOR"] = "1"
@@ -43,7 +43,7 @@ class GitCliff < Formula
 
   test do
     system "git", "cliff", "--init"
-    assert_predicate testpath/"cliff.toml", :exist?
+    assert_path_exists testpath/"cliff.toml"
 
     system "git", "init"
     system "git", "add", "cliff.toml"
@@ -62,7 +62,7 @@ class GitCliff < Formula
     linkage_with_libgit2 = (bin/"git-cliff").dynamically_linked_libraries.any? do |dll|
       next false unless dll.start_with?(HOMEBREW_PREFIX.to_s)
 
-      File.realpath(dll) == (Formula["libgit2"].opt_lib/shared_library("libgit2")).realpath.to_s
+      File.realpath(dll) == (Formula["libgit2@1.8"].opt_lib/shared_library("libgit2")).realpath.to_s
     end
 
     assert linkage_with_libgit2, "No linkage with libgit2! Cargo is likely using a vendored version."

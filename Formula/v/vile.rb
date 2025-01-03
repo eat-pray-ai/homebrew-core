@@ -11,6 +11,7 @@ class Vile < Formula
   end
 
   bottle do
+    sha256 arm64_sequoia:  "84034c614555bb446473e976341e350c73dcb4471d210c67fe602e958faef612"
     sha256 arm64_sonoma:   "e84be3fdb790f3335cd751171d55992f7bab1c53eebba6a06221a52665da04f4"
     sha256 arm64_ventura:  "cdaba9b9b3fc2a83aabc80a1b76481fa81bf861c0667d4c4e37929b4b92b5025"
     sha256 arm64_monterey: "a59ef3113b85e9b48da4bd05c297628d14aee271559257fc3bea1acac346ea72"
@@ -21,30 +22,30 @@ class Vile < Formula
   end
 
   uses_from_macos "flex" => :build
-  uses_from_macos "expect" => :test
   uses_from_macos "libxcrypt"
   uses_from_macos "ncurses"
   uses_from_macos "perl"
 
   def install
-    system "./configure", *std_configure_args,
-                          "--disable-imake",
+    system "./configure", "--disable-imake",
                           "--enable-colored-menus",
                           "--with-ncurses",
                           "--without-x",
-                          "--with-screen=ncurses"
+                          "--with-screen=ncurses",
+                          *std_configure_args
     system "make", "install"
   end
 
   test do
+    require "pty"
     ENV["TERM"] = "xterm"
-    (testpath/"vile.exp").write <<~EOS
-      spawn #{bin}/vile
-      expect "unnamed"
-      send ":w new\r:q\r"
-      expect eof
-    EOS
-    system "expect", "-f", "vile.exp"
-    assert_predicate testpath/"new", :exist?
+    PTY.spawn(bin/"vile") do |r, w, _pid|
+      w.write "ibrew\e:w new\r:q\r"
+      r.read
+    rescue Errno::EIO
+      # GNU/Linux raises EIO when read is done on closed pty
+    end
+    assert_path_exists testpath/"new"
+    assert_equal "brew\n", (testpath/"new").read
   end
 end

@@ -1,8 +1,8 @@
 class Cfengine < Formula
   desc "Help manage and understand IT infrastructure"
   homepage "https://cfengine.com/"
-  url "https://cfengine-package-repos.s3.amazonaws.com/tarballs/cfengine-community-3.23.0.tar.gz"
-  sha256 "fcf4b6ddb325ffe99c949cdee8d0f5a40b5f5c9a482df1a4eba0b38892d354f9"
+  url "https://cfengine-package-repos.s3.amazonaws.com/tarballs/cfengine-community-3.24.1.tar.gz"
+  sha256 "c73c3125052ddf3c6f2507a7062705104e3e1495396c71009e3ada3883751b1a"
   license all_of: ["BSD-3-Clause", "GPL-2.0-or-later", "GPL-3.0-only", "LGPL-2.0-or-later"]
 
   livecheck do
@@ -11,18 +11,17 @@ class Cfengine < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "28b96d1f0f2daf07422bc23ec9538b1c61f56847d49cbeb86cf36721cdc943db"
-    sha256 arm64_ventura:  "1570f76deae4f2d02ee25fe7226cfe0eeec7849b656d0217ac994f4938fd76c5"
-    sha256 arm64_monterey: "c7ff210a0fa52481fb287eb8d2c5e9ce3966f211a9b8ebd75d4bbe11eed5e37b"
-    sha256 sonoma:         "88cbe41b16a6fbb7dea06a0f866b87d67f8adf6a4b1bf06f33c360523065c32a"
-    sha256 ventura:        "d6be87f933d40caeff5132f15b50291a5883d693dc1454925d59be2f471b7e00"
-    sha256 monterey:       "24ba49dd05ecf2c8136dfd6f11ed77bc907841cff05181a2262def819cf97e32"
-    sha256 x86_64_linux:   "cf4f1070ffbc86d5273b80788370a82503788227a82a67c7822f3fec364eec36"
+    sha256 arm64_sequoia: "f725b175040ab622809474f57ef2c849d9f0b0610175ad9c24d6e79d52d8e626"
+    sha256 arm64_sonoma:  "169bfd10f3813bb149e10d2e7bc0a30afe8996a5917bd7e95a9213be904bc6d9"
+    sha256 arm64_ventura: "511105a7ebe2c3674679bf6bf0fbfbf2db0f24c5773c5a327b9233f713121ab2"
+    sha256 sonoma:        "543e420accc4bb2463b30b68ecd7c831cbbb9313a70d8fc6fc92d579ffaf95e2"
+    sha256 ventura:       "96ab82d4a0ae7721c2e31a850bcf81a23bb521ff51c6400bb4c7fd27eb91a79f"
+    sha256 x86_64_linux:  "20aa60575821934942208af520fb19e963f8bf5801e684243777d340d05a6c85"
   end
 
   depends_on "lmdb"
   depends_on "openssl@3"
-  depends_on "pcre"
+  depends_on "pcre2"
 
   uses_from_macos "curl", since: :ventura # uses CURLOPT_PROTOCOLS_STR, available since curl 7.85.0
   uses_from_macos "libxml2"
@@ -32,26 +31,24 @@ class Cfengine < Formula
   end
 
   resource "masterfiles" do
-    url "https://cfengine-package-repos.s3.amazonaws.com/tarballs/cfengine-masterfiles-3.23.0.tar.gz"
-    sha256 "47a47afa141d980793b1b4f832095bc3e680bcec2a4534458c86cbf1649368e2"
+    url "https://cfengine-package-repos.s3.amazonaws.com/tarballs/cfengine-masterfiles-3.24.1.tar.gz"
+    sha256 "f1b05bcf9d7086200666225e77c9bb79cbf2ae3d67512b2122e4fc861a263e17"
   end
 
   def install
     odie "masterfiles resource needs to be updated" if version != resource("masterfiles").version
 
     args = %W[
-      --disable-dependency-tracking
-      --prefix=#{prefix}
       --with-workdir=#{var}/cfengine
       --with-lmdb=#{Formula["lmdb"].opt_prefix}
-      --with-pcre=#{Formula["pcre"].opt_prefix}
+      --with-pcre2=#{Formula["pcre2"].opt_prefix}
       --without-mysql
       --without-postgresql
     ]
 
     args << "--with-systemd-service=no" if OS.linux?
 
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args
     system "make", "install"
     (pkgshare/"CoreBase").install resource("masterfiles")
   end

@@ -6,6 +6,7 @@ class Tomlplusplus < Formula
   license "MIT"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "3934d4a98565c6b3161550033341f13c4e74085b3de259e57f09007c5a03b940"
     sha256 cellar: :any,                 arm64_sonoma:   "40067a1ffc31cf6fdcb26161a1809b815a8d82a63afdf93232dd81521329e05d"
     sha256 cellar: :any,                 arm64_ventura:  "871c57fbe77aa04bba1388ac0ca4e0ccf4c125333a84b84a860a6548a2bffb8f"
     sha256 cellar: :any,                 arm64_monterey: "71e6c4e3940782e94ba05fb8357430b56c973b1ff867340ce966acfdc649f6c4"
@@ -18,7 +19,7 @@ class Tomlplusplus < Formula
   depends_on "cmake" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => [:build, :test]
+  depends_on "pkgconf" => [:build, :test]
 
   def install
     system "meson", "setup", "build", *std_meson_args
@@ -27,7 +28,7 @@ class Tomlplusplus < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <iostream>
       #include <toml++/toml.hpp>
 
@@ -47,9 +48,9 @@ class Tomlplusplus < Formula
         std::cout << "Title: " << data["title"].value_or("No title") << std::endl;
         return 0;
       }
-    EOS
+    CPP
 
-    pkg_config_flags = shell_output("pkg-config --cflags --libs tomlplusplus").chomp.split
+    pkg_config_flags = shell_output("pkgconf --cflags --libs tomlplusplus").chomp.split
     system ENV.cxx, "test.cpp", *pkg_config_flags, "-std=c++17", "-o", "test"
     assert_match "Title: TOML Example", shell_output("./test")
   end

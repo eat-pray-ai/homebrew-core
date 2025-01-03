@@ -1,25 +1,26 @@
 class Numcpp < Formula
   desc "C++ implementation of the Python Numpy library"
   homepage "https://dpilger26.github.io/NumCpp"
-  url "https://github.com/dpilger26/NumCpp/archive/refs/tags/Version_2.12.1.tar.gz"
-  sha256 "f462ecd27126e6057b31fa38f1f72cef2c4223c9d848515412970714a5bb6d16"
+  url "https://github.com/dpilger26/NumCpp/archive/refs/tags/Version_2.13.0.tar.gz"
+  sha256 "930c8c433c4cd4322ea4a3f42b06453e5c1586a4210aeff603eaae180b228457"
   license "MIT"
   head "https://github.com/dpilger26/NumCpp.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "5fd0a17279c0f7086f4a61824e0372c289f55811299732e9aabebabd62053f8a"
+    sha256 cellar: :any_skip_relocation, all: "fb73c57557420b7c0449d8b91259043af80bc84e005792fd2ee735ef72148f52"
   end
 
   depends_on "cmake" => :build
   depends_on "boost"
 
   def install
-    system "cmake", ".", *std_cmake_args
-    system "make", "install"
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <iostream>
       #include <NumCpp.hpp>
 
@@ -29,7 +30,8 @@ class Numcpp < Formula
           for (int i = 0; i < nc::shape(a).cols; ++i)
               std::cout << a[i] << std::endl;
       }
-    EOS
+    CPP
+
     system ENV.cxx, "-std=c++17", "test.cpp", "-o", "test", "-I#{include}"
     assert_equal "1\n5\n9\n", shell_output("./test")
   end

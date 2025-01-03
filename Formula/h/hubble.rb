@@ -1,8 +1,8 @@
 class Hubble < Formula
   desc "Network, Service & Security Observability for Kubernetes using eBPF"
   homepage "https://github.com/cilium/hubble"
-  url "https://github.com/cilium/hubble/archive/refs/tags/v0.13.5.tar.gz"
-  sha256 "67cfcebbeade12d1b0ed7ab8b623186cf0cd0ab9fd8a82677ab7c06c9bb6da20"
+  url "https://github.com/cilium/hubble/archive/refs/tags/v1.16.5.tar.gz"
+  sha256 "7fbcbc321ef3dc0ed67a84ecfe0749898ea3a11b72a3f9b279ae6b272e38a819"
   license "Apache-2.0"
 
   # There can be a notable gap between when a version is tagged and a
@@ -14,13 +14,12 @@ class Hubble < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "f03bd85920c52a3aa9c3593f13ce9b9189e4a634dce594b094c9edf37c08f20e"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "b74804b2da2c9131fe318903e0a1c33f4e3bb73527e24a850b959cdccb2a7277"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "94e6aa577d8937f3af9ff35908dd558e473c51fdc45beae562b89d2f8cc87a7e"
-    sha256 cellar: :any_skip_relocation, sonoma:         "7b20452ebe8c5e309ca95ff3964bc82c9b94dd1afeb5f34948965c99101a0a6e"
-    sha256 cellar: :any_skip_relocation, ventura:        "06e21f3b27c436288889c3e6ac328cadd4d5fcb158eaf75170a1bd96d588ee4b"
-    sha256 cellar: :any_skip_relocation, monterey:       "13599da527babfe5cadf37571177d68f43b135bc8efcf9626840c01026317503"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "04b1ff4204e8261508c79bf46608a36c7708373d32fb023c69f801903a2f399a"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "280efd6ac5fe81d7364f283ab4c8f1a7882eff584bedae364bf14a51286fcdcb"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "280efd6ac5fe81d7364f283ab4c8f1a7882eff584bedae364bf14a51286fcdcb"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "280efd6ac5fe81d7364f283ab4c8f1a7882eff584bedae364bf14a51286fcdcb"
+    sha256 cellar: :any_skip_relocation, sonoma:        "41f94fe9d766f71ed2b573d0057a5affab41d2a701c3790fcc8174df1632a444"
+    sha256 cellar: :any_skip_relocation, ventura:       "41f94fe9d766f71ed2b573d0057a5affab41d2a701c3790fcc8174df1632a444"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "08e682b91045107973e4a9f3153404f1f7f5b1352f3cbf2d10c857cf55fb1fd7"
   end
 
   depends_on "go" => :build

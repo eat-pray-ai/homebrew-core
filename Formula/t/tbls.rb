@@ -1,19 +1,18 @@
 class Tbls < Formula
   desc "CI-Friendly tool for document a database"
   homepage "https://github.com/k1LoW/tbls"
-  url "https://github.com/k1LoW/tbls/archive/refs/tags/v1.76.1.tar.gz"
-  sha256 "89ace17b2052a78543e15eeab5b666a0b311487ed8de3a499d8532b03c3a30aa"
+  url "https://github.com/k1LoW/tbls/archive/refs/tags/v1.79.4.tar.gz"
+  sha256 "9631c6c1e380eb81add74c5981eb1c328c3d28c118c48d7786ebcd5d173826dd"
   license "MIT"
   head "https://github.com/k1LoW/tbls.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "f0ff75224e7becbaa16d38c6482f95287e0533aa04c64dc1fd5ce9d5f11c54fe"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "4421a6b340f953f650dfe2cce659bc8ad55355c15aacf9f3acba9e9c27b3ad8a"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "a99632669ee483aa5b710c5ef46b7f37bb24a7493898c76f45b09f5ecc233dbd"
-    sha256 cellar: :any_skip_relocation, sonoma:         "acaf9006c9cbc103829ce17bc7bd5ab24ac396a8274156407ff3284e51ff86d3"
-    sha256 cellar: :any_skip_relocation, ventura:        "0fe7690a331c2e8171c520bc957a784150b43aa742b9a22eb143c3184059ac9a"
-    sha256 cellar: :any_skip_relocation, monterey:       "53b10cf7b84a873ffe7380c95ab6a2252af62205eade32ab0f128462d60181a5"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d06c2e1f6594abed14ebba92c8f001677390acfbeb7a8c1193b6c78e7763095e"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "2af6f5554daaf2c02695e8cdcbbdbfc6ab74bca3e18022a9f4a6b666e9dad4ca"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "11ea075ce3a4ffa98d627983474b605a3b4fbe5d189258ab189b53b8f0aec5fa"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "4b62fc78a77c19b9e53d4df3b192ce4d58cdc8dabbc1e7b7645fdebf321609e2"
+    sha256 cellar: :any_skip_relocation, sonoma:        "f67dac0a81bc127104bce479110b7466db83b185aabcca58027bc959b3b4755b"
+    sha256 cellar: :any_skip_relocation, ventura:       "5d79209e53238f73fc71e40545dadc3a91938072131981edb3a600c3a9a82609"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "12dba274b1c2267dd70843ec7ba053232a0bad5fbf9f03912fddb3bb82128629"
   end
 
   depends_on "go" => :build

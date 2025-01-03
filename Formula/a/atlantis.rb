@@ -1,8 +1,8 @@
 class Atlantis < Formula
   desc "Terraform Pull Request Automation tool"
   homepage "https://www.runatlantis.io/"
-  url "https://github.com/runatlantis/atlantis/archive/refs/tags/v0.28.3.tar.gz"
-  sha256 "59a271d26fe1cc34f8489417794781a0da0f1d47eaf00626e3490ae3451bc7c7"
+  url "https://github.com/runatlantis/atlantis/archive/refs/tags/v0.32.0.tar.gz"
+  sha256 "2ce49b9bc08dc547dd3ad8f99edc9bbf4ea325377489e6fe7f605a56d56971cd"
   license "Apache-2.0"
   head "https://github.com/runatlantis/atlantis.git", branch: "main"
 
@@ -12,13 +12,12 @@ class Atlantis < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "f51aeba6df75abd4d4b8aec295dcddf3c9900329b81248adb31db13d5640bcfe"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "6e3b0cd4f3d4797dacd28c2327dcd13875b32ccd73d6f6f39d22905a916eccbc"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "3bcd7c48fc07d71e48f00ae2fd9a56cdac2911f20710eaedf47d51badb73b989"
-    sha256 cellar: :any_skip_relocation, sonoma:         "818bdaec327593ad1f08ec1c4ce4e1e7604a6dcc6ea71be9ef02d51e2b056995"
-    sha256 cellar: :any_skip_relocation, ventura:        "60fd438e2271f33b4c5ad78eb3379e077e11bd1123e32830c6cc5e87ee94690c"
-    sha256 cellar: :any_skip_relocation, monterey:       "cd788bf5a75a03796b31952e19d63c0ad20d43bc7f653f04689601d1b4ef01a0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "65786da522348bcd7995a626872e97aa2740322e25a6b3b4f90ec47ad1a7a7f2"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "d5af804ae1bdb552f368afad71261ed2e83b1a7dd33282da1e198986e832442c"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "d5af804ae1bdb552f368afad71261ed2e83b1a7dd33282da1e198986e832442c"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "d5af804ae1bdb552f368afad71261ed2e83b1a7dd33282da1e198986e832442c"
+    sha256 cellar: :any_skip_relocation, sonoma:        "5325f3ee95d3d6f6fa6f6a28aa539b4ba8b6bfede138630b38e889b9597f5d4a"
+    sha256 cellar: :any_skip_relocation, ventura:       "5325f3ee95d3d6f6fa6f6a28aa539b4ba8b6bfede138630b38e889b9597f5d4a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "751a9e28faf5bca201b29eb78f1fda07508316acb148de716cc35709e476a35b"
   end
 
   depends_on "go" => :build

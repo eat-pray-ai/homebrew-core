@@ -1,32 +1,35 @@
 class Wasmedge < Formula
   desc "Lightweight, high-performance, and extensible WebAssembly runtime"
   homepage "https://WasmEdge.org/"
-  url "https://github.com/WasmEdge/WasmEdge/releases/download/0.13.5/WasmEdge-0.13.5-src.tar.gz"
-  sha256 "95e066661c9fc00c2927e6ae79cb0d3f9c38e804834c07faf4ceb72c0c7ff09f"
+  url "https://github.com/WasmEdge/WasmEdge/releases/download/0.14.1/WasmEdge-0.14.1-src.tar.gz"
+  sha256 "e5a944975fb949ecda73d6fe80a86507deb2d0a221b2274338807b63758350b4"
   license "Apache-2.0"
+  revision 1
   head "https://github.com/WasmEdge/WasmEdge.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "33e4ce1d41249590d70302bd71f0a3469e524bcbe3a712cc86d030b813dfb69a"
-    sha256 cellar: :any,                 arm64_ventura:  "0d80f3e14880d7c8f8ee50b3425872c68207b1be37b0ca270e1f9aeefbdad40d"
-    sha256 cellar: :any,                 arm64_monterey: "b73d8b824a1d2b0e5b045757a1897a49a78b31bc02e9a7f661fcaa783e5c7d5d"
-    sha256 cellar: :any,                 sonoma:         "63743fc9c1603e88e48a19d5d73107984273488f6b94cb03763183964b38ff61"
-    sha256 cellar: :any,                 ventura:        "cf190b3d7868fdfc6112b1e2850d74cfa98799bc009402d8a6c2dd4d1671e261"
-    sha256 cellar: :any,                 monterey:       "966e885668dea37e7868a57fbdf12dfff7d3a4f79bf341ebd6157084b06ded4e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "0cbc06f9de75c3ca9c748d99a08eb5ec01ffd8cf003b51a6312b71c500a0cebc"
+    sha256 cellar: :any,                 arm64_sequoia: "f6ae6e711e190c45a027eccd05ca4415c55888ea94a00439fbe7bbd0c6a941c8"
+    sha256 cellar: :any,                 arm64_sonoma:  "f08075f0ed49f38c7d55bf912a1b313b1d63578c79d5893712b49a985a8f3003"
+    sha256 cellar: :any,                 arm64_ventura: "c1d79e101c67d214b8801143665250b442159a5fdcc117843b9fb3151678877d"
+    sha256 cellar: :any,                 sonoma:        "ba7e25a126a64a5a9c039e2a814a90f1aa7ae93384d2da5aed5a6eb3b9cf2b1a"
+    sha256 cellar: :any,                 ventura:       "acc7cb9c933d4834accf98d4c6bd8c3a6ab37a161127b4b0e61d1d1e7a5dc690"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e93dc0a0ce969f97bd6bb5c6066d097c3bd7cd322de2293e309ce14defc4ac2d"
   end
 
   depends_on "cmake" => :build
-  depends_on "ninja" => :build
-  # llvm is required on run-time, as WASMEDGE_LINK_LLVM_STATIC defaults to OFF.
-  # The version is pinned to 16 due to https://github.com/WasmEdge/WasmEdge/pull/2878
-  depends_on "llvm@16"
+  depends_on "fmt"
+  depends_on "lld"
+  depends_on "llvm"
+  depends_on "spdlog"
+
+  uses_from_macos "zlib"
+
+  on_linux do
+    depends_on "zstd"
+  end
 
   def install
-    ENV["LLVM_DIR"] = Formula["llvm@16"].opt_lib/"cmake"
-    ENV["CC"] = Formula["llvm@16"].opt_bin/"clang"
-    ENV["CXX"] = Formula["llvm@16"].opt_bin/"clang++"
-    system "cmake", "-S", ".", "-B", "build", "-G", "Ninja", *std_cmake_args
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end

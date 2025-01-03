@@ -1,25 +1,24 @@
 class Mpi4py < Formula
   desc "Python bindings for MPI"
   homepage "https://mpi4py.github.io/"
-  url "https://github.com/mpi4py/mpi4py/releases/download/3.1.6/mpi4py-3.1.6.tar.gz"
-  sha256 "c8fa625e0f92b082ef955bfb52f19fa6691d29273d7d71135d295aa143dee6cb"
-  license "BSD-2-Clause"
+  url "https://github.com/mpi4py/mpi4py/releases/download/4.0.1/mpi4py-4.0.1.tar.gz"
+  sha256 "f3174b245775d556f4fddb32519a2066ef0592edc810c5b5a59238f9a0a40c89"
+  license "BSD-3-Clause"
 
   bottle do
-    sha256 cellar: :any, arm64_sonoma:   "55bdbc162a7ceb14f72116a1cb888da9e06419532905e3ec3f222d011a5e21d7"
-    sha256 cellar: :any, arm64_ventura:  "46ca1e36c3f428433dd59b0093f8f0022686072a08b46b46dafae75a2f66e525"
-    sha256 cellar: :any, arm64_monterey: "7c6b8ab027983c122adf9c77adb2deed5f65bf337819ee3ec148c9421bf4a994"
-    sha256 cellar: :any, sonoma:         "b6ec53adbcfc129bae8da46aaa824302ef50039572e72094f3e45155ffe6f68a"
-    sha256 cellar: :any, ventura:        "b0fdcb05a9b0b50f1de20d6c2e3a600847001db5941e69a57459bd6a44d636d2"
-    sha256 cellar: :any, monterey:       "847b9e2f39508f08a24f5c2f7d6c3638710e7b0a1611756d46911e797b474447"
-    sha256               x86_64_linux:   "989d1c12db3d151c9bc98be42be1f974e75859d7916f4da2de9f11f81ca67c40"
+    sha256 cellar: :any, arm64_sequoia: "557a93e747f7b13041f6104ecb537616e6d6080bc485e6964d8b6ab7699e7af1"
+    sha256 cellar: :any, arm64_sonoma:  "2d6bba0738377bf1c10bf44a51de01c4fe125f25ff30277a85150f7c62f1932f"
+    sha256 cellar: :any, arm64_ventura: "6087645f1f222cd2a5efe80274895f5da76190f7fdae53c19a41442a4ea26372"
+    sha256 cellar: :any, sonoma:        "c6df8310a13fdf5f75d7d3dac7e5696d643fcdb487182185d77fcc3aaa897138"
+    sha256 cellar: :any, ventura:       "8a5f05db2cc8ddf8dd771a04001b324e1d148610f7cf18134cfb08dd9fc72a07"
+    sha256               x86_64_linux:  "d5850a6a3d6c4cc24c46f1d6054c71aaa1773f377b6887794761d2eca9467a96"
   end
 
   depends_on "open-mpi"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def install

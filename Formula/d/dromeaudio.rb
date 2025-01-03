@@ -8,6 +8,7 @@ class Dromeaudio < Formula
 
   bottle do
     rebuild 2
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "955eefdfe1d3fe73315f0f9c2eb9c90a08444658caf30b5c9235aa27337980bb"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "6dfb5e4fee8100aaf2ba927c2eb06f0ab7ea5b988f4e40b226653b9547937668"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "3e8d488b354c6a990708784d7048679ff882b3edf5d21b12276d13e2e241ab3f"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "9848eaeb0b335219124e08ff894bedd136c1fa95bcf72a04b69a778305fef5b1"
@@ -27,13 +28,15 @@ class Dromeaudio < Formula
   def install
     # install FindDromeAudio.cmake under share/cmake/Modules/
     inreplace "share/CMakeLists.txt", "${CMAKE_ROOT}", "#{share}/cmake"
-    system "cmake", ".", *std_cmake_args
-    system "make", "install"
+
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do
-    assert_predicate include/"DromeAudio", :exist?
-    assert_predicate lib/"libDromeAudio.a", :exist?
+    assert_path_exists include/"DromeAudio"
+    assert_path_exists lib/"libDromeAudio.a"
 
     # We don't test DromeAudioPlayer with an audio file because it only works
     # with certain audio devices and will fail on CI with this error:

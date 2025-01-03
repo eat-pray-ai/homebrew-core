@@ -8,6 +8,7 @@ class Freedink < Formula
 
   bottle do
     rebuild 1
+    sha256 arm64_sequoia:  "791eb877668eacf35dbc1e12754a2fc5c40f5804107367fc7f0cc2da76f0974e"
     sha256 arm64_sonoma:   "78a162584ff38dcffdf1485d08a0e29a556f0eada9831fefef6f7dc14755d222"
     sha256 arm64_ventura:  "c3ac13edb0efd994c52954b8a4512c0254f6fbe0874f4bae8416949dc18f2026"
     sha256 arm64_monterey: "3c0d3f2a3362647f774125622db2f836a1f209a5bccfe66a8a7901e357d9434f"
@@ -23,7 +24,7 @@ class Freedink < Formula
   end
 
   depends_on "glm" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "check"
   depends_on "cxxtest"
   depends_on "fontconfig"
@@ -51,12 +52,10 @@ class Freedink < Formula
     # cannot initialize a variable of type 'char *' with an rvalue of type 'const char *'
     inreplace "src/gfx_fonts.cpp", "char *familyname", "const char *familyname"
     inreplace "src/gfx_fonts.cpp", "char *stylename", "const char *stylename"
-    system "./configure", "--disable-debug",
-                          "--disable-dependency-tracking",
-                          "--disable-silent-rules",
-                          "--prefix=#{prefix}"
 
+    system "./configure", "--disable-silent-rules", *std_configure_args
     system "make", "install"
+
     resource("freedink-data").stage do
       inreplace "Makefile", "xargs -0r", "xargs -0"
       system "make", "install", "PREFIX=#{prefix}"
@@ -65,6 +64,6 @@ class Freedink < Formula
 
   test do
     assert_match "GNU FreeDink 109.6", shell_output("#{bin}/freedink -vwis")
-    assert_predicate share/"dink/dink/Dink.dat", :exist?
+    assert_path_exists share/"dink/dink/Dink.dat"
   end
 end

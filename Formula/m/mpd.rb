@@ -1,26 +1,35 @@
 class Mpd < Formula
   desc "Music Player Daemon"
   homepage "https://github.com/MusicPlayerDaemon/MPD"
-  url "https://github.com/MusicPlayerDaemon/MPD/archive/refs/tags/v0.23.15.tar.gz"
-  sha256 "d2865d8f8ea79aa509b1465b99a2b8f3f449fe894521c97feadc2dca85a6ecd2"
   license "GPL-2.0-or-later"
-  revision 2
+  revision 3
   head "https://github.com/MusicPlayerDaemon/MPD.git", branch: "master"
 
+  stable do
+    url "https://github.com/MusicPlayerDaemon/MPD/archive/refs/tags/v0.23.16.tar.gz"
+    sha256 "a3ba8a4ef53c681ae5d415a79fbd1409d61cb3d03389a51595af24b330ecbb61"
+
+    # support libnfs 6.0.0, upstream commit ref, https://github.com/MusicPlayerDaemon/MPD/commit/31e583e9f8d14b9e67eab2581be8e21cd5712b47
+    patch do
+      url "https://raw.githubusercontent.com/Homebrew/formula-patches/557ad661621fa81b5e6ff92ab169ba40eba58786/mpd/0.23.16-libnfs-6.patch"
+      sha256 "e0f2e6783fbb92d9850d31f245044068dc0614721788d16ecfa8aacfc5c27ff3"
+    end
+  end
+
   bottle do
-    sha256 cellar: :any, arm64_sonoma:   "75aaa76bf8c7ca80c95031dca7edb2f5d2be3be5ca4497f892991af5f46c84e1"
-    sha256 cellar: :any, arm64_ventura:  "edc7dc059af8a6e12743864c0c28350106562a28a97dd81d47c2be90a7a200e9"
-    sha256 cellar: :any, arm64_monterey: "69357ae80afb04a5280ee467d0fb57b80a4c45e7ee52a34e1900ebb3b0a19ead"
-    sha256 cellar: :any, sonoma:         "9b6fd7a48bca06aedc8b01189f34ede4885b128cd93b44b33a516b850c986dce"
-    sha256 cellar: :any, ventura:        "3264fcec94c16f31feda5ae7811f7afe0ef7577694a6824b62af86360b19e4a4"
-    sha256 cellar: :any, monterey:       "ab6395db650c07787ae9b76d68829abb7c8d651787ee4203b36a70f4f45472b0"
-    sha256               x86_64_linux:   "42f7bdc9e0f5eea39128ac7c3af0f3aac59488bbc58b12ffae15633e3ea38b92"
+    sha256 cellar: :any, arm64_sequoia: "9a9354f8f2e68f7b9a7f3374c69a6216e3bbbddfdf00c88bee70a11f7024ffd6"
+    sha256 cellar: :any, arm64_sonoma:  "1a816d6549cf5485e60b818e86933166a97af3f0f838fd9e4436b0d56b20262a"
+    sha256 cellar: :any, arm64_ventura: "7959d13d7d3e5e64d658b77b0f7204237b7bd0a8b74a200a34c55c3116a8f727"
+    sha256 cellar: :any, sonoma:        "34d9b1cd6e9963b8fa4042ea49b0b85aedb28574c5a3576d3a113c29f378da2a"
+    sha256 cellar: :any, ventura:       "6c57462d32ab0bbe02bcb8d36547d8895dc19e468ce3c6ffb626cbbeab15cc3e"
+    sha256               x86_64_linux:  "312aa5516ab7ba1c7018425dea8b0439850c6727d4073a85fd1e789d84889ad0"
   end
 
   depends_on "boost" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
+
   depends_on "chromaprint"
   depends_on "expat"
   depends_on "faad2"
@@ -28,12 +37,14 @@ class Mpd < Formula
   depends_on "flac"
   depends_on "fluid-synth"
   depends_on "fmt"
+  depends_on "game-music-emu"
   depends_on "glib"
-  depends_on "icu4c"
+  depends_on "icu4c@76"
   depends_on "lame"
   depends_on "libao"
   depends_on "libgcrypt"
   depends_on "libid3tag"
+  depends_on "libmikmod"
   depends_on "libmpdclient"
   depends_on "libnfs"
   depends_on "libogg"
@@ -50,6 +61,7 @@ class Mpd < Formula
   depends_on "sqlite"
   depends_on "wavpack"
 
+  uses_from_macos "bzip2"
   uses_from_macos "curl"
   uses_from_macos "zlib"
 
@@ -62,8 +74,6 @@ class Mpd < Formula
     depends_on "systemd"
   end
 
-  fails_with gcc: "5"
-
   def install
     # mpd specifies -std=gnu++0x, but clang appears to try to build
     # that against libstdc++ anyway, which won't work.
@@ -71,6 +81,7 @@ class Mpd < Formula
     ENV.libcxx
 
     args = %W[
+      -Dcpp_std=c++20
       --sysconfdir=#{etc}
       -Dmad=disabled
       -Dmpcdec=disabled
@@ -86,6 +97,8 @@ class Mpd < Formula
       -Dupnp=pupnp
       -Dvorbisenc=enabled
       -Dwavpack=enabled
+      -Dgme=enabled
+      -Dmikmod=enabled
       -Dsystemd_system_unit_dir=#{lib}/systemd/system
       -Dsystemd_user_unit_dir=#{lib}/systemd/user
     ]

@@ -1,19 +1,18 @@
 class GoogleBenchmark < Formula
   desc "C++ microbenchmark support library"
   homepage "https://github.com/google/benchmark"
-  url "https://github.com/google/benchmark/archive/refs/tags/v1.8.4.tar.gz"
-  sha256 "3e7059b6b11fb1bbe28e33e02519398ca94c1818874ebed18e504dc6f709be45"
+  url "https://github.com/google/benchmark/archive/refs/tags/v1.9.1.tar.gz"
+  sha256 "32131c08ee31eeff2c8968d7e874f3cb648034377dfc32a4c377fa8796d84981"
   license "Apache-2.0"
   head "https://github.com/google/benchmark.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "96f66edd70bd4fd5b743b3cb47481c55a0fa6119048566d304f4f4b76f4e3cfb"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "70025180f4eefd615cd18012febe749208f4113ea925789dc10ef902adc03dc6"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "c489b8fce7399e3b8e429df45f9c119c405669a86ec10ba1689984732bb8de80"
-    sha256 cellar: :any_skip_relocation, sonoma:         "89b959b99ccb917145e426fc38c79f474a48799f86a875a8da3da0edb898250e"
-    sha256 cellar: :any_skip_relocation, ventura:        "f49d6f70f17ac2f192674ab9136713bc4be13280fef264cedb47d3e58f25e730"
-    sha256 cellar: :any_skip_relocation, monterey:       "2b9200561f16267c54323837a819a9f9c384d8a2318c7caf51b6b6d602b4b816"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "32cf9bc19a5623a51c97a2bbb200bdb11fb5d444b5d9247b7c1a68225a2855ca"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "640ba4c9e992d27b80aeb54e9cabf1d9386c230440940ebdf02e8f7db09713a8"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "1c9fc96575cd6f7e7241e359df03a9dbaffea569c160b0cab81d54aa9593e352"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "89a1537bc5004572aa0277a5c113e3907b4453b0ccf15b4c0d980a70c5afc117"
+    sha256 cellar: :any_skip_relocation, sonoma:        "0e63378d17e3a72b1c7a198a61e74ca823217edbb1abf080ad64d093b107a699"
+    sha256 cellar: :any_skip_relocation, ventura:       "bf91cfbe179fb24d2c297fbc87d01e028862340b82a94b9018e59e1f3716bce6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e8a44839b256fd772353566f2cd8a73266e90a72da964454730481e62dc020f4"
   end
 
   depends_on "cmake" => :build
@@ -29,7 +28,7 @@ class GoogleBenchmark < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <string>
       #include <benchmark/benchmark.h>
       static void BM_StringCreation(benchmark::State& state) {
@@ -38,7 +37,7 @@ class GoogleBenchmark < Formula
       }
       BENCHMARK(BM_StringCreation);
       BENCHMARK_MAIN();
-    EOS
+    CPP
     flags = ["-I#{include}", "-L#{lib}", "-lbenchmark", "-pthread"] + ENV.cflags.to_s.split
     system ENV.cxx, "-o", "test", "test.cpp", *flags
     system "./test"

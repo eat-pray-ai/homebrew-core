@@ -1,8 +1,8 @@
 class Adios2 < Formula
   desc "Next generation of ADIOS developed in the Exascale Computing Program"
   homepage "https://adios2.readthedocs.io"
-  url "https://github.com/ornladios/ADIOS2/archive/refs/tags/v2.10.1.tar.gz"
-  sha256 "ce776f3a451994f4979c6bd6d946917a749290a37b7433c0254759b02695ad85"
+  url "https://github.com/ornladios/ADIOS2/archive/refs/tags/v2.10.2.tar.gz"
+  sha256 "14cf0bcd94772194bce0f2c0e74dba187965d1cffd12d45f801c32929158579e"
   license "Apache-2.0"
   head "https://github.com/ornladios/ADIOS2.git", branch: "master"
 
@@ -12,13 +12,12 @@ class Adios2 < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "15dc5582a5809d2fd547311d2e509da5a1cd1998b66b7be713fdb29f3a90af45"
-    sha256 arm64_ventura:  "660e1bf873b7d6ccc560f5585ed1c05760033ea365b8d6e6ce3ea3d00b7b6b5d"
-    sha256 arm64_monterey: "b24dd9522c4858ee40454dec41f13b9980d7dd4a1732a4e0d9e09f5ea4858b7f"
-    sha256 sonoma:         "e54e9b99ca2553ed65970bc277ced6563a5d1bb7255a34859e20312679f6a587"
-    sha256 ventura:        "55acae4510e3146d024222370f987de7c1a205776db4c312de41ac455d1f2632"
-    sha256 monterey:       "fa52f5f7c028709c4d7394add07c53618c6141c7a6e3a5bb1ae7fbd75b5d365b"
-    sha256 x86_64_linux:   "a6bb7f960648f75642c6940cdca6e44dba5f2c8e2961060ec9f43519e46ed246"
+    sha256 arm64_sequoia: "502983bb973c584e61ea4325857019308d37ed7876149ca8b692e462a7350e96"
+    sha256 arm64_sonoma:  "f85ec0a3210c79e1730d3f7f71c88de5f75fe6a4a9ca9449935ebd2e97145044"
+    sha256 arm64_ventura: "e75a203fbaa7987772e61ba24b66419ae5a5e1b69d8f29524d431330accb9caf"
+    sha256 sonoma:        "5caafa5a27988407eb69e25b2a1f03a61d584af7d152efbc90b2f197586a6f2e"
+    sha256 ventura:       "f22fdaa080f998c8ecd24b826c148ad60bc587a7acc3f0c49171e8d61ddcb7a3"
+    sha256 x86_64_linux:  "6eccf49dc0677c2e62f0a5fdc69872e35552137b6339ebccca057795480be4bf"
   end
 
   depends_on "cmake" => :build
@@ -33,7 +32,7 @@ class Adios2 < Formula
   depends_on "open-mpi"
   depends_on "pugixml"
   depends_on "pybind11"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "sqlite"
   depends_on "yaml-cpp"
   depends_on "zeromq"
@@ -51,7 +50,7 @@ class Adios2 < Formula
   fails_with :clang if DevelopmentTools.clang_build_version == 1400
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def install

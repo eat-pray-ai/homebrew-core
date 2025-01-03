@@ -6,6 +6,7 @@ class Wslay < Formula
   license "MIT"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "695e27c926b9cba4a774c0bead3c924fe34f11e9d151e203ee82f83c3be1ae20"
     sha256 cellar: :any,                 arm64_sonoma:   "a589896e5f7fce349934f90cee721270752c65cfb58dfca69ce9d13f6bfc52e7"
     sha256 cellar: :any,                 arm64_ventura:  "696c0681644905529efaaa30ab237023dc12c9a726af0bd7c700302308401a2a"
     sha256 cellar: :any,                 arm64_monterey: "f09d67afcce3498de58ebcb20cf0c5478ff9cd909fa3841a9545e526c31f9b34"
@@ -29,14 +30,12 @@ class Wslay < Formula
   end
 
   depends_on "cunit" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "sphinx-doc" => :build
 
   def install
-    system "autoreconf", "-fvi" if build.head?
-    system "./configure", "--prefix=#{prefix}",
-                          "--disable-dependency-tracking",
-                          "--disable-silent-rules"
+    system "autoreconf", "--force", "--install", "--verbose" if build.head?
+    system "./configure", "--disable-silent-rules", *std_configure_args
     system "make", "check"
     system "make", "install"
   end

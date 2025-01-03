@@ -1,36 +1,33 @@
-require "language/node"
-
 class Pyright < Formula
   desc "Static type checker for Python"
   homepage "https://github.com/microsoft/pyright"
-  url "https://registry.npmjs.org/pyright/-/pyright-1.1.371.tgz"
-  sha256 "40bf4babb909ec7258c83a1836667a3b073cba8ad1a5cf780f7cfa2b5db570df"
+  url "https://registry.npmjs.org/pyright/-/pyright-1.1.391.tgz"
+  sha256 "24439c0e5bf0a0b14db0f3104bb7ba6d5d522f92a7d4d67e1023048173e0b1dc"
   license "MIT"
   head "https://github.com/microsoft/pyright.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "c5350af775a64b0383af09b473c18e00f5abb4080c632c86d316a7906869cfb5"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "c5350af775a64b0383af09b473c18e00f5abb4080c632c86d316a7906869cfb5"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "c5350af775a64b0383af09b473c18e00f5abb4080c632c86d316a7906869cfb5"
-    sha256 cellar: :any_skip_relocation, sonoma:         "59a9f78a1997b4d7c1c3781bd9298840cffa771bd408f51e6d32696aa59c649f"
-    sha256 cellar: :any_skip_relocation, ventura:        "59a9f78a1997b4d7c1c3781bd9298840cffa771bd408f51e6d32696aa59c649f"
-    sha256 cellar: :any_skip_relocation, monterey:       "59a9f78a1997b4d7c1c3781bd9298840cffa771bd408f51e6d32696aa59c649f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "241a82dcdee5dd59723fd797a637a55d71997a9100aa713357d980093a6c9852"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "2123e2d46dbc35e5eb01bf3fd9b5dc956d07ebf5541dded644e1426da9864db0"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "2123e2d46dbc35e5eb01bf3fd9b5dc956d07ebf5541dded644e1426da9864db0"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "2123e2d46dbc35e5eb01bf3fd9b5dc956d07ebf5541dded644e1426da9864db0"
+    sha256 cellar: :any_skip_relocation, sonoma:        "23b206838efb93e02aafb120773f069f4bca1df1b20cd47b669e8e172f7d5d5d"
+    sha256 cellar: :any_skip_relocation, ventura:       "23b206838efb93e02aafb120773f069f4bca1df1b20cd47b669e8e172f7d5d5d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2123e2d46dbc35e5eb01bf3fd9b5dc956d07ebf5541dded644e1426da9864db0"
   end
 
   depends_on "node"
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+    system "npm", "install", *std_npm_args
     bin.install_symlink Dir["#{libexec}/bin/*"]
   end
 
   test do
-    (testpath/"broken.py").write <<~EOS
+    (testpath/"broken.py").write <<~PYTHON
       def wrong_types(a: int, b: int) -> str:
           return a + b
-    EOS
+    PYTHON
     output = pipe_output("#{bin}/pyright broken.py 2>&1")
-    assert_match "error: Expression of type \"int\" is incompatible with return type \"str\"", output
+    assert_match "error: Type \"int\" is not assignable to return type \"str\"", output
   end
 end

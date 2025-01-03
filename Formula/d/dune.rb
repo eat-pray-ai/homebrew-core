@@ -1,19 +1,18 @@
 class Dune < Formula
   desc "Composable build system for OCaml"
   homepage "https://dune.build/"
-  url "https://github.com/ocaml/dune/releases/download/3.16.0/dune-3.16.0.tbz"
-  sha256 "5481dde7918ca3121e02c34d74339f734b32d5883efb8c1b8056471e74f9bda6"
+  url "https://github.com/ocaml/dune/releases/download/3.17.1/dune-3.17.1.tbz"
+  sha256 "6b9ee5ed051379a69ca45173ac6c5deb56b44a1c16e30b7c371343303d835ac6"
   license "MIT"
   head "https://github.com/ocaml/dune.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "3c705387f96692b7075e6d981be85588c43847eb9716072d2a92c15aa623b5ed"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "b3ebc5cbac423f50a79db2fb9b3586b0e77731e204845d9c2f9190fd97d13b55"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "fbc76d1cbabab2e4e25972125cf3c9d5fa3af0d8ee663d263b303c7cd81dc99c"
-    sha256 cellar: :any_skip_relocation, sonoma:         "d5a6960e4b995ba8428ffea1ee1e8a7d99098b809065e956ccdacce9475e4d10"
-    sha256 cellar: :any_skip_relocation, ventura:        "eb241573ffc403ac3b86d65586ed0540b27f7a722a8c9a26990fd2819599d7e5"
-    sha256 cellar: :any_skip_relocation, monterey:       "23ff9c55507ab3a8262648d47fddb9b34ac8b37a01eee3d0fe18ba3eb7c57073"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "5d4dc2923b46d80e72e55038ad220bd9e9418d4f31bca82c1c76a32503590840"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "cbe712230ebb0b40c9e8b1ef98b8dc71833486de4b45a4a7a85b96b96dde477e"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "5ca9c2522a72cea646d27a6bc31a6107b572ca25f51282eb67a48dc19d5782fe"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "3b96067281833c3383f0fae1950e42ecd7d2f805bd688f9985c51e58452cf6dc"
+    sha256 cellar: :any_skip_relocation, sonoma:        "eea07e9f1a4c83eee7e6294f5956f90eb59b9a06a3595aae12cd8d3f7e53fa1c"
+    sha256 cellar: :any_skip_relocation, ventura:       "4b1bc4b25cf3c392df87a4fdffe2c85bd8edd4742ec55a8175d22173bf1f38a4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f5a6a2519c0a84ac69567bcfc5abeaad4e036831b510bf0ae6ead5e5fa6e722d"
   end
 
   depends_on "ocaml" => [:build, :test]

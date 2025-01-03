@@ -1,8 +1,8 @@
 class RubyAT32 < Formula
   desc "Powerful, clean, object-oriented scripting language"
   homepage "https://www.ruby-lang.org/"
-  url "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.4.tar.gz"
-  sha256 "c72b3c5c30482dca18b0f868c9075f3f47d8168eaf626d4e682ce5b59c858692"
+  url "https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.6.tar.gz"
+  sha256 "d9cb65ecdf3f18669639f2638b63379ed6fbb17d93ae4e726d4eb2bf68a48370"
   license "Ruby"
 
   livecheck do
@@ -11,20 +11,19 @@ class RubyAT32 < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "e53e897164a68ad3d027a4dce50742a1f20130d849c1cb3bcc58ab1200ea122b"
-    sha256 arm64_ventura:  "d52c90c5f9048725ffdef1ecd609ee2deb256369493429cb6dcc31f0456c4216"
-    sha256 arm64_monterey: "a707434a60ac044067c8dd1817c2d176fe5e620cce5640465b286037539363c7"
-    sha256 sonoma:         "aedc9fa3b5ab822f07d51027b924e05fb825a1d17ee1b5f6a88d5a5a239ce76d"
-    sha256 ventura:        "ab0e542f51c3b669561a2a0a1a0ca9084de4fee7f57722b74b204dbcb3f7375e"
-    sha256 monterey:       "7c6657eedc19f12724fa6c8b843509676b188d80b6491b1ebfc4d4f8fcbf2717"
-    sha256 x86_64_linux:   "51fa1767613a571a8f091b137bbc0e0635d4adb4d5a766beb7238223afaa2ee8"
+    sha256 arm64_sequoia: "1699f819bfb77774b7c71e7cabe2d22f57d98bcf0d253e6ee78a6e254289e60d"
+    sha256 arm64_sonoma:  "974759f22b4c526a89fecfb6fe7271457465f9a46f65ffb26b788a2ea6a2e086"
+    sha256 arm64_ventura: "6c494ee006260a9b517f3d9c7b516dfd849eb2971d96fb7e472e36fb93326e8c"
+    sha256 sonoma:        "daf8990e96ce6e294a833f54c3459f0627b8bc8ac07abffd8bccddd88b0c1026"
+    sha256 ventura:       "3b4e1265fa4d15d6b09c27812b848fed3f7aa5a97d08e697effaa32167fad377"
+    sha256 x86_64_linux:  "f2ba2e3b24093a1f1ad2783615cab5b28d6bf135d05bfb44f1025e7c12135806"
   end
 
   keg_only :versioned_formula
 
   depends_on "autoconf" => :build
   depends_on "bison" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
   depends_on "libyaml"
   depends_on "openssl@3"
@@ -33,14 +32,20 @@ class RubyAT32 < Formula
   uses_from_macos "gperf"
   uses_from_macos "libffi"
   uses_from_macos "libxcrypt"
+  uses_from_macos "ncurses"
   uses_from_macos "zlib"
 
   # Should be updated only when Ruby is updated (if an update is available).
   # The exception is Rubygem security fixes, which mandate updating this
   # formula & the versioned equivalents and bumping the revisions.
   resource "rubygems" do
-    url "https://rubygems.org/rubygems/rubygems-3.5.9.tgz"
-    sha256 "2b203642191e6bb9ece19075f62275a88526319b124684c46667415dca4363f1"
+    url "https://rubygems.org/rubygems/rubygems-3.5.22.tgz"
+    sha256 "229c8e393a412e99d6a0fe2a22fb98f7d2e2d79cdbc48e5a8dcca6fa9a356c87"
+
+    livecheck do
+      url "https://rubygems.org/pages/download"
+      regex(/href=.*?rubygems[._-]v?(\d+(?:\.\d+)+)\.t/i)
+    end
   end
 
   def api_version
@@ -101,7 +106,7 @@ class RubyAT32 < Formula
     resource("rubygems").stage do
       ENV.prepend_path "PATH", bin
 
-      system "#{bin}/ruby", "setup.rb", "--prefix=#{buildpath}/vendor_gem"
+      system bin/"ruby", "setup.rb", "--prefix=#{buildpath}/vendor_gem"
       rg_in = lib/"ruby/#{api_version}"
       rg_gems_in = lib/"ruby/gems/#{api_version}"
 
@@ -128,11 +133,11 @@ class RubyAT32 < Formula
     # Since Gem ships Bundle we want to provide that full/expected installation
     # but to do so we need to handle the case where someone has previously
     # installed bundle manually via `gem install`.
-    rm_f %W[
+    rm(%W[
       #{rubygems_bindir}/bundle
       #{rubygems_bindir}/bundler
-    ]
-    rm_rf Dir[HOMEBREW_PREFIX/"lib/ruby/gems/#{api_version}/gems/bundler-*"]
+    ].select { |file| File.exist?(file) })
+    rm_r(Dir[HOMEBREW_PREFIX/"lib/ruby/gems/#{api_version}/gems/bundler-*"])
     rubygems_bindir.install_symlink Dir[libexec/"gembin/*"]
 
     # Customize rubygems to look/install in the global gem directory
@@ -236,7 +241,7 @@ class RubyAT32 < Formula
     assert_equal api_version, shell_output("#{bin}/ruby -e 'print Gem.ruby_api_version'")
 
     ENV["GEM_HOME"] = testpath
-    system "#{bin}/gem", "install", "json"
+    system bin/"gem", "install", "json"
 
     (testpath/"Gemfile").write <<~EOS
       source 'https://rubygems.org'

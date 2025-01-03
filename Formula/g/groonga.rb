@@ -1,8 +1,8 @@
 class Groonga < Formula
   desc "Fulltext search engine and column store"
   homepage "https://groonga.org/"
-  url "https://github.com/groonga/groonga/releases/download/v14.0.5/groonga-14.0.5.tar.gz"
-  sha256 "cb85069eff242b4cfe6ebf305e93dfe7b34c5e474424770b0ae4ef622b9b9c87"
+  url "https://github.com/groonga/groonga/releases/download/v14.1.2/groonga-14.1.2.tar.gz"
+  sha256 "3da6ba0a9d64582e1b8ef5daf6f6f5b1257e8d68e401341de625b08a1cc43b09"
   license "LGPL-2.1-or-later"
 
   livecheck do
@@ -11,13 +11,12 @@ class Groonga < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "5462e14a6903c7a0057353397acf73f311b7ea214635a8ac70dc60f974079f1a"
-    sha256 arm64_ventura:  "dcc13d137d3bf7b10302036585b65ed39872ab6775eba9be1d21cfc383420a85"
-    sha256 arm64_monterey: "6e4730b43c9daede5d6b7eab85ba10956984af0cf79c01f145337a4aa2a7ede4"
-    sha256 sonoma:         "e063fa99cf61c0c8cfa33b73d9a589c57043e1341d67fa77dc85733018e2e932"
-    sha256 ventura:        "8d0fc6d7f812d12dda38072420717e92c74f6fe98991dee653955bc21196bc40"
-    sha256 monterey:       "b89dd0d27723c713e0ea69e889077c61a49afaca1f5349324399f51f9846e496"
-    sha256 x86_64_linux:   "0fc75de56d66f4bb20ad77bbde1118641583f33fff9dcd117a203064f770855b"
+    sha256 arm64_sequoia: "fa3cb8fcae55350f1ff5f6d56f2fbf13595da00edf01d7bc3c4e74c1bdfe9c02"
+    sha256 arm64_sonoma:  "3186f80fbb740d0092d10fc2b44d6ec9b5efe00675ce83239c6f4d5893645ef1"
+    sha256 arm64_ventura: "291b73754cf6e14cc7ea86007c5ec351793bcdb0b73d32a83e0d7d95f8b702eb"
+    sha256 sonoma:        "50275becaa35901e0d0befa00d8ac20c818f1f6ff3f91fad23b6007cdd7c8f73"
+    sha256 ventura:       "a89a50bad7219197f19d41bb014f7957fc81e0ac2b059e6d5408101826b1ade0"
+    sha256 x86_64_linux:  "baf0f6c7c296c236ca325d95031bb494474c9b5e8b78a7213d4c43c227021c22"
   end
 
   head do
@@ -27,13 +26,14 @@ class Groonga < Formula
     depends_on "libtool" => :build
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "mecab"
   depends_on "mecab-ipadic"
   depends_on "msgpack"
   depends_on "openssl@3"
 
   uses_from_macos "libxcrypt"
+  uses_from_macos "zlib"
 
   on_linux do
     depends_on "glib"

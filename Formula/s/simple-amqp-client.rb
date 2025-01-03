@@ -4,17 +4,16 @@ class SimpleAmqpClient < Formula
   url "https://github.com/alanxz/SimpleAmqpClient/archive/refs/tags/v2.5.1.tar.gz"
   sha256 "057c56b29390ec7659de1527f9ccbadb602e3e73048de79594521b3141ab586d"
   license "MIT"
-  revision 8
+  revision 10
   head "https://github.com/alanxz/SimpleAmqpClient.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "645346f36e74f61005db4ad163c83fb2b3934a0de1377b472926ab68b1b35c85"
-    sha256 cellar: :any,                 arm64_ventura:  "625eb8a2de9b7c42a7a0ac8c83d5595769a68ed085dd9aac75f0dc577b2cb67f"
-    sha256 cellar: :any,                 arm64_monterey: "3cdd0fa3e91338c63c2eae38a5216f31f35ee7149f58b8a5fd6e658ed07ec715"
-    sha256 cellar: :any,                 sonoma:         "f42f3b677edeaa0ff889d55e4cf864d3f5628de8fac90c3fb9f0948c521ce75e"
-    sha256 cellar: :any,                 ventura:        "bfa2411426319a0b3c2c8749e5ad8ea655e4a86daa6d966c21d363c3a96b5f4f"
-    sha256 cellar: :any,                 monterey:       "4b758c02d215e4d0812344c10c2a0c03c362843628623e0b5c86c0715c34edb2"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "38cf99fc2c567e1c68c42325fd229b686677c43d450ee2e197a1f0814edf0075"
+    sha256 cellar: :any,                 arm64_sequoia: "113b5ded452952e6ece8e1ac1f36abbe862bac2e36dc6933ccf85277d92d423a"
+    sha256 cellar: :any,                 arm64_sonoma:  "bb232a7dd23e721fab644f9853f8daece9d4ade01397d823ecb7e5765f002d9c"
+    sha256 cellar: :any,                 arm64_ventura: "701415d086b41bc3d4d81f2b9f2455b62e4d4ced88429aedefac7c366133347d"
+    sha256 cellar: :any,                 sonoma:        "dac31186f89a2cb1aa4b20c0c3e5b2f7d61cca70b8469a0501e976a8f6bc4783"
+    sha256 cellar: :any,                 ventura:       "c037064915eac9fbe507101aba085e58c7b5cd86e3dffa2b4f0f374bb232ab50"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2abfcf884b581f32544e4873d8285e27080f95814eb9513e54ed54b44fc17c24"
   end
 
   depends_on "cmake" => :build
@@ -38,7 +37,7 @@ class SimpleAmqpClient < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <SimpleAmqpClient/SimpleAmqpClient.h>
       #include <string>
       int main() {
@@ -49,7 +48,7 @@ class SimpleAmqpClient < Formula
 
         return 0;
       }
-    EOS
+    CPP
     system ENV.cxx, "test.cpp", "-std=c++14", "-L#{lib}", "-lSimpleAmqpClient", "-o", "test"
     system "./test"
   end

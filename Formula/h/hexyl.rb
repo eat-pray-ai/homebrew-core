@@ -1,19 +1,18 @@
 class Hexyl < Formula
   desc "Command-line hex viewer"
   homepage "https://github.com/sharkdp/hexyl"
-  url "https://github.com/sharkdp/hexyl/archive/refs/tags/v0.14.0.tar.gz"
-  sha256 "5205fa1a483c66997f5a7179cdd1a277ebb5e0a743bb269a962d20b29dd735f8"
+  url "https://github.com/sharkdp/hexyl/archive/refs/tags/v0.16.0.tar.gz"
+  sha256 "52853b4edede889b40fd6ff132e1354d957d1f26ee0c26ebdea380f8ce82cb0b"
   license any_of: ["Apache-2.0", "MIT"]
   head "https://github.com/sharkdp/hexyl.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "47840f2ffb16fcb2d4a78556a79c00e2cd18d5cbe723c358eaa92b1edf5e7a72"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "eb8d7ef2f04405b08e996f6a44d5fe934bf762da6406fadef831be353fc7eac9"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "aa4f47a4a455618ec36efd674ce9f34139161d19d013ecf62de726af8fa7cfd1"
-    sha256 cellar: :any_skip_relocation, sonoma:         "3e639fa05686f3707032fe01755a2e9a1ef17b3ece0574681f784112981e834d"
-    sha256 cellar: :any_skip_relocation, ventura:        "ffa62bb30bf6d67ca78143753ed9ef5f52dae96bee8f86f331f704ee3c89b153"
-    sha256 cellar: :any_skip_relocation, monterey:       "7b42c01944d81f20cc9e880aecdecd2231f8449907c87fbead6364746a35a6f0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d9017bafc48b6087ec8b236e3f62906d75ac882d6a5207058e50016048047a6d"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "97598fb11f5c1a101081183f3a00864973d5349402864db0e2c694a48c079f97"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "21cada0c4349bfc09a426f2616e4f881ef42d6625d46120d65f95394e2e36fb2"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "779a6fdb3c0f2e6510bd57178035273a0f9646f5040d7a5f62c71b6acfe40242"
+    sha256 cellar: :any_skip_relocation, sonoma:        "61036a4e637cedfd6552216797444bf1bf0cbd1d2904fa45be32ac595cfbcb78"
+    sha256 cellar: :any_skip_relocation, ventura:       "42429a6a91e2d1f963559a9c618397be4ab0fbd70e206c599e49acab065cdff4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "84ad345fa48b2ea4a6e62145423924a9f4112f10b1cfd1f765bdb7b3531d56c5"
   end
 
   depends_on "pandoc" => :build

@@ -13,6 +13,7 @@ class Jupp < Formula
   end
 
   bottle do
+    sha256 arm64_sequoia:  "69af220c327528966dd893daab6d625a5b5241b9273f7b53decb37c5f1e33efe"
     sha256 arm64_sonoma:   "501d87f4b79bf8ae4a8a67b811fbca484e6bc68f6b1e04d9abfb0b1948430880"
     sha256 arm64_ventura:  "821daf3c2f840c5a9942de15a4b0c226928e35808079db3f0d48e686a474f08d"
     sha256 arm64_monterey: "b5732141fc6bfe41e312ee4492c2680a3dcfba4a3951c8f6ab590b2e6c887a01"
@@ -28,8 +29,6 @@ class Jupp < Formula
   depends_on "automake" => :build
   depends_on "libtool" => :build
 
-  uses_from_macos "expect" => :test
-
   uses_from_macos "ncurses"
 
   on_macos do
@@ -40,15 +39,23 @@ class Jupp < Formula
 
   def install
     ENV.prepend_path "PATH", Formula["gnu-sed"].opt_libexec/"gnubin" if OS.mac?
-    system "autoreconf", "-vfi"
-    system "./configure", *std_configure_args,
-                          "--enable-sysconfjoesubdir=/jupp"
+    system "autoreconf", "--force", "--install", "--verbose"
+    system "./configure", "--enable-sysconfjoesubdir=/jupp", *std_configure_args
     system "make", "install"
   end
 
   test do
-    assert_match "File (Unnamed) not changed so no update needed.",
-      pipe_output("env TERM=tty expect -",
-                  "spawn #{bin}/jupp;send \"q\";expect eof")
+    require "pty"
+    output = ""
+    PTY.spawn({ "TERM" => "xterm" }, bin/"jupp", "test") do |r, w, _pid|
+      w.write "brewx"
+      begin
+        r.each { |line| output += line }
+      rescue Errno::EIO
+        # GNU/Linux raises EIO when read is done on closed pty
+      end
+    end
+    assert_match "File test saved", output
+    assert_equal "brew", (testpath/"test").read
   end
 end

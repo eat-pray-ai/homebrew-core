@@ -4,8 +4,8 @@
 class Mu < Formula
   desc "Tool for searching e-mail messages stored in the maildir-format"
   homepage "https://www.djcbsoftware.nl/code/mu/"
-  url "https://github.com/djcb/mu/releases/download/v1.12.5/mu-1.12.5.tar.xz"
-  sha256 "770b92e3072adae8777bd4e985c8b027c66ce0b7ef7cbb8eab4497b92ba68acb"
+  url "https://github.com/djcb/mu/releases/download/v1.12.8/mu-1.12.8.tar.xz"
+  sha256 "6c7d43e95ad228990defe5dfd61101aa7a7217d631add303cce1fb29f7a204d0"
   license "GPL-3.0-or-later"
   head "https://github.com/djcb/mu.git", branch: "master"
 
@@ -18,13 +18,12 @@ class Mu < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_sonoma:   "26069fa881239b0cd682c0b9b37bfd15390123ca1c940c1dde4097b0c2d2e98f"
-    sha256 cellar: :any, arm64_ventura:  "970817f29bc04c6987b87af39aafae5b9538e4a9cc6ef448fc28b3960d0fe07d"
-    sha256 cellar: :any, arm64_monterey: "aa70c59b22a88c6934ba41329a26f23ef9c274d26e7cd0e73ea771d311d1ec63"
-    sha256 cellar: :any, sonoma:         "7a172a029e74618d255f0876ffa24512f0eadff7c8a5b32cde0ac0d3157e6046"
-    sha256 cellar: :any, ventura:        "f49773ebb6229e0a53d38927356109af6078ec852b9cd3fc7361302c8343bcd7"
-    sha256 cellar: :any, monterey:       "3ba357409dc6d0d14831938cba9f404e8cf61b4aa1ac92df0cb89c76fbb33aab"
-    sha256               x86_64_linux:   "42d54ef3f7fb26a9acda8a97b9c488aa22b8e70c13f198312f12190ba7c9613c"
+    sha256 cellar: :any, arm64_sequoia: "bd21f7afbcdbbf99cea1b4b448fc18061af53cf6905fd5dc1607ed46ef253811"
+    sha256 cellar: :any, arm64_sonoma:  "9fedabf1413897ab7c5d00c6c4fe86a7f2ad463db8232ec700eaed827ea32df9"
+    sha256 cellar: :any, arm64_ventura: "99bd6352ebf8244bc10bd79268faa622026db5c9915e87bd5598343b84110b8c"
+    sha256 cellar: :any, sonoma:        "876264ceac69288357d99a9e79e8207a24e75220af2e3437e9d75987ca5ec3ac"
+    sha256 cellar: :any, ventura:       "5a423d8cc16836297af967d12f09ab74da31091409bb93f62f0c3a7f16d4214d"
+    sha256               x86_64_linux:  "9ddb8fceff83dd45696bb55158caec1678820ae038d6a25a97cdf1dd7424e6f5"
   end
 
   depends_on "emacs" => :build
@@ -32,7 +31,7 @@ class Mu < Formula
   depends_on "libtool" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "texinfo" => :build
   depends_on "gettext"
   depends_on "glib"
@@ -40,8 +39,6 @@ class Mu < Formula
   depends_on "xapian"
 
   conflicts_with "mu-repo", because: "both install `mu` binaries"
-
-  fails_with gcc: "5"
 
   def install
     system "meson", "setup", "build", "-Dlispdir=#{elisp}", *std_meson_args
@@ -75,8 +72,8 @@ class Mu < Formula
       This used to happen outdoors. It was more fun then.
     EOS
 
-    system "#{bin}/mu", "init", "--muhome=#{testpath}", "--maildir=#{testpath}"
-    system "#{bin}/mu", "index", "--muhome=#{testpath}"
+    system bin/"mu", "init", "--muhome=#{testpath}", "--maildir=#{testpath}"
+    system bin/"mu", "index", "--muhome=#{testpath}"
 
     mu_find = "#{bin}/mu find --muhome=#{testpath} "
     find_message = "#{mu_find} msgid:2222222222@example.com"

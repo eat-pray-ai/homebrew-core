@@ -1,18 +1,18 @@
 class GitlabGem < Formula
   desc "Ruby client and CLI for GitLab API"
   homepage "https://narkoz.github.io/gitlab/"
-  url "https://github.com/NARKOZ/gitlab/archive/refs/tags/v5.0.0.tar.gz"
-  sha256 "c08305b376275be73b6da01c14d3e004d49860925770e8e2f760afc3abedd629"
+  url "https://github.com/NARKOZ/gitlab/archive/refs/tags/v5.1.0.tar.gz"
+  sha256 "fdb4cab8f09258b9b8a70b3cddd618dc19a10303124a9176dd7ca5ed70f98ce4"
   license "BSD-2-Clause"
+  revision 1
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "febf8cba6b5ae71c41b70021c74e77a73c8bd847f802cdbdae2e566bf77b7543"
-    sha256 cellar: :any,                 arm64_ventura:  "931cefa46d0818baa052c7e7a5917ed19d326fb86102e992a96a4a7ae93f9b2a"
-    sha256 cellar: :any,                 arm64_monterey: "4ccf47ef97c42469e4cb87bcf7d503272be1094a28b6bdff085fbe9c4cc9e7ab"
-    sha256 cellar: :any,                 sonoma:         "15a26b3093df8a0515358081e6f8094266cac0a9c4b08ef602d2d7f65d686e1a"
-    sha256 cellar: :any,                 ventura:        "b4a8f2e1308a8f33fac73aaf6b8beb9990e81db11f636bc065e3f5366a0a4918"
-    sha256 cellar: :any,                 monterey:       "9c4df067b814a648b95734bd9cc1daec717d96fff81098436cd97d924198da39"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "47c3f066efa9e4efd26169ee94ecae0cdd4059dd7593795210e387e636e44aff"
+    sha256 cellar: :any,                 arm64_sequoia: "05f1b0962f1cdc0ba8325a1cb2161aad2fb2c2d93c144c1efd8aa861b7faac12"
+    sha256 cellar: :any,                 arm64_sonoma:  "040dfa582c413b0c51cedffc28d3edc5d5482b4c3584e1553fb31fbb9c76ad9e"
+    sha256 cellar: :any,                 arm64_ventura: "46f87e54a723b07f5813a32f9d5391c471a6384929e4a1880cf27a864d55543d"
+    sha256 cellar: :any,                 sonoma:        "7d01617823ef02f76e5ef3ca2f31fbdc07c78c0ecb93fa89b2cad893971851e3"
+    sha256 cellar: :any,                 ventura:       "c1b354fab666cfffd496156c33b9a8c0bafb5ed371bcf9b1ffdd6ddab30e015d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f059f0148490b7eaffb7a619c8c7cb146b511defea2b4c9d146c68b68e2da7e4"
   end
 
   depends_on "ruby"
@@ -70,7 +70,7 @@ class GitlabGem < Formula
     ENV["GITLAB_API_ENDPOINT"] = "https://example.com/"
     ENV["GITLAB_API_PRIVATE_TOKEN"] = "token"
     output = shell_output("#{bin}/gitlab user 2>&1", 1)
-    assert_match "404 - Not Found", output
+    assert_match "Server responded with code 404, message", output
 
     assert_match version.to_s, shell_output("#{bin}/gitlab --version")
   end

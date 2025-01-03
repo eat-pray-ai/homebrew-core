@@ -15,6 +15,7 @@ class LibusbCompat < Formula
 
   bottle do
     rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia:  "db9c3980772b1debe48a65b951a7b6ac27ccfacd26afc6b96b49fa1a60c34339"
     sha256 cellar: :any,                 arm64_sonoma:   "64e879dd5f99d9e95ef207caf668bd1363d79f660abc1ec60c44eeb7082cb216"
     sha256 cellar: :any,                 arm64_ventura:  "a2fcb4b8c54d64c71ca73d7b70573617b9df000d7cd8040925c45627a601f84f"
     sha256 cellar: :any,                 arm64_monterey: "b963fa8ff806b92ea8d4a278ae9fd41e8e86c9dbad743c8848f0962363e48104"
@@ -27,15 +28,15 @@ class LibusbCompat < Formula
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "libusb"
 
   def install
-    system "./configure", "--prefix=#{prefix}", "--disable-dependency-tracking"
+    system "./configure", *std_configure_args
     system "make", "install"
   end
 
   test do
-    system "#{bin}/libusb-config", "--libs"
+    system bin/"libusb-config", "--libs"
   end
 end

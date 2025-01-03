@@ -1,25 +1,25 @@
 class Mpv < Formula
   desc "Media player based on MPlayer and mplayer2"
   homepage "https://mpv.io"
-  url "https://github.com/mpv-player/mpv/archive/refs/tags/v0.38.0.tar.gz"
-  sha256 "86d9ef40b6058732f67b46d0bbda24a074fae860b3eaae05bab3145041303066"
+  url "https://github.com/mpv-player/mpv/archive/refs/tags/v0.39.0.tar.gz"
+  sha256 "2ca92437affb62c2b559b4419ea4785c70d023590500e8a52e95ea3ab4554683"
   license :cannot_represent
-  revision 2
+  revision 1
   head "https://github.com/mpv-player/mpv.git", branch: "master"
 
   bottle do
-    sha256 arm64_sonoma:   "93d5aa968907b390fcd666243a1dcb6a66a059216f79d3560203ce1da3b412c1"
-    sha256 arm64_ventura:  "9c95d2ac2955c3fb4a94c0424eacb328c58f45c218c55c2a12a896cda30d382b"
-    sha256 arm64_monterey: "941e7df30544e5e570fdf3ff91d34ecda42604586ae0c4cebd6f8016c581bbd8"
-    sha256 sonoma:         "8f37893df91d065a0a263ae10a0e5962620fdf245c8c5f4bb0d56dc22957f9a8"
-    sha256 ventura:        "76e6244d443ed7ec9fd093e4862a3300433e91346b70f868311e01e722a20912"
-    sha256 monterey:       "b1fbee73afe693264741b853a622b123c5bd6e836f9884d6bbfb019059a38053"
-    sha256 x86_64_linux:   "e344dd51ed38cb8711a651aef37ce12d9677054cb2ad71adca20ac550f9b5b73"
+    sha256 arm64_sequoia: "6ca65c7edfb41534bf8a22a8f17284717c699680c43e23246258f919ed2545ac"
+    sha256 arm64_sonoma:  "17e235319eb2611e7a828444a64954cc340effb0eb16b909b9d247a402c177c2"
+    sha256 arm64_ventura: "b4de2eb8f40a03737d705d157921d61e5f3a1f8be83e3d1bfde7144a29ab15af"
+    sha256 sonoma:        "ae496a7e51e9c5f4636b2f868b1371c157ca7010d6f353c70b3788b2a9381a44"
+    sha256 ventura:       "8c2c5be6917b47240078eabfc1208f54f4a621c8d74e7aee60e2acbcec000c55"
+    sha256 x86_64_linux:  "a80f7ba627052cc08ac3433bda05d6abf36220a5832f1d965c1f12facb7ae182"
   end
 
   depends_on "docutils" => :build
   depends_on "meson" => :build
-  depends_on "pkg-config" => [:build, :test]
+  depends_on "ninja" => :build
+  depends_on "pkgconf" => [:build, :test]
   depends_on xcode: :build
   depends_on "ffmpeg"
   depends_on "jpeg-turbo"
@@ -27,7 +27,6 @@ class Mpv < Formula
   depends_on "libass"
   depends_on "libbluray"
   depends_on "libplacebo"
-  depends_on "libsamplerate"
   depends_on "little-cms2"
   depends_on "luajit"
   depends_on "mujs"
@@ -46,7 +45,19 @@ class Mpv < Formula
 
   on_linux do
     depends_on "alsa-lib"
+    depends_on "libdrm"
+    depends_on "libva"
+    depends_on "libvdpau"
+    depends_on "libx11"
+    depends_on "libxext"
+    depends_on "libxkbcommon"
+    depends_on "libxpresent"
+    depends_on "libxrandr"
+    depends_on "libxscrnsaver"
+    depends_on "libxv"
+    depends_on "mesa"
     depends_on "pulseaudio"
+    depends_on "wayland"
   end
 
   def install
@@ -56,22 +67,31 @@ class Mpv < Formula
     ENV["LC_ALL"] = "C"
 
     # force meson find ninja from homebrew
-    ENV["NINJA"] = Formula["ninja"].opt_bin/"ninja"
+    ENV["NINJA"] = which("ninja")
 
     # libarchive is keg-only
-    ENV.prepend_path "PKG_CONFIG_PATH", Formula["libarchive"].opt_lib/"pkgconfig"
+    ENV.prepend_path "PKG_CONFIG_PATH", Formula["libarchive"].opt_lib/"pkgconfig" if OS.mac?
 
     args = %W[
+      -Dbuild-date=false
       -Dhtml-build=enabled
       -Djavascript=enabled
       -Dlibmpv=true
       -Dlua=luajit
       -Dlibarchive=enabled
       -Duchardet=enabled
+      -Dvulkan=enabled
       --sysconfdir=#{pkgetc}
       --datadir=#{pkgshare}
       --mandir=#{man}
     ]
+    if OS.linux?
+      args += %w[
+        -Degl=enabled
+        -Dwayland=enabled
+        -Dx11=enabled
+      ]
+    end
 
     system "meson", "setup", "build", *args, *std_meson_args
     system "meson", "compile", "-C", "build", "--verbose"
@@ -96,7 +116,7 @@ class Mpv < Formula
     system bin/"mpv", "--ao=null", "--vo=null", test_fixtures("test.wav")
     assert_match "vapoursynth", shell_output(bin/"mpv --vf=help")
 
-    # Make sure `pkg-config` can parse `mpv.pc` after the `inreplace`.
-    system "pkg-config", "mpv"
+    # Make sure `pkgconf` can parse `mpv.pc` after the `inreplace`.
+    system "pkgconf", "--print-errors", "mpv"
   end
 end

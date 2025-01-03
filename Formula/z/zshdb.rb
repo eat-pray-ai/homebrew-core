@@ -1,9 +1,13 @@
 class Zshdb < Formula
   desc "Debugger for zsh"
-  homepage "https://github.com/rocky/zshdb"
+  homepage "https://github.com/Trepan-Debuggers/zshdb"
   url "https://downloads.sourceforge.net/project/bashdb/zshdb/1.1.4/zshdb-1.1.4.tar.gz"
   sha256 "83749450ffe030c28e7b7d1d8b06aea63232504ff61f31f9becc5a5717e69638"
-  license all_of: ["GPL-2.0-or-later", "GPL-3.0-or-later"]
+  license all_of: [
+    "GPL-2.0-or-later",
+    "GPL-3.0-or-later",  # COPYING, lib/term-highlight.py
+    "HPND-sell-variant", # getopts_long.sh
+  ]
 
   # We check the "zshdb" directory page because the bashdb project contains
   # various software and zshdb releases may be pushed out of the SourceForge
@@ -20,6 +24,7 @@ class Zshdb < Formula
 
   head do
     url "https://github.com/rocky/zshdb.git", branch: "master"
+
     depends_on "autoconf" => :build
     depends_on "automake" => :build
   end
@@ -28,20 +33,18 @@ class Zshdb < Formula
 
   def install
     system "./autogen.sh" if build.head?
-
-    system "./configure", "--with-zsh=#{HOMEBREW_PREFIX}/bin/zsh", *std_configure_args
+    system "./configure", "--disable-silent-rules",
+                          "--with-zsh=#{HOMEBREW_PREFIX}/bin/zsh",
+                          *std_configure_args
     system "make", "install"
   end
 
   test do
     require "open3"
-    Open3.popen3("#{bin}/zshdb -c 'echo test'") do |stdin, stdout, _|
-      stdin.write "exit\n"
-      assert_match <<~EOS, stdout.read
-        echo test
-        test
-        Debugged program terminated normally.
-      EOS
-    end
+    assert_match <<~EOS, pipe_output("#{bin}/zshdb -c 'echo test'", "exit\n")
+      echo test
+      test
+      Debugged program terminated normally.
+    EOS
   end
 end

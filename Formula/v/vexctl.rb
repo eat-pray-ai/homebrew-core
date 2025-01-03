@@ -1,27 +1,39 @@
 class Vexctl < Formula
   desc "Tool to create, transform and attest VEX metadata"
   homepage "https://openssf.org/projects/openvex/"
-  url "https://github.com/openvex/vexctl/archive/refs/tags/v0.2.6.tar.gz"
-  sha256 "dc979bb97e370f750946240a84461627b57764299a73332e94350e02f99ef9aa"
+  url "https://github.com/openvex/vexctl/archive/refs/tags/v0.3.0.tar.gz"
+  sha256 "5a5904448ef1bf11bd8a165d737acc88afd9799618f6583c15cee5d99dd58e17"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "ab83abcd96209b3bab971fce6d4e81d22925f9ffa32d90c6c966a82696f26c06"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "e48159bef03456bf7ec7d382ef9650cb901f01ae8918f70c84ff41b7f356c3fb"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "d746ed639060dffd7cd6657984fd91f938b3d67d52fe26252f2b13b2e95189d9"
-    sha256 cellar: :any_skip_relocation, sonoma:         "9eacd38d53131df0495d4c275dc92c6682dc383b6ef0119a9f0158ade751635b"
-    sha256 cellar: :any_skip_relocation, ventura:        "d04a4d2ad93f970075e01645c1cee7c6eb16fe0d7c9e5ca582bad4f1133ae275"
-    sha256 cellar: :any_skip_relocation, monterey:       "4b0bac06e37b5f66881cc635c6bf95857227f185d89ada25bbd6b28aa4815e96"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "8f3d5bd002bf2f8415c050fe1cecf07030483c3e31ab2017b3af57fbfd4d8629"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "c8d3737e23f7d11f5fe749b5524f7f92a36654592f53caf22e81281ffe6614e4"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "c8d3737e23f7d11f5fe749b5524f7f92a36654592f53caf22e81281ffe6614e4"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "c8d3737e23f7d11f5fe749b5524f7f92a36654592f53caf22e81281ffe6614e4"
+    sha256 cellar: :any_skip_relocation, sonoma:        "6b46198d549d57cb6d165dd4f4009308fd7ba5373e68ea3e6551ebbb7c3e5d1d"
+    sha256 cellar: :any_skip_relocation, ventura:       "cdfd7239a7588664765926a8a5e45dfbc50271017c625701c07d79ab78e67c2a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9129dd69cff712abe1ada640119124ac040263e31cb8ba1365e6e2edd54b7e5a"
   end
 
   depends_on "go" => :build
 
   def install
-    system "go", "build", *std_go_args(ldflags: "-s -w")
+    ldflags = %W[
+      -s -w
+      -X sigs.k8s.io/release-utils/version.gitVersion=#{version}
+      -X sigs.k8s.io/release-utils/version.gitCommit=#{tap.user}
+      -X sigs.k8s.io/release-utils/version.gitTreeState=clean
+      -X sigs.k8s.io/release-utils/version.buildDate=#{time.iso8601}
+    ]
+
+    system "go", "build", *std_go_args(ldflags:)
+
+    generate_completions_from_executable(bin/"vexctl", "completion")
   end
 
   test do
+    assert_match version.to_s, shell_output("#{bin}/vexctl version")
+
     assert_match "Valid Statuses:\n\tnot_affected\n\taffected\n\tfixed\n\tunder_investigation\n",
     shell_output("#{bin}/vexctl list status")
   end

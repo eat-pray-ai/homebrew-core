@@ -7,6 +7,7 @@ class Libmrss < Formula
   head "https://github.com/bakulf/libmrss.git", branch: "master"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "183934eb440639c9d4506bcc74cc7c86da915e1bc65d041d79ebbc6eff5f6f1b"
     sha256 cellar: :any,                 arm64_sonoma:   "b28e679db851fa12e08db6e3c5061cd7dc8daa31b8d39686ae4fc40f6e5164a7"
     sha256 cellar: :any,                 arm64_ventura:  "52dbc8575b256260ae711ff08c2a8fbd2bed6151c26fb65c872d7e4e97cfd0f6"
     sha256 cellar: :any,                 arm64_monterey: "fa6977b426f1dd8c129134839639658642a90927e2cc1094989dff78c0d05d9e"
@@ -19,8 +20,10 @@ class Libmrss < Formula
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => [:build, :test]
+  depends_on "pkgconf" => [:build, :test]
   depends_on "libnxml"
+
+  uses_from_macos "curl"
 
   def install
     # need NEWS file for build
@@ -32,7 +35,7 @@ class Libmrss < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <stdio.h>
       #include <mrss.h>
 
@@ -56,10 +59,10 @@ class Libmrss < Formula
 
         return 0;
       }
-    EOS
+    C
 
-    pkg_config_flags = shell_output("pkg-config --cflags --libs mrss").chomp.split
-    system ENV.cc, "test.c", *pkg_config_flags, "-o", "test"
+    flags = shell_output("pkgconf --cflags --libs mrss").chomp.split
+    system ENV.cc, "test.c", "-o", "test", *flags
     assert_match "Title: {{ post.title | xml_escape}}", shell_output("./test")
   end
 end

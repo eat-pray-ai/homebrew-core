@@ -12,6 +12,7 @@ class Wmctrl < Formula
   end
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "76d0afbd8d8a925bf3d2137457f49f03f9550733358079820150adc2976010c3"
     sha256 cellar: :any,                 arm64_sonoma:   "6a1a692f4cb4c2246cb4e1f3e53dfe9e6c56486dd706a7910704e9a09def7cb9"
     sha256 cellar: :any,                 arm64_ventura:  "388c8eb49eeca6f9ced7eb9d3c7418e7b2f6a5f4cc4a77263e4ddb92ae135b8b"
     sha256 cellar: :any,                 arm64_monterey: "fb8c3a7dcd11a32b075ba4181f5825bfd9b55a8ee1453f4ad8454c7dd56cf6cf"
@@ -26,13 +27,16 @@ class Wmctrl < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "f35104a632334a639f0c7d233baea5a9177a2d43fe78cd563870c97b394d78bc"
   end
 
-  depends_on "pkg-config" => :build
-  depends_on "gettext"
+  depends_on "pkgconf" => :build
   depends_on "glib"
   depends_on "libice"
   depends_on "libsm"
   depends_on "libx11"
   depends_on "libxmu"
+
+  on_macos do
+    depends_on "gettext"
+  end
 
   # Fix for 64-bit arch. See:
   # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=362068
@@ -42,13 +46,11 @@ class Wmctrl < Formula
   end
 
   def install
-    system "./configure", "--disable-debug", "--disable-dependency-tracking",
-                          "--prefix=#{prefix}",
-                          "--mandir=#{man}"
+    system "./configure", "--mandir=#{man}", *std_configure_args
     system "make", "install"
   end
 
   test do
-    system "#{bin}/wmctrl", "--version"
+    system bin/"wmctrl", "--version"
   end
 end

@@ -1,30 +1,23 @@
 class Ivtools < Formula
   desc "X11 vector graphic servers"
   homepage "https://github.com/vectaport/ivtools"
-  url "https://github.com/vectaport/ivtools/archive/refs/tags/ivtools-2.1.tar.gz"
-  sha256 "6a5a55883399cbfef317d8bbf553e57e54945188666b344d9efa98ba3edb57ad"
+  url "https://github.com/vectaport/ivtools/archive/refs/tags/ivtools-2.1.1.tar.gz"
+  sha256 "4fa680b9d0fd2af610e9012258e150249d9a8abbc3b1f65eb17d01c959142cfc"
   license "MIT"
-  revision 5
+  revision 1
 
   bottle do
-    sha256 cellar: :any, arm64_sonoma:   "b7832b61ea89442eb47365df80d62c135ab747575829be850b9cc44e25b6679f"
-    sha256               arm64_ventura:  "308901dd8cea56dc89e58fefd63dea889dd2ad0cdcfae6309b1030366cf5acdd"
-    sha256               arm64_monterey: "915a9016e85be3aa2f8cf5ca803d3b3eff5ec24c6e82bec01000206ed1f11b95"
-    sha256 cellar: :any, sonoma:         "8609c55cc742badffacb1d04ce702bf1ba18237dec5d010b8adb736232f6a8bc"
-    sha256               ventura:        "37bd9d56364c6fb1de7ff35ac1546b71ea9284d682346fe713d60637f5dac06b"
-    sha256               monterey:       "11fe86c640c678230dca2bee5bac746faf5993b27a51ef073e163405b1e89095"
-    sha256               x86_64_linux:   "73e14906aa2298300b5f6986d0da662cbe8374f163dafb5f25a85b40414bc9ef"
+    sha256 arm64_sequoia: "b27e3ccddafd5fc89c69fb691f636e16dc83cd351371c60fdd63d8c1f6983b83"
+    sha256 arm64_sonoma:  "cd85d4ab27e43fadb3bb79a7fa5bb4744ba312a1dc3f0e7143eba3bacc948bc1"
+    sha256 arm64_ventura: "70ffb6c9ade79c815e2b1e06d8b4e867bcd9babda7b77faa9f1d3919e656621c"
+    sha256 sonoma:        "828070545c2e66472fade42f8e22b154f153a7a38023783562b87a05798112f5"
+    sha256 ventura:       "aa7085f4e2a50ed9abf9846b9b16ea456abdddf774e0dd20acdcfb3b7d23ca85"
+    sha256 x86_64_linux:  "d09f4ad1563dfd467eeb0991c8289cc5fdda69bb3a749a798d3134f915de3af4"
   end
 
   depends_on "ace"
   depends_on "libx11"
   depends_on "libxext"
-
-  # c++17 build patch, upstream PR ref, https://github.com/vectaport/ivtools/pull/22
-  patch do
-    url "https://github.com/vectaport/ivtools/commit/7ce87b9159e720cf1990b6fef10ba7a8b664bcda.patch?full_index=1"
-    sha256 "0c1e722b574df66e3c6d4114b066db99691764a04f92c77af2b7adaabde3782c"
-  end
 
   def install
     cp "Makefile.orig", "Makefile"
@@ -42,6 +35,6 @@ class Ivtools < Formula
   end
 
   test do
-    system "#{bin}/comterp", "exit(0)"
+    system bin/"comterp", "exit(0)"
   end
 end

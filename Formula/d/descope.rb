@@ -1,18 +1,17 @@
 class Descope < Formula
   desc "Command-line utility for performing common tasks on Descope projects"
   homepage "https://www.descope.com"
-  url "https://github.com/descope/descopecli/archive/refs/tags/v0.8.6.tar.gz"
-  sha256 "f5b71307dfe411e6c83e22d18ad2b890350661aa43a9e386ede176e64e9355df"
+  url "https://github.com/descope/descopecli/archive/refs/tags/v0.8.11.tar.gz"
+  sha256 "fa5460f3c96ca0596b2bfe72bd20cd689bd5adad3b6603c23533565de9210f18"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "2412e9855a1d9bd924bef71e7a88874c32d991f6b6cc307a38b74de973885b37"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "303ec8857adde4d3b8d2808b33240a24921b791a80072a7735b4b2aacbe11c98"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "e0b6df3e76e103514726c412e3cd7c26f0e1b31b2c5d9c548b9512678b934991"
-    sha256 cellar: :any_skip_relocation, sonoma:         "855243a3c9f38686b20ffea48c1d802a99aca874391be9aa91337682a39f7611"
-    sha256 cellar: :any_skip_relocation, ventura:        "82d0273d03d68b15d482dbe4349f70aee1c84baf591f756be9ab99302414412d"
-    sha256 cellar: :any_skip_relocation, monterey:       "8e4ff9dddd2b0a6bf640c7d63d057f21cbc39c070401e312713367bcea7a8dc0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "554b09b0b832dc6bacdab3e4001bce03312b7cef3da7f223e603f45d5fa659f9"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "0bb4ae8bb4c29c8f185d060ac3750ee3116da5df67cd11a4a9667570ee325349"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "0bb4ae8bb4c29c8f185d060ac3750ee3116da5df67cd11a4a9667570ee325349"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "0bb4ae8bb4c29c8f185d060ac3750ee3116da5df67cd11a4a9667570ee325349"
+    sha256 cellar: :any_skip_relocation, sonoma:        "8ac7654197187d0184db64d24514ea7656c4c325e9544f9eae77ba89722a05db"
+    sha256 cellar: :any_skip_relocation, ventura:       "8ac7654197187d0184db64d24514ea7656c4c325e9544f9eae77ba89722a05db"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f61d3bb6de69dac1d3ee6ece1e8251ae41c56cc85688ea2a8bdb9325f7f44e61"
   end
 
   depends_on "go" => :build

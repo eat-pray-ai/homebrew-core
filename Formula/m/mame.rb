@@ -1,9 +1,9 @@
 class Mame < Formula
   desc "Multiple Arcade Machine Emulator"
   homepage "https://mamedev.org/"
-  url "https://github.com/mamedev/mame/archive/refs/tags/mame0267.tar.gz"
-  version "0.267"
-  sha256 "c6dacd02080ab20512a7d15fc6a1715879912d7482df6b4d5f36849e1ae5813f"
+  url "https://github.com/mamedev/mame/archive/refs/tags/mame0273.tar.gz"
+  version "0.273"
+  sha256 "37d73e7772bd78ffffabac69a694323f37fd2215f1b5244e05b872c0154785fd"
   license "GPL-2.0-or-later"
   head "https://github.com/mamedev/mame.git", branch: "master"
 
@@ -19,18 +19,17 @@ class Mame < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "dbc49f88f95a756c9adf66ace1753be1a05bc5d42dac36e9d386600fd9959c0a"
-    sha256 cellar: :any,                 arm64_ventura:  "b4d2855a4d63d7c30a8b0ae90d813dfccda79c4f33444516fde169f91e503a3b"
-    sha256 cellar: :any,                 arm64_monterey: "380dabbfbcc99b6f4933f2b98753fd5fb5ef6061442672b18980f0b951770749"
-    sha256 cellar: :any,                 sonoma:         "232b2e9e80c30cfba204fcd62c3d00d749cdd8bc2a6493d9fff7adbd4064bf72"
-    sha256 cellar: :any,                 ventura:        "ed711aef6ed678782ed4e10cdbe289c9372c1aa0aacf436ef26d8c7d4dce068e"
-    sha256 cellar: :any,                 monterey:       "5c712d8159c97d98132793e99a17529bde103c354c4046c5614709da7a4d54ab"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "a01c37616f8dfb2d9fd0796b521f7f948968b01f681ec8942dafda69c135efe6"
+    sha256 cellar: :any,                 arm64_sequoia: "f069aa5cf80067f758b9b1bc63303492bf4f819a90ac812fdae37b626cf9fb8d"
+    sha256 cellar: :any,                 arm64_sonoma:  "52de93bc13f0fad3829641c5aa08cabcb3159de54fa06b2b1bfeaa9454f6378d"
+    sha256 cellar: :any,                 arm64_ventura: "b6f4091433e95808cd882e99e21076196319231188c3cae6dd6081b1279e7bc8"
+    sha256 cellar: :any,                 sonoma:        "913a12b08015d276de7c76b5f6f1c06de9ac3f58f204593bd5c9fd0111be64ed"
+    sha256 cellar: :any,                 ventura:       "ab54c599924c240850011c58428da5a9e566f0c5f0bab51be5cc1beb2429835a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "75a8f89b593eae23b8ace83ee182db3a0d07cfbbc740226b9b3aab0ecdca069f"
   end
 
   depends_on "asio" => :build
   depends_on "glm" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rapidjson" => :build
   depends_on "sphinx-doc" => :build
   depends_on "flac"
@@ -50,15 +49,18 @@ class Mame < Formula
   uses_from_macos "zlib"
 
   on_linux do
+    depends_on "fontconfig"
+    depends_on "libx11"
+    depends_on "libxi"
+    depends_on "mesa"
     depends_on "pulseaudio"
-    depends_on "qt@5"
+    depends_on "qt"
     depends_on "sdl2_ttf"
   end
 
-  fails_with gcc: "5"
-  fails_with gcc: "6"
-
   def install
+    ENV["QT_HOME"] = Formula["qt"].opt_prefix if OS.linux?
+
     # Cut sdl2-config's invalid option.
     inreplace "scripts/src/osd/sdl.lua", "--static", ""
 

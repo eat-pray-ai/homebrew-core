@@ -7,6 +7,7 @@ class Libuvc < Formula
   head "https://github.com/libuvc/libuvc.git", branch: "master"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "94deef8d9e60b29d70cc1348b58cade333270747562c2ea151dcad2893757a84"
     sha256 cellar: :any,                 arm64_sonoma:   "fdde8f75b100e1b5c4880eade6ae2e1df144236a26a6757b59f935feadf45283"
     sha256 cellar: :any,                 arm64_ventura:  "6708c80f52e02d433eb7bc74ff598b8c6cc4a7963fb70f3757252abe94b021be"
     sha256 cellar: :any,                 arm64_monterey: "ad6af8f029ad6050565a30a2215b2e0a831d1acc0927cc032ba7b25754aa788b"
@@ -19,12 +20,29 @@ class Libuvc < Formula
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => [:build, :test]
   depends_on "libusb"
 
   def install
-    system "cmake", ".", *std_cmake_args
-    system "make"
-    system "make", "install"
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
+  end
+
+  test do
+    (testpath/"test.c").write <<~C
+      #include <libuvc/libuvc.h>
+      int main() {
+        uvc_context_t *ctx;
+        uvc_error_t res = uvc_init(&ctx, NULL);
+        if (res != UVC_SUCCESS) return 1;
+        uvc_exit(ctx);
+        return 0;
+      }
+    C
+
+    flags = shell_output("pkgconf --cflags --libs libuvc").strip.split
+    system ENV.cc, "test.c", "-o", "test", *flags
+    system "./test"
   end
 end

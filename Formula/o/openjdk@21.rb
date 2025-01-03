@@ -1,30 +1,30 @@
 class OpenjdkAT21 < Formula
   desc "Development kit for the Java programming language"
   homepage "https://openjdk.java.net/"
-  url "https://github.com/openjdk/jdk21u/archive/refs/tags/jdk-21.0.3-ga.tar.gz"
-  sha256 "818e9dee28ae390f2781406d594690fc42bd994d078ad9f8360a4fbca6a3df1f"
+  url "https://github.com/openjdk/jdk21u/archive/refs/tags/jdk-21.0.5-ga.tar.gz"
+  sha256 "1dcf54fe0d4263a0fb95290a77dac9e4ff81761ed234daadfbab781f1779bf0b"
   license "GPL-2.0-only" => { with: "Classpath-exception-2.0" }
 
   livecheck do
     url :stable
-    regex(/^jdk[._-]v?(21+(?:\.\d+)*)-ga$/i)
+    regex(/^jdk[._-]v?(21(?:\.\d+)*)-ga$/i)
   end
 
   bottle do
-    sha256 cellar: :any, arm64_sonoma:   "aec482cdb96996ba9402067cd88be0299cd887e5b87e4c18b0b2d1deb3ed3106"
-    sha256 cellar: :any, arm64_ventura:  "0956a035050c26af4e25301c2df59627eaf3bfcf354320c90d7905983c3352b0"
-    sha256 cellar: :any, arm64_monterey: "e40e95bb72f9b6d95734118f7919c50e0c2548c5da59af924ffb4c9623cdc45b"
-    sha256 cellar: :any, sonoma:         "a2dcea077166caf52638df5b15364471ea8d77eaef42a597f1588846814bdeea"
-    sha256 cellar: :any, ventura:        "1aaf0f1992b80735642a7748f4601f9118ce5aa42814d1acb53b757bed2ba7e7"
-    sha256 cellar: :any, monterey:       "880517d05b646ad165ff7a8d82e23ab242f1f72240fca01d8746b4e081d52941"
-    sha256               x86_64_linux:   "96aa8a414f7742f0dae62d45b3fe9732efe3ea0395913f8b7f1c5eccf3f994bb"
+    sha256 cellar: :any, arm64_sequoia: "39d28c673b18915e808e38559a9bcfc272c947c475a2f9b36d3064d1b00833b3"
+    sha256 cellar: :any, arm64_sonoma:  "0d39ee370b9230c65078039b9541c230aa86b0edc0f8c1bb564bc1fdf322ec11"
+    sha256 cellar: :any, arm64_ventura: "48154af73a12195490174518372f7782d37634d7a16959d74f5802655372473b"
+    sha256 cellar: :any, sonoma:        "1f6b28a4ce616c847f4b6360ccc4632a3862ca8e6bca32032a5daa7b50708a7e"
+    sha256 cellar: :any, ventura:       "9631253796a0f5660e9685c96081b60ac7bcf6865df52dd6a3bd8596e7cb6359"
+    sha256               x86_64_linux:  "63897ad3699f4111e6706068268e3088b38b14c574bd604d1d3176d7878adf9b"
   end
 
   keg_only :versioned_formula
 
   depends_on "autoconf" => :build
-  depends_on "pkg-config" => :build
-  depends_on xcode: :build
+  depends_on "pkgconf" => :build
+  depends_on xcode: :build # for metal
+  depends_on "freetype"
   depends_on "giflib"
   depends_on "harfbuzz"
   depends_on "jpeg-turbo"
@@ -40,7 +40,6 @@ class OpenjdkAT21 < Formula
   on_linux do
     depends_on "alsa-lib"
     depends_on "fontconfig"
-    depends_on "freetype"
     depends_on "libx11"
     depends_on "libxext"
     depends_on "libxi"
@@ -49,8 +48,6 @@ class OpenjdkAT21 < Formula
     depends_on "libxt"
     depends_on "libxtst"
   end
-
-  fails_with gcc: "5"
 
   # From https://jdk.java.net/archive/
   resource "boot-jdk" do
@@ -97,6 +94,7 @@ class OpenjdkAT21 < Formula
       --with-version-build=#{revision}
       --without-version-opt
       --without-version-pre
+      --with-freetype=system
       --with-giflib=system
       --with-harfbuzz=system
       --with-lcms=system
@@ -109,8 +107,13 @@ class OpenjdkAT21 < Formula
     args += if OS.mac?
       ldflags << "-headerpad_max_install_names"
 
+      # Allow unbundling `freetype` on macOS
+      inreplace "make/autoconf/lib-freetype.m4", '= "xmacosx"', '= ""'
+
       %W[
         --enable-dtrace
+        --with-freetype-include=#{Formula["freetype"].opt_include}
+        --with-freetype-lib=#{Formula["freetype"].opt_lib}
         --with-sysroot=#{MacOS.sdk_path}
       ]
     else
@@ -118,11 +121,14 @@ class OpenjdkAT21 < Formula
         --with-x=#{HOMEBREW_PREFIX}
         --with-cups=#{HOMEBREW_PREFIX}
         --with-fontconfig=#{HOMEBREW_PREFIX}
-        --with-freetype=system
         --with-stdc++lib=dynamic
       ]
     end
     args << "--with-extra-ldflags=#{ldflags.join(" ")}"
+
+    if DevelopmentTools.clang_build_version == 1600
+      args << "--with-extra-cflags=-mllvm -enable-constraint-elimination=0"
+    end
 
     system "bash", "configure", *args
 
@@ -153,13 +159,13 @@ class OpenjdkAT21 < Formula
   end
 
   test do
-    (testpath/"HelloWorld.java").write <<~EOS
+    (testpath/"HelloWorld.java").write <<~JAVA
       class HelloWorld {
         public static void main(String args[]) {
           System.out.println("Hello, world!");
         }
       }
-    EOS
+    JAVA
 
     system bin/"javac", "HelloWorld.java"
 

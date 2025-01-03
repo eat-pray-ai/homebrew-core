@@ -7,18 +7,20 @@ class Indicators < Formula
   head "https://github.com/p-ranav/indicators.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "722fdcb2c0acf2eb576eaec0f91171d503b65c10910ec70abf1bf50bd45979bf"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, all: "2322751e34abbf99f523edd2f22119089ce3ce2935ffc919e6ba6c2e2b6f72bc"
   end
 
   depends_on "cmake" => :build
 
   def install
-    system "cmake", ".", *std_cmake_args
-    system "make", "install"
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <indicators/cursor_control.hpp>
       #include <indicators/progress_bar.hpp>
       #include <vector>
@@ -55,7 +57,8 @@ class Indicators < Formula
         show_console_cursor(true);
         return 0;
       }
-    EOS
+    CPP
+
     system ENV.cxx, "test.cpp", "-std=c++11", "-I#{include}", "-o", "test"
     output = shell_output("./test")
 

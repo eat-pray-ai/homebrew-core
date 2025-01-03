@@ -1,9 +1,10 @@
 class Echidna < Formula
   desc "Ethereum smart contract fuzzer"
   homepage "https://github.com/crytic/echidna"
-  url "https://github.com/crytic/echidna/archive/refs/tags/v2.2.3.tar.gz"
-  sha256 "5d52aa22b360cc27155f195480a39d4e6cdfa8c88b39b8f25a64ef5799cb2f8e"
+  url "https://github.com/crytic/echidna/archive/refs/tags/v2.2.5.tar.gz"
+  sha256 "148504b6881727265f4fd87c699cf521b0cb8bb7b0dea4cba42b97e2d588ec16"
   license "AGPL-3.0-only"
+  revision 1
   head "https://github.com/crytic/echidna.git", branch: "master"
 
   livecheck do
@@ -12,16 +13,15 @@ class Echidna < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "9976d9f5715ebc873d7056216fbdbcf8579c447c15998f02a89b4977f719923f"
-    sha256 cellar: :any,                 arm64_ventura:  "04d426f750924952dd96d046f07b24845cc80d5cd83d6b0933480ce80ee7da0a"
-    sha256 cellar: :any,                 arm64_monterey: "604023890a2aabe52303d2e20f49a9e2a1ab613ef817e371a14162115514aaa7"
-    sha256 cellar: :any,                 sonoma:         "698790f4ba7684285027ce801333ed8e3c1f4e9adf03132aaffd147559737c1b"
-    sha256 cellar: :any,                 ventura:        "56037ead666297d91874edf29a0d4907b61ee2e0e5731efb5dcae0b9550fa057"
-    sha256 cellar: :any,                 monterey:       "b7a318183f1026ca3f07f0f32fd942d8dc18e55498ac31dd9137f561e24d9738"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "e5aeac3e6360807349fb3ab4fc22926ee3035ada95a9e12c2e0e33870d11553e"
+    sha256 cellar: :any,                 arm64_sequoia: "15434151c4692b9edb45d66c0ea7924edc304e20ebf9fa37400874fcc089e8fd"
+    sha256 cellar: :any,                 arm64_sonoma:  "ac97f82cfe20ee7565794496ac1e129d9d119fd3f00366e98ea27d0da838e716"
+    sha256 cellar: :any,                 arm64_ventura: "f081bc8f4e357a66b581cc8b1977f25431e03e1de544313cbe622f946dba9a19"
+    sha256 cellar: :any,                 sonoma:        "6ba066a900d1d2d64e25e19db0115f2187106bbf16d1bb0f929034f2b4d14a2d"
+    sha256 cellar: :any,                 ventura:       "e6a88f34daca135244362e116d954ee333e036b621656e70dfc4db2b4aa943cb"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ca3e2796402ea85f7f013c4cd11827e6f65b462247df88ba8c6ad08c3f510f0c"
   end
 
-  depends_on "ghc@9.4" => :build
+  depends_on "ghc@9.6" => :build
   depends_on "haskell-stack" => :build
 
   depends_on "truffle" => :test
@@ -65,7 +65,7 @@ class Echidna < Formula
     # Use an explicit 'paris' EVM target meanwhile, which was the previous default
     inreplace "truffle-config.js", %r{//\s*evmVersion:.*$}, "evmVersion: 'paris'"
 
-    (testpath/"contracts/test.sol").write <<~EOS
+    (testpath/"contracts/test.sol").write <<~SOLIDITY
       pragma solidity ^0.8.0;
       contract True {
         function f() public returns (bool) {
@@ -75,7 +75,7 @@ class Echidna < Formula
           return(true);
         }
       }
-    EOS
+    SOLIDITY
 
     assert_match("echidna_true: passing",
                  shell_output("#{bin}/echidna --format text --contract True #{testpath}"))

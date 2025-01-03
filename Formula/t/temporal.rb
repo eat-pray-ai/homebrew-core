@@ -1,19 +1,24 @@
 class Temporal < Formula
   desc "Command-line interface for running and interacting with Temporal Server and UI"
   homepage "https://temporal.io/"
-  url "https://github.com/temporalio/cli/archive/refs/tags/v0.13.2.tar.gz"
-  sha256 "a492f79b2b9e2429fcce6674cd7a197fab69cc2e4f19201ddc2ea7367dbab1fd"
+  url "https://github.com/temporalio/cli/archive/refs/tags/v1.1.2.tar.gz"
+  sha256 "24e22de1d36f94df466439b1dd53aff5d4e684e1f9f1da02468096198df493f3"
   license "MIT"
   head "https://github.com/temporalio/cli.git", branch: "main"
 
+  livecheck do
+    url :stable
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
+  end
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "7b227f8933bb196c685e4cbac92bb91e70f8c595bb1a8eebb74306a632925993"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "3df1ac8326d65cfb0de8fd91a8f042499f5600786d4b8b67a25487f983bddefc"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "2a590231c7805c0bf7d1729dcab753c28bec2872188573512d7e39675b472a1b"
-    sha256 cellar: :any_skip_relocation, sonoma:         "7e28e9c27b2e24501fd9479dd79d90d6571104497198858dd088cab6c5828ee4"
-    sha256 cellar: :any_skip_relocation, ventura:        "28fa2ee8abc9dca2abbbbfe97f713d9054440c75de99e2fdd6d1e529732f9f9f"
-    sha256 cellar: :any_skip_relocation, monterey:       "6b6f675b455017ac602b46df5bc5b401cd83638a947807f973b420452f371a7e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "8ceeeac0283e22c59a5aa299a8d7c0581e5c820f44d866dd1163aa634b164743"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "6e8c8c6de97ade1b780f71f8924bbf5a04658420fd29129fd7cdece3b9f97a19"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "6e8c8c6de97ade1b780f71f8924bbf5a04658420fd29129fd7cdece3b9f97a19"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "6e8c8c6de97ade1b780f71f8924bbf5a04658420fd29129fd7cdece3b9f97a19"
+    sha256 cellar: :any_skip_relocation, sonoma:        "e3aa0d666ad38eccca5e8d50764682f43d0d43168e703f1719c205a542e29d17"
+    sha256 cellar: :any_skip_relocation, ventura:       "e3aa0d666ad38eccca5e8d50764682f43d0d43168e703f1719c205a542e29d17"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "051d2781c004699c386ed25429d4754f5dbfae0a2f243cf1d551080753855d0d"
   end
 
   depends_on "go" => :build
@@ -22,6 +27,14 @@ class Temporal < Formula
     ldflags = "-s -w -X github.com/temporalio/cli/temporalcli.Version=#{version}"
     system "go", "build", *std_go_args(ldflags:), "./cmd/temporal"
     generate_completions_from_executable bin/"temporal", "completion"
+  end
+
+  service do
+    run [opt_bin/"temporal", "server", "start-dev"]
+    keep_alive true
+    error_log_path var/"log/temporal.log"
+    log_path var/"log/temporal.log"
+    working_dir var
   end
 
   test do

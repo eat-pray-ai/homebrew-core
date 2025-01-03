@@ -1,22 +1,27 @@
 class Tgui < Formula
   desc "GUI library for use with sfml"
   homepage "https://tgui.eu"
-  url "https://github.com/texus/TGUI/archive/refs/tags/v1.3.0.tar.gz"
-  sha256 "641067026656518479ac8e7e1551fc0673836dfdb82c31b03474c27eb3bf0b05"
+  url "https://github.com/texus/TGUI/archive/refs/tags/v1.7.0.tar.gz"
+  sha256 "7d40359770e2f8e534a57332c99fd56c72cf79a8b59642676e01394fe05cb1fa"
   license "Zlib"
+  revision 1
+
+  livecheck do
+    url :stable
+    strategy :github_latest
+  end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "e839f1b5b9945f0cd2737ea93e624fb0fc8f8308edf843719fe923d6d8407082"
-    sha256 cellar: :any,                 arm64_ventura:  "98d5e03611ff45bf440c7c12fcdbc61b93e08c4048932129e997491968d631c4"
-    sha256 cellar: :any,                 arm64_monterey: "0d78d86653592784e30142a35538ee6dade97db3da361e2b2352cca20f49aab9"
-    sha256 cellar: :any,                 sonoma:         "27b8e682819b001faf77a266e39e7dfc8d87f4728d2e761e8bdab86f4372e4e2"
-    sha256 cellar: :any,                 ventura:        "b9bea58c715494b1cd62aca8ca705f0e4d51a6b0c395d0ba407f014af456270b"
-    sha256 cellar: :any,                 monterey:       "109dce3263f806ea1129b04c8c08870a7d652d123cf2f25d8b7054b1d6cf79af"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "6e6230a051dcb356576ce2c233168e67d13337326242af20a2d4d77d102f5c64"
+    sha256 cellar: :any,                 arm64_sequoia: "68d876aecf41558861d2e17ff3ea4aded9773977350015de1b9b0f71cf46e8fe"
+    sha256 cellar: :any,                 arm64_sonoma:  "3a24d3b020a457f65ae2dde489267629d190acf8136f330096daf341d5eace2f"
+    sha256 cellar: :any,                 arm64_ventura: "aef7806f9a2d5f54c0c052c5b5b2ae1c9447b0492b362e4d6669f0eabd6a7ab5"
+    sha256 cellar: :any,                 sonoma:        "4ad63bf9364d7d9b52674b4927448a88a287fcd9d8769fb6daee8f1cac9a3e28"
+    sha256 cellar: :any,                 ventura:       "5f96c17afffd6e3497c694e864d9202cbbac1abd3923393258ccfc5427fa524d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f46837a2ada4a9bff27b178d758b8ad2c6c78215f7c25837f64f6f7b356bc463"
   end
 
   depends_on "cmake" => :build
-  depends_on "sfml"
+  depends_on "sfml@2" # sfml 3.0 build issue report, https://github.com/texus/TGUI/issues/249
 
   def install
     args = %W[
@@ -35,7 +40,7 @@ class Tgui < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <TGUI/TGUI.hpp>
       #include <TGUI/Backend/SFML-Graphics.hpp>
       int main()
@@ -44,9 +49,11 @@ class Tgui < Formula
         text.setString("Hello World");
         return 0;
       }
-    EOS
-    system ENV.cxx, "test.cpp", "-std=c++17", "-I#{include}",
-      "-L#{lib}", "-L#{Formula["sfml"].opt_lib}",
+    CPP
+
+    ENV.append_path "LD_LIBRARY_PATH", Formula["sfml@2"].opt_lib if OS.linux?
+    system ENV.cxx, "test.cpp", "-std=c++17", "-I#{include}", "-I#{Formula["sfml@2"].opt_include}",
+      "-L#{lib}", "-L#{Formula["sfml@2"].opt_lib}",
       "-ltgui", "-lsfml-graphics", "-lsfml-system", "-lsfml-window",
       "-o", "test"
     system "./test"

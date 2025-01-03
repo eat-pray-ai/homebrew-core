@@ -12,6 +12,7 @@ class Svg2png < Formula
   end
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "35e0958cd39141bcefea89ffb6938e60c495151fff2d0c09c22cc3cb2d5a2d90"
     sha256 cellar: :any,                 arm64_sonoma:   "e12447c3d9303d05526006e0264334788b9420770964e4fa621368f38b099905"
     sha256 cellar: :any,                 arm64_ventura:  "6ea6d9de3e844679b033653d791e7b4e9d323e9851d5d69ae88e2aedcf9de01d"
     sha256 cellar: :any,                 arm64_monterey: "d27d975e6029a87783131f8c4dc4aa41da61901f01d13a44aebf1a69b27be9f3"
@@ -24,7 +25,7 @@ class Svg2png < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "26430f8c9086f1f7d1e460dc8588c57a2fb696527278006c68f41641ff88bd42"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "cairo"
   depends_on "jpeg-turbo"
   depends_on "libpng"
@@ -46,12 +47,12 @@ class Svg2png < Formula
                                    "$(LINK) $(svg2png_OBJECTS) $(svg2png_LDFLAGS)"
     end
 
-    system "./configure", *std_configure_args, "--mandir=#{man}"
+    system "./configure", "--mandir=#{man}", *std_configure_args
     system "make", "install"
   end
 
   test do
-    system "#{bin}/svg2png", test_fixtures("test.svg"), "test.png"
-    assert_predicate testpath/"test.png", :exist?
+    system bin/"svg2png", test_fixtures("test.svg"), "test.png"
+    assert_path_exists testpath/"test.png"
   end
 end

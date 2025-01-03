@@ -2,34 +2,25 @@ class Mas < Formula
   desc "Mac App Store command-line interface"
   homepage "https://github.com/mas-cli/mas"
   url "https://github.com/mas-cli/mas.git",
-      tag:      "v1.8.6",
-      revision: "560c89af2c1fdf0da9982a085e19bb6f5f9ad2d0"
+      tag:      "v1.8.8",
+      revision: "26964a86206241f95be175a2be26218e8fc017a9"
   license "MIT"
   head "https://github.com/mas-cli/mas.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "7b11bfefcb43e9a423ff301f7bbc29b0fb86044bf93442f243c5a8a67d8d4869"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "e49511dd1283813c4420aec9fc3b3167d18f9fdbb51d82b1e479b628d5312342"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "379d46e2657be295321f1603dc1df28130ea0b5b264ceb192a9ba488d77c7a98"
-    sha256 cellar: :any_skip_relocation, arm64_big_sur:  "918a1484de106940f7bebc936e1ded87d7b65652054b09204887ad0651937ec4"
-    sha256 cellar: :any_skip_relocation, sonoma:         "24e3057991ea1eed52eb4a27c0f17d794106770621e5a8bb975477dae135b82d"
-    sha256 cellar: :any_skip_relocation, ventura:        "6ef7788e28c46cdc0f916812f49dfeb1fabf2240a8c36f33ce34bcfb9df1502f"
-    sha256 cellar: :any_skip_relocation, monterey:       "6b313f2f66d028cb7782c108d6e502ce73ccb9c08fac3bece0b057fcce5c4689"
-    sha256 cellar: :any_skip_relocation, big_sur:        "50b50f51219143fcb69c730b52b74011a76104f66348ea727d0200f7b375ae25"
-    sha256 cellar: :any_skip_relocation, catalina:       "d241d3b9156b033f3d2c31684a44de726297e07fd9bd5e3ccc4c36e4f1c3baf3"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "11e8997a99ca12d9b1139289ba9bc3b7f7bcda9f91606ea7584c1706492cdd38"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "b159cd4bd45185064191007169c901d5d0e0158c459d8df0fad8a32c7e4f41c2"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "6699cf3c85b6efa23c2f556a2401d022f5c15c356419ca51a7f082bd1d4cd485"
+    sha256 cellar: :any_skip_relocation, sonoma:        "bb51318ed111a5a2fbf605995c5d5a0521a9ab6468b2d40845648eb766025d92"
+    sha256 cellar: :any_skip_relocation, ventura:       "77d0438a4052e7dd9ac1b4eaa66070134d0247c271c8017776a7b61fc35ff2ca"
   end
 
+  depends_on xcode: ["14.2", :build]
   depends_on :macos
-  on_arm do
-    depends_on xcode: ["12.2", :build]
-  end
-  on_intel do
-    depends_on xcode: ["12.0", :build]
-  end
 
   def install
-    system "script/build"
-    system "script/install", prefix
+    system "script/build", "--disable-sandbox"
+    bin.install ".build/release/mas"
 
     bash_completion.install "contrib/completion/mas-completion.bash" => "mas"
     fish_completion.install "contrib/completion/mas.fish"

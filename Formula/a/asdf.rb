@@ -1,13 +1,19 @@
 class Asdf < Formula
   desc "Extendable version manager with support for Ruby, Node.js, Erlang & more"
   homepage "https://asdf-vm.com/"
-  url "https://github.com/asdf-vm/asdf/archive/refs/tags/v0.14.0.tar.gz"
-  sha256 "8bca30e01e7fdb71d93fe7bc6efc80bfa41f27a3ff584d184138817962be8058"
+  url "https://github.com/asdf-vm/asdf/archive/refs/tags/v0.15.0.tar.gz"
+  sha256 "d0cafe61d27b5e3fcb53658821bfbf744fd040a8ea28b0e22277e032b8e8f7fe"
   license "MIT"
   head "https://github.com/asdf-vm/asdf.git", branch: "master"
 
+  livecheck do
+    url :stable
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
+  end
+
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "2aa1302895c8908cef593cd3e9b3be3aea517595c8cd8bcb380cc0474db0bd05"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, all: "a94dd362ce5c3a818f4fa56607eac3c616a3c1191e9f41480093bda2dc308af4"
   end
 
   depends_on "autoconf"
@@ -20,11 +26,10 @@ class Asdf < Formula
   depends_on "unixodbc"
 
   def install
-    bash_completion.install "completions/asdf.bash"
+    bash_completion.install "completions/asdf.bash" => "asdf"
     fish_completion.install "completions/asdf.fish"
     zsh_completion.install "completions/_asdf"
     libexec.install Dir["*"]
-    touch libexec/"asdf_updates_disabled"
 
     bin.write_exec_script libexec/"bin/asdf"
   end
@@ -44,6 +49,5 @@ class Asdf < Formula
     assert_match version.to_s, shell_output("#{bin}/asdf version")
     output = shell_output("#{bin}/asdf plugin-list 2>&1")
     assert_match "No plugins installed", output
-    assert_match "Update command disabled.", shell_output("#{bin}/asdf update", 42)
   end
 end

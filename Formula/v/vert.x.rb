@@ -18,13 +18,13 @@ class VertX < Formula
   depends_on "openjdk@17"
 
   def install
-    rm_f Dir["bin/*.bat"]
+    rm(Dir["bin/*.bat"])
     libexec.install %w[bin conf lib]
     (bin/"vertx").write_env_script libexec/"bin/vertx", Language::Java.overridable_java_home_env("17")
   end
 
   test do
-    (testpath/"HelloWorld.java").write <<~EOS
+    (testpath/"HelloWorld.java").write <<~JAVA
       import io.vertx.core.AbstractVerticle;
       public class HelloWorld extends AbstractVerticle {
         public void start() {
@@ -33,7 +33,7 @@ class VertX < Formula
           System.exit(0);
         }
       }
-    EOS
+    JAVA
     output = shell_output("#{bin}/vertx run HelloWorld.java")
     assert_equal "Hello World!\n", output
   end

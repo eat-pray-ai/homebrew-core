@@ -1,38 +1,38 @@
 class MagicWormholeRs < Formula
   desc "Rust implementation of Magic Wormhole, with new features and enhancements"
   homepage "https://github.com/magic-wormhole/magic-wormhole.rs"
-  url "https://github.com/magic-wormhole/magic-wormhole.rs/archive/refs/tags/0.6.1.tar.gz"
-  sha256 "522db57161bb7df10feb4b0ca8dec912186f24a0974647dc4fccdd8f70649f96"
+  url "https://github.com/magic-wormhole/magic-wormhole.rs/archive/refs/tags/0.7.4.tar.gz"
+  sha256 "3ddc40c82faa381e96ffdc54757625a4707c1bd111d67ab2ec733a5bb666a43c"
   license "EUPL-1.2"
   head "https://github.com/magic-wormhole/magic-wormhole.rs.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "d38edab7ed408bd27e9e9f1885a652c9d142991afee79fe1bdf1d049b906280c"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "f706e6c204c714e3fc0656cc6807df5147ab772949bbe9f714b6b7385f420fbc"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "71a0c12ddcadfcc5ba1b9b9efda2bd5c84f02fc795d7b9ba9a2fae9cdf344d33"
-    sha256 cellar: :any_skip_relocation, sonoma:         "0dd2f502fd16e23076d234dce9893b55225bc37b4dc789cd4e69a1b505b11fe3"
-    sha256 cellar: :any_skip_relocation, ventura:        "d5604c8b0d336a96aafd97d18e2e2604ab7ec6653685980bc1c467b934a8cb26"
-    sha256 cellar: :any_skip_relocation, monterey:       "6b3c15888e1b07d1122d0d6127cce866b7943656ac8598dc54ed4b92131d271d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "712436bf59d66a6463ee06711903b120f00d6b16e822fae4dbac203bd083a439"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "f46eb70c04e3a06978a0bb63cc5aafd2727467931d6ba11a106aae14270a3a1a"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "65521995b87468603204f09ea6dea02dd3c60a9c1d906c21caa8e70d41706c20"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "7f9823d71411bfd399a6af92c08afcd52dbb164d27cf8a1feaa43fdc3f654359"
+    sha256 cellar: :any_skip_relocation, sonoma:        "983692bbf7dd98cfcc733ee25928504c79a8f2e66d3dd723f9cd4ec5f19927cf"
+    sha256 cellar: :any_skip_relocation, ventura:       "219c8c34004646ae1d079ab541afb7904a7776644e8ebc014bdf28ac94159fb2"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f273cd3da5ff6f41cd0178d4a926624b2f397402c807869bd112edfeee0a963e"
   end
 
   depends_on "rust" => :build
 
   def install
     system "cargo", "install", *std_cargo_args(path: "cli")
+
+    generate_completions_from_executable(bin/"wormhole-rs", "completion")
   end
 
   test do
     n = rand(1e6)
-    pid = fork do
-      exec bin/"wormhole-rs", "send", "--code=#{n}-homebrew-test", test_fixtures("test.svg")
-    end
-    sleep 1
+    pid = spawn bin/"wormhole-rs", "send", "--code=#{n}-homebrew-test", test_fixtures("test.svg")
     begin
-      received = "received.svg"
-      exec bin/"wormhole-rs", "receive", "--noconfirm", "--rename=#{received}", "#{n}-homebrew-test"
-      assert_predicate testpath/received, :exist?
+      sleep 1
+      exec bin/"wormhole-rs", "receive", "--noconfirm", "#{n}-homebrew-test"
+      assert_path_exists testpath/"received.svg"
     ensure
+      Process.kill("TERM", pid)
       Process.wait(pid)
     end
   end

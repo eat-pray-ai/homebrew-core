@@ -1,19 +1,18 @@
 class Railway < Formula
   desc "Develop and deploy code with zero configuration"
   homepage "https://railway.app/"
-  url "https://github.com/railwayapp/cli/archive/refs/tags/v3.11.0.tar.gz"
-  sha256 "74dd639b555bbb22bfbd5bd313ec23b3aba22857624148211290d444a6e6dc28"
+  url "https://github.com/railwayapp/cli/archive/refs/tags/v3.20.0.tar.gz"
+  sha256 "e43b9c0388ec885b90c9a52a661d3d6e32de2c1c0d4c56d042ac525d798dbdb4"
   license "MIT"
   head "https://github.com/railwayapp/cli.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "e8997c287c16db2b058a48144945a31d2a56761446fe79d0a85eb5fea55a2edd"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "7594c1f93cc05fe48836b0911ae2107352772a4db8aca5268f44664031b5625a"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "a2d1da0f814bb83ca03610a5a7831607710d2f653d12a078e9010b51b082146c"
-    sha256 cellar: :any_skip_relocation, sonoma:         "4faf6ad9c0ad82f68036bb7af38018d9b6a620cef140dee445b430f7f3508cd6"
-    sha256 cellar: :any_skip_relocation, ventura:        "d9f4d4bdbde8fc3546f44f622d8a3ccc804050a50228f47375923a1e0faac32d"
-    sha256 cellar: :any_skip_relocation, monterey:       "e4f342f100de869b61cd121c427826a6c3f026dda6c7dd9e2ec5e1901457660f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "c84e5f07fca792d1a4be05516039f7605f70fd4b06196f5e3c43244040cb31a4"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "e64085e5c169519fe3345bbf5c15d3ac09736169f959e5d6d3af5127ba3d798f"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "569f095e1a08da22f5c6b7ee05598ca0619594a4688a5954b18a2704d5941beb"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "0305a16bde5d5f29d6c6e587cb75ef797bb9d4669dbf3d2a1a0c7e884794eb34"
+    sha256 cellar: :any_skip_relocation, sonoma:        "2279582b24c94b3e9e907b552b1caa99c57472f72f302d0a98cefb170a7f7e88"
+    sha256 cellar: :any_skip_relocation, ventura:       "4d6b346d4f594345e78142aa824e098bfdf7038a1fb423d7524f3e7e21bf1598"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0bc275e3503346893aec81f242789e9329c450538e0c0adf7888fb424352a913"
   end
 
   depends_on "rust" => :build

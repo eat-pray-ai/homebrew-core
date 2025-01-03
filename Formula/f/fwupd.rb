@@ -3,57 +3,67 @@ class Fwupd < Formula
 
   desc "Firmware update daemon"
   homepage "https://github.com/fwupd/fwupd"
-  url "https://github.com/fwupd/fwupd/releases/download/1.9.21/fwupd-1.9.21.tar.xz"
-  sha256 "a0b56ed11f0ae8045b465535d468b14a230535a30d4a703ff9113fc5dd236ba4"
+  url "https://github.com/fwupd/fwupd/releases/download/2.0.3/fwupd-2.0.3.tar.xz"
+  sha256 "73690175d0dd81849d729a0f247c69146ee9105c3c8c5d8428b64ad42d49b2f7"
   license "LGPL-2.1-or-later"
+  revision 1
   head "https://github.com/fwupd/fwupd.git", branch: "main"
 
   bottle do
-    sha256 arm64_sonoma:   "3b71c06edc83018a6760a66a3c02cbf946e967819c1affeb461805311e738cd3"
-    sha256 arm64_ventura:  "edb6db918af662fb570dd70d82908992e978cb1862713c4a2008ba116debae7d"
-    sha256 arm64_monterey: "5e41ab94167e7c01f76127ab420188fc0bec5e59ff12fbe427140424444ba674"
-    sha256 sonoma:         "0a2020c31f76ca66dd0d5a090ccf1842108f149b2d2ac7b21ad3d499d953d67f"
-    sha256 ventura:        "c086112e206a2de65f7ea9f40f172f177ac6fda3b16a311b26dd5f18b269ccbc"
-    sha256 monterey:       "bf720d6b9efc49fbbbee5211a2643ba19fd88cdc70151211dbe85f961571b543"
-    sha256 x86_64_linux:   "abc3fb36f5a9003397cd36998f1e26a267b28b7938e0e29fca73ac9ba8ae26a0"
+    sha256 arm64_sequoia: "5930222336830529919343a33540a0f8e1603a2a5695ed5e4e322cdfff860351"
+    sha256 arm64_sonoma:  "5d818cf44344991cd367b181d89608844e2354541402785f5ebe721d344549cc"
+    sha256 arm64_ventura: "1af8b3db3328365386419652f1b6b312e2b7754225f64c301cec766fc0a346fc"
+    sha256 sonoma:        "72e98bddb44ebc8841a411cc2f48b6346926306c5157dd9fadfb0624ee11823d"
+    sha256 ventura:       "84321c057422c3b94134ec73ccbe5a31eb28efe6d5ab99e712ed0babac759672"
+    sha256 x86_64_linux:  "2f6c424f24827871f9a2c21c3f7671608de0238002d2b8ee6e8812ea775be4cd"
   end
 
+  depends_on "gettext" => :build
   depends_on "gi-docgen" => :build
   depends_on "gobject-introspection" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
-  depends_on "python@3.12" => :build
+  depends_on "pkgconf" => [:build, :test]
+  depends_on "python@3.13" => :build
   depends_on "vala" => :build
+
   depends_on "gcab"
-  depends_on "gettext"
   depends_on "glib"
   depends_on "gnutls"
   depends_on "json-glib"
   depends_on "libarchive"
   depends_on "libcbor"
-  depends_on "libgusb"
   depends_on "libjcat"
+  depends_on "libusb"
   depends_on "libxmlb"
   depends_on "protobuf-c"
   depends_on "sqlite"
+  depends_on "usb.ids"
   depends_on "xz"
 
   uses_from_macos "curl"
   uses_from_macos "zlib"
 
+  on_macos do
+    depends_on "gettext"
+  end
+
+  on_linux do
+    depends_on "util-linux"
+  end
+
   resource "jinja2" do
-    url "https://files.pythonhosted.org/packages/ed/55/39036716d19cab0747a5020fc7e907f362fbf48c984b14e62127f7e68e5d/jinja2-3.1.4.tar.gz"
-    sha256 "4a3aee7acbbe7303aede8e9648d13b8bf88a429282aa6122a993f0ac800cb369"
+    url "https://files.pythonhosted.org/packages/af/92/b3130cbbf5591acf9ade8708c365f3238046ac7cb8ccba6e81abccb0ccff/jinja2-3.1.5.tar.gz"
+    sha256 "8fefff8dc3034e27bb80d67c671eb8a9bc424c0ef4c0826edbff304cceff43bb"
   end
 
   resource "markupsafe" do
-    url "https://files.pythonhosted.org/packages/87/5b/aae44c6655f3801e81aa3eef09dbbf012431987ba564d7231722f68df02d/MarkupSafe-2.1.5.tar.gz"
-    sha256 "d283d37a890ba4c1ae73ffadf8046435c76e7bc2247bbb63c00bd1a709c6544b"
+    url "https://files.pythonhosted.org/packages/b2/97/5d42485e71dfc078108a86d6de8fa46db44a1a9295e89c5d6d4a06e23a62/markupsafe-3.0.2.tar.gz"
+    sha256 "ee55d3edf80167e48ea11a923c7386f4669df67d7994554387f84e7d8b0a2bf0"
   end
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def install
@@ -76,6 +86,7 @@ class Fwupd < Formula
                     # these two are needed for https://github.com/fwupd/fwupd/pull/6147
                     "-Dplugin_logitech_scribe=disabled",
                     "-Dplugin_logitech_tap=disabled",
+                    "-Dvendor_ids_dir=#{Formula["usb.ids"].opt_share}/misc/usb.ids",
                     *std_meson_args
     system "meson", "compile", "-C", "build", "--verbose"
     system "meson", "install", "-C", "build"
@@ -83,33 +94,20 @@ class Fwupd < Formula
 
   test do
     # check apps like gnome-firmware can link
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <fwupd.h>
       int main(int argc, char *argv[]) {
         FwupdClient *client = fwupd_client_new();
         g_assert_nonnull(client);
         return 0;
       }
-    EOS
-    gettext = Formula["gettext"]
-    glib = Formula["glib"]
-    flags = %W[
-      -I#{glib.opt_include}/glib-2.0
-      -I#{glib.opt_lib}/glib-2.0/include
-      -I#{include}/fwupd-1
-      -L#{gettext.opt_lib}
-      -L#{glib.opt_lib}
-      -L#{lib}
-      -lgio-2.0
-      -lglib-2.0
-      -lgobject-2.0
-      -lfwupd
-    ]
-    flags << "-lintl" if OS.mac?
-    system ENV.cc, "test.c", "-o", "test", *flags
+    C
+
+    pkgconf_flags = shell_output("pkgconf --cflags --libs fwupd").chomp.split
+    system ENV.cc, "test.c", "-o", "test", *pkgconf_flags
     system "./test"
 
     # this is a lame test, but fwupdtool requires root access to do anything much interesting
-    system "#{bin}/fwupdtool", "-h"
+    system bin/"fwupdtool", "-h"
   end
 end

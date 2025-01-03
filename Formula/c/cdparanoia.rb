@@ -61,15 +61,13 @@ class Cdparanoia < Formula
                 "-Wl,-rpath,#{Formula["cdparanoia"].libexec} -L ../interface"
     end
 
-    system "autoreconf", "-fiv"
-    system "./configure", "--prefix=#{prefix}",
-                          "--mandir=#{man}",
-                          "--libdir=#{libexec}"
+    system "autoreconf", "--force", "--install", "--verbose"
+    system "./configure", "--mandir=#{man}", * std_configure_args
     system "make", "all"
     system "make", "install"
   end
 
   test do
-    system "#{bin}/cdparanoia", "--version"
+    system bin/"cdparanoia", "--version"
   end
 end

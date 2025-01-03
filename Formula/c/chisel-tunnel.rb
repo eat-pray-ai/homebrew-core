@@ -1,19 +1,19 @@
 class ChiselTunnel < Formula
   desc "Fast TCP/UDP tunnel over HTTP"
   homepage "https://github.com/jpillora/chisel"
-  url "https://github.com/jpillora/chisel/archive/refs/tags/v1.9.1.tar.gz"
-  sha256 "7323fb3510a36f14949337cd03efd078f4a5d6159259c20539e3a8e1960a7c7e"
+  url "https://github.com/jpillora/chisel/archive/refs/tags/v1.10.1.tar.gz"
+  sha256 "85d121087ea3e1139f63eaa389642bd6d8c2584728ec80d16315b17410844269"
   license "MIT"
   head "https://github.com/jpillora/chisel.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "f5037b5ae58ec1a0eb1fe11b26efa6838587c624a37c2bd770a1628ac9cb3316"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "99d3c362ac14ef78c792399308994e9be4509a0b2ea31aea95e82b10f37e271f"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "d50fca28c7c5be10d023efb49e9ac2be728e90285491e39ffba5a3afed39eabc"
-    sha256 cellar: :any_skip_relocation, sonoma:         "3e0fc64e4471956b20c175cec8a06cd27363648d71856207d20b6b883271cbf6"
-    sha256 cellar: :any_skip_relocation, ventura:        "825b46a233b6a10768e50f06d53bd8cec945457ee8be0889fa65901749aa6d48"
-    sha256 cellar: :any_skip_relocation, monterey:       "7b1fb7177adbcaa8ba3ba3a5fd0a0c7d51ffccea5da2a46f3d3c2bf3094461ea"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "955d2db76211bd1fef5a447b7281d7f058144fcfde65b087970d188fbaf613e3"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "05ab3b695c06c0f9228bfd895ef79863a8e78a6b68e96b06774e703ac9075bd5"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "05ab3b695c06c0f9228bfd895ef79863a8e78a6b68e96b06774e703ac9075bd5"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "05ab3b695c06c0f9228bfd895ef79863a8e78a6b68e96b06774e703ac9075bd5"
+    sha256 cellar: :any_skip_relocation, sonoma:        "6320979297527ca632fa428271fa3519e3382e90c6d02a6bc1fd8c0886d23ae8"
+    sha256 cellar: :any_skip_relocation, ventura:       "6320979297527ca632fa428271fa3519e3382e90c6d02a6bc1fd8c0886d23ae8"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f7957fcca28005c5d81736033b68312872485b673a1e01ec53d1c7e98b11050b"
   end
 
   depends_on "go" => :build
@@ -21,7 +21,8 @@ class ChiselTunnel < Formula
   conflicts_with "chisel", because: "both install `chisel` binaries"
 
   def install
-    system "go", "build", *std_go_args(output: bin/"chisel", ldflags: "-X github.com/jpillora/chisel/share.BuildVersion=v#{version}")
+    ldflags = "-s -w -X github.com/jpillora/chisel/share.BuildVersion=v#{version}"
+    system "go", "build", *std_go_args(ldflags:, output: bin/"chisel")
   end
 
   test do

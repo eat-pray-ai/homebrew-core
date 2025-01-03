@@ -1,24 +1,24 @@
 class Gfold < Formula
   desc "Help keep track of your Git repositories, written in Rust"
   homepage "https://github.com/nickgerace/gfold"
-  url "https://github.com/nickgerace/gfold/archive/refs/tags/4.5.0.tar.gz"
-  sha256 "ba5afe509ef17f5cdde8540cfd9321001cbb10d49dd6324f22562d65dbae8738"
+  url "https://github.com/nickgerace/gfold/archive/refs/tags/4.6.0.tar.gz"
+  sha256 "f965daa340349b04bd9d29b5013dcb3006d2f5333cdbae1f1e3901a685e7bf7d"
   license "Apache-2.0"
+  revision 1
   head "https://github.com/nickgerace/gfold.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "3d60d01fcc4d949d385448343156ee494dfeacc91ce4f3f1292517d455989849"
-    sha256 cellar: :any,                 arm64_ventura:  "55d732326ef6bb146960f4d291f9146f882fab21a1ecdd4db552474bbf1123b5"
-    sha256 cellar: :any,                 arm64_monterey: "9544cc10fe9106d5f773f28f50481d5f90833f7203e1e13fb6b8f85275e6a5d0"
-    sha256 cellar: :any,                 sonoma:         "f2fd71f5c5d944ae70b41642aeeb6c98fd5c8dc3dc27882b1973b6c20c8acdba"
-    sha256 cellar: :any,                 ventura:        "9ec3069ba7bf5264bbbb2b0e7fef50608c1ad61981bc65e319678e2f5ea0f365"
-    sha256 cellar: :any,                 monterey:       "efa17cc98e7064f71df72a1d80100d63c68cddb4d99672684c3121c4f67710a1"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "77f496786ea2247a8f28bc809fcc5c84cb879ef385a039ee8aa7b2e68e9d63c0"
+    sha256 cellar: :any,                 arm64_sequoia: "d3f39968905493da2887c42a234a341da936cc46ead483ca56888396dd325227"
+    sha256 cellar: :any,                 arm64_sonoma:  "691802c014e5ba101e3c70e9e7f198c32d7dd3e0cec2ec5c6e315225327519d2"
+    sha256 cellar: :any,                 arm64_ventura: "617d2c377199fa4b6ff83106a04f3ed75fdf219239f5497966f2ba6fc9a2ef85"
+    sha256 cellar: :any,                 sonoma:        "25b560b6af51200d61642b76d391a7033905f8af3b535794db2aa5a86b7eb8da"
+    sha256 cellar: :any,                 ventura:       "d468c1cafee8579904e3e92445806fdeeb33515bb9e436c957eaa2c0cb89254b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0332deac0f1b1ebe9a68d14ac953edbc09c94b2c02e3c7d47eef2616eeb7c020"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
-  depends_on "libgit2"
+  depends_on "libgit2@1.8" # needs https://github.com/rust-lang/git2-rs/issues/1109 to support libgit2 1.9
 
   uses_from_macos "zlib"
 
@@ -27,14 +27,14 @@ class Gfold < Formula
   def install
     ENV["LIBGIT2_NO_VENDOR"] = "1"
 
-    system "cargo", "install", *std_cargo_args(path: "bin/gfold")
+    system "cargo", "install", *std_cargo_args
   end
 
   test do
     mkdir "test" do
       system "git", "config", "--global", "init.defaultBranch", "master"
       system "git", "init"
-      (Pathname.pwd/"README").write "Testing"
+      Pathname("README").write "Testing"
       system "git", "add", "README"
       system "git", "commit", "-m", "init"
     end
@@ -46,7 +46,7 @@ class Gfold < Formula
     linkage_with_libgit2 = (bin/"gfold").dynamically_linked_libraries.any? do |dll|
       next false unless dll.start_with?(HOMEBREW_PREFIX.to_s)
 
-      File.realpath(dll) == (Formula["libgit2"].opt_lib/shared_library("libgit2")).realpath.to_s
+      File.realpath(dll) == (Formula["libgit2@1.8"].opt_lib/shared_library("libgit2")).realpath.to_s
     end
 
     assert linkage_with_libgit2, "No linkage with libgit2! Cargo is likely using a vendored version."

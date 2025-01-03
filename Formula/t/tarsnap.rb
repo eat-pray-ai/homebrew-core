@@ -13,6 +13,7 @@ class Tarsnap < Formula
 
   bottle do
     rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia:  "ee097bdaecb43df24fdd6c40cd401cebc24ab36382547310da9a0b7320528a98"
     sha256 cellar: :any,                 arm64_sonoma:   "b6625d85533017b32de38a4691da1c7784917f77db503cf64ca960f912665168"
     sha256 cellar: :any,                 arm64_ventura:  "b9efb41f22d2bfc464a999b1008d98638c4c98960c41436253a6bae8f3b0bae9"
     sha256 cellar: :any,                 arm64_monterey: "b46cd4c9c74a74f0eda24f0b3128c174e6feb8c25258a71c3585063bfaea7ae1"
@@ -44,19 +45,17 @@ class Tarsnap < Formula
   end
 
   def install
-    system "autoreconf", "-iv" if build.head?
+    system "autoreconf", "--force", "--install", "--verbose" if build.head?
 
     args = %W[
-      --disable-dependency-tracking
       --disable-silent-rules
-      --prefix=#{prefix}
       --sysconfdir=#{etc}
       --with-bash-completion-dir=#{bash_completion}
       --without-lzma
       --without-lzmadec
     ]
 
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args
     system "make", "install"
   end
 

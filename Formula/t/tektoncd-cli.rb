@@ -1,8 +1,8 @@
 class TektoncdCli < Formula
   desc "CLI for interacting with TektonCD"
   homepage "https://github.com/tektoncd/cli"
-  url "https://github.com/tektoncd/cli/archive/refs/tags/v0.37.0.tar.gz"
-  sha256 "60377a9b33ad292fc4a6b9dca13626acc62dbf84c44e376b7a244374d692d3a7"
+  url "https://github.com/tektoncd/cli/archive/refs/tags/v0.39.0.tar.gz"
+  sha256 "95469fa9e2eedb7c882a5a2cac424a8ec06c7436bca4722d2efc70acca9a2dd6"
   license "Apache-2.0"
 
   livecheck do
@@ -11,13 +11,12 @@ class TektoncdCli < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "c8d457696431f214fa75884fbd5613f4f5feadabdc13c730abcc5442a228c7bb"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "5f4de54fc339f9b95c65bceb4efb212b69d05c968dd9bbcb606f9430db215979"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "27a3ecff97ed3a3dd2ab3159f38ea2f7990d7b95a04fc2bc4ce336fc922e5ca1"
-    sha256 cellar: :any_skip_relocation, sonoma:         "bf4f452691bd90a173382ccac4a2369cef0b4d8e1c9ab869f9aadd64c14c5023"
-    sha256 cellar: :any_skip_relocation, ventura:        "b834c191c7bedeac0d327719943dc55c5b733283eedcfd82f5f5422cf7ee19bd"
-    sha256 cellar: :any_skip_relocation, monterey:       "6f76f90509daefa57a92679565842f3d4036b0010fce0f005f8d73c336e8740f"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "6371e2ee93517f882691474c107b2a452b0ee8d754d38b5f0a587841bb27b83d"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "1a03ef564a59e5041c5b6ac0664b218f7aa3f19962054870a32dccd72eda2c62"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "de231cba4806d83262ad3756ef7aaf95e034df60f4ab90e229fda0ebd8ada7ec"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "64525304de280d308e1931f2871cd032cd397ac7768d5a399f9cfa0a4d05c3df"
+    sha256 cellar: :any_skip_relocation, sonoma:        "9292b5878b409602473e34d40378b4d2a4e8395b3ee982b8a65af00a947421fa"
+    sha256 cellar: :any_skip_relocation, ventura:       "c8f78186f46c7d99c702b2f6bbdd5ced272149d2ca77f28c4e9525c569f395ad"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "dda005f3d38e3102a4cdad1e57172c51412f93cc5371646f726870d66baa39c8"
   end
 
   depends_on "go" => :build
@@ -26,12 +25,11 @@ class TektoncdCli < Formula
     system "make", "bin/tkn"
     bin.install "bin/tkn" => "tkn"
 
-    generate_completions_from_executable(bin/"tkn", "completion", base_name: "tkn")
+    generate_completions_from_executable(bin/"tkn", "completion")
   end
 
   test do
-    cmd = "#{bin}/tkn pipelinerun describe homebrew-formula"
-    io = IO.popen(cmd, err: [:child, :out])
-    assert_match "Error: Couldn't get kubeConfiguration namespace", io.read
+    output = shell_output("#{bin}/tkn pipelinerun describe homebrew-formula 2>&1", 1)
+    assert_match "Error: Couldn't get kubeConfiguration namespace", output
   end
 end

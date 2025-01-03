@@ -1,26 +1,33 @@
 class SvtAv1 < Formula
   desc "AV1 encoder"
   homepage "https://gitlab.com/AOMediaCodec/SVT-AV1"
-  url "https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v2.1.2/SVT-AV1-v2.1.2.tar.bz2"
-  sha256 "a1d95875f7539d49f7c8fdec0623fbf984804a168da6289705d53268e3b38412"
+  url "https://gitlab.com/AOMediaCodec/SVT-AV1/-/archive/v2.3.0/SVT-AV1-v2.3.0.tar.bz2"
+  sha256 "f65358499f572a47d6b076dda73681a8162b02c0b619a551bc2d62ead8ee719a"
   license "BSD-3-Clause"
   head "https://gitlab.com/AOMediaCodec/SVT-AV1.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "5b2187052d417aa06ddb0b41d5381dd741fe74ba7caee30ad120df6050bf78bb"
-    sha256 cellar: :any,                 arm64_ventura:  "073dfc4e3cead69cd42db18976c891fdd4173bb66b53ee167bbbb90c55667c54"
-    sha256 cellar: :any,                 arm64_monterey: "8aa7ef9134d2e8b9f9d0c0d2983f72ee8fd27be900af88518bb588c4fe762834"
-    sha256 cellar: :any,                 sonoma:         "8805e49274f42b7224a2b5c22e567aede7c3fbd92b858e88d79bde8d4fe0ff44"
-    sha256 cellar: :any,                 ventura:        "0ee6775d220397e8e1baab5f53334062e61615a31c82b0082e700cb9a856de8b"
-    sha256 cellar: :any,                 monterey:       "163ee3c89d1c749268c69997b8dd62e08fd3ceaecd8f58a48c384f379581a7de"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "baa1ca4dbe40a28fbab5435f95288e1429c1bfdf24e3402c65d03f45d5f7540a"
+    sha256 cellar: :any,                 arm64_sequoia: "b7071bcdd49e6f95dbea917544ae580502b0bb3463b509b40a46f4bc76599c35"
+    sha256 cellar: :any,                 arm64_sonoma:  "9628c69df64063f970ed2886c0ee331021ddf62bdb240dc4a596c8a269f67341"
+    sha256 cellar: :any,                 arm64_ventura: "bb144183d7849c4e6a7621c447d4b7195255d7ab7f374a0cc417f398fd1cfe53"
+    sha256 cellar: :any,                 sonoma:        "16d30044c1f93b2e7d1761609049c98d6ae45a2761d20b16646da8988443b4c5"
+    sha256 cellar: :any,                 ventura:       "3f61bca9d63853428078901104a73485771985466300c25e8cb5eb68397b86de"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2102cd7a9136546cdaa969708b64d162dde990e74ba5caa4ed935b11bea9f616"
   end
 
   depends_on "cmake" => :build
   depends_on "nasm" => :build
 
   def install
-    system "cmake", "-S", ".", "-B", "build", "-DCMAKE_INSTALL_RPATH=#{rpath}", *std_cmake_args
+    extra_cmake_args = %W[-DCMAKE_INSTALL_RPATH=#{rpath}]
+
+    # Explicitly disable ARM NEON I8MM extension on Apple Silicon: upstream
+    # build script attempts to detect CPU features via compiler flags, which
+    # are stripped by brew's compiler shim. The M1 chip does not support the
+    # I8MM extension (hw.optional.arm.FEAT_I8MM).
+    extra_cmake_args << "-DENABLE_NEON_I8MM=OFF" if OS.mac?
+
+    system "cmake", "-S", ".", "-B", "build", *extra_cmake_args, *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end
@@ -32,7 +39,7 @@ class SvtAv1 < Formula
     end
 
     testpath.install resource("homebrew-testvideo")
-    system "#{bin}/SvtAv1EncApp", "-w", "64", "-h", "64", "-i", "video_64x64_yuv420p_25frames.yuv", "-b", "output.ivf"
+    system bin/"SvtAv1EncApp", "-w", "64", "-h", "64", "-i", "video_64x64_yuv420p_25frames.yuv", "-b", "output.ivf"
     assert_predicate testpath/"output.ivf", :exist?
   end
 end

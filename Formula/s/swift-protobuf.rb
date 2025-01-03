@@ -1,32 +1,39 @@
 class SwiftProtobuf < Formula
   desc "Plugin and runtime library for using protobuf with Swift"
   homepage "https://github.com/apple/swift-protobuf"
-  url "https://github.com/apple/swift-protobuf/archive/refs/tags/1.27.0.tar.gz"
-  sha256 "387ab60f4814e76ed3ae689690c658cf6dab1bc1c6ed67d6c14c33de9daed4d2"
+  url "https://github.com/apple/swift-protobuf/archive/refs/tags/1.28.2.tar.gz"
+  sha256 "d086deab3ca0b74751fcc1905d268697b0d471e747fb50eced94941f28b35fb8"
   license "Apache-2.0"
+  revision 1
   head "https://github.com/apple/swift-protobuf.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "263fd3d48287f507d1c942be9927be6ae17fe7626c84e54fabdb6288dfe325f4"
-    sha256 cellar: :any_skip_relocation, arm64_ventura: "9f9bb88c2280b624fc2e173f22c9d597469896779ca5eb101a7c1decee64f9f8"
-    sha256 cellar: :any_skip_relocation, sonoma:        "32f8874cb155e2f36aea49ed8d2c2ae701f65c1b92b886ca8388a2ed7c377908"
-    sha256 cellar: :any_skip_relocation, ventura:       "74614c199b907b243b1cd70d2cea50cd1dbf23bcb8853ba80deaabc7c983d6d9"
-    sha256                               x86_64_linux:  "67c7b9be03a5c1161b8b16c641f5e74e3efbdf46aa53b60ad4b951dd0eac84a2"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "cd56104efbff42d8793ec02ed212fe8eedd011a045e9063dd9f11fb602a8580a"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "5d205878109743b4bc66bbdab6ecb6e4271a99a5a2fd929faf6648524107f3cd"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "b51e076ed77a2e55bb899f75e4626ff9ff89794362b7fc14d84304c4cf3a9dd5"
+    sha256 cellar: :any_skip_relocation, sonoma:        "67eedb80e3f078c92b6770a09a198bde2cae63dc60b8138b561481b579114433"
+    sha256 cellar: :any_skip_relocation, ventura:       "8d2430ecad2190aa1106d3b917c2bec66a6e4380c3fd741f23515bd24c15ebef"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0290054e89192d859c7bdca84ebf40cb8cd90c0cf3cda9b4bc43ccfd6c6f7961"
   end
 
   depends_on xcode: ["14.3", :build]
   depends_on "protobuf"
 
-  uses_from_macos "swift"
+  uses_from_macos "swift" => :build
 
   def install
-    system "swift", "build", "--disable-sandbox", "-c", "release"
+    args = if OS.mac?
+      ["--disable-sandbox"]
+    else
+      ["--static-swift-stdlib"]
+    end
+    system "swift", "build", *args, "-c", "release"
     bin.install ".build/release/protoc-gen-swift"
     doc.install "Documentation/PLUGIN.md"
   end
 
   test do
-    (testpath/"test.proto").write <<~EOS
+    (testpath/"test.proto").write <<~PROTO
       syntax = "proto3";
       enum Flavor {
         CHOCOLATE = 0;
@@ -36,7 +43,7 @@ class SwiftProtobuf < Formula
         int32 scoops = 1;
         Flavor flavor = 2;
       }
-    EOS
+    PROTO
     system Formula["protobuf"].opt_bin/"protoc", "test.proto", "--swift_out=."
     assert_predicate testpath/"test.pb.swift", :exist?
   end

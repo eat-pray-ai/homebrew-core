@@ -1,8 +1,8 @@
 class Orientdb < Formula
   desc "Graph database"
   homepage "https://orientdb.org/"
-  url "https://search.maven.org/remotecontent?filepath=com/orientechnologies/orientdb-community/3.2.31/orientdb-community-3.2.31.zip"
-  sha256 "9d1418cfe795c9f47f08d5e0b27d5c9e9d5a41b8ff96260cf365d0cb70cc7964"
+  url "https://search.maven.org/remotecontent?filepath=com/orientechnologies/orientdb-community/3.2.36/orientdb-community-3.2.36.zip"
+  sha256 "ce4e1a30178242540a8e2904a993fa22e5843477749a7639d94f7546de56c7ee"
   license "Apache-2.0"
 
   livecheck do
@@ -11,20 +11,14 @@ class Orientdb < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "b60aa53cf4dd28d499ef06e03c484f8620879a3293aa71d573ee7279032f527a"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "b60aa53cf4dd28d499ef06e03c484f8620879a3293aa71d573ee7279032f527a"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "b60aa53cf4dd28d499ef06e03c484f8620879a3293aa71d573ee7279032f527a"
-    sha256 cellar: :any_skip_relocation, sonoma:         "b60aa53cf4dd28d499ef06e03c484f8620879a3293aa71d573ee7279032f527a"
-    sha256 cellar: :any_skip_relocation, ventura:        "b60aa53cf4dd28d499ef06e03c484f8620879a3293aa71d573ee7279032f527a"
-    sha256 cellar: :any_skip_relocation, monterey:       "b60aa53cf4dd28d499ef06e03c484f8620879a3293aa71d573ee7279032f527a"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "64aca2c8c47d576e0194b015ea99fbb65ad7dc10f21344a0eb48d4d5b50b7763"
+    sha256 cellar: :any_skip_relocation, all: "666ca9781afa6a2e01c6593b5e4f3643b5f14bb3be67dc89f79b2bb7c97f41bc"
   end
 
   depends_on "maven" => :build
   depends_on "openjdk"
 
   def install
-    rm_rf Dir["bin/*.bat"]
+    rm_r(Dir["bin/*.bat"])
 
     chmod 0755, Dir["bin/*"]
     libexec.install Dir["*"]
@@ -55,12 +49,12 @@ class Orientdb < Formula
     touch "#{var}/log/orientdb/orientdb.log"
 
     ENV["ORIENTDB_ROOT_PASSWORD"] = "orientdb"
-    system "#{bin}/orientdb", "stop"
+    system bin/"orientdb", "stop"
     sleep 3
-    system "#{bin}/orientdb", "start"
+    system bin/"orientdb", "start"
     sleep 3
   ensure
-    system "#{bin}/orientdb", "stop"
+    system bin/"orientdb", "stop"
   end
 
   def caveats

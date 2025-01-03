@@ -1,19 +1,18 @@
 class Signmykey < Formula
   desc "Automated SSH Certificate Authority"
   homepage "https://signmykey.io"
-  url "https://github.com/signmykeyio/signmykey/archive/refs/tags/v0.8.6.tar.gz"
-  sha256 "16c34d874bf6cec0d83dbefb8dea0b89afacd0884a1069e2d9f5ee8b499133ed"
+  url "https://github.com/signmykeyio/signmykey/archive/refs/tags/v0.8.8.tar.gz"
+  sha256 "3d08c9b0fbe6c6bcd8240ff0a65121ace0413f30abdd40068930509abc84e4ba"
   license "MIT"
   head "https://github.com/signmykeyio/signmykey.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "c735b4c74571749c949743f4a5f1e72a530ed9a252f4c6f982784da3e8166eff"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "8ac2184b3bb728bac7fa17b4365f9ddc2b06a6b61ae51e85164a969521ef06a1"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "13175251cc1356a649398221b2e1ca7dd6c72215da73d4b788fcd07f3ad1933d"
-    sha256 cellar: :any_skip_relocation, sonoma:         "779cd8f7ab0de371ab01bae5e19b49890a17d53b2ac5cc1fd0ff6c4bdd242d35"
-    sha256 cellar: :any_skip_relocation, ventura:        "86a393be6f86a79b85fc5d7dfa2419a358312ba3472b3c23994bca6d275eebd4"
-    sha256 cellar: :any_skip_relocation, monterey:       "d3493a9c55a59a0843e8b7c4fed154e6148cf44aa7127dd760d9fc41a4802fae"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "fa5da62b6a04f5f054906020b219c25551872a5003480d36c0a0342e81c8cf63"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "13f42dcc050c7a1c8f4284603c2b9cf51fc0fdfeec5a59a9c6cc7973fe4a4b4c"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "13f42dcc050c7a1c8f4284603c2b9cf51fc0fdfeec5a59a9c6cc7973fe4a4b4c"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "13f42dcc050c7a1c8f4284603c2b9cf51fc0fdfeec5a59a9c6cc7973fe4a4b4c"
+    sha256 cellar: :any_skip_relocation, sonoma:        "a7f9f2972ad442c06ad29a0102bc6a40ba0f9321d90c8cc2f02ea3665d4e71fd"
+    sha256 cellar: :any_skip_relocation, ventura:       "a7f9f2972ad442c06ad29a0102bc6a40ba0f9321d90c8cc2f02ea3665d4e71fd"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6d80a2c91ff6d9fa7e8d95b5a05c7e072380c8fc10e167ee0fd6dc68faeb4aaa"
   end
 
   depends_on "go" => :build

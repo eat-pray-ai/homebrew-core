@@ -1,37 +1,36 @@
 class Daq < Formula
   desc "Network intrusion prevention and detection system"
   homepage "https://www.snort.org/"
-  url "https://github.com/snort3/libdaq/archive/refs/tags/v3.0.15.tar.gz"
-  mirror "https://fossies.org/linux/misc/libdaq-3.0.15.tar.gz"
-  sha256 "174c639d59f7bda84d71bda50257febbb2646138aa7bbf948bb4d4a8be60f2d8"
+  url "https://github.com/snort3/libdaq/archive/refs/tags/v3.0.17.tar.gz"
+  mirror "https://fossies.org/linux/misc/libdaq-3.0.17.tar.gz"
+  sha256 "2adfb70d07611743204db580c6603e2b16b9f5d1d32e5656f3c291995e3252a1"
   license "GPL-2.0-only"
   head "https://github.com/snort3/libdaq.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "2bff8d875c244a57cb29026e9fd16f21ba9393ed5b080f3af9733db42e5379c1"
-    sha256 cellar: :any,                 arm64_ventura:  "67a37086842de0572b33d128312d9d140aa969f12140f16b0668eba18340c018"
-    sha256 cellar: :any,                 arm64_monterey: "66afe818e9a4009512cb66b40d2d1ffbac16f246b54f90583876a5f516411ad5"
-    sha256 cellar: :any,                 sonoma:         "4c65d0b5f6d58a55eecc6b53354bfa325272564de38460974bcb55620e4495dd"
-    sha256 cellar: :any,                 ventura:        "c94f842e9d8bac8e53a48018661b5b9205cd31955952f24788ce1dc9d2b5c359"
-    sha256 cellar: :any,                 monterey:       "0d5fc669460512586e51f642500a4a7c7ca4e097831c97ef8c32d134197c4c02"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "ff7bd173abe5e325ec61c73d6bb54b18fd7fe28a87339be110b708a7a67c0746"
+    sha256 cellar: :any,                 arm64_sequoia: "ff282bb63d1ebd08c2acb847c883851ac3487f2488abb6b8fd3482da1801655a"
+    sha256 cellar: :any,                 arm64_sonoma:  "fc59e4bb69a94ad3acdb3d87854b02d5169f3502881c20b8a32ec56d58161a11"
+    sha256 cellar: :any,                 arm64_ventura: "8a7f4ff2d1e3bdf0d693924afe1d836b601d14459888b4ae2d59c159bcc33487"
+    sha256 cellar: :any,                 sonoma:        "09a56d487e4805fc5e297d34dcad3259ffbfce76f8a16e99b798a27270cab3a8"
+    sha256 cellar: :any,                 ventura:       "eefe2f055bfabeb5c9eb019956858c2d7274405f34892280d8e5988f287b344f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0245b7f5625ff425f49493e4d40e3af288880e6ec8a6d1d872522c1f81f124ae"
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   uses_from_macos "libpcap"
 
   def install
     system "./bootstrap"
-    system "./configure", *std_configure_args, "--disable-silent-rules"
+    system "./configure", "--disable-silent-rules", *std_configure_args
     system "make", "install"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <assert.h>
       #include <stdio.h>
       #include <daq.h>
@@ -51,7 +50,7 @@ class Daq < Formula
         assert(module == NULL);
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-L#{lib}", "-ldaq", "-ldaq_static_pcap", "-lpcap", "-lpthread", "-o", "test"
     assert_match "[pcap] - Type: 0xb", shell_output("./test")
   end

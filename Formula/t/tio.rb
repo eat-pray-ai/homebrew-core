@@ -1,25 +1,24 @@
 class Tio < Formula
   desc "Simple TTY terminal I/O application"
   homepage "https://tio.github.io"
-  url "https://github.com/tio/tio/releases/download/v3.5/tio-3.5.tar.xz"
-  sha256 "efd3e9a406f827ac22d4157e345079dde15ee5a948b24156561d6c97a54e6ec0"
+  url "https://github.com/tio/tio/releases/download/v3.8/tio-3.8.tar.xz"
+  sha256 "a24c69e59b53cf72a147db2566b6ff3b6a018579684caa4b16ce36614b2b68d4"
   license "GPL-2.0-or-later"
   head "https://github.com/tio/tio.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any, arm64_sonoma:   "a7a1ec7ee2d60c3736e2f5dd9c6539b798529748cd286297a04fddbeab342030"
-    sha256 cellar: :any, arm64_ventura:  "e8c13da32cef114a0560a20bb3af9a64cf0f0d045b79764e8df04540177253c8"
-    sha256 cellar: :any, arm64_monterey: "99e1ad3a4a8d97d35136a1a2634b538c69e4595c8ffde88e75e7de5f0601b3e4"
-    sha256 cellar: :any, sonoma:         "65e8723cec535c6e206efe10d5202e798049793f6660605977f3f88a089147ca"
-    sha256 cellar: :any, ventura:        "5b1a0e3f0595db6b2311a8b40c2dac865664caab7db1bc287ce64b3921310d80"
-    sha256 cellar: :any, monterey:       "9af5eaf690b86ab92a7cfcb7305e71051229fb2c98d0145d6cc76ff0e25eb657"
-    sha256               x86_64_linux:   "d54f723ad37a40227f3fae8971408293bcb1d1e45e325dc3d628414c3b435ffe"
+    sha256 cellar: :any, arm64_sequoia: "38f4f70905451183fad4051c989e0413566236dde34909fd695d64b52d333c7f"
+    sha256 cellar: :any, arm64_sonoma:  "430ac18ea09829b2d4936a8745ff8f283ffd024cfa2a82c07579150eaec395b8"
+    sha256 cellar: :any, arm64_ventura: "85f54e24ddc2ffa80e50318e185468ec0149719b1fb9abf804e1c972c4dd5cb1"
+    sha256 cellar: :any, sonoma:        "4abf71b12f17dbe57c4ec145228c54bf0478a5bc599579e0885def3a583dca29"
+    sha256 cellar: :any, ventura:       "b41d2c80312869927a8b692cf88e280d953d0d63b0d3bdb9890040a3daebd66b"
+    sha256               x86_64_linux:  "73f6272f22e12b44d89f7966cfdbca29110131cebc9e9d76e826d9a05fcdf930"
   end
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
-  depends_on "gettext"
+  depends_on "pkgconf" => :build
+
   depends_on "glib"
   depends_on "lua"
 

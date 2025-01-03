@@ -6,6 +6,7 @@ class Mkfontscale < Formula
   license "X11"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "cb7cfc5fe147173c5117c3269dda15cdcacf19be6a992b9a9339ca3a91fc7495"
     sha256 cellar: :any,                 arm64_sonoma:   "6795c9f6167e00f72f72aa22ebf557a440ba85e9c4242ffba2a774dad5c8b859"
     sha256 cellar: :any,                 arm64_ventura:  "c88d40044de4b6556a64c1d679cfa377d32f0af07c7d6b344b91046910db8371"
     sha256 cellar: :any,                 arm64_monterey: "01eacad2f18ee8f35bc292d7c6dece30a4ad5a040fdbb12fd4541f843b8c438f"
@@ -15,7 +16,7 @@ class Mkfontscale < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "2ea938e8ad6c373bad7f07d10cce369fa35345c4ae07629d46e8173357404708"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "xorgproto"  => :build
 
   depends_on "freetype"
@@ -25,17 +26,17 @@ class Mkfontscale < Formula
   uses_from_macos "zlib"
 
   def install
-    configure_args = std_configure_args + %w[
+    configure_args = %w[
       --with-bzip2
     ]
 
-    system "./configure", *configure_args
+    system "./configure", *configure_args, *std_configure_args
     system "make"
     system "make", "install"
   end
 
   test do
     system bin/"mkfontscale"
-    assert_predicate testpath/"fonts.scale", :exist?
+    assert_path_exists testpath/"fonts.scale"
   end
 end

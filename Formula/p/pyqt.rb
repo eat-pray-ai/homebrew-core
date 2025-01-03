@@ -1,25 +1,22 @@
 class Pyqt < Formula
   desc "Python bindings for v6 of Qt"
   homepage "https://www.riverbankcomputing.com/software/pyqt/intro"
-  url "https://files.pythonhosted.org/packages/ce/c6/99127e39e62f0c887a39d9644012867874a68983bd0fe641f00aa796de88/PyQt6-6.7.0.tar.gz"
-  sha256 "3d31b2c59dc378ee26e16586d9469842483588142fc377280aad22aaf2fa6235"
+  url "https://files.pythonhosted.org/packages/d1/f9/b0c2ba758b14a7219e076138ea1e738c068bf388e64eee68f3df4fc96f5a/PyQt6-6.7.1.tar.gz"
+  sha256 "3672a82ccd3a62e99ab200a13903421e2928e399fda25ced98d140313ad59cb9"
   license "GPL-3.0-only"
+  revision 2
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "ff5ebac9070a5f9d15442ff0981eb5690dd9cf668fbcef8cbd53dd24ffaed2ad"
-    sha256 cellar: :any,                 arm64_ventura:  "ec3abbbc7751faabf34fa388100d9685acabbd788428d71a2d998e1ba7379fa5"
-    sha256 cellar: :any,                 arm64_monterey: "796c48191e9685b5d4184a4d676cbedd5caefcba0094854cb4e4b2231ec35264"
-    sha256 cellar: :any,                 sonoma:         "14468a809fdc8f2d80c6b4418e17ff6594ec5a8e562cfabfb6275a66194480ec"
-    sha256 cellar: :any,                 ventura:        "73c9d46adae4ce63e55848875bd1c013dc20464b19d8528d6dd735ad39e6c8a6"
-    sha256 cellar: :any,                 monterey:       "88c4cd143db46e6a86bce96640c6b1248767ac35ef1699022c3a8da98e15de9e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "e4a6aac19ca0975376890d595ad29dcb5aee9db23b69f52e868bc4280f608e75"
+    sha256 cellar: :any,                 arm64_sonoma:  "115b7fe876382e37b7ec6b780d081a3735d10348563fe3b319c595e71c0c1ede"
+    sha256 cellar: :any,                 arm64_ventura: "ca4e7770dc38d1da7a083545aa5fa7fe93090c1d3ff63602d61bdb81757e711f"
+    sha256 cellar: :any,                 sonoma:        "9dc09304736af3a852083802ed87533d7e4fd8da85219545bfdf96c5551cbc43"
+    sha256 cellar: :any,                 ventura:       "480abb46fd740155ffc7da43f62a5775f12831a4223d1a0b89a3aad445097e52"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "34e48e4167527158ea52ed7eaf99c18ba4ffffa03325e7844771e639416e3096"
   end
 
   depends_on "pyqt-builder" => :build
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "qt"
-
-  fails_with gcc: "5"
 
   # extra components
   resource "pyqt6-3d" do
@@ -43,8 +40,8 @@ class Pyqt < Formula
   end
 
   resource "pyqt6-sip" do
-    url "https://files.pythonhosted.org/packages/98/23/e54e02a44afc357ccab1b88575b90729664164358ceffde43e4f2e549daa/PyQt6_sip-13.6.0.tar.gz"
-    sha256 "2486e1588071943d4f6657ba09096dc9fffd2322ad2c30041e78ea3f037b5778"
+    url "https://files.pythonhosted.org/packages/e9/b7/95ac49b181096ef40144ef05aff8de7c9657de7916a70533d202ed9f0fd2/PyQt6_sip-13.8.0.tar.gz"
+    sha256 "2f74cf3d6d9cab5152bd9f49d570b2dfb87553ebb5c4919abfde27f5b9fd69d4"
   end
 
   resource "pyqt6-webengine" do
@@ -53,7 +50,7 @@ class Pyqt < Formula
   end
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def install
@@ -79,10 +76,10 @@ class Pyqt < Formula
       next if r.name == "pyqt6-webengine" && OS.mac? && DevelopmentTools.clang_build_version <= 1200
 
       r.stage do
-        inreplace "pyproject.toml", "[tool.sip.project]", <<~EOS
+        inreplace "pyproject.toml", "[tool.sip.project]", <<~TOML
           [tool.sip.project]
           sip-include-dirs = ["#{site_packages}/PyQt#{version.major}/bindings"]
-        EOS
+        TOML
         system sip_install, "--target-dir", site_packages
       end
     end
@@ -115,6 +112,6 @@ class Pyqt < Formula
     pyqt_modules.each { |mod| system python3, "-c", "import PyQt#{version.major}.Qt#{mod}" }
 
     # Make sure plugin is installed as it currently gets skipped on wheel build,  e.g. `pip install`
-    assert_predicate share/"qt/plugins/designer"/shared_library("libpyqt#{version.major}"), :exist?
+    assert_path_exists share/"qt/plugins/designer"/shared_library("libpyqt#{version.major}")
   end
 end

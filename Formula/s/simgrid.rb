@@ -3,10 +3,10 @@ class Simgrid < Formula
 
   desc "Studies behavior of large-scale distributed systems"
   homepage "https://simgrid.org/"
-  url "https://gitlab.inria.fr/simgrid/simgrid/-/archive/v3.35/simgrid-v3.35.tar.bz2"
-  sha256 "de4c34ea424d99702419736e51cb5ad425dc01502a39f303128483a70405c473"
+  url "https://gitlab.inria.fr/simgrid/simgrid/-/archive/v3.36/simgrid-v3.36.tar.bz2"
+  sha256 "408289f3d9b2eb2fb9d4904348437a035c6befa4197028c617ab2ef6e8e1260f"
   license "LGPL-2.1-only"
-  revision 2
+  revision 1
 
   livecheck do
     url :homepage
@@ -14,13 +14,12 @@ class Simgrid < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "8d96b3df03cb0acee23b19b114431ee60ce83ff9be7ea7f5c8ef5945a89bde10"
-    sha256 arm64_ventura:  "67899be53148fda6745f98f0fd44eecc37d106212d8059ccbb249f955656e3a6"
-    sha256 arm64_monterey: "5946e04472ab8d3685a8f67a275697e3aa4443d1fde7a2b4d47a7f74ff3ee493"
-    sha256 sonoma:         "ebc1a6c4cefe4348425e42959e81feecd15c84b6d6cb71ac1e1456bbbc5e0984"
-    sha256 ventura:        "95789997999efce593fe87226a59230c7d58174fb973ee7dd4ea2af019c26877"
-    sha256 monterey:       "e989ee84ea89342b955ee00ac70b2a951720e0a36122e7736da7927258fa0963"
-    sha256 x86_64_linux:   "72b3b0404b3dc8cdfbdd8c029ae59ea5456900287c0d6af2b3eacf07c80aeb7a"
+    sha256 arm64_sequoia: "54a68e0bf87d40ff1e916b5a435bcf49feed3f986ad4be41927e7fac812dd4d2"
+    sha256 arm64_sonoma:  "7655403fedb6b333b75d805cc27710c5a74db2c4587f8014a063d03dc346ecf0"
+    sha256 arm64_ventura: "4e5f188e958a0df7c16f390f5f841f6ca0910600ffc594cf199b5f2a82dc2f17"
+    sha256 sonoma:        "cb12adfc59a96236ee7869c9b66d9777b07ce36895abb7a075a0b4cb6143c012"
+    sha256 ventura:       "ef5c294ed30a2a33d80233ac8fab044bc333e5b166d63acc823b812a834a693c"
+    sha256 x86_64_linux:  "5ce6ee0872d4bbe238bcee075b8bfc59e870fb5dd8880195957b57e9ef71e18b"
   end
 
   depends_on "cmake" => :build
@@ -29,8 +28,6 @@ class Simgrid < Formula
   depends_on "graphviz"
 
   uses_from_macos "python", since: :catalina
-
-  fails_with gcc: "5"
 
   def install
     # Avoid superenv shim references
@@ -53,7 +50,7 @@ class Simgrid < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <stdio.h>
       #include <stdlib.h>
       #include <simgrid/engine.h>
@@ -62,7 +59,7 @@ class Simgrid < Formula
         printf("%f", simgrid_get_clock());
         return 0;
       }
-    EOS
+    C
 
     system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-lsimgrid",
                    "-o", "test"

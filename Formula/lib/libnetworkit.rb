@@ -10,6 +10,7 @@ class Libnetworkit < Formula
   end
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "ffb3aa63de3e3cb1f54e74b8b82c52e9483eb095b872cbfa1160760227594b6f"
     sha256 cellar: :any,                 arm64_sonoma:   "35247ec81aa371424653681f3d267f554791441ec7097fe1f0531498581091fe"
     sha256 cellar: :any,                 arm64_ventura:  "62f3647720ab3848ab4db7e5b437c3cb895f0f92ceb282ef3a8c436251566841"
     sha256 cellar: :any,                 arm64_monterey: "b8e918851ccbb196bcf2bc59183f4ac6cd4b35144d2b65626f3639a0d1a47174"
@@ -27,8 +28,6 @@ class Libnetworkit < Formula
     depends_on "libomp"
   end
 
-  fails_with gcc: "5"
-
   def install
     system "cmake", "-S", ".", "-B", "build",
                     "-DNETWORKIT_EXT_TLX=#{Formula["tlx"].opt_prefix}",
@@ -39,7 +38,7 @@ class Libnetworkit < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <networkit/graph/Graph.hpp>
       int main()
       {
@@ -47,7 +46,7 @@ class Libnetworkit < Formula
         NetworKit::Graph g(5);
         return 0;
       }
-    EOS
+    CPP
     omp_flags = OS.mac? ? ["-I#{Formula["libomp"].opt_include}"] : []
     system ENV.cxx, "-std=c++17", "test.cpp", "-L#{lib}", "-lnetworkit", "-o", "test", *omp_flags
     system "./test"

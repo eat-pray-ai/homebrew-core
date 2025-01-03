@@ -1,18 +1,19 @@
 class Powerman < Formula
   desc "Control (remotely and in parallel) switched power distribution units"
   homepage "https://github.com/chaos/powerman"
-  url "https://github.com/chaos/powerman/releases/download/v2.4.2/powerman-2.4.2.tar.gz"
-  sha256 "8465d1669745a72e3822fdc73f3e4a06737d8579a59190fef0b8aa259d7fc13f"
+  url "https://github.com/chaos/powerman/releases/download/v2.4.4/powerman-2.4.4.tar.gz"
+  sha256 "d675502144bc0875def92dad4c0efc6d43bc81c78d6fdb09ebc5f3558b3b7c85"
   license "GPL-2.0-or-later"
 
   bottle do
-    sha256 arm64_sonoma:   "449897522c30bbf6038ec585e5468431a9375b7c60181cc69205f3e32727d6c8"
-    sha256 arm64_ventura:  "b2575429a427c64419b73cec8cfefd025c5c63115a5bd9fc74591dcb1472d6f0"
-    sha256 arm64_monterey: "1b34a44d3c1b602cc3f626202599fc35da5227625a114f197c6a8b4851b27502"
-    sha256 sonoma:         "bedfb4bc34c7a486261dec7d938e161e468bfd1306d6faa19ef119105766b71e"
-    sha256 ventura:        "ff90dab0175a46c5d69fc7fcf2f496e3f2bc7cd2d6bcbec995cfd224af552f6d"
-    sha256 monterey:       "41364ffc8b3ad19c29757b462b15955c46884f20030c1b704499045f81d5f961"
-    sha256 x86_64_linux:   "6337235e996ed7cf93257f77da3788f6a0bb61e707cdb5e016736fe2063d345e"
+    sha256 arm64_sequoia:  "54a0c75c35b58a6eb25dc9f56b019643b33fbfcc3b71f6d1316f2eb32447eb11"
+    sha256 arm64_sonoma:   "6274589c50d20da83fdc311f6810716088ecdeab30dd079faffd7622694ae8ae"
+    sha256 arm64_ventura:  "bed3bba37a720c974c0752e1026bafabf8c6c647b6cb344a372d3354429a15ee"
+    sha256 arm64_monterey: "e218e0db90cd2e380ebfd077218c11dd0431006677e34a30fd253b73a3bdffaa"
+    sha256 sonoma:         "86b2910601c00324092ad76240a00179fc9f957131804f621bd06f54af35d826"
+    sha256 ventura:        "0e043048d342891a2062efc4a573b0d434276eb59401881cb30a90528ebcecbb"
+    sha256 monterey:       "2df1fa862eaa9e2fa6c9af732f77430919cc6664db0a9a1e170029830cc3ea37"
+    sha256 x86_64_linux:   "995393b52583123c1791404fca6de037205ea8b8ae14817c817328a6eb3e7b96"
   end
 
   head do

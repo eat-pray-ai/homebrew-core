@@ -12,6 +12,7 @@ class Srtp < Formula
   end
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "434b6f64c212cee50599b634ff07f3c9204bdf83514793b0e77a71ae1a5988c2"
     sha256 cellar: :any,                 arm64_sonoma:   "f4659edc90366755154d729abdc17c15cd3f0afd5db88a34e113570b123fb32f"
     sha256 cellar: :any,                 arm64_ventura:  "c3ce5d112378cb65da6076012f3e57071e449cec1624aed7cb643c6875325114"
     sha256 cellar: :any,                 arm64_monterey: "d5caefa466b896041eb0eeaf3da044b75d19e63361b3bee650ac7ab99dc79ae7"
@@ -21,11 +22,11 @@ class Srtp < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "eae0dbd9de36ab4ca28ded9160425af7fa9ab1928b5de1d94049866627b514b1"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "openssl@3"
 
   def install
-    system "./configure", "--disable-debug", "--prefix=#{prefix}", "--enable-openssl"
+    system "./configure", "--enable-openssl", *std_configure_args
     system "make", "test"
     system "make", "shared_library"
     system "make", "install" # Can't go in parallel of building the dylib

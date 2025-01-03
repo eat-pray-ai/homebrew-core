@@ -6,6 +6,7 @@ class Tctl < Formula
   license "MIT"
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "7820bd1e43e2d0b5fbbbf20ac2592642c42d2085c2f8ec4c96a98ec609fb6a35"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "ac5e8aca07861abbfb56081050cfb6faa543a8ccb5ce8c800b5f0197de90cbfb"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "aa22864d02f9260322e70777bdf2cb834e697a1bcddd49a84211a7030d743bf3"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "ac4a78dea7bbb2f643e8db88ab808abd9ecaf6c9363017c65346a28a3a4b5e38"
@@ -15,14 +16,16 @@ class Tctl < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "6fe6c1efa47cbfe9750cb68e0c9e413a4e2005d382faf3554202585f71218500"
   end
 
+  deprecate! date: "2024-12-04", because: :unmaintained, replacement: "temporal"
+
   depends_on "go" => :build
 
   conflicts_with "teleport", because: "both install `tctl` binaries"
 
   def install
     system "go", "build", *std_go_args(ldflags: "-s -w"), "./cmd/tctl/main.go"
-    system "go", "build", *std_go_args(ldflags: "-s -w"), "-o", bin/"tctl-authorization-plugin",
-      "./cmd/plugins/tctl-authorization-plugin/main.go"
+    system "go", "build", *std_go_args(ldflags: "-s -w", output: bin/"tctl-authorization-plugin"),
+      "./cmd/plugins/tctl-authorization-plugin"
   end
 
   test do

@@ -6,6 +6,7 @@ class Libxrandr < Formula
   license "MIT"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "e29fec5331c2d36188093a2331d0f2f426c9cb18d21e5335931ee0d0e22e5ec9"
     sha256 cellar: :any,                 arm64_sonoma:   "7775fef1d482d55d108a57bd2cc32c3177eea7270956a2fb648b3683acd54049"
     sha256 cellar: :any,                 arm64_ventura:  "dbc964894d888cc4147af5ca01528a8bfaacff3c9219981267c405bd37e591de"
     sha256 cellar: :any,                 arm64_monterey: "e19d7b1164d1aacee9a9a9f2811f5071fdb649913f3b6a388b11ab56ba65c153"
@@ -15,7 +16,7 @@ class Libxrandr < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "c48b622aed3d5e99e225601dca2d129fda08585571d948f8737f3e6a4bcb2a56"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "libx11"
   depends_on "libxext"
   depends_on "libxrender"
@@ -23,20 +24,18 @@ class Libxrandr < Formula
 
   def install
     args = %W[
-      --prefix=#{prefix}
       --sysconfdir=#{etc}
       --localstatedir=#{var}
-      --disable-dependency-tracking
       --disable-silent-rules
     ]
 
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args
     system "make"
     system "make", "install"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include "X11/Xlib.h"
       #include "X11/extensions/Xrandr.h"
 
@@ -44,7 +43,7 @@ class Libxrandr < Formula
         XRRScreenSize size;
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c"
     assert_equal 0, $CHILD_STATUS.exitstatus
   end

@@ -1,25 +1,24 @@
 class Onefetch < Formula
   desc "Command-line Git information tool"
   homepage "https://onefetch.dev/"
-  url "https://github.com/o2sh/onefetch/archive/refs/tags/2.21.0.tar.gz"
-  sha256 "a035bc44ef0c04a330b409e08ee61ac8a66a56cb672f87a824d4c0349989eaf2"
+  url "https://github.com/o2sh/onefetch/archive/refs/tags/2.23.1.tar.gz"
+  sha256 "72e87f6a62682ad88aa07b02815ee1e2863fe45e04df3bba49026bf3edd10537"
   license "MIT"
   head "https://github.com/o2sh/onefetch.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "3581ef45dadca882bb57a085849fd2ec9ba44c62d677c5ab08d5944a2f4d8a1a"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "9ca90fce57dc18ff55389d3567e3eba0a666a1d3e1c2f52b6bfe810889e6a19c"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "5a091696f43ba20b0a0ba4abcce19d62be22e56782979490c18b8c8f6e733d61"
-    sha256 cellar: :any_skip_relocation, sonoma:         "2bcfdcded391edaecc787c5f1165116cbe194e466ae97c67bd3e3dbe7ee0ed95"
-    sha256 cellar: :any_skip_relocation, ventura:        "481eeab95ebd1df96337c4027ea5a5222609353958ea1ab906828fd076f5f6cf"
-    sha256 cellar: :any_skip_relocation, monterey:       "3c7f7278fd8a8ab9f36dbb6df6a8c49101bf9dd3f130c2989928c5d44ed404ce"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "263294e626cc159116127e22f45443035721cbd2b70f9c81eb7c1b9b633ebdaa"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "2d3993a0b6e343544f34263de289c9c5853d7cef5bb89baa8e34007baf5d29ea"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "68ca98926eb7dd75d60b081b4d8ee23a2d0ac6442ab9bbb4b1b1f493d377cd42"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "8197b79c3f38ee59ab1566c8207a18cacaf29b62f0e18e4b3bcc0290042e2271"
+    sha256 cellar: :any_skip_relocation, sonoma:        "75d5a293661170fc68a59e9eec180cd862993a112b890df6baa314ef52c49a88"
+    sha256 cellar: :any_skip_relocation, ventura:       "cb64912fa0eee5b4c21b478b674e7a60f3db7c0c798e64634c4472f74eba92c1"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8eaaca384c0c07d80f8e8364fb651dbb2e95e4b7094634e45c2b951f6b0b2c12"
   end
 
   # `cmake` is used to build `zlib`.
   # upstream issue, https://github.com/rust-lang/libz-sys/issues/147
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
   depends_on "zstd"
 
@@ -33,7 +32,7 @@ class Onefetch < Formula
   end
 
   test do
-    system "#{bin}/onefetch", "--help"
+    system bin/"onefetch", "--help"
     assert_match "onefetch " + version.to_s, shell_output("#{bin}/onefetch -V").chomp
 
     system "git", "init"
@@ -43,6 +42,6 @@ class Onefetch < Formula
     (testpath/"main.rb").write "puts 'Hello, world'\n"
     system "git", "add", "main.rb"
     system "git", "commit", "-m", "First commit"
-    assert_match("Ruby (100.0 %)", shell_output("#{bin}/onefetch").chomp)
+    assert_match("Ruby (100.0 %)", shell_output(bin/"onefetch").chomp)
   end
 end

@@ -6,6 +6,7 @@ class Retry < Formula
   license "Apache-2.0"
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "ba9aabeed58659b5bb810b2cc266bcce7b9bdafa7767bd553b362e1add65e062"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "fab2637e747061b35b938d0ec128394c62e5c6322913ca9e36a780ac7cf7baf5"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "1c9090a16f0e8aec18d85a0d997c64864332cccbeb036e91144f83e418d2e24b"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "43ed02da4008539afbb274d2801b3dc84b52e7a47a43fe441aed74c5ccce93c3"
@@ -15,30 +16,26 @@ class Retry < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "08c9b562e484816df97ec9ffdb6849201f5e5958397269087f90dbc478b1e354"
   end
 
-  uses_from_macos "curl" => :test
-
   def install
-    system "./configure", *std_configure_args, "--disable-silent-rules"
+    system "./configure", "--disable-silent-rules", *std_configure_args
     system "make", "install"
   end
 
   test do
     require "socket"
     port = free_port
-    command = "#{bin}/retry --delay 1 --until 0,28 -- curl --max-time 1 telnet://localhost:#{port}"
-    _, stdout = Open3.popen2e(command)
-    sleep 3
+    args = %W[--delay 1 --until 0,28 -- curl --max-time 1 telnet://localhost:#{port}]
+    Open3.popen2e(bin/"retry", *args) do |_, stdout_and_stderr|
+      sleep 3
+      assert_match "curl returned 7", stdout_and_stderr.read_nonblock(1024)
 
-    assert_match "curl returned 7", stdout.read_nonblock(1024)
+      TCPServer.open(port) do |server|
+        session = server.accept
+        session.puts "Hello world!"
+        session.close
+      end
 
-    fork do
-      server = TCPServer.new port
-      session = server.accept
-      session.puts "Hello world!"
-      session.close
-      server.close
+      assert_match "Hello world!", stdout_and_stderr.read
     end
-
-    assert_match "Hello world!", stdout.read
   end
 end

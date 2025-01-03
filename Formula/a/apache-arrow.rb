@@ -1,38 +1,37 @@
 class ApacheArrow < Formula
   desc "Columnar in-memory analytics layer designed to accelerate big data"
   homepage "https://arrow.apache.org/"
-  url "https://www.apache.org/dyn/closer.lua?path=arrow/arrow-16.1.0/apache-arrow-16.1.0.tar.gz"
-  mirror "https://archive.apache.org/dist/arrow/arrow-16.1.0/apache-arrow-16.1.0.tar.gz"
-  sha256 "c9e60c7e87e59383d21b20dc874b17153729ee153264af6d21654b7dff2c60d7"
+  url "https://www.apache.org/dyn/closer.lua?path=arrow/arrow-18.1.0/apache-arrow-18.1.0.tar.gz"
+  mirror "https://archive.apache.org/dist/arrow/arrow-18.1.0/apache-arrow-18.1.0.tar.gz"
+  sha256 "2dc8da5f8796afe213ecc5e5aba85bb82d91520eff3cf315784a52d0fa61d7fc"
   license "Apache-2.0"
-  revision 2
+  revision 4
   head "https://github.com/apache/arrow.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "9baa7213cade7b48b74d57de30af4eeed924b3c5e313c2c5ed46759bfcac04d7"
-    sha256 cellar: :any,                 arm64_ventura:  "9f7416e7e355c5482ccde0a74bf90d4b7812fb9d73f0f62771d8df2e5e87d70d"
-    sha256 cellar: :any,                 arm64_monterey: "dbbc34467a945e6ae1e7b418d728efd689d5d73bafba3e366311dfcac0c1498b"
-    sha256 cellar: :any,                 sonoma:         "9d570f10cee6ad8946e45ff1c31c4c51f04215db9c05037c9136ed7799e7d778"
-    sha256 cellar: :any,                 ventura:        "e7315737b25c8532c72ff24e72f7f9e8ecd0cc9b9319ae25190d34281f48bc64"
-    sha256 cellar: :any,                 monterey:       "13a737d89d014ff6b12406ce9b8dc29d3988a32422e0c5bbf47da9ff3a2f2da6"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "da1e2105a5907ac4083fce69fdcacbf743db349c9e854bff98f9765d3fc63258"
+    sha256 cellar: :any,                 arm64_sequoia: "365dbe9722456dbb3c41c13c8c939ae519008d60fd48a57d6e581290a540a83b"
+    sha256 cellar: :any,                 arm64_sonoma:  "37c4d21830e414964627268e60d558340bb4e84a236bd5559e00f742ecd4e170"
+    sha256 cellar: :any,                 arm64_ventura: "2ed61140c2acd7c800868228c7681403754cf3ce8b043feedc3bea8ff74ab433"
+    sha256 cellar: :any,                 sonoma:        "d5f91bce2a00954bcc433bcf2a63a46f77a62b454258e1fbabcaec3d3295a7fa"
+    sha256 cellar: :any,                 ventura:       "aa065ac9d32ada2f3017d8b0795a69d04fae9d3ca9a113442979089e290b6631"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a6d92852cdcbbdef86b35753634735d2d4c0abfd55628ad7b97dfe4d9c63cc2f"
   end
 
   depends_on "boost" => :build
   depends_on "cmake" => :build
+  depends_on "gflags" => :build
   depends_on "ninja" => :build
+  depends_on "rapidjson" => :build
+  depends_on "xsimd" => :build
   depends_on "abseil"
   depends_on "aws-sdk-cpp"
   depends_on "brotli"
-  depends_on "bzip2"
   depends_on "c-ares"
-  depends_on "glog"
   depends_on "grpc"
   depends_on "llvm"
   depends_on "lz4"
   depends_on "openssl@3"
   depends_on "protobuf"
-  depends_on "rapidjson"
   depends_on "re2"
   depends_on "snappy"
   depends_on "thrift"
@@ -40,20 +39,23 @@ class ApacheArrow < Formula
   depends_on "zstd"
 
   uses_from_macos "python" => :build
+  uses_from_macos "bzip2"
   uses_from_macos "zlib"
 
-  fails_with gcc: "5"
+  # Issue ref: https://github.com/protocolbuffers/protobuf/issues/19447
+  fails_with :gcc do
+    version "12"
+    cause "Protobuf 29+ generated code with visibility and deprecated attributes needs GCC 13+"
+  end
 
   def install
-    # Work around an Xcode 15 linker issue which causes linkage against LLVM's
-    # libunwind due to it being present in a library search path.
-    llvm = Formula["llvm"]
-    ENV.remove "HOMEBREW_LIBRARY_PATHS", llvm.opt_lib if DevelopmentTools.clang_build_version >= 1500
+    ENV.llvm_clang if OS.linux?
 
     # We set `ARROW_ORC=OFF` because it fails to build with Protobuf 27.0
     args = %W[
       -DCMAKE_INSTALL_RPATH=#{rpath}
-      -DLLVM_ROOT=#{llvm.opt_prefix}
+      -DLLVM_ROOT=#{Formula["llvm"].opt_prefix}
+      -DARROW_DEPENDENCY_SOURCE=SYSTEM
       -DARROW_ACERO=ON
       -DARROW_COMPUTE=ON
       -DARROW_CSV=ON
@@ -88,13 +90,15 @@ class ApacheArrow < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    ENV.method(DevelopmentTools.default_compiler).call if OS.linux?
+
+    (testpath/"test.cpp").write <<~CPP
       #include "arrow/api.h"
       int main(void) {
         arrow::int64();
         return 0;
       }
-    EOS
+    CPP
     system ENV.cxx, "test.cpp", "-std=c++17", "-I#{include}", "-L#{lib}", "-larrow", "-o", "test"
     system "./test"
   end

@@ -1,36 +1,59 @@
 class Prr < Formula
   desc "Mailing list style code reviews for github"
   homepage "https://github.com/danobi/prr"
-  url "https://github.com/danobi/prr/archive/refs/tags/v0.18.0.tar.gz"
-  sha256 "3c32911854a33a1a7870382db0e759923315ec943b5d43dec42d751820473094"
   license "GPL-2.0-only"
+  revision 2
   head "https://github.com/danobi/prr.git", branch: "master"
 
-  bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "a41eaf83c87805e346322d8b5d70b2510b121c4a12fc8afea76d0dc422605d32"
-    sha256 cellar: :any,                 arm64_ventura:  "3e372a872a907dae516ced9fc6b9249d91393ce9e7406656f2db611afb921bfb"
-    sha256 cellar: :any,                 arm64_monterey: "dd4711d7fb1e746f81aa958d359feaded9beb6b0c1b8fb472cc73f96e969236a"
-    sha256 cellar: :any,                 sonoma:         "c5f8b4fff81e8e58789786b419b09fa8727ca33a7ccb1857cb2cf168c8dc6423"
-    sha256 cellar: :any,                 ventura:        "f709f6934727a3cb9626883f698a03dc1e818a2937266de8cd5087d0fb99f57e"
-    sha256 cellar: :any,                 monterey:       "eaff2deac7e7b0fb1bfa75d352eac30391fbc85a07e437549543a843ae3111fe"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3c95b6520f8088895a53baf6b32b335d513d4deb0e2c021195db43476e5311f6"
+  stable do
+    url "https://github.com/danobi/prr/archive/refs/tags/v0.19.0.tar.gz"
+    sha256 "76d101fefe42456d0c18a64e6f57b9d3a84baaecaf1e3a5e94b93657a6773c11"
+
+    # support libgit2 1.8, upstream pr ref, https://github.com/MitMaro/git-interactive-rebase-tool/pull/948
+    patch do
+      url "https://github.com/danobi/prr/commit/c860f3d29c3607b10885e6526bea4cfd242815b5.patch?full_index=1"
+      sha256 "208bbbdf4358f98c01b567146d0da2d1717caa53e4d2e5ea55ae29f5adaaaae2"
+    end
+
+    # completion and manpage support, upstream pr ref, https://github.com/danobi/prr/pull/68
+    patch do
+      url "https://github.com/danobi/prr/commit/8ba7fdc2fcca86236311c65481af5b27a276a806.patch?full_index=1"
+      sha256 "f74882907e25bc1af3e1556407c84e5477b3d7be3e51a2b40178ae17aaafaa0d"
+    end
   end
 
-  depends_on "pkg-config" => :build
+  bottle do
+    sha256 cellar: :any,                 arm64_sequoia: "55088b52450bbe27b38177e4c0dbac2480defc15dc48e66aaf03c834178803b0"
+    sha256 cellar: :any,                 arm64_sonoma:  "bd278e9e68140e02e6841496f7d84c6092f06390c7a525b4a5dbb8b5a1377fdc"
+    sha256 cellar: :any,                 arm64_ventura: "c9e7b1a6479fd33c34d1be401fb6fc4145e36a642884bfeedb1574b323f4c1d6"
+    sha256 cellar: :any,                 sonoma:        "a40a5696842f03b31a694ace93ce5775c42b747e42915a901031d487e2319580"
+    sha256 cellar: :any,                 ventura:       "c79aa8de4e7ea6477ca584cca5261dcb7a955b3e845ea5321d1afa33c0344859"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5a878aed66f84e1e1be4885647859eaef4676cab25dae269aea0855203f10874"
+  end
+
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
-  depends_on "libgit2"
+  depends_on "libgit2@1.8" # needs https://github.com/rust-lang/git2-rs/issues/1109 to support libgit2 1.9
   depends_on "openssl@3"
 
   uses_from_macos "zlib"
 
   def install
+    ENV["LIBGIT2_NO_VENDOR"] = "1"
     # Ensure the declared `openssl@3` dependency will be picked up.
     # https://docs.rs/openssl/latest/openssl/#manual
     ENV["OPENSSL_DIR"] = Formula["openssl@3"].opt_prefix
     ENV["OPENSSL_NO_VENDOR"] = "1"
 
-    ENV["LIBGIT2_NO_VENDOR"] = "1"
+    # Specify GEN_DIR for shell completions and manpage generation
+    ENV["GEN_DIR"] = buildpath
+
     system "cargo", "install", *std_cargo_args
+
+    bash_completion.install "completions/prr.bash" => "prr"
+    fish_completion.install "completions/prr.fish"
+    zsh_completion.install "completions/_prr"
+    man1.install Dir["man/*.1"]
   end
 
   def check_binary_linkage(binary, library)
@@ -45,7 +68,7 @@ class Prr < Formula
     assert_match "Failed to read config", shell_output("#{bin}/prr get Homebrew/homebrew-core/6 2>&1", 1)
 
     [
-      Formula["libgit2"].opt_lib/shared_library("libgit2"),
+      Formula["libgit2@1.8"].opt_lib/shared_library("libgit2"),
       Formula["openssl@3"].opt_lib/shared_library("libssl"),
       Formula["openssl@3"].opt_lib/shared_library("libcrypto"),
     ].each do |library|

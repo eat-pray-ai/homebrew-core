@@ -1,8 +1,8 @@
 class Nagios < Formula
   desc "Network monitoring and management system"
   homepage "https://www.nagios.org/"
-  url "https://downloads.sourceforge.net/project/nagios/nagios-4.x/nagios-4.5.3/nagios-4.5.3.tar.gz"
-  sha256 "5ad0f9eadcd504d4da41d81c01d1be22e9dc183e851fc74c9083de8359f9a5f4"
+  url "https://downloads.sourceforge.net/project/nagios/nagios-4.x/nagios-4.5.9/nagios-4.5.9.tar.gz"
+  sha256 "b0add4cb7637b46bca8d5b1645ffa2537747649bdc881f228f916539677951ec"
   license "GPL-2.0-only"
 
   livecheck do
@@ -11,21 +11,23 @@ class Nagios < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "d269ea8bf5d0d9783250101155522722a0bdce16b30ec310533269964de7fd8e"
-    sha256 arm64_ventura:  "c225d459e4ee1021a04afb235f3dcc62092c9c896809d8c626d91327c5aadbdd"
-    sha256 arm64_monterey: "1459795551863ad66b1f2c2a91f7a6b0ad29b3588178ceb3c9ad9ea8a74fd0ed"
-    sha256 sonoma:         "6cd0b29b520cbc4a3990f3e4dd1b9cede0ef9c780b618a00bc47e4f84f9c975a"
-    sha256 ventura:        "b04dc13e9027626aa94d63d73a9bc6e8e4dac2ee40a4aa040410fa990b4d85af"
-    sha256 monterey:       "9a75f87c9332ed7378abb8ab1b6a48dbd6fb38ec987190a45a774879ec91d6f4"
-    sha256 x86_64_linux:   "184338ac0cea525eaf728c035d6b4a3aeff2b86a5c24ce9435a7b51dd8b41ab4"
+    sha256 arm64_sequoia: "9646c0ff39a620deeddb386028b140930d4204e62dd67e68d158774c4825c542"
+    sha256 arm64_sonoma:  "c9d84510322c0b776b886faf0fe4fb2b1d238a8203751aeb47d18f4875370473"
+    sha256 arm64_ventura: "a2fbf4c911c2de1b1d135ef9a29882e21a1f6d7e5ccad4f5dde1d5138a72926b"
+    sha256 sonoma:        "d96bd15c74973f9f45dc4b29f0eab5c22ff9dae05206786be854ab9db228759a"
+    sha256 ventura:       "2be2887f399a467087b82119aadbb0e392b58736def5696daf328c9284a5ed9d"
+    sha256 x86_64_linux:  "17ea83b36c6ff5f2cc372297b7398649f4032afdb56bf5c86ae59d4dd20ba100"
   end
 
   depends_on "gd"
   depends_on "libpng"
-  depends_on "nagios-plugins"
   depends_on "openssl@3"
 
   uses_from_macos "unzip"
+
+  on_macos do
+    depends_on "jpeg-turbo"
+  end
 
   def nagios_sbin
     prefix/"cgi-bin"
@@ -92,8 +94,8 @@ class Nagios < Formula
     run [opt_bin/"nagios", etc/"nagios/nagios.cfg"]
     keep_alive true
     require_root true
-    log_path "/dev/null"
-    error_log_path "/dev/null"
+    log_path File::NULL
+    error_log_path File::NULL
   end
 
   test do

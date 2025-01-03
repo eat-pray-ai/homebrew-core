@@ -4,21 +4,20 @@ class ColladaDom < Formula
   url "https://github.com/rdiankov/collada-dom/archive/refs/tags/v2.5.0.tar.gz"
   sha256 "3be672407a7aef60b64ce4b39704b32816b0b28f61ebffd4fbd02c8012901e0d"
   license "MIT"
-  revision 9
+  revision 11
   head "https://github.com/rdiankov/collada-dom.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "1b96ee02cb3ba9976f95da7a9ad8480ae236075e2120f12da228d40bbb0468fc"
-    sha256 cellar: :any,                 arm64_ventura:  "1f9c4e85aff69a46deb4c726ce8bee8989b973c372fbdcb66706c7a1f9c07277"
-    sha256 cellar: :any,                 arm64_monterey: "121ba525d1bb601e360f898692cec0af348756d5edec73df0d701a42ba993350"
-    sha256 cellar: :any,                 sonoma:         "f9e6ed22404314db701d551d9b4d6507b1755689b3b8d930a38b890f4f4552fa"
-    sha256 cellar: :any,                 ventura:        "f1d8fa9ecaab9ec6cf16ab93e4941963c868d0b6a2cbffebd5717f1fbbd5bba8"
-    sha256 cellar: :any,                 monterey:       "75db596eb27853c04f15d4df1bfb5b6dd7b6205e05796f923cba10cec59282d1"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "8a032874ec251f8e8d8efb7a52fca15616e5fe4d66c4eae78b38f3633e2339a3"
+    sha256 cellar: :any,                 arm64_sequoia: "7f2f14ada8f52d59fab95a8daa171a5f8190c082e3e593200715c15e24128758"
+    sha256 cellar: :any,                 arm64_sonoma:  "5751a4df5552a182392748da057b6609ebaf823a9d0f5153e320769ec0c63261"
+    sha256 cellar: :any,                 arm64_ventura: "c1c63c11e7a9cdfe018e8840078db2d38118e68484e8aa97c20327d3d313d5f6"
+    sha256 cellar: :any,                 sonoma:        "183a9d8e0ec094106681fc44295ed04c3b3575407e6fea95cfae3d257704745b"
+    sha256 cellar: :any,                 ventura:       "295fff9dae9857f830805e1edfec4f35a10d80f821c86012549b0d763b2ea02a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "0954666d6fe07b3cc599f72f797c61f9ef3ae2ba51d3c07dfd876bf3fbe26d8a"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "boost"
   depends_on "minizip"
   depends_on "uriparser"
@@ -31,7 +30,7 @@ class ColladaDom < Formula
 
   def install
     # Remove bundled libraries to avoid fallback
-    (buildpath/"dom/external-libs").rmtree
+    rm_r(buildpath/"dom/external-libs")
 
     system "cmake", "-S", ".", "-B", "build", "-DCMAKE_CXX_STANDARD=11", *std_cmake_args
     system "cmake", "--build", "build"
@@ -39,7 +38,7 @@ class ColladaDom < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <iostream>
       #include <dae.h>
       #include <dae/daeDom.h>
@@ -51,7 +50,7 @@ class ColladaDom < Formula
         cout << GetCOLLADA_VERSION() << endl;
         return 0;
       }
-    EOS
+    CPP
     system ENV.cxx, "test.cpp", "-std=c++11", "-I#{include}/collada-dom2.5",
                     "-L#{lib}", "-lcollada-dom2.5-dp", "-o", "test"
 

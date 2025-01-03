@@ -7,6 +7,7 @@ class Libplist < Formula
   head "https://github.com/libimobiledevice/libplist.git", branch: "master"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "3a853be8a0514790551569325c444331c67a8a6de82e6b1fd063fe821bd1ada9"
     sha256 cellar: :any,                 arm64_sonoma:   "6b9ece7854f6db7fcaf6beaf043d83cd1f3dbe54c1208d5ebbd4be56ecc45e05"
     sha256 cellar: :any,                 arm64_ventura:  "65565f4500012d7d9e9930f27f5dd267a841fc10cf762c51a349ece86c9f3e4f"
     sha256 cellar: :any,                 arm64_monterey: "ad1f58b4285197664514657ff118180773884f6de14f2c77031440f01297d2e1"
@@ -19,7 +20,7 @@ class Libplist < Formula
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   def install
     ENV.deparallelize
@@ -29,8 +30,8 @@ class Libplist < Formula
       --without-cython
     ]
 
-    system "./autogen.sh", *std_configure_args, *args if build.head?
-    system "./configure", *std_configure_args, *args if build.stable?
+    system "./autogen.sh", *args, *std_configure_args if build.head?
+    system "./configure", *args, *std_configure_args if build.stable?
     system "make"
     system "make", "install"
   end
@@ -51,7 +52,6 @@ class Libplist < Formula
       </plist>
     EOS
     system bin/"plistutil", "-i", "test.plist", "-o", "test_binary.plist"
-    assert_predicate testpath/"test_binary.plist", :exist?,
-                     "Failed to create converted plist!"
+    assert_path_exists testpath/"test_binary.plist", "Failed to create converted plist!"
   end
 end

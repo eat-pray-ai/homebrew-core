@@ -1,18 +1,17 @@
 class ManifestTool < Formula
   desc "Command-line tool to create and query container image manifest list/indexes"
   homepage "https://github.com/estesp/manifest-tool/"
-  url "https://github.com/estesp/manifest-tool/archive/refs/tags/v2.1.7.tar.gz"
-  sha256 "fcf163faad3aff112593f1e648a750e08014ba83d43739e9a5bb0f0e9f0927ca"
+  url "https://github.com/estesp/manifest-tool/archive/refs/tags/v2.1.9.tar.gz"
+  sha256 "909fa46defbfca664fd05779c7d60e099af87f877ffeea298497e95e3204983d"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "00c822837fcebc8ba92cb2440c5339b1875f267586a612d1407ec666d81494c9"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "472cb9d36b0f005282b790b4f134fe3e436d9b578a74d7b693285fa16c0e984f"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "b5ac24ba9596cac9e41a715f4de5ef50dc8abd3dc4da6209375fed924105b791"
-    sha256 cellar: :any_skip_relocation, sonoma:         "1709b2ce3705956f3c0889e915c9fc51f5668d6ab78ecba89a10e5053807efb8"
-    sha256 cellar: :any_skip_relocation, ventura:        "ef30dbeace12c20e3aa7324c1384280dcc147679ed564ba50f1c79a0618661f4"
-    sha256 cellar: :any_skip_relocation, monterey:       "399bfcb8761a795af3afdefdd093d2bc71723ebd1be93b709f4da4fa4b1592fe"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "523d53eb4737435418928e59af054f978d9f382fdd203c32ea125c0e106d7462"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "f0fa16676503705b0b47fccd329f32d1dfe3ea713de3b5b169599c2dacb91d5e"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "a26c70492d519db60390b6e1e23f9e955d8733094417a9ede31fe06a5cfbe53f"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "e5e2ca74e8db7612d70d251517c2d6aadc57e114c0283e45b6c71b9e085a7709"
+    sha256 cellar: :any_skip_relocation, sonoma:        "94779ecdde3e49fdb93412518e378f4375306b467e2d636b0b10940edfc21855"
+    sha256 cellar: :any_skip_relocation, ventura:       "9ed20c11d7418c6a3a78679865e60d1e002a1e513578f4a5ac191992de1c3c5c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a289ef90b70bbdbdbab4d7dca57db966d2b3d5c3702f4744e2030267b4c08280"
   end
 
   depends_on "go" => :build

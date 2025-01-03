@@ -1,10 +1,8 @@
-require "language/node"
-
 class Renovate < Formula
   desc "Automated dependency updates. Flexible so you don't need to be"
   homepage "https://github.com/renovatebot/renovate"
-  url "https://registry.npmjs.org/renovate/-/renovate-37.426.0.tgz"
-  sha256 "98445acb3f81a9d4e73661af5e98704c35b6b4b1d73df47a5ba4b6abaf73f954"
+  url "https://registry.npmjs.org/renovate/-/renovate-39.90.0.tgz"
+  sha256 "aa7e035f8a51c8765a31a564e2175b65ce61d950bde6a318a4b85fa6da64c672"
   license "AGPL-3.0-only"
 
   # There are thousands of renovate releases on npm and the page the `Npm`
@@ -19,25 +17,24 @@ class Renovate < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "3ccd79274b20d15fa27d5e1330d5cb058e0575c2a0155d94241d044b00f83c79"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "7f553906176a2b863bda68fe959de8e43daa921c8f21ced69d99a04f8493f154"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "d1564d4773a59017d1ecf17e69f4bc3425579ab66e1ccba8c751f242f491d964"
-    sha256 cellar: :any_skip_relocation, sonoma:         "0f6f3999ade2805918bde57c91fcae49e8abeb4bae7088899cc110336b735549"
-    sha256 cellar: :any_skip_relocation, ventura:        "3ea46219657922ea0d2bd372d669090ae90e099e648608ebcff9a2a76d011da1"
-    sha256 cellar: :any_skip_relocation, monterey:       "204c1456b00b902d63e5f104a234d703b99135229e86824e7032f203e1fddde1"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "254e070587011c33f1a72fb6ddaf0226d958d872a10fe2349a2781d629f3895c"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "694dd62297e206615e2e6678facb5d647707fc837fddfc2139004c6ea9666db8"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "29993cf8ef2f2d32a93e42cb83894e57695c08622f372d5e7e333f4200d13449"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "ca8c80472c49dcafbcbfd75fdb631f1b0340fa61f059c7a169baf1c9eb6e6d69"
+    sha256 cellar: :any_skip_relocation, sonoma:        "f447b397023e16b9b54d06765c18c9e6c3f6af675d12dcef5cc74fe3e62cbe9d"
+    sha256 cellar: :any_skip_relocation, ventura:       "25afd77ed89a78065066e155c7d286603a79c126fbe84e5ce004ad5e83d61c5b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e4d5ea9819a64eef59c6b37dd9e2c1f20efee3e7da9763edb9aa745ea8fc1fc9"
   end
 
-  depends_on "node"
+  depends_on "node@22"
 
   uses_from_macos "git", since: :monterey
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+    system "npm", "install", *std_npm_args
     bin.install_symlink Dir["#{libexec}/bin/*"]
   end
 
   test do
-    assert_match "FATAL: You must configure a GitHub token", shell_output("#{bin}/renovate 2>&1", 1)
+    system bin/"renovate", "--platform=local", "--enabled=false"
   end
 end

@@ -1,24 +1,27 @@
 class Grafana < Formula
   desc "Gorgeous metric visualizations and dashboards for timeseries databases"
   homepage "https://grafana.com"
-  url "https://github.com/grafana/grafana/archive/refs/tags/v11.1.0.tar.gz"
-  sha256 "b219cd9670c4d723a6135f317f1ed8dd86262aa25cad9aea1ddcc6830209e7fb"
+  url "https://github.com/grafana/grafana/archive/refs/tags/v11.4.0.tar.gz"
+  sha256 "c3a63aade2a86aa360c9b46f4963e60673fc51bb6c54a088d44dfab5a8fb465e"
   license "AGPL-3.0-only"
   head "https://github.com/grafana/grafana.git", branch: "main"
 
+  livecheck do
+    url :stable
+    regex(/^v?(\d+(?:\.\d+)+)$/i)
+  end
+
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "13910f94278ae43f02379a6fccd67832e2754c4cda58653db882984939090c10"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "bc300c8f9acd97b04ff9ae9c2b038641f3b663b351f815393214a3004dd78d20"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "a53cdf3dc036513d110f94f1ad9b4aa015c680f4e1f3f9965c92b5983e055a98"
-    sha256 cellar: :any_skip_relocation, sonoma:         "ced7df476e9f750d53d30c7eb2870a98b33cbafbc790623203d61899e989f51e"
-    sha256 cellar: :any_skip_relocation, ventura:        "e2709d420ecd9e81b8022e498986ab98cf1ecd498ca812a284b3ffb571042883"
-    sha256 cellar: :any_skip_relocation, monterey:       "64cb90336cba20939a2bedc167d47b7f1684ec6040c31a2b2caad0b3b40a1178"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3c53f793eab6d5a213cd6ac6a2465c741119bc6e49f08c7f25e0da7a5197e3f0"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "2a17c0012f1c42f8e70f6fba36d84daf57ca22d2f62d3b9b1f39c62d78e4d813"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "328dfb28cbd6f001c1bd02d6cafd6478323745d74aa313a13c7f8d8a963702ac"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "f3ecaba2e44418a5833a9f3016e943a0cafb17c6d2f877b901054e6493bfc454"
+    sha256 cellar: :any_skip_relocation, sonoma:        "7bfb9e105d1d73c032a9b8ba8f82fe3b6a31786efa0fb9763f1772b6d8774fd1"
+    sha256 cellar: :any_skip_relocation, ventura:       "758c04af568e1e8fe11db570ad5a5fc9b01e1d7c0d48df59eba66369000df1e6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2aea4ca36d6f641b554129140a095c77e42a07bab768454cacf840fa46a6491f"
   end
 
   depends_on "go" => :build
   depends_on "node" => :build
-  depends_on "yarn" => :build
 
   uses_from_macos "python" => :build, since: :catalina
   uses_from_macos "zlib"
@@ -30,11 +33,15 @@ class Grafana < Formula
 
   def install
     ENV["NODE_OPTIONS"] = "--max-old-space-size=8000"
+
+    ENV["COREPACK_ENABLE_DOWNLOAD_PROMPT"] = "0"
+    system "corepack", "enable", "--install-directory", buildpath
+
     system "make", "gen-go"
     system "go", "run", "build.go", "build"
 
-    system "yarn", "install"
-    system "yarn", "build"
+    system buildpath/"yarn", "install"
+    system buildpath/"yarn", "build"
 
     os = OS.kernel_name.downcase
     arch = Hardware::CPU.intel? ? "amd64" : Hardware::CPU.arch.to_s

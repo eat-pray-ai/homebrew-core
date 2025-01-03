@@ -3,30 +3,24 @@ class Urlscan < Formula
 
   desc "View/select the URLs in an email message or file"
   homepage "https://github.com/firecat53/urlscan"
-  url "https://files.pythonhosted.org/packages/27/23/57d2d0a002a77638c2f3196d24d966209f51c498413ac1758d1680a0f96a/urlscan-1.0.2.tar.gz"
-  sha256 "d909ff180588008faba8a6491e3e0821ad3c8a3b6574b94fd73b8fb11ff302f2"
+  url "https://files.pythonhosted.org/packages/f0/9d/dbb1b7b3bb226a8a796b870cf9325cae53edc36acdf619cf4c5eefe94880/urlscan-1.0.6.tar.gz"
+  sha256 "3bbf8900de23913c29aed27702eaba92a871b2fe95920e72c56a19fff7cb4581"
   license "GPL-2.0-or-later"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "4aa227256b751c0800fc64164b8b34ae6fab1a096f5d8bb4599dafe934e7f83d"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "4aa227256b751c0800fc64164b8b34ae6fab1a096f5d8bb4599dafe934e7f83d"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "4aa227256b751c0800fc64164b8b34ae6fab1a096f5d8bb4599dafe934e7f83d"
-    sha256 cellar: :any_skip_relocation, sonoma:         "4aa227256b751c0800fc64164b8b34ae6fab1a096f5d8bb4599dafe934e7f83d"
-    sha256 cellar: :any_skip_relocation, ventura:        "4aa227256b751c0800fc64164b8b34ae6fab1a096f5d8bb4599dafe934e7f83d"
-    sha256 cellar: :any_skip_relocation, monterey:       "4aa227256b751c0800fc64164b8b34ae6fab1a096f5d8bb4599dafe934e7f83d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "4eafd40467f3ab691249ea1850abc9fea3c9919bc53f4867d7dbd0c6c2483865"
+    sha256 cellar: :any_skip_relocation, all: "be64bb1ca7c78bd13312b59f17f761051b64857476413d41952af71d0d5de7cd"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "typing-extensions" do
-    url "https://files.pythonhosted.org/packages/f6/f3/b827b3ab53b4e3d8513914586dcca61c355fa2ce8252dea4da56e67bf8f2/typing_extensions-4.11.0.tar.gz"
-    sha256 "83f085bd5ca59c80295fc2a82ab5dac679cbe02b9f33f7d83af68e241bea51b0"
+    url "https://files.pythonhosted.org/packages/df/db/f35a00659bc03fec321ba8bce9420de607a1d37f8342eee1863174c69557/typing_extensions-4.12.2.tar.gz"
+    sha256 "1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8"
   end
 
   resource "urwid" do
-    url "https://files.pythonhosted.org/packages/ef/fd/77d351caa11c438c7536bba12ea26bb1f22fe7fd0d9aa65849d4625c3e2d/urwid-2.6.11.tar.gz"
-    sha256 "52770007d734d7387ae0421e7b7769c4c5ec67e91a5f4df54e858e314062e475"
+    url "https://files.pythonhosted.org/packages/98/21/ad23c9e961b2d36d57c63686a6f86768dd945d406323fb58c84f09478530/urwid-2.6.16.tar.gz"
+    sha256 "93ad239939e44c385e64aa00027878b9e5c486d59e855ec8ab5b1e1adcdb32a2"
   end
 
   resource "wcwidth" do

@@ -1,13 +1,13 @@
 class Zls < Formula
   desc "Language Server for Zig"
   homepage "https://github.com/zigtools/zls"
-  url "https://github.com/zigtools/zls.git",
-      tag:      "0.13.0",
-      revision: "a26718049a8657d4da04c331aeced1697bc7652b"
+  url "https://github.com/zigtools/zls/archive/refs/tags/0.13.0.tar.gz"
+  sha256 "2e8046b6b0de765a4bf4bb828345e2badc8b828bc257dc931d0f56b147684d9f"
   license "MIT"
   head "https://github.com/zigtools/zls.git", branch: "master"
 
   bottle do
+    sha256 arm64_sequoia:  "40ae2eed62a206035ef1ac4744f0b29e57c608edc19256d6dbc4e5a04a9e6731"
     sha256 arm64_sonoma:   "ad033c76a56c3e673f5a98b858044b6cce0943e4efc1f65e1808e96e6bc35526"
     sha256 arm64_ventura:  "8cec98eb089329c697832b25e173f6b136c007dfbcb6c3831d6b20df9ca65738"
     sha256 arm64_monterey: "dc17fa3ed91c7f1fe2f3978d5179f1b7d3bf49be1efe432c0de5c7934bc4b984"
@@ -35,11 +35,11 @@ class Zls < Formula
 
   test do
     test_config = testpath/"zls.json"
-    test_config.write <<~EOS
+    test_config.write <<~JSON
       {
         "enable_semantic_tokens": true
       }
-    EOS
+    JSON
 
     json = <<~JSON
       {

@@ -6,6 +6,7 @@ class Libucl < Formula
   license "BSD-2-Clause"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "7fb7a6da5d226f44461cc63016b2b0254ec73ee5506772c98d2c9c12eb5be185"
     sha256 cellar: :any,                 arm64_sonoma:   "00ca25427fee2390ea39e75173ae8c844b816a21bad5b205d76d7961dc81614e"
     sha256 cellar: :any,                 arm64_ventura:  "04ee73714b6d52de15235224a1a4fd72ca07d7e39fc5324e6fcc630a27ecc84f"
     sha256 cellar: :any,                 arm64_monterey: "64174ea202ba8d56e10a61a2835800ad180ae649613184b7e55b801b0a3f260d"
@@ -18,25 +19,22 @@ class Libucl < Formula
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
 
   def install
     system "./autogen.sh"
 
-    args = %W[
-      --disable-debug
-      --disable-dependency-tracking
+    args = %w[
       --disable-silent-rules
       --enable-utils
-      --prefix=#{prefix}
     ]
 
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args
     system "make", "install"
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <ucl++.h>
       #include <string>
       #include <cassert>
@@ -49,7 +47,7 @@ class Libucl < Formula
         assert(obj[std::string("foo")].string_value() == "bar");
         assert(obj[std::string("section")][std::string("flag")].bool_value());
       }
-    EOS
+    CPP
     system ENV.cxx, "-std=c++11", "test.cpp", "-L#{lib}", "-lucl", "-o", "test"
     system "./test"
   end

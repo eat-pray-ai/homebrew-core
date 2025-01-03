@@ -1,8 +1,8 @@
 class OpenjdkAT11 < Formula
   desc "Development kit for the Java programming language"
   homepage "https://openjdk.java.net/"
-  url "https://github.com/openjdk/jdk11u/archive/refs/tags/jdk-11.0.23-ga.tar.gz"
-  sha256 "82bd91cc58909c6b08a8066e8ed8cf3ad09532b250126eb1159390b15db1f9fd"
+  url "https://github.com/openjdk/jdk11u/archive/refs/tags/jdk-11.0.25-ga.tar.gz"
+  sha256 "fc5a473f4679163b65379adbc92083004f7b3ac2402b4ac6097bba8b65443e8e"
   license "GPL-2.0-only"
 
   livecheck do
@@ -11,19 +11,19 @@ class OpenjdkAT11 < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "97ee92fd5b15fbf361ca3193fdaba0140a3c0ad15ec81947b3d01fb714023dcd"
-    sha256 cellar: :any,                 arm64_ventura:  "38c7b2546d8eaf4a0bf22a042e010cedbc79640eb7dae477d84bff0c27e7d16c"
-    sha256 cellar: :any,                 arm64_monterey: "bcfcacdf2ccf7ea5e6d14cd7e8d66c173a5645f35df96900759f64e11edbd996"
-    sha256 cellar: :any,                 sonoma:         "1a9b6c3e121a8e4b14f10da6c8f45e653947765b2878e55892f894f5e4c33149"
-    sha256 cellar: :any,                 ventura:        "5cbca297e8fda3da4ddad43158a0ea8229753c81959e64155165497a07cf4a98"
-    sha256 cellar: :any,                 monterey:       "7aadc5defa8d2398c6a182d84b8e9788f74574e0a1d60993c0439f3f60a713cf"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "217bb1ad9743b7b46f56dcc3fe4dc69cb730130fd71e8b0ca1ed02ed931b97e1"
+    sha256 cellar: :any,                 arm64_sequoia: "b3b0c90700249c9b37ef4700d23ff27d9961a4ccfa516f215b0a9253947aebe5"
+    sha256 cellar: :any,                 arm64_sonoma:  "31115f0ad3f4ef7db6588adc76b127252d2f25b37113fc854b460b3084c3be76"
+    sha256 cellar: :any,                 arm64_ventura: "541d61d7a7387578dbc2df2e9b456ff943e44cbc8753dd2410b57dfdfcefebb1"
+    sha256 cellar: :any,                 sonoma:        "04b76e07395573a6e56039c1bf826d55d2f78e818d0b7a57c687cdd9db68dddd"
+    sha256 cellar: :any,                 ventura:       "b293e8b9e96c0a2bbeab3735d48c1a403aadb76614f0c25593477afe2e91d699"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9aa19e0427499e93e51d6375f47473e029fa46cd45560b2b1323d3ed072a9116"
   end
 
   keg_only :versioned_formula
 
   depends_on "autoconf" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
+  depends_on "freetype"
   depends_on "giflib"
   depends_on "harfbuzz"
   depends_on "jpeg-turbo"
@@ -35,12 +35,38 @@ class OpenjdkAT11 < Formula
   uses_from_macos "zip"
   uses_from_macos "zlib"
 
+  on_macos do
+    if DevelopmentTools.clang_build_version == 1600
+      depends_on "llvm" => :build
+
+      fails_with :clang do
+        cause "fatal error while optimizing exploded image for BUILD_JIGSAW_TOOLS"
+      end
+
+      # Backport fix for UB that errors on LLVM 19
+      patch do
+        url "https://github.com/openjdk/jdk/commit/51be7db96f3fc32a7ddb24f8af19fb4fc0577aaf.patch?full_index=1"
+        sha256 "7fb09ce74a1cf534c976d0ea8aec285c86a832fe4fa016bdf79870ac5574b9a7"
+      end
+
+      # Apply FreeBSD workaround to avoid UB causing failure on recent Clang.
+      # A proper fix requires backport of 8229258[^1] which was previously attempted[^2].
+      #
+      # [^1]: https://bugs.openjdk.org/browse/JDK-8229258
+      # [^2]: https://github.com/openjdk/jdk11u/pull/23
+      patch do
+        url "https://github.com/battleblow/jdk11u/commit/305a68a90c722aa7a7b75589e24d5b5d554c96c1.patch?full_index=1"
+        sha256 "5327c249c379a8db6a9e844e4fb32471506db8b8e3fef1f62f5c0c892684fe15"
+      end
+    end
+  end
+
   on_linux do
     depends_on "alsa-lib"
     depends_on "fontconfig"
-    depends_on "freetype"
     depends_on "libx11"
     depends_on "libxext"
+    depends_on "libxi"
     depends_on "libxrandr"
     depends_on "libxrender"
     depends_on "libxt"
@@ -73,6 +99,16 @@ class OpenjdkAT11 < Formula
   end
 
   def install
+    if DevelopmentTools.clang_build_version == 1600
+      ENV.llvm_clang
+      ENV.remove "HOMEBREW_LIBRARY_PATHS", Formula["llvm"].opt_lib
+      # ptrauth.h is not available in brew LLVM
+      inreplace "src/hotspot/os_cpu/bsd_aarch64/pauth_bsd_aarch64.inline.hpp" do |s|
+        s.sub! "#include <ptrauth.h>", ""
+        s.sub! "return ptrauth_strip(ptr, ptrauth_key_asib);", "return ptr;"
+      end
+    end
+
     boot_jdk = buildpath/"boot-jdk"
     resource("boot-jdk").stage boot_jdk
     boot_jdk /= "Contents/Home" if OS.mac? && !Hardware::CPU.arm?
@@ -95,6 +131,7 @@ class OpenjdkAT11 < Formula
       --with-vendor-vm-bug-url=#{tap.issues_url}
       --without-version-opt
       --without-version-pre
+      --with-freetype=system
       --with-giflib=system
       --with-harfbuzz=system
       --with-lcms=system
@@ -107,8 +144,13 @@ class OpenjdkAT11 < Formula
     args += if OS.mac?
       ldflags << "-headerpad_max_install_names"
 
+      # Allow unbundling `freetype` on macOS
+      inreplace "make/autoconf/lib-freetype.m4", '= "xmacosx"', '= ""'
+
       %W[
         --enable-dtrace
+        --with-freetype-include=#{Formula["freetype"].opt_include}
+        --with-freetype-lib=#{Formula["freetype"].opt_lib}
         --with-sysroot=#{MacOS.sdk_path}
       ]
     else
@@ -116,7 +158,6 @@ class OpenjdkAT11 < Formula
         --with-x=#{HOMEBREW_PREFIX}
         --with-cups=#{HOMEBREW_PREFIX}
         --with-fontconfig=#{HOMEBREW_PREFIX}
-        --with-freetype=system
         --with-stdc++lib=dynamic
       ]
     end
@@ -127,20 +168,18 @@ class OpenjdkAT11 < Formula
     ENV["MAKEFLAGS"] = "JOBS=#{ENV.make_jobs}"
     system "make", "images", "CONF=release"
 
-    cd "build/release/images" do
-      jdk = libexec
-      if OS.mac?
-        libexec.install Dir["jdk-bundle/*"].first => "openjdk.jdk"
-        jdk /= "openjdk.jdk/Contents/Home"
-      else
-        libexec.install Dir["jdk/*"]
-      end
-
-      bin.install_symlink Dir[jdk/"bin/*"]
-      include.install_symlink Dir[jdk/"include/*.h"]
-      include.install_symlink Dir[jdk/"include/*/*.h"]
-      man1.install_symlink Dir[jdk/"man/man1/*"]
+    jdk = libexec
+    if OS.mac?
+      libexec.install Dir["build/release/images/jdk-bundle/*"].first => "openjdk.jdk"
+      jdk /= "openjdk.jdk/Contents/Home"
+    else
+      libexec.install Dir["build/release/images/jdk/*"]
     end
+
+    bin.install_symlink Dir[jdk/"bin/*"]
+    include.install_symlink Dir[jdk/"include/*.h"]
+    include.install_symlink Dir[jdk/"include"/OS.kernel_name.downcase/"*.h"]
+    man1.install_symlink Dir[jdk/"man/man1/*"]
   end
 
   def caveats
@@ -153,13 +192,13 @@ class OpenjdkAT11 < Formula
   end
 
   test do
-    (testpath/"HelloWorld.java").write <<~EOS
+    (testpath/"HelloWorld.java").write <<~JAVA
       class HelloWorld {
         public static void main(String args[]) {
           System.out.println("Hello, world!");
         }
       }
-    EOS
+    JAVA
 
     system bin/"javac", "HelloWorld.java"
 

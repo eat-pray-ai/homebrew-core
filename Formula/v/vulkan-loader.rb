@@ -1,8 +1,8 @@
 class VulkanLoader < Formula
   desc "Vulkan ICD Loader"
   homepage "https://github.com/KhronosGroup/Vulkan-Loader"
-  url "https://github.com/KhronosGroup/Vulkan-Loader/archive/refs/tags/v1.3.280.tar.gz"
-  sha256 "eb0d9cae11b06eb7d306605b97bfefcd31d40def97c7617c765f73f7535e3853"
+  url "https://github.com/KhronosGroup/Vulkan-Loader/archive/refs/tags/v1.4.304.tar.gz"
+  sha256 "368d8281604a3f4dee038bfcc55c44e305031ec67f6e3fdd50cdeb83586c99f9"
   license "Apache-2.0"
   head "https://github.com/KhronosGroup/Vulkan-Loader.git", branch: "main"
 
@@ -12,18 +12,17 @@ class VulkanLoader < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "90735da41b552351e5f41710602c9c38237f87aeaa29b28973ff5e1b86924492"
-    sha256 arm64_ventura:  "ed71ee7fc504c9508de3d6220d411e517ddef0ce67cef140f5c240617ecfe6a5"
-    sha256 arm64_monterey: "2a85311f18331eec45845b3a3a999b085ef80e4e5059b4a2368c12a5714c2fa6"
-    sha256 sonoma:         "efad0a14b534bc0e9ac88c9f3b70e5d169a3d8fd934ba56c70a2e737b60cdd5e"
-    sha256 ventura:        "0b11348e5aaf35d85bcb35a2ace6fc4e447621208ca4fff3fdb99bf52cc735a1"
-    sha256 monterey:       "3793bb2000ccbffee59c3cad05d4c87e407599a5ed198f994b5cafacfeffed23"
-    sha256 x86_64_linux:   "ef6bd356e28113b32d457342b53d745ff8fa88afcdd11dc1a9ef524cd69a4b81"
+    sha256 arm64_sequoia: "d35c80b23b6e2bdfe103466725ea523b1202ff549c3687ccd046aba6dd6e6bff"
+    sha256 arm64_sonoma:  "4d44cc07c46042c54a382671a76870cab6455f33f657e3814191a069d391b2f4"
+    sha256 arm64_ventura: "4518fd3017776d204ee86f433bce70da6b2a36275832f81c3b247dddbd242b75"
+    sha256 sonoma:        "5a6427923ea32d8e0395d57a793341d97b11f345075434c3fb59263cfeccbb91"
+    sha256 ventura:       "59ce83160e137f5dd3917b2da074f0ac02219e23f68303477c67b131a1020817"
+    sha256 x86_64_linux:  "c35a330ed03dad3a49eb9fc735294ac5a6d400e4f4fb04d35332bc9442720c4c"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
-  depends_on "python@3.12" => :build
+  depends_on "pkgconf" => :build
+  depends_on "python@3.13" => :build
   depends_on "vulkan-headers"
 
   on_linux do
@@ -46,14 +45,14 @@ class VulkanLoader < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <vulkan/vulkan_core.h>
       int main() {
         uint32_t version;
         vkEnumerateInstanceVersion(&version);
         return (version >= VK_API_VERSION_1_1) ? 0 : 1;
       }
-    EOS
+    C
     system ENV.cc, "-o", "test", "test.c", "-I#{Formula["vulkan-headers"].opt_include}",
                    "-L#{lib}", "-lvulkan"
     system "./test"

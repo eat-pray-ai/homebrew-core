@@ -1,30 +1,31 @@
 class Pan < Formula
   desc "Usenet newsreader that's good at both text and binaries"
   homepage "https://gitlab.gnome.org/GNOME/pan"
-  url "https://gitlab.gnome.org/GNOME/pan/-/archive/v0.159/pan-v0.159.tar.bz2"
-  sha256 "96f05c4ff60a009969bec79b6ba76b01528186d9c86fce55d158f2b4dc0876e2"
+  url "https://gitlab.gnome.org/GNOME/pan/-/archive/v0.161/pan-v0.161.tar.bz2"
+  sha256 "4c2c34b9e4a13275b73fae4f5dbdb3f857cf6b58c4813a373dd9d67ce37779d9"
   license "GPL-2.0-only"
 
   bottle do
-    sha256 arm64_sonoma:   "54d0b93e0ce8513bde012288e8545fddda341667dc3ff79b67e96342d3959ecf"
-    sha256 arm64_ventura:  "c4ddc501ebde818151ce5724c2d799049f59f1165b2afc8ec01c9f5216d028ac"
-    sha256 arm64_monterey: "440da042ec88422d11264f02ee6dce1f530e8644e602f70f3abf719b8df33610"
-    sha256 sonoma:         "487918c021182d240cf4153a2f7e8680303a4e21ab38deb3b003524565d61497"
-    sha256 ventura:        "6d9cb747b69a89f1cc3d893a1ec88697646e8c2c27275f0dc1f049ca247a2150"
-    sha256 monterey:       "328c72198d69c3b8f5af8c14c366f81d86c9aa61074efa0e29601cd78f6864a9"
-    sha256 x86_64_linux:   "12943f01d60be32ca5f87e8877994a6a46ca6ab3af96d3c3fefdbfec7bde6eeb"
+    sha256 arm64_sequoia: "35f4b99a7bdcb408b9f6a7ec4ea839df25204a73e07cbd2bcf54d4df7524569c"
+    sha256 arm64_sonoma:  "3f55ddfdcfb08f1b827b2c4edfe64cbed1b9d85fdeb8fd15fe88cf569819195b"
+    sha256 arm64_ventura: "4e9d21bdc040a523f50becffca34332b18b54277f6cdb534628bc5e2c33d7083"
+    sha256 sonoma:        "923377d62ba469d533c4eaa7e7f9ec74c1726e839b451bbc12c59d0cb4789a1d"
+    sha256 ventura:       "f9034fe247a568d255d7fe8b477678224971504679006733a61212440df3965e"
+    sha256 x86_64_linux:  "01192961eb2ea62a502ab3da7c28751a97cee269691f3bb12493ad1b58868c16"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "gettext" => :build
+  depends_on "pkgconf" => :build
+
   depends_on "adwaita-icon-theme"
   depends_on "cairo"
   depends_on "enchant"
   depends_on "gdk-pixbuf"
-  depends_on "gettext"
   depends_on "glib"
   depends_on "gmime"
   depends_on "gnutls"
+  depends_on "gspell"
   depends_on "gtk+3"
   depends_on "gtkspell3"
   depends_on "harfbuzz"
@@ -34,6 +35,7 @@ class Pan < Formula
 
   on_macos do
     depends_on "at-spi2-core"
+    depends_on "gettext"
   end
 
   def install

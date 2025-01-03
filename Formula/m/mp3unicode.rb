@@ -12,6 +12,7 @@ class Mp3unicode < Formula
   end
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "6612359fa6921d2c5d688200c5406a41a56a344f0ee288f7cb031fa8171ac4cf"
     sha256 cellar: :any,                 arm64_sonoma:   "eb5436a0aedcfc316d8504fc65d4ddb2e9123aa035b31661ae8e5e98f77f530f"
     sha256 cellar: :any,                 arm64_ventura:  "c9cab3295e2f0715c8427c98d17f8dc4384fe50c30cde51046623de82a32739c"
     sha256 cellar: :any,                 arm64_monterey: "e2f6b5eef63cc1163c65a34fe790a49d41293a35c5f693fd853f982b423141fb"
@@ -39,18 +40,18 @@ class Mp3unicode < Formula
   # no new commits since Dec 2016
   deprecate! date: "2024-04-04", because: :unmaintained
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "taglib"
 
   def install
     ENV.append "ICONV_LIBS", "-liconv" if OS.mac?
 
-    system "autoreconf", "-fvi" if build.head?
-    system "./configure", "--prefix=#{prefix}"
+    system "autoreconf", "--force", "--install", "--verbose" if build.head?
+    system "./configure", *std_configure_args
     system "make", "install"
   end
 
   test do
-    system "#{bin}/mp3unicode", "-s", "ASCII", "-w", test_fixtures("test.mp3")
+    system bin/"mp3unicode", "-s", "ASCII", "-w", test_fixtures("test.mp3")
   end
 end

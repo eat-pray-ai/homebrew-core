@@ -3,9 +3,18 @@ class Pyside < Formula
 
   desc "Official Python bindings for Qt"
   homepage "https://wiki.qt.io/Qt_for_Python"
-  url "https://download.qt.io/official_releases/QtForPython/pyside6/PySide6-6.7.0-src/pyside-setup-everywhere-src-6.7.0.tar.xz"
-  sha256 "82eae370737df5ecf539c165d09d7c81d5fc6153a541b8d3d37b11275f9e3e8f"
-  license all_of: ["GFDL-1.3-only", "GPL-2.0-only", "GPL-3.0-only", "LGPL-3.0-only"]
+  url "https://download.qt.io/official_releases/QtForPython/pyside6/PySide6-6.7.3-src/pyside-setup-everywhere-src-6.7.3.tar.xz"
+  sha256 "a4c414be013d5051a2d10a9a1151e686488a3172c08a57461ea04b0a0ab74e09"
+  # NOTE: We omit some licenses even though they are in SPDX-License-Identifier or LICENSES/ directory:
+  # 1. LicenseRef-Qt-Commercial is removed from "OR" options as non-free
+  # 2. GFDL-1.3-no-invariants-only is only used by not installed docs, e.g. sources/{pyside6,shiboken6}/doc
+  # 3. BSD-3-Clause is only used by not installed examples, tutorials and build scripts
+  # 4. Apache-2.0 is only used by not installed examples
+  license all_of: [
+    { "GPL-3.0-only" => { with: "Qt-GPL-exception-1.0" } },
+    { any_of: ["LGPL-3.0-only", "GPL-2.0-only", "GPL-3.0-only"] },
+  ]
+  revision 1
 
   livecheck do
     url "https://download.qt.io/official_releases/QtForPython/pyside6/"
@@ -13,20 +22,20 @@ class Pyside < Formula
   end
 
   bottle do
-    sha256 cellar: :any, arm64_sonoma:   "f2b5371e496b5bf5c63c2fc225791d66b37905cdd3b1d2a5482b46d08bba977e"
-    sha256 cellar: :any, arm64_ventura:  "2fdb4b589dbd66c6ca3c213ff04ac4135b7ddbf7b5fc049f780b19546a992db0"
-    sha256 cellar: :any, arm64_monterey: "8206ec1cb131fdf33d48bf3e30c434d5ec7d16121603bf130ee92fd48ce1778f"
-    sha256 cellar: :any, sonoma:         "03d185bb327a05d2e842eee24f99e9fd481f4539634a9d7897657b9edacca502"
-    sha256 cellar: :any, ventura:        "0d7af02711c1e15479bf821ec62575c25a10e9d04470dcaefea8d81d70cd5252"
-    sha256 cellar: :any, monterey:       "5b9832524e7f3e2bc3d60cc5676bd8b444f873a8c7640cb0e596a8bac52086cb"
+    sha256 cellar: :any,                 arm64_sonoma:  "dc93c539db28959cf90f3007bafa5aee52051e79a594e78625dc076712512471"
+    sha256 cellar: :any,                 arm64_ventura: "f5e321f36f4f35a16e504ca5c856464cfba8680cddf98714e1aca3a01bc6e64c"
+    sha256 cellar: :any,                 sonoma:        "2264961ab93c38f68e224ab9b6ccc1ee2f9b48cecbac234861ca0933e0ac7a86"
+    sha256 cellar: :any,                 ventura:       "d142edf80b5c8a07e40d56e260f3ba08ed879deedd8ebeaea0bb1580a5b26093"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "242f0b1bf3dd12c40c30b8b58b55a770a3e32e3ef4824e6fafdd99e0cd5bc538"
   end
 
   depends_on "cmake" => :build
   depends_on "ninja" => :build
   depends_on "python-setuptools" => :build
   depends_on xcode: :build
+  depends_on "pkgconf" => :test
   depends_on "llvm"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "qt"
 
   uses_from_macos "libxml2"
@@ -36,14 +45,12 @@ class Pyside < Formula
     depends_on "mesa"
   end
 
-  fails_with gcc: "5"
-
   # Fix .../sources/pyside6/qtexampleicons/module.c:4:10: fatal error: 'Python.h' file not found
   # Upstream issue: https://bugreports.qt.io/browse/PYSIDE-2491
   patch :DATA
 
   def python3
-    "python3.12"
+    "python3.13"
   end
 
   def install
@@ -76,9 +83,9 @@ class Pyside < Formula
                      "-DPYTHON_EXECUTABLE=#{which(python3)}",
                      "-DBUILD_TESTS=OFF",
                      "-DNO_QT_TOOLS=yes",
-                     "-DFORCE_LIMITED_API=yes",
+                     # Limited API (maybe combined with keg relocation) breaks the Linux bottle
+                     "-DFORCE_LIMITED_API=#{OS.mac? ? "yes" : "no"}",
                      *std_cmake_args
-
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end
@@ -111,7 +118,7 @@ class Pyside < Formula
       ]
     end
 
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <shiboken.h>
       int main()
       {
@@ -120,11 +127,9 @@ class Pyside < Formula
         assert(!module.isNull());
         return 0;
       }
-    EOS
-    system ENV.cxx, "-std=c++17", "test.cpp",
-                    "-I#{include}/shiboken6",
-                    "-L#{lib}", "-lshiboken6.abi3",
-                    *pyincludes, *pylib, "-o", "test"
+    CPP
+    shiboken_flags = shell_output("pkgconf --cflags --libs shiboken6").chomp.split
+    system ENV.cxx, "-std=c++17", "test.cpp", *shiboken_flags, *pyincludes, *pylib, "-o", "test"
     system "./test"
   end
 end

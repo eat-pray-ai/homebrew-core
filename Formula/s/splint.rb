@@ -16,6 +16,7 @@ class Splint < Formula
 
   bottle do
     rebuild 1
+    sha256                               arm64_sequoia:  "71b5c97c68f8d10d646955b1111d8556dc2f0ab90136dafd78f5beb673533fb3"
     sha256                               arm64_sonoma:   "b7570a4d7dbb53a9da6cc06e69bb7fd2a850829fe93ea39ffc14f494c4b1c58b"
     sha256                               arm64_ventura:  "6aae55c464e14dde1a9aa9f49da8e30d8184fcf12fbe06a9e913e1fc313455fa"
     sha256                               arm64_monterey: "f47715d1e6f0f201c2486f0d788fd138e89b86cd0c11477b3e5576fa49cffc83"
@@ -52,7 +53,7 @@ class Splint < Formula
 
   test do
     path = testpath/"test.c"
-    path.write <<~EOS
+    path.write <<~C
       #include <stdio.h>
       int main()
       {
@@ -60,7 +61,7 @@ class Splint < Formula
           printf("%c", c);
           return 0;
       }
-    EOS
+    C
 
     output = shell_output("#{bin}/splint #{path} 2>&1", 1)
     assert_match(/5:18:\s+Variable c used before definition/, output)

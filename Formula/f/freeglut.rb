@@ -6,6 +6,7 @@ class Freeglut < Formula
   license "MIT"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "15142599aa482cf0cd446ae930ea18cc39d0244ac980254ab1f97b135000e1af"
     sha256 cellar: :any,                 arm64_sonoma:   "cbd441a4a55c8b7db3732964e1dea5709fc7a9698a3bfc8df498f306a19b7df9"
     sha256 cellar: :any,                 arm64_ventura:  "9e1d3f9c8cedb8b611e66158e898d46bbcb4e28aaf5280536917b0f30b207cb7"
     sha256 cellar: :any,                 arm64_monterey: "02606145d1a13b1a22e9ce8b61c61701dd903b17aa962f9abbdfe558cc3e00ca"
@@ -16,7 +17,7 @@ class Freeglut < Formula
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :test
+  depends_on "pkgconf" => :test
   depends_on "libx11"
   depends_on "libxi"
   depends_on "libxrandr"
@@ -37,7 +38,7 @@ class Freeglut < Formula
     args = %W[
       -DFREEGLUT_BUILD_DEMOS=OFF
       -DOPENGL_INCLUDE_DIR=#{Formula["mesa"].include}
-      -DOPENGL_gl_LIBRARY=#{Formula["mesa"].lib}/#{shared_library("libGL")}
+      -DOPENGL_gl_LIBRARY=#{Formula["mesa"].lib/shared_library("libGL")}
     ]
     system "cmake", *std_cmake_args, *args, "."
     system "make", "all"
@@ -46,7 +47,7 @@ class Freeglut < Formula
 
   test do
     resource("init_error_func.c").stage(testpath)
-    flags = shell_output("pkg-config --cflags --libs glut gl xext x11").chomp.split
+    flags = shell_output("pkgconf --cflags --libs glut gl xext x11").chomp.split
     system ENV.cc, "init_error_func.c", "-o", "init_error_func", *flags
     assert_match "Entering user defined error handler", shell_output("./init_error_func 2>&1", 1)
   end

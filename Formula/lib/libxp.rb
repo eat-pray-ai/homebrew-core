@@ -11,6 +11,7 @@ class Libxp < Formula
   end
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "58ea4743cac65c66cd744b26ab6cd8e83a282e2da52ef872898e2237c948b563"
     sha256 cellar: :any,                 arm64_sonoma:   "ebdf40af1b62e90da723be29ff1c9a2f636bb09dbd7b4caa69975f2928123c71"
     sha256 cellar: :any,                 arm64_ventura:  "f92106b34661b7a8d39636a544ee208e724b2ac68395ca4a9b2ef264359190f9"
     sha256 cellar: :any,                 arm64_monterey: "c2e8285bdd8edb318e57e2b9d47e692d283cc05ac7ba811468ce946a9070fa1f"
@@ -26,7 +27,7 @@ class Libxp < Formula
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => [:build, :test]
+  depends_on "pkgconf" => [:build, :test]
   depends_on "util-macros" => :build
   depends_on "libx11"
   depends_on "libxext"
@@ -39,23 +40,17 @@ class Libxp < Formula
   def install
     resource("printproto").stage do
       system "sh", "autogen.sh"
-      system "./configure", "--disable-debug",
-                            "--disable-dependency-tracking",
-                            "--disable-silent-rules",
-                            "--prefix=#{prefix}"
+      system "./configure", "--disable-silent-rules", *std_configure_args
       system "make", "install"
     end
 
     ENV.prepend_path "PKG_CONFIG_PATH", "#{lib}/pkgconfig"
     system "sh", "autogen.sh"
-    system "./configure", "--disable-debug",
-                          "--disable-dependency-tracking",
-                          "--disable-silent-rules",
-                          "--prefix=#{prefix}"
+    system "./configure", "--disable-silent-rules", *std_configure_args
     system "make", "install"
   end
 
   test do
-    assert_match "-I#{include}", shell_output("pkg-config --cflags xp").chomp
+    assert_match "-I#{include}", shell_output("pkgconf --cflags xp").chomp
   end
 end

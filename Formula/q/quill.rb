@@ -1,19 +1,17 @@
 class Quill < Formula
   desc "C++17 Asynchronous Low Latency Logging Library"
   homepage "https://github.com/odygrd/quill"
-  url "https://github.com/odygrd/quill/archive/refs/tags/v4.5.0.tar.gz"
-  sha256 "70e8f4a76fd8a83b60d378f31b70dd09a9381686ebafdcd0db08fe099f518309"
+  url "https://github.com/odygrd/quill/archive/refs/tags/v7.5.0.tar.gz"
+  sha256 "18846d7c50f2ffe753661b204004fac2df9143e59cf150ecbe77315bc0b232c4"
   license "MIT"
   head "https://github.com/odygrd/quill.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "5c1568177a7e1445323fa1dba52854c88d1385ef697a7411ee0286c8db6e2a26"
+    sha256 cellar: :any_skip_relocation, all: "1663a1bfbeeaaf362b731548bbf87fe9b8ced0586988b67ea1ff12e90613b56f"
   end
 
   depends_on "cmake" => :build
   depends_on macos: :catalina
-
-  fails_with gcc: "5"
 
   def install
     system "cmake", "-S", ".", "-B", "build", *std_cmake_args
@@ -22,7 +20,7 @@ class Quill < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include "quill/Backend.h"
       #include "quill/Frontend.h"
       #include "quill/LogMacros.h"
@@ -50,7 +48,7 @@ class Quill < Formula
         LOG_TRACE_L2(logger, "Positional arguments are {1} {0} ", "too", "supported");
         LOG_TRACE_L3(logger, "Support for floats {:03.2f}", 1.23456);
       }
-    EOS
+    CPP
 
     system ENV.cxx, "-std=c++17", "test.cpp", "-I#{include}", "-o", "test", "-pthread"
     system "./test"

@@ -7,6 +7,7 @@ class Pdf2svg < Formula
   revision 6
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "d8eeaafdf393cfa6a111959c4b64ded4dc4111c0706a823f25dcbda06c105b92"
     sha256 cellar: :any,                 arm64_sonoma:   "c1ee5db9b628526a6a4cf4bee28826288ca7bb77cd5af8ddf96a24a91f952577"
     sha256 cellar: :any,                 arm64_ventura:  "397a10a14de7d93121d1939aa4428ee31077e8a3f0da4850c49803fef0172805"
     sha256 cellar: :any,                 arm64_monterey: "59c454529b5b0a0f5361f9e46d4e73b9cf13a449690fd9dcb1b9a8eeafc32428"
@@ -20,17 +21,21 @@ class Pdf2svg < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "2524e6d0eecc059f7135c92554ba25a781cb29c32335a6af8d4db24571dd3b82"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "cairo"
+  depends_on "glib"
   depends_on "poppler"
 
+  on_macos do
+    depends_on "gettext"
+  end
+
   def install
-    system "./configure", "--disable-dependency-tracking",
-                          "--prefix=#{prefix}"
+    system "./configure", *std_configure_args.reject { |s| s["--disable-debug"] }
     system "make", "install"
   end
 
   test do
-    system "#{bin}/pdf2svg", test_fixtures("test.pdf"), "test.svg"
+    system bin/"pdf2svg", test_fixtures("test.pdf"), "test.svg"
   end
 end

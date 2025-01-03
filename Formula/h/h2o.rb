@@ -7,6 +7,7 @@ class H2o < Formula
   revision 3
 
   bottle do
+    sha256 arm64_sequoia:  "c54b0d937a91c61b234753347dd756cb2a26dcb3b7f1aa37252b55fb9ee065ae"
     sha256 arm64_sonoma:   "02473fe011f04525a6e4fd604baa839c43988ca3fc96396774d96200e79daf87"
     sha256 arm64_ventura:  "1227fcbf6a078a4448106c6e60af24e1bb271823a50590bf201e4887784b8edb"
     sha256 arm64_monterey: "df4235fa62ee97877317730f405c523eb091f32ec9bf3ad433b9a72596a60fe3"
@@ -19,7 +20,7 @@ class H2o < Formula
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "openssl@3"
 
   uses_from_macos "zlib"
@@ -80,11 +81,8 @@ class H2o < Formula
   test do
     port = free_port
     (testpath/"h2o.conf").write conf_example(port)
-    fork do
-      exec "#{bin}/h2o -c #{testpath}/h2o.conf"
-    end
+    spawn "#{bin}/h2o -c #{testpath}/h2o.conf"
     sleep 2
-
     assert_match "Welcome to H2O", shell_output("curl localhost:#{port}")
   end
 end

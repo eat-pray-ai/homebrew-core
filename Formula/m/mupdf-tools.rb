@@ -1,8 +1,8 @@
 class MupdfTools < Formula
   desc "Lightweight PDF and XPS viewer"
   homepage "https://mupdf.com/"
-  url "https://mupdf.com/downloads/archive/mupdf-1.23.11-source.tar.gz"
-  sha256 "478f2a167feae2a291c8b8bc5205f2ce2f09f09b574a6eb0525bfad95a3cfe66"
+  url "https://mupdf.com/downloads/archive/mupdf-1.25.2-source.tar.gz"
+  sha256 "36ccf6a5e691e188acf8db6e98d08bf05f27bb4ce30432dc15fc76d329a92d4d"
   license "AGPL-3.0-or-later"
   head "https://git.ghostscript.com/mupdf.git", branch: "master"
 
@@ -11,17 +11,15 @@ class MupdfTools < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "bd23d0f128cda11e03c9d6b316775438f03efa8e5e244291065491729987c17a"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "12bdb80c5812748e61249318839caf528ede3f3bb5c06f20c03008106aa96865"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "7b5657d24084a2d1c8ca0914604dbfed407489ec60ce8980985bb2fc42536cbd"
-    sha256 cellar: :any_skip_relocation, sonoma:         "b65c83248eea921dd9d0c887a9c55e36207ed322bbdc40b7e4a34e0369e326da"
-    sha256 cellar: :any_skip_relocation, ventura:        "c2f3d00c39fd05f628c49a42e1575976b0dff7d1fea1a61026c7efc64c91c544"
-    sha256 cellar: :any_skip_relocation, monterey:       "8e9196348789761ebd0f43d2007da44c1ed0dcf18e8caef756d9be969132afc5"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "b48482c03e3b6bd4639762e1d677ed25fa50090ddd6d5985e8b1476b0bf9ba20"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "a2281b06b6eab5509f5689ef70aa70d4b88baf42653990f0ab040182f0539d47"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "7413a69945866272c31540e8306f6f1c0633c8ab3891bed2b8dbfd0f9fd98bf6"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "418f879c3410db0a17d985359c35c8857b1137cba22afb956ad4fa05e8a0c891"
+    sha256 cellar: :any_skip_relocation, sonoma:        "20a7fe61507190db5ed20abd6dc38bb5ed043c84d17aa3ce2131fefb125a0e1c"
+    sha256 cellar: :any_skip_relocation, ventura:       "8b098599d4bcfe8c7c81cd2857df5ae17f2d476a7ec05f814b614f05c3c21b05"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e249ac3b12444d071eada58a9ffbef829dc06ddb1f74b584b85520d9e153e4e5"
   end
 
-  conflicts_with "mupdf",
-    because: "mupdf and mupdf-tools install the same binaries"
+  conflicts_with "mupdf", because: "mupdf and mupdf-tools install the same binaries"
 
   def install
     system "make", "install",

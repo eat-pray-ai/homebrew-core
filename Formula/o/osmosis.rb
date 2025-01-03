@@ -11,7 +11,8 @@ class Osmosis < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "f1827ecda866771598f0f547d497e53793a646f91600292ef9c424079fe526ed"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, all: "bbf0840fce8067bb973ff59a7e9d9774178ae11b9af976aa0842e80b90264b00"
   end
 
   depends_on "openjdk"
@@ -26,7 +27,7 @@ class Osmosis < Formula
 
   test do
     path = testpath/"test.osm"
-    path.write <<~EOS
+    path.write <<~XML
       <?xml version="1.0" encoding="UTF-8"?>
       <osm version="0.6" generator="CGImap 0.5.8 (30532 thorn-05.openstreetmap.org)" copyright="OpenStreetMap and contributors" attribution="https://www.openstreetmap.org/copyright" license="https://opendatacommons.org/licenses/odbl/1-0/">
       <bounds minlat="49.9363700" minlon="8.9159400" maxlat="49.9371300" maxlon="8.9173800"/>
@@ -44,9 +45,9 @@ class Osmosis < Formula
         <tag k="wheelchair:description" v="Kein Kasseler Bord"/>
       </node>
       </osm>
-    EOS
+    XML
 
-    system("#{bin}/osmosis", "--read-xml", "file=#{path}", "--write-null")
+    system(bin/"osmosis", "--read-xml", "file=#{path}", "--write-null")
   end
 end
 

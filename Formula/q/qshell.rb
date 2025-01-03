@@ -1,19 +1,19 @@
 class Qshell < Formula
   desc "Shell Tools for Qiniu Cloud"
   homepage "https://github.com/qiniu/qshell"
-  url "https://github.com/qiniu/qshell/archive/refs/tags/v2.14.0.tar.gz"
-  sha256 "1bb1eb9c7c71c0af7714fa49b04b5e27c851e49a0f8fb0360254cb3c9f4ee472"
+  url "https://github.com/qiniu/qshell/archive/refs/tags/v2.16.0.tar.gz"
+  sha256 "f0b9e9bec2e9f07b144d7fd660a60d419da07ae4c1882a7a6f7c5a9a7f969002"
   license "MIT"
   head "https://github.com/qiniu/qshell.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "6fa3a186562a263f6980f38a10decd812898833623b8904a17fb158c1bee4bd1"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "b56d1e101453ac0992e72ba41d6cb8099ff533f288c436532d345060e0e82286"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "8e5bcc911371e247f82f2912116b50ae9a8ba4e1c4a54c82df92313fad722955"
-    sha256 cellar: :any_skip_relocation, sonoma:         "bb055ae85801b90f89fac758ce9df6cf8afc69dc225346bae6f8087a1d0185fa"
-    sha256 cellar: :any_skip_relocation, ventura:        "4f6b122851a0661bc2dc2b7ce834d2c755436b28d4046355fe2fdc4dd50d0027"
-    sha256 cellar: :any_skip_relocation, monterey:       "ca14664cb34be1b80cd2e542043b95b44d1a8f5c4930aa29fc7d6340f606e4cf"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "daa3155554a6de7acf972805fbf4352bcabe27f8b930c07812f885f02740c57d"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "54e0895a04e25a5389bf6581c15655c9c494752ffd0633ec34ed5f387343284f"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "73ff629197d9611911b20554fc6d8facdf740ec4349509e77eaf8b4b7fb99af9"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "fafa0f83b863d64973e22fe5a4e16567874938e51024be431ffc64701f740f5b"
+    sha256 cellar: :any_skip_relocation, sonoma:        "3c4ca827c917019ca343b5a50eb83023ce09ddd04967a9296e4a5fd9f303e0c4"
+    sha256 cellar: :any_skip_relocation, ventura:       "e445640b9b3068b67019755a83247d9650527bdf6282e2535b93d6ff612ffa54"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5149b877deb02d7f1ac5559d7d6b98c247208ffc30d3b84c14228261945caa90"
   end
 
   depends_on "go" => :build

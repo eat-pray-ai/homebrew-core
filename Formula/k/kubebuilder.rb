@@ -2,19 +2,19 @@ class Kubebuilder < Formula
   desc "SDK for building Kubernetes APIs using CRDs"
   homepage "https://github.com/kubernetes-sigs/kubebuilder"
   url "https://github.com/kubernetes-sigs/kubebuilder.git",
-      tag:      "v4.1.0",
-      revision: "de1cc60900b896b2195e403a40c976a892df4921"
+      tag:      "v4.3.1",
+      revision: "a9ee3909f7686902879bd666b92deec4718d92c9"
   license "Apache-2.0"
   head "https://github.com/kubernetes-sigs/kubebuilder.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "62570265b49e55b4fefb6b15e955a92d1b7b080c93b2c3cccfc7acee3ce1ee00"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "e90878c9ccaedbf0e48cdf283e4bf1e3a808ef350802b9a982020e153bdbceb1"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "f7a0238e67d1ba13e1bed1d92274552e26f24017911f1efd633e898411e5f917"
-    sha256 cellar: :any_skip_relocation, sonoma:         "d6e4972266296888f8349ddbe778ee393d875eb1ad37a2407e214d8e330f4ca3"
-    sha256 cellar: :any_skip_relocation, ventura:        "0c2c020336229aa10dfe334e59d531335959994c4a98faf022c7b656c55e5ffd"
-    sha256 cellar: :any_skip_relocation, monterey:       "8513888911d43fd6169d0a53d8d8cf745426f293aa793f7ea6df1632da54684d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "e0052136bfff9461de0ec13b1afbc7485d6364578ff463d705f76e9eabc17286"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "6ee4f57443c4f474f3f11e02760e5a569f41ffdc7e43b4ee20aff2ebb401712b"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "6ee4f57443c4f474f3f11e02760e5a569f41ffdc7e43b4ee20aff2ebb401712b"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "6ee4f57443c4f474f3f11e02760e5a569f41ffdc7e43b4ee20aff2ebb401712b"
+    sha256 cellar: :any_skip_relocation, sonoma:        "04a88935b8f844e6c9c7150e0cec2e2949a033161b75224e5ee3373c97a7d056"
+    sha256 cellar: :any_skip_relocation, ventura:       "04a88935b8f844e6c9c7150e0cec2e2949a033161b75224e5ee3373c97a7d056"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "eccaab58c93d975cd255be39ca10c2181a1543b1cfe3f376c7bffb28d21330c2"
   end
 
   depends_on "go"
@@ -22,7 +22,9 @@ class Kubebuilder < Formula
   def install
     goos = Utils.safe_popen_read("#{Formula["go"].bin}/go", "env", "GOOS").chomp
     goarch = Utils.safe_popen_read("#{Formula["go"].bin}/go", "env", "GOARCH").chomp
+
     ldflags = %W[
+      -s -w
       -X main.kubeBuilderVersion=#{version}
       -X main.goos=#{goos}
       -X main.goarch=#{goarch}
@@ -43,14 +45,14 @@ class Kubebuilder < Formula
                  "--skip-go-version-check"
     end
 
-    assert_match <<~EOS, (testpath/"test/PROJECT").read
+    assert_match <<~YAML, (testpath/"test/PROJECT").read
       domain: my.domain
       layout:
       - go.kubebuilder.io/v4
       projectName: test
       repo: example.com
       version: "3"
-    EOS
+    YAML
 
     assert_match version.to_s, shell_output("#{bin}/kubebuilder version")
   end

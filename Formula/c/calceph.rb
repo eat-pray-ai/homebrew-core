@@ -1,8 +1,8 @@
 class Calceph < Formula
   desc "C library to access the binary planetary ephemeris files"
   homepage "https://www.imcce.fr/inpop/calceph"
-  url "https://www.imcce.fr/content/medias/recherche/equipes/asd/calceph/calceph-4.0.0.tar.gz"
-  sha256 "f083df763e3d8cbbd17060c77b3ecd88beb9ce6c7e7f87630b3debd1bb0091f9"
+  url "https://www.imcce.fr/content/medias/recherche/equipes/asd/calceph/calceph-4.0.4.tar.gz"
+  sha256 "20c9f0bd720c5cfe99a7b342babda3ff91428adfec9d55357b380b4a13205d60"
   license "GPL-2.0-or-later"
 
   livecheck do
@@ -11,14 +11,12 @@ class Calceph < Formula
   end
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any,                 arm64_sonoma:   "f3eaa36769c57dc20c5b7d0f16deeb6b45ed5c68f3f58630c727225e5d4ff586"
-    sha256 cellar: :any,                 arm64_ventura:  "3ce78bef643795814bbcb10893afecf503f1b01f08534f6aa051d0bb3a27083e"
-    sha256 cellar: :any,                 arm64_monterey: "eddf124a142143cec2c295f7f72577465a2ddea36d572d8b7042e940ed4753c0"
-    sha256 cellar: :any,                 sonoma:         "e57374f3abf1844e583e041d96cf9e96326db74ce07b6f03f21e16a609b9fc5c"
-    sha256 cellar: :any,                 ventura:        "c8433423489014bde56b59e9cacca52de5e243989c1609ffa5b9d1dbaef8c7f8"
-    sha256 cellar: :any,                 monterey:       "f81b50297c00919226302bb6441af824b2f63466530ad73e7f2b76e9de9732d9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "9ca2fed126afa7575352d456b0e7c6fef6b5a4274ddf1b2607d7347c4434edb2"
+    sha256 cellar: :any,                 arm64_sequoia: "8052ae633e2e434f92a58297a7d95b7abf31c6df27a4f150f04acd90c458b24d"
+    sha256 cellar: :any,                 arm64_sonoma:  "bccdf7dd4f4b833f7382eafad36ab00cc3e886f2193013fcf01f8c3edeab93f1"
+    sha256 cellar: :any,                 arm64_ventura: "ed3e3aa4f63ba31eb8b56a313e7695c2bc1a1ec3f76b91de087ba1ba4c89c477"
+    sha256 cellar: :any,                 sonoma:        "71acfca39979f054472b0f287a256e3ef51548f77e6e20410a3c669403a1b63a"
+    sha256 cellar: :any,                 ventura:       "4527dfd754d1f940f46eca0af7000e6cb8f8c801521810288325c5e189eab35b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3cac5e4fa043c89c765556ecde72dfea4199b1f59f814840916c8c97eacc633f"
   end
 
   depends_on "cmake" => :build
@@ -36,7 +34,7 @@ class Calceph < Formula
   end
 
   test do
-    (testpath/"testcalceph.c").write <<~EOS
+    (testpath/"testcalceph.c").write <<~C
       #include <calceph.h>
       #include <assert.h>
 
@@ -52,7 +50,7 @@ class Calceph < Formula
         assert (errorfound==1);
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "testcalceph.c", "-L#{lib}", "-lcalceph", "-o", "testcalceph"
     system "./testcalceph"
   end

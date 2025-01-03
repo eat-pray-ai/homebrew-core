@@ -13,6 +13,7 @@ class Libexosip < Formula
 
   bottle do
     rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia:  "642cdbf3c7e2c28d59ba0bfa578465767fcc52a0640153ae68efea87e928243a"
     sha256 cellar: :any,                 arm64_sonoma:   "4fc704e8d56094e3cae0b85da0ef283821679c52d11376eab270a5532b75e7e8"
     sha256 cellar: :any,                 arm64_ventura:  "f16e7871375ba4b6fa1a0449efdbaac6cd0ecd385cb30ca73b81e5303b4fe643"
     sha256 cellar: :any,                 arm64_monterey: "986de480122d68131d838a6f0d37921978491b83e01fc53ab8631c50ce428cf0"
@@ -24,7 +25,7 @@ class Libexosip < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "07fe4531bd26a4c6fabb8833e55dc9b955c3f995c5c024177b9a9e3800785782"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "c-ares"
   depends_on "libosip"
   depends_on "openssl@3"
@@ -37,12 +38,12 @@ class Libexosip < Formula
       ENV.append "LDFLAGS", "-framework CoreFoundation -framework CoreServices " \
                             "-framework Security"
     end
-    system "./configure", *std_configure_args, "--disable-silent-rules"
+    system "./configure", "--disable-silent-rules", *std_configure_args
     system "make", "install"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <netinet/in.h>
       #include <eXosip2/eXosip.h>
 
@@ -68,7 +69,7 @@ class Libexosip < Formula
 
           return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-leXosip2", "-o", "test"
     system "./test"
   end

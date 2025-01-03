@@ -13,6 +13,7 @@ class Kore < Formula
 
   bottle do
     rebuild 1
+    sha256 arm64_sequoia:  "b25dd99e236b7cf5cdfec8d1128dfb125d271400aef79e29a6877fd47f86a4a2"
     sha256 arm64_sonoma:   "d984004ecf128c881234240035fe13f5e2c9af10c9bb0552f4ee0a321d2f5bdb"
     sha256 arm64_ventura:  "2079b1a823ee0915cb18e0148f04514d04638dc91807d2b3ef27c32129f7303a"
     sha256 arm64_monterey: "0a22c98bd62f85f7cb1dcd41ef763c95bb97c4d77592432770de250e97dde75c"
@@ -24,7 +25,7 @@ class Kore < Formula
     sha256 x86_64_linux:   "8f982ba054916139a8560c8826a450b30784e08c672aaebcc8736d6ca88e4eb0"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on macos: :sierra # needs clock_gettime
   depends_on "openssl@3"
 

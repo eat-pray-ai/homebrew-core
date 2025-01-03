@@ -1,30 +1,33 @@
 class Mgis < Formula
   desc "Provide tools to handle MFront generic interface behaviours"
   homepage "https://thelfer.github.io/mgis/web/index.html"
-  url "https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/refs/tags/MFrontGenericInterfaceSupport-2.2.tar.gz"
-  sha256 "b3776d7b3a534ca626525a42b97665f7660ae2b28ea57b3f53fd7e8538da1ceb"
+  url "https://github.com/thelfer/MFrontGenericInterfaceSupport/archive/refs/tags/MFrontGenericInterfaceSupport-3.0.tar.gz"
+  sha256 "dae915201fd20848b69745dabda1a334eb242d823af600825b8b010ddc597640"
   license any_of: ["LGPL-3.0-only", "CECILL-1.0"]
-  revision 2
   head "https://github.com/thelfer/MFrontGenericInterfaceSupport.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "a9f2faeb46acb862f38f5f6e435a160455cfff1eb4fcd11ccf80139d3347fd65"
-    sha256 cellar: :any,                 arm64_ventura:  "537c4b219d812e0a65f1b83aed9c155987b9ba3685da2d798b7504c96be593fc"
-    sha256 cellar: :any,                 arm64_monterey: "96b812beca68e53cad35856bb68ce1ce3f87d555659fe2c68b16d457b068d181"
-    sha256 cellar: :any,                 sonoma:         "573f5b9d9dca499164b77712d2a47fad682f06b8fc6dc9363e96a2b489478851"
-    sha256 cellar: :any,                 ventura:        "c6e7eaab95307bcd5a9d5ed8aeec521de3e26f536f4a1b5b1fd0532ba7b297fa"
-    sha256 cellar: :any,                 monterey:       "12d833417be504c1ec72e197613929c34dbfa08a93e998bb94abee3736ce9378"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3ba60221ce64d021d5c7f867a3c70f6898f643593cd72c180787bc9958aa2e56"
+    sha256 cellar: :any,                 arm64_sequoia: "84283eaa25f7674e42ea56ebe31801a6ac0539cbe44fb5e4c536983d8851766b"
+    sha256 cellar: :any,                 arm64_sonoma:  "6787ed26f2608121ca8598b37b6d985e5fe4bb22c9718b7cdaa46ba439995fa0"
+    sha256 cellar: :any,                 arm64_ventura: "b79c3b72a78f04a0db0e57c0241fae6b0efd2e8986021d5033a0aa098b411eb2"
+    sha256 cellar: :any,                 sonoma:        "42540c9b23197bb53abd58aba435fca397e27daa792cc88275f75a495c242941"
+    sha256 cellar: :any,                 ventura:       "8d6cc187d4e48cb9241939305ead3837778504a3d123fb7e2ff72b2d62b87af8"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "c38d2aaa72371acfbc4a19d293514532c64559116b82be05406ed15359851a7c"
   end
 
   depends_on "cmake" => :build
   depends_on "llvm" => :build
+
   depends_on "boost-python3"
   depends_on "numpy"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
+
+  on_macos do
+    depends_on "gcc"
+  end
 
   def python3
-    which("python3.12")
+    which("python3.13")
   end
 
   def install
@@ -44,7 +47,12 @@ class Mgis < Formula
       "-Denable-enable-static=OFF",
       "-Ddisable_python_library_linking=ON",
       "-DCMAKE_INSTALL_RPATH=#{rpath}",
+      "-DPython_ADDITIONAL_VERSIONS=#{Language::Python.major_minor_version python3}",
     ]
+
+    site_packages = prefix/Language::Python.site_packages(python3)
+    args << "-DCMAKE_MODULE_LINKER_FLAGS=-Wl,-rpath,#{rpath(source: site_packages/"mgis")}" if OS.mac?
+
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"

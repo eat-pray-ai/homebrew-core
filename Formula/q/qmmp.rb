@@ -1,8 +1,8 @@
 class Qmmp < Formula
   desc "Qt-based Multimedia Player"
   homepage "https://qmmp.ylsoftware.com/"
-  url "https://qmmp.ylsoftware.com/files/qmmp/2.1/qmmp-2.1.8.tar.bz2"
-  sha256 "846a6143c7a9ab29b8ec2f5da2248e41ddf2736f17c15d94b0d73b8af85a69ee"
+  url "https://qmmp.ylsoftware.com/files/qmmp/2.2/qmmp-2.2.3.tar.bz2"
+  sha256 "993e57d8e11b083bb6f246738505edf35d498ffe82a1936f3129b8bb09eab244"
   license "GPL-2.0-or-later"
 
   livecheck do
@@ -11,19 +11,19 @@ class Qmmp < Formula
   end
 
   bottle do
-    sha256 arm64_ventura:  "9f66cd4552a1e0ebf47f042bfa4aee8da347f8496491a5a74b174ac65c7f3637"
-    sha256 arm64_monterey: "9611fcdd44de2fd101761a5609bd5aeb99b16296c7aff5d4848a069293b83182"
-    sha256 ventura:        "84c4b219c07b6aa338e3d1d92c4d3b35e23579df2e3e1fbf049d5c63438290f7"
-    sha256 monterey:       "b560ee9657fe34e1adfb9d83928223a4aeb9378a659c2b775d32641c2de55d71"
-    sha256 x86_64_linux:   "87e0e32e3a5a2f4ad894bb373cc64e1a54ae140c350ce996215353ef2317dd38"
+    sha256 cellar: :any,                 arm64_sonoma:  "a2ff29655ff5f287fd593ce0469383ac0477142b02ace28e0c13ba4d5309fc8d"
+    sha256 cellar: :any,                 arm64_ventura: "f9c0e7082b9e8565698adc371eca5741bbdf09232ddc5d749af348e2b5fcc93b"
+    sha256 cellar: :any,                 sonoma:        "1afad9f18c8dcfb942297b90db0ed315141cee9373be78ed921712f73478e643"
+    sha256 cellar: :any,                 ventura:       "f834e4fa8c3d29b1fb8758536b2c9b3f914964f1ab8e70b265b038acf9002733"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7c8b97066683785b963190ad8e9a2a75a2ad8a901a8f1567ecb8d24c85b2905e"
   end
 
-  depends_on "cmake"      => :build
-  depends_on "pkg-config" => :build
+  depends_on "cmake" => :build
+  depends_on "pkgconf" => :build
 
   # TODO: on linux: pipewire
   depends_on "faad2"
-  depends_on "ffmpeg@6"
+  depends_on "ffmpeg"
   depends_on "flac"
   depends_on "game-music-emu"
   depends_on "jack"
@@ -42,6 +42,7 @@ class Qmmp < Formula
   depends_on "libxcb"
   depends_on "libxmp"
   depends_on "mad"
+  depends_on "mpg123"
   depends_on "mplayer"
   depends_on "opus"
   depends_on "opusfile"
@@ -55,20 +56,26 @@ class Qmmp < Formula
   uses_from_macos "curl"
 
   on_macos do
+    depends_on "gettext"
+    depends_on "glib"
     # musepack is not bottled on Linux
     # https://github.com/Homebrew/homebrew-core/pull/92041
     depends_on "musepack"
   end
 
-  fails_with gcc: "5" # ffmpeg is compiled with GCC
+  on_linux do
+    depends_on "alsa-lib"
+    depends_on "libx11"
+    depends_on "mesa"
+  end
 
   resource "qmmp-plugin-pack" do
-    url "https://qmmp.ylsoftware.com/files/qmmp-plugin-pack/2.1/qmmp-plugin-pack-2.1.1.tar.bz2"
-    sha256 "f68484426579f2a0bc68b6be06e7a019fd1c266fca35b764d5788661ddf9bcc4"
+    url "https://qmmp.ylsoftware.com/files/qmmp-plugin-pack/2.2/qmmp-plugin-pack-2.2.1.tar.bz2"
+    sha256 "bfb19dfc657a3b2d882bb1cf4069551488352ae920d8efac391d218c00770682"
   end
 
   def install
-    cmake_args = std_cmake_args + %W[
+    cmake_args = %W[
       -DCMAKE_INSTALL_RPATH=#{rpath}
       -DCMAKE_STAGING_PREFIX=#{prefix}
       -DUSE_SKINNED=ON
@@ -81,15 +88,19 @@ class Qmmp < Formula
       cmake_args << "-DCMAKE_MODULE_LINKER_FLAGS=-Wl,-undefined,dynamic_lookup"
     end
 
-    system "cmake", "-S", ".", *cmake_args
-    system "cmake", "--build", "."
-    system "cmake", "--install", "."
+    # Fix to recognize x11
+    # Issue ref: https://sourceforge.net/p/qmmp-dev/tickets/1177/
+    inreplace "src/plugins/Ui/skinned/CMakeLists.txt", "PkgConfig::X11", "${X11_LDFLAGS}"
+
+    system "cmake", "-S", ".", "-B", "build", *cmake_args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
 
     ENV.append_path "PKG_CONFIG_PATH", lib/"pkgconfig"
     resource("qmmp-plugin-pack").stage do
-      system "cmake", ".", *std_cmake_args, "-DCMAKE_INSTALL_RPATH=#{rpath}"
-      system "cmake", "--build", "."
-      system "cmake", "--install", "."
+      system "cmake", "-S", ".", "-B", "build", "-DCMAKE_INSTALL_RPATH=#{rpath}", *std_cmake_args
+      system "cmake", "--build", "build"
+      system "cmake", "--install", "build"
     end
   end
 

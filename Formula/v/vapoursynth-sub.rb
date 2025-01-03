@@ -6,10 +6,10 @@ class VapoursynthSub < Formula
   license "MIT"
   revision 1
   version_scheme 1
-
   head "https://github.com/vapoursynth/subtext.git", branch: "master"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "2a7e9a3f6ddb1982320e4319a9cea989f64f0631c077192f707ee341c88c03e7"
     sha256 cellar: :any,                 arm64_sonoma:   "a790bb27c1854e657d72731ea03ee7afc25b1400223a8603812ef8afad7a0554"
     sha256 cellar: :any,                 arm64_ventura:  "4eb095f03ea992f8c3fdb1140044a1146ff1cdbe8c9ff0b5805336fa4e4a94e9"
     sha256 cellar: :any,                 arm64_monterey: "a20a39d297e2fbee9881147990abcd0678e54e0aafa880126404fc67e5118bfe"
@@ -19,21 +19,23 @@ class VapoursynthSub < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "9ebc9c1460d973e9f99019e07866d5422349101796a7a4267c83bc945bffceec"
   end
 
-  depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "meson" => :build
+  depends_on "ninja" => :build
+  depends_on "pkgconf" => :build
   depends_on "ffmpeg"
   depends_on "libass"
   depends_on "vapoursynth"
 
-  fails_with gcc: "5" # ffmpeg is compiled with GCC
-
   def install
-    # A meson-based install method has been added but is not present
-    # in this release. Switch to it in the next release to avoid
-    # manually installing the shared library.
-    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
-    system "cmake", "--build", "build"
-    (lib/"vapoursynth").install "build/#{shared_library("libsubtext")}"
+    # Upstream build system wants to install directly into vapoursynth's libdir and does not respect
+    # prefix, but we want it in a Cellar location instead.
+    inreplace "meson.build",
+              "install_dir : join_paths(vapoursynth_dep.get_pkgconfig_variable('libdir'), 'vapoursynth')",
+              "install_dir : '#{lib}/vapoursynth'"
+
+    system "meson", "setup", "build", *std_meson_args
+    system "meson", "compile", "-C", "build", "--verbose"
+    system "meson", "install", "-C", "build"
   end
 
   test do

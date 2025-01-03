@@ -1,8 +1,8 @@
 class BoostMpi < Formula
   desc "C++ library for C++/MPI interoperability"
   homepage "https://www.boost.org/"
-  url "https://github.com/boostorg/boost/releases/download/boost-1.85.0/boost-1.85.0-b2-nodocs.tar.xz"
-  sha256 "09f0628bded81d20b0145b30925d7d7492fd99583671586525d5d66d4c28266a"
+  url "https://github.com/boostorg/boost/releases/download/boost-1.87.0/boost-1.87.0-b2-nodocs.tar.xz"
+  sha256 "3abd7a51118a5dd74673b25e0a3f0a4ab1752d8d618f4b8cea84a603aeecc680"
   license "BSL-1.0"
   head "https://github.com/boostorg/boost.git", branch: "master"
 
@@ -11,13 +11,12 @@ class BoostMpi < Formula
   end
 
   bottle do
-    sha256                               arm64_sonoma:   "854e2a1b25217ac7d71d5079dfab2ce2a112e94a6aedb71c0a09d7698cc1ccfb"
-    sha256                               arm64_ventura:  "e5af8f441eef5e0e352c96c75c35815227b99590919e6630cbc9ffc2ca0d71d8"
-    sha256                               arm64_monterey: "1e3c07e7da84a767b15f21f11cd62032c36724377101957fe772a2ea9fec082b"
-    sha256                               sonoma:         "0943c93e59801bd80efb3ff5961791a629c1d8fa8ad70234c8155cec857fab33"
-    sha256                               ventura:        "1b92ee1487f0cff5743cbddc6a04ae82dae3ae5e6126ecd75b4b25ec17e78237"
-    sha256                               monterey:       "a01e275f76e5305cd2b14ec85498ac54ab88275c250a7372e46e15e449a770ff"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "72c859d9c7a010c1cc2c8d50d5467dcb06b8249618cc38851097f6eca8209d86"
+    sha256                               arm64_sequoia: "9efa4e62e7552a5ddfb642b8d6ec3007792d0deb868285f64ce7e1b9a149ec20"
+    sha256                               arm64_sonoma:  "fc59a592f4d3b42eb0e873884bcf67bdfd45382c01c4a7287dd5642d74b3982e"
+    sha256                               arm64_ventura: "f7d78fe074a21546a30dec3688b5c5dabde5a07b830d82ffcbe5f31aa96b7124"
+    sha256                               sonoma:        "a3d8b33c333cd20e91133573cad92a5a8300587d1eb91afdbee34c94d5ee4e21"
+    sha256                               ventura:       "06a0c896e162a8fc19ae5ecdd850c3491fe3d010f5817a373cf52bb3f18d88e3"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6c066f845dbd122c9b597fd598facfb099118f4f46d084804833324a7938bcee"
   end
 
   # Test with cmake to avoid issues like:
@@ -31,10 +30,10 @@ class BoostMpi < Formula
     args = %W[
       -d2
       -j#{ENV.make_jobs}
-      --layout=tagged-1.66
+      --layout=system
       --user-config=user-config.jam
       install
-      threading=multi,single
+      threading=multi
       link=shared,static
     ]
 
@@ -42,6 +41,10 @@ class BoostMpi < Formula
     # handling using ENV.cxx11. Using "cxxflags" and "linkflags" still works.
     args << "cxxflags=-std=c++11"
     args << "cxxflags=-stdlib=libc++" << "linkflags=-stdlib=libc++" if ENV.compiler == :clang
+
+    # Avoid linkage to boost container and graph modules
+    # Issue ref: https://github.com/boostorg/boost/issues/985
+    args << "linkflags=-Wl,-dead_strip_dylibs" if OS.mac?
 
     open("user-config.jam", "a") do |file|
       if OS.mac?
@@ -65,9 +68,6 @@ class BoostMpi < Formula
     if OS.mac?
       # libboost_mpi links to libboost_serialization, which comes from the main boost formula
       boost = Formula["boost"]
-      MachO::Tools.change_install_name("#{lib}/libboost_mpi-mt.dylib",
-                                       "libboost_serialization-mt.dylib",
-                                       "#{boost.lib}/libboost_serialization-mt.dylib")
       MachO::Tools.change_install_name("#{lib}/libboost_mpi.dylib",
                                        "libboost_serialization.dylib",
                                        "#{boost.lib}/libboost_serialization.dylib")
@@ -75,7 +75,7 @@ class BoostMpi < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <boost/mpi.hpp>
       #include <iostream>
       #include <boost/serialization/string.hpp>
@@ -101,12 +101,12 @@ class BoostMpi < Formula
 
         return 0;
       }
-    EOS
+    CPP
 
     boost = Formula["boost"]
     args = ["-L#{lib}",
             "-L#{boost.lib}",
-            "-lboost_mpi-mt",
+            "-lboost_mpi",
             "-lboost_serialization",
             "-std=c++14"]
 

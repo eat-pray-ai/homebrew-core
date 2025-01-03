@@ -1,8 +1,8 @@
 class Eccodes < Formula
   desc "Decode and encode messages in the GRIB 1/2 and BUFR 3/4 formats"
   homepage "https://confluence.ecmwf.int/display/ECC"
-  url "https://confluence.ecmwf.int/download/attachments/45757960/eccodes-2.36.0-Source.tar.gz"
-  sha256 "da74143a64b2beea25ea27c63875bc8ec294e69e5bd0887802040eb04151d79a"
+  url "https://confluence.ecmwf.int/download/attachments/45757960/eccodes-2.39.0-Source.tar.gz"
+  sha256 "0c4d746700acc49af9c878925f1b26bdd42443ff7c2d7c676deb2babb6847afb"
   license "Apache-2.0"
 
   livecheck do
@@ -11,13 +11,12 @@ class Eccodes < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "557e0ef44f04748e9d0e57453d1a968f68d66ada8640f0390715a556d19d13ed"
-    sha256 arm64_ventura:  "5dbefb6d63c3a46b83cc239813cb5c5c07d47ca70bc78abb5f7212962b54d530"
-    sha256 arm64_monterey: "9f7dc2f051ccb029df8915b382cb828cbeec3fd2545f19dfae07d13749521a10"
-    sha256 sonoma:         "73ec2c2a93384cdb7f12c27b4efbcdb3cbbb4ab233a4b84902ff0a48e7a2f7be"
-    sha256 ventura:        "4a16e7b8858ef4ee5dd697837d25b80054cccde0aa46b947e09801e1d6ec6452"
-    sha256 monterey:       "62ce82e1205ed31b790ac255fdd99975ccac4c7093bdf96291763fa8b90499bd"
-    sha256 x86_64_linux:   "aca7f1982b24d8a6e1b21e05f1ef711e7cb48833871979eda9bc5b1dbcc84dc9"
+    sha256 arm64_sequoia: "038b023ee6a1abb809cfd90a56f1a866c070c12ceb84205dd2ec6e993c007666"
+    sha256 arm64_sonoma:  "bec847844e0379a2c1f7fd4b2f7662bc7055303071527f4d338e98162992f368"
+    sha256 arm64_ventura: "8bb29dbe986c04b46e576e4ae4135ad2d12fd59155b2c5fb95c8f01586a689a3"
+    sha256 sonoma:        "891bf650bf2adba6cc05c6a601af72eee52aeb437781ed1d7887a5a64872e385"
+    sha256 ventura:       "b3462d8c871a3a731e3ca62bc5f7bfd3a8ed49053e794a7d33e2e0d3ecbe5f0a"
+    sha256 x86_64_linux:  "3341656e4174c32fc58ad8f8c772030cbbd400e173069fbc031c42269a9284c8"
   end
 
   depends_on "cmake" => :build
@@ -28,18 +27,18 @@ class Eccodes < Formula
   depends_on "openjpeg"
 
   def install
-    mkdir "build" do
-      system "cmake", "..", "-DENABLE_NETCDF=ON",
-                            "-DENABLE_FORTRAN=ON",
-                            "-DENABLE_PNG=ON",
-                            "-DENABLE_JPG=ON",
-                            "-DENABLE_JPG_LIBOPENJPEG=ON",
-                            "-DENABLE_JPG_LIBJASPER=OFF",
-                            "-DENABLE_PYTHON=OFF",
-                            "-DENABLE_ECCODES_THREADS=ON",
-                             *std_cmake_args
-      system "make", "install"
-    end
+    args = %w[
+      -DENABLE_NETCDF=ON
+      -DENABLE_FORTRAN=ON
+      -DENABLE_PNG=ON
+      -DENABLE_JPG=ON
+      -DENABLE_JPG_LIBOPENJPEG=ON
+      -DENABLE_JPG_LIBJASPER=OFF
+      -DENABLE_ECCODES_THREADS=ON
+    ]
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
 
     # Avoid references to Homebrew shims directory
     shim_references = [include/"eccodes_ecbuild_config.h", lib/"pkgconfig/eccodes.pc", lib/"pkgconfig/eccodes_f90.pc"]

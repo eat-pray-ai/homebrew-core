@@ -6,6 +6,7 @@ class OpentracingCpp < Formula
   license "Apache-2.0"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "e30de6dd8cd5968ca9e06daa0f2e6bc3f750f55adf8a7b70c981e79df7704932"
     sha256 cellar: :any,                 arm64_sonoma:   "7da4222d346f9ea96d1fbf8d89662250c82876a1f5cccbf2a335af1e6cf9ae71"
     sha256 cellar: :any,                 arm64_ventura:  "ccbb5e255e5f6708324c7d8853e5d9e16e6409d061d465628fa876f0371454bc"
     sha256 cellar: :any,                 arm64_monterey: "50677ac8a2082e88324b45764c2f2d46dd70df23261c13e4e4fdfe4577505635"
@@ -25,8 +26,10 @@ class OpentracingCpp < Formula
   depends_on "cmake" => :build
 
   def install
-    system "cmake", ".", *std_cmake_args, "-DCMAKE_INSTALL_RPATH=#{rpath}"
-    system "make", "install"
+    system "cmake", "-S", ".", "-B", "build", "-DCMAKE_INSTALL_RPATH=#{rpath}", *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
+
     pkgshare.install "example/tutorial/tutorial-example.cpp"
     pkgshare.install "example/tutorial/text_map_carrier.h"
   end

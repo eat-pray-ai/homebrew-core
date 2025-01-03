@@ -1,30 +1,27 @@
-require "language/node"
-
 class Neonctl < Formula
   desc "Neon CLI tool"
   homepage "https://neon.tech/docs/reference/neon-cli"
-  url "https://registry.npmjs.org/neonctl/-/neonctl-1.31.1.tgz"
-  sha256 "bdd5ae3fef702612e4ac8be2d4832f4efc0fd09552d700f10e900c24f963dc14"
+  url "https://registry.npmjs.org/neonctl/-/neonctl-2.6.0.tgz"
+  sha256 "8e0b1985e6a4acbc5405f4fc4ceed147e500472a10b27eee691e606e852d6869"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "8a52457fb32cab3b6e24526e39c9099dcfffb1ea607258dfcba115c452700272"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "8a52457fb32cab3b6e24526e39c9099dcfffb1ea607258dfcba115c452700272"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "8a52457fb32cab3b6e24526e39c9099dcfffb1ea607258dfcba115c452700272"
-    sha256 cellar: :any_skip_relocation, sonoma:         "d4389cc96495a3ff236f77de750a898b3997940af915a1eda90aa307f2925d54"
-    sha256 cellar: :any_skip_relocation, ventura:        "d4389cc96495a3ff236f77de750a898b3997940af915a1eda90aa307f2925d54"
-    sha256 cellar: :any_skip_relocation, monterey:       "d4389cc96495a3ff236f77de750a898b3997940af915a1eda90aa307f2925d54"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d827654581dec19a547bb027ce6a2828585cee61d77f46503be818edea5c59fd"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "545624d518766da1aa50efcc11c3c5800cdfe938e14759af1e4707bdc4e4ad8a"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "545624d518766da1aa50efcc11c3c5800cdfe938e14759af1e4707bdc4e4ad8a"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "545624d518766da1aa50efcc11c3c5800cdfe938e14759af1e4707bdc4e4ad8a"
+    sha256 cellar: :any_skip_relocation, sonoma:        "4eea08391deae349f16fbef98d88bd3889df6464a628b07013ddc0b997f13d00"
+    sha256 cellar: :any_skip_relocation, ventura:       "4eea08391deae349f16fbef98d88bd3889df6464a628b07013ddc0b997f13d00"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "545624d518766da1aa50efcc11c3c5800cdfe938e14759af1e4707bdc4e4ad8a"
   end
 
   depends_on "node"
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+    system "npm", "install", *std_npm_args
     bin.install_symlink Dir["#{libexec}/bin/*"]
 
     %w[neonctl neon].each do |cmd|
-      generate_completions_from_executable(bin/cmd, "completion")
+      generate_completions_from_executable(bin/cmd, "completion", shells: [:bash, :zsh])
     end
   end
 

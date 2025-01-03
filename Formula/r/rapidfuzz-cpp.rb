@@ -1,13 +1,13 @@
 class RapidfuzzCpp < Formula
   desc "Rapid fuzzy string matching in C++ using the Levenshtein Distance"
   homepage "https://github.com/rapidfuzz/rapidfuzz-cpp"
-  url "https://github.com/rapidfuzz/rapidfuzz-cpp/archive/refs/tags/v3.0.5.tar.gz"
-  sha256 "e32936cc66333a12f659553b5fdd6d0c22257d32ac3b7a806ac9031db8dea5a1"
+  url "https://github.com/rapidfuzz/rapidfuzz-cpp/archive/refs/tags/v3.2.0.tar.gz"
+  sha256 "45504e1091814017fb16e69b9f9494233043eee6a8a17ee7c327ffde3b0cc412"
   license "MIT"
   head "https://github.com/rapidfuzz/rapidfuzz-cpp.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "af7926b7fd79e17687628341e6a4e249bb8e8497319c8e6758af188db572797e"
+    sha256 cellar: :any_skip_relocation, all: "277d9dee97404183fd28fb6be9dabb88341d26e6b9ca824c79b28065da8758da"
   end
 
   depends_on "cmake" => :build
@@ -19,7 +19,7 @@ class RapidfuzzCpp < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <rapidfuzz/fuzz.hpp>
       #include <string>
       #include <iostream>
@@ -30,7 +30,7 @@ class RapidfuzzCpp < Formula
           std::string b = "abab";
           std::cout << rapidfuzz::fuzz::ratio(a, b) << std::endl;
       }
-    EOS
+    CPP
     system ENV.cxx, "test.cpp", "-std=c++17", "-I#{include}", "-o", "test"
     assert_equal "50", shell_output("./test").strip
   end

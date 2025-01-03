@@ -1,19 +1,18 @@
 class Vvenc < Formula
   desc "Fraunhofer Versatile Video Encoder"
   homepage "https://github.com/fraunhoferhhi/vvenc"
-  url "https://github.com/fraunhoferhhi/vvenc/archive/refs/tags/v1.12.0.tar.gz"
-  sha256 "e7311ffcc87d8fcc4b839807061cca1b89be017ae7c449a69436dc2dd07615c2"
+  url "https://github.com/fraunhoferhhi/vvenc/archive/refs/tags/v1.13.0.tar.gz"
+  sha256 "28994435e4f7792cc3a907b1c5f20afd0f7ef1fcd82eee2af7713df7a72422eb"
   license "BSD-3-Clause-Clear"
   head "https://github.com/fraunhoferhhi/vvenc.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "1c5857d284bf4fc94769c6248a811372bbb813b1c09d03cdf9bca872f7b91f95"
-    sha256 cellar: :any,                 arm64_ventura:  "823efb6a8e5732bac2e800fd5dbd11f289b27cf595a6271abcc9aeae736b0694"
-    sha256 cellar: :any,                 arm64_monterey: "f8a0ba66ab0d1ea35ac45dba888aee3a5afff8a10f4e604f1fa34d07fa45e8cd"
-    sha256 cellar: :any,                 sonoma:         "694b46e96049b0431de6dcca89e8006df5fa46d22add11403a28ac5bb0fe8937"
-    sha256 cellar: :any,                 ventura:        "292ba473af86af725c8fc75cd58ab440dcf5596a81f1c31de42109f947d47548"
-    sha256 cellar: :any,                 monterey:       "541ff6ce51eee6e54248b6b6cec15a593dd84d93a9db873394847f4746dff2f0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d0c1d047079359eedcacab0179d81c285d6d27f0a8ed81ff6707017d491802df"
+    sha256 cellar: :any,                 arm64_sequoia: "7a19d7f4402f06759d7f270a5fdc5f020617b2a9ffe341e11858cd6676949914"
+    sha256 cellar: :any,                 arm64_sonoma:  "cdbbb243d7e900ded36f966c3843ba353833d178a22d62e0d2581558d3528191"
+    sha256 cellar: :any,                 arm64_ventura: "1d5aa565dc36ae8e3433f4f93b8eecbe1f6bde43fb66eacb9aa834a1a2597ee3"
+    sha256 cellar: :any,                 sonoma:        "1ccf83d2dd5b8f41ee83a469cfef3a3925571124eab263e74753bac0be5bf195"
+    sha256 cellar: :any,                 ventura:       "5047f6ac1a59f405b328502d32553f86099a13887214d7e547935af9986f2bd2"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3ab6befb73b40836dab61c28558e09bbf1104a8477db230f8767f7050c79e5b4"
   end
 
   depends_on "cmake" => :build

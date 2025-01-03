@@ -1,8 +1,8 @@
 class JpegXl < Formula
   desc "New file format for still image compression"
   homepage "https://jpeg.org/jpegxl/index.html"
-  url "https://github.com/libjxl/libjxl/archive/refs/tags/v0.10.3.tar.gz"
-  sha256 "e0191411cfcd927eebe5392d030fe4283fe27ba1685ab7265104936e0b4283a6"
+  url "https://github.com/libjxl/libjxl/archive/refs/tags/v0.11.1.tar.gz"
+  sha256 "1492dfef8dd6c3036446ac3b340005d92ab92f7d48ee3271b5dac1d36945d3d9"
   license "BSD-3-Clause"
 
   livecheck do
@@ -11,22 +11,20 @@ class JpegXl < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "00d633fdbcd07f7e1b99b981bebce471cea4e6787970fbb07a9a824df603a5b0"
-    sha256 cellar: :any,                 arm64_ventura:  "7f8e717c60fe7d3f05d41dedde1cb648484a43caea06b6d80fcb45e75d8d8c88"
-    sha256 cellar: :any,                 arm64_monterey: "8e7a3bb9fc00497ceb70d4c3774cf4175b510f1368db8964ae57ce43cab06a78"
-    sha256 cellar: :any,                 sonoma:         "e15c98d5454618125d3a164c97460b52b4e006c995783fc0664152760d6f09ed"
-    sha256 cellar: :any,                 ventura:        "480ae7e486257d0e0d819254b1a0b2418e5994a7343be4f431ee029623ac79d5"
-    sha256 cellar: :any,                 monterey:       "398c84d9563b6c2d7ad1654764d37eb300a11259b4ad8f3bfe00bc9edeaf9142"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "64b61d8a8d21bed6842b83b3e2810fe12ad1d77bdad9781850edef818a1355e7"
+    sha256 cellar: :any,                 arm64_sequoia: "e55e2be8d3c75882b0db111e3925b5b2ab937bc28255c73e6d6da370b5d695e2"
+    sha256 cellar: :any,                 arm64_sonoma:  "e16ed22cd8691d3dfa5397b8f1e3ea0bead0d562ec8a114ccb73248cc2149ba8"
+    sha256 cellar: :any,                 arm64_ventura: "9aa6aeaf24e83b836f4c78739b2f92f6ffdb312c4a4713e6195763267f29c6dd"
+    sha256 cellar: :any,                 sonoma:        "366b2602c265d810b87c1475bba10b185e66d54362d770a80f35ef8f556f185f"
+    sha256 cellar: :any,                 ventura:       "50b22e54a36fe7bd74cb058a15d0b2ba7cd1a497ac9a5670050a3ec8f73f081c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8347218162b01146c21087e93462c83290cdb05fc6d1595266785c7d21f7381f"
   end
 
   depends_on "asciidoc" => :build
   depends_on "cmake" => :build
   depends_on "docbook-xsl" => :build
   depends_on "doxygen" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => [:build, :test]
   depends_on "sphinx-doc" => :build
-  depends_on "pkg-config" => :test
   depends_on "brotli"
   depends_on "giflib"
   depends_on "highway"
@@ -40,9 +38,6 @@ class JpegXl < Formula
   uses_from_macos "libxml2" => :build
   uses_from_macos "libxslt" => :build # for xsltproc
   uses_from_macos "python"
-
-  fails_with gcc: "5"
-  fails_with gcc: "6"
 
   # These resources are versioned according to the script supplied with jpeg-xl to download the dependencies:
   # https://github.com/libjxl/libjxl/tree/v#{version}/third_party
@@ -70,13 +65,16 @@ class JpegXl < Formula
                     *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--build", "build", "--target", "install"
+
+    # Avoid rebuilding dependents that hard-code the prefix.
+    inreplace (lib/"pkgconfig").glob("*.pc"), prefix, opt_prefix
   end
 
   test do
-    system "#{bin}/cjxl", test_fixtures("test.jpg"), "test.jxl"
-    assert_predicate testpath/"test.jxl", :exist?
+    system bin/"cjxl", test_fixtures("test.jpg"), "test.jxl"
+    assert_path_exists testpath/"test.jxl"
 
-    (testpath/"jxl_test.c").write <<~EOS
+    (testpath/"jxl_test.c").write <<~C
       #include <jxl/encode.h>
       #include <stdlib.h>
 
@@ -89,12 +87,12 @@ class JpegXl < Formula
           JxlEncoderDestroy(enc);
           return EXIT_SUCCESS;
       }
-    EOS
-    jxl_flags = shell_output("pkg-config --cflags --libs libjxl").chomp.split
+    C
+    jxl_flags = shell_output("pkgconf --cflags --libs libjxl").chomp.split
     system ENV.cc, "jxl_test.c", *jxl_flags, "-o", "jxl_test"
     system "./jxl_test"
 
-    (testpath/"jxl_threads_test.c").write <<~EOS
+    (testpath/"jxl_threads_test.c").write <<~C
       #include <jxl/thread_parallel_runner.h>
       #include <stdlib.h>
 
@@ -107,8 +105,8 @@ class JpegXl < Formula
           JxlThreadParallelRunnerDestroy(runner);
           return EXIT_SUCCESS;
       }
-    EOS
-    jxl_threads_flags = shell_output("pkg-config --cflags --libs libjxl_threads").chomp.split
+    C
+    jxl_threads_flags = shell_output("pkgconf --cflags --libs libjxl_threads").chomp.split
     system ENV.cc, "jxl_threads_test.c", *jxl_threads_flags, "-o", "jxl_threads_test"
     system "./jxl_threads_test"
   end

@@ -4,7 +4,7 @@ class Visp < Formula
   url "https://visp-doc.inria.fr/download/releases/visp-3.6.0.tar.gz"
   sha256 "eec93f56b89fd7c0d472b019e01c3fe03a09eda47f3903c38dc53a27cbfae532"
   license "GPL-2.0-or-later"
-  revision 5
+  revision 10
 
   livecheck do
     url "https://visp.inria.fr/download/"
@@ -12,40 +12,74 @@ class Visp < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "aefbb29ddf9b04bb066d9c204ff0aa543613e621f4a92c03695b7131324abea2"
-    sha256 cellar: :any,                 arm64_ventura:  "ed9745df38cf5b9b6c709215c4570f5bf377adcf6dd229ac7615e7ffcc1e6d53"
-    sha256 cellar: :any,                 arm64_monterey: "8a8ec734e686eea880816aaaa361b12506a6b0a99539f9d35d6a1180fb457d85"
-    sha256 cellar: :any,                 sonoma:         "e78c8d941c97159f1d01b131e0c867e79ccb896afb77f5a6925b746b1b88e1fc"
-    sha256 cellar: :any,                 ventura:        "53ded94c21564a1508a31cb91f0a7adfdb06ea9859a8bb05b7eb39f751585d93"
-    sha256 cellar: :any,                 monterey:       "9ee6ba617a25ea4c6fd5a011e3be303b7f4b185accb7290ca0b290a7ec9aefa9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "7f47d63677bc7b78d8cb3d3a900540b53579b35f575c9fded216c52c82f14195"
+    sha256 cellar: :any,                 arm64_sonoma:  "cd46d0345aac25f3459482433444fc604fac8edd647c110966a959c9ae6d9c96"
+    sha256 cellar: :any,                 arm64_ventura: "67b6676dcd3a6b751f87d880a9b6a6be42a17626a06ab0ddda08defaa4272c23"
+    sha256 cellar: :any,                 sonoma:        "6cb4fed15290ad68e0c008815589a4453163323cbcd345be6588cc9b9892513f"
+    sha256 cellar: :any,                 ventura:       "3a1a93587fe3432cda0dfc9adaa78235d71154878cdffd5f92f43ce1bfbffc0c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5f55415e96b2adca09e489d64b8399f9b14961939f8b0d5b9895ddff1c7f50f9"
   end
 
-  depends_on "cmake" => :build
-  depends_on "pkg-config" => [:build, :test]
+  depends_on "cmake" => [:build, :test]
+  depends_on "pkgconf" => [:build, :test]
+
   depends_on "eigen"
   depends_on "gsl"
   depends_on "jpeg-turbo"
   depends_on "libdc1394"
   depends_on "libpng"
+  depends_on "openblas"
   depends_on "opencv"
   depends_on "pcl"
+  depends_on "vtk"
   depends_on "zbar"
 
   uses_from_macos "libxml2"
   uses_from_macos "zlib"
 
+  on_macos do
+    depends_on "boost"
+    depends_on "flann"
+    depends_on "glew"
+    depends_on "libomp"
+    depends_on "libpcap"
+    depends_on "qhull"
+    depends_on "qt"
+  end
+
   on_linux do
     depends_on "libnsl"
   end
 
-  fails_with gcc: "5"
+  # Backport fix for recent Apple Clang
+  patch do
+    url "https://github.com/lagadic/visp/commit/8c1461661f99a5db31c89ede9946d2b0244f8123.patch?full_index=1"
+    sha256 "1e0126c731bf14dfe915088a4205a16ec0b6d5f2ea57d0e84f2f69b8e86b144f"
+  end
+  patch do
+    url "https://github.com/lagadic/visp/commit/e41aa4881e0d58c182f0c140cc003b37afb99d39.patch?full_index=1"
+    sha256 "c0dd6678f1b39473da885f7519daf16018e20209c66cdd04f660a968f6fadbba"
+  end
+
+  # Backport fix for VTK include directories detection
+  patch do
+    url "https://github.com/lagadic/visp/commit/44d06319430c4933127e8dc31094259d92c63c2e.patch?full_index=1"
+    sha256 "a474659656764ca7b98d7ab7bad162cd9d36c50018d3033eb59806d2ac309850"
+  end
+  patch do
+    url "https://github.com/lagadic/visp/commit/09c900480c5b9d3b2d97244fe3b109e48f8e2d27.patch?full_index=1"
+    sha256 "417c3fa88cd5718e48e970ddd590ccaaafbe01db328dee79390fb931afa67da9"
+  end
+  patch do
+    url "https://github.com/lagadic/visp/commit/d6aebe3af2700c95c17c75aafb4f25d478a8f853.patch?full_index=1"
+    sha256 "740cb92ff79a368475af7979ff6ac4c443f90808bd02dd841aec3428cdbc95ed"
+  end
 
   # One usage of OpenCV Universal Intrinsics API altered starting from 4.9.0
-  # Remove this patch if it's merged into a future version
-  # https://github.com/lagadic/visp/issues/1309
-  # Patch source: https://github.com/lagadic/visp/pull/1310
-  patch :DATA
+  # TODO: Remove this patch in the next release
+  patch do
+    url "https://github.com/lagadic/visp/commit/ebfa2602faca0f40db2dd1cc0cfb72cd8177640c.patch?full_index=1"
+    sha256 "7fac428ca4fee039a84770e9c7877c43e28945038ff21233da74f3ae159703e0"
+  end
 
   def install
     ENV.cxx11
@@ -112,11 +146,12 @@ class Visp < Formula
     system "cmake", "--install", "."
 
     # Make sure software built against visp don't reference opencv's cellar path either
-    inreplace lib/"pkgconfig/visp.pc", opencv.prefix.realpath, opencv.opt_prefix
+    inreplace [lib/"pkgconfig/visp.pc", lib/"cmake/visp/VISPConfig.cmake", lib/"cmake/visp/VISPModules.cmake"],
+              opencv.prefix.realpath, opencv.opt_prefix
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <visp3/core/vpConfig.h>
       #include <iostream>
       int main()
@@ -125,43 +160,23 @@ class Visp < Formula
                 "." << VISP_VERSION_PATCH << std::endl;
         return 0;
       }
-    EOS
-    pkg_config_flags = shell_output("pkg-config --cflags --libs visp").chomp.split
+    CPP
+    pkg_config_flags = shell_output("pkgconf --cflags --libs visp").chomp.split
     system ENV.cxx, "test.cpp", "-o", "test", *pkg_config_flags
     assert_equal version.to_s, shell_output("./test").chomp
+
+    ENV.delete "CPATH"
+    (testpath/"CMakeLists.txt").write <<~CMAKE
+      cmake_minimum_required(VERSION 3.10 FATAL_ERROR)
+      project(visp-check)
+      find_package(VISP REQUIRED)
+      include_directories(${VISP_INCLUDE_DIRS})
+      add_executable(visp-check test.cpp)
+      target_link_libraries(visp-check ${VISP_LIBRARIES})
+    CMAKE
+
+    system "cmake", "-B", "build", "-S", "."
+    system "cmake", "--build", "build"
+    assert_equal version.to_s, shell_output("build/visp-check").chomp
   end
 end
-__END__
-diff --git a/modules/tracker/mbt/src/depth/vpMbtFaceDepthDense.cpp b/modules/tracker/mbt/src/depth/vpMbtFaceDepthDense.cpp
-index 8a47b5d437..c6d636bc9e 100644
---- a/modules/tracker/mbt/src/depth/vpMbtFaceDepthDense.cpp
-+++ b/modules/tracker/mbt/src/depth/vpMbtFaceDepthDense.cpp
-@@ -606,9 +606,15 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
-         cv::v_float64x2 vx, vy, vz;
-         cv::v_load_deinterleave(ptr_point_cloud, vx, vy, vz);
- 
-+#if (VISP_HAVE_OPENCV_VERSION >= 0x040900)
-+        cv::v_float64x2 va1 = cv::v_sub(cv::v_mul(vnz, vy), cv::v_mul(vny, vz)); // vnz*vy - vny*vz
-+        cv::v_float64x2 va2 = cv::v_sub(cv::v_mul(vnx, vz), cv::v_mul(vnz, vx)); // vnx*vz - vnz*vx
-+        cv::v_float64x2 va3 = cv::v_sub(cv::v_mul(vny, vx), cv::v_mul(vnx, vy)); // vny*vx - vnx*vy
-+#else
-         cv::v_float64x2 va1 = vnz*vy - vny*vz;
-         cv::v_float64x2 va2 = vnx*vz - vnz*vx;
-         cv::v_float64x2 va3 = vny*vx - vnx*vy;
-+#endif
- 
-         cv::v_float64x2 vnxy = cv::v_combine_low(vnx, vny);
-         cv::v_store(ptr_L, vnxy);
-@@ -630,7 +636,12 @@ void vpMbtFaceDepthDense::computeInteractionMatrixAndResidu(const vpHomogeneousM
-         cv::v_store(ptr_L, vnxy);
-         ptr_L += 2;
- 
-+#if (VISP_HAVE_OPENCV_VERSION >= 0x040900)
-+        cv::v_float64x2 verr = cv::v_add(vd, cv::v_muladd(vnx, vx, cv::v_muladd(vny, vy, cv::v_mul(vnz, vz))));
-+#else
-         cv::v_float64x2 verr = vd + cv::v_muladd(vnx, vx, cv::v_muladd(vny, vy, vnz*vz));
-+#endif
-+
-         cv::v_store(ptr_error, verr);
-         ptr_error += 2;
- #elif USE_SSE

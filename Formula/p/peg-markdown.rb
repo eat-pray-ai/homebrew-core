@@ -8,6 +8,7 @@ class PegMarkdown < Formula
   head "https://github.com/jgm/peg-markdown.git", branch: "master"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "bd7f5543b909228fcad9af4e3173b8ca657d92ca17233c99c8415716c7a575a5"
     sha256 cellar: :any,                 arm64_sonoma:   "a98a5d30c50275c60315ca49c9a5e9f8db427bf8e14dd76eed44f5d59af8b354"
     sha256 cellar: :any,                 arm64_ventura:  "b86b3203ed481c4afb9bcbd489a4803b3f1fd204c27bbed16dc42e45e16790fb"
     sha256 cellar: :any,                 arm64_monterey: "93a7ee730c2fb9c01ab25be02028ff8b25907d2a1693de10f07864b861f3be13"
@@ -23,8 +24,12 @@ class PegMarkdown < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "d1b2212c3e3a3610a02a5f668e3b88785c0bf1c6383f36ed3674abe42cc941bc"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "glib"
+
+  on_macos do
+    depends_on "gettext"
+  end
 
   def install
     system "make"
@@ -33,6 +38,6 @@ class PegMarkdown < Formula
 
   test do
     assert_equal "<p><strong>Homebrew</strong></p>",
-      pipe_output("#{bin}/peg-markdown", "**Homebrew**", 0).chomp
+      pipe_output(bin/"peg-markdown", "**Homebrew**", 0).chomp
   end
 end

@@ -1,12 +1,13 @@
 class Gkrellm < Formula
   desc "Extensible GTK system monitoring application"
   homepage "https://billw2.github.io/gkrellm/gkrellm.html"
-  url "http://gkrellm.srcbox.net/releases/gkrellm-2.3.11.tar.bz2"
+  url "https://gkrellm.srcbox.net/releases/gkrellm-2.3.11.tar.bz2"
   sha256 "1ee0643ed9ed99f88c1504c89d9ccb20780cf29319c904b68e80a8e7c8678c06"
+  license "GPL-3.0-or-later"
   revision 4
 
   livecheck do
-    url "http://gkrellm.srcbox.net/releases/"
+    url "https://gkrellm.srcbox.net/releases/"
     regex(/href=.*?gkrellm[._-]v?(\d+(?:\.\d+)+)\.t/i)
   end
 
@@ -20,7 +21,7 @@ class Gkrellm < Formula
     sha256 x86_64_linux:   "8d8b012ba597fb48d4a205aecfff14230f67053b25a504e64945378fa3331fd4"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "at-spi2-core"
   depends_on "cairo"
   depends_on "fontconfig"
@@ -32,8 +33,14 @@ class Gkrellm < Formula
   depends_on "openssl@3"
   depends_on "pango"
 
+  on_macos do
+    depends_on "harfbuzz"
+  end
+
   on_linux do
+    depends_on "libice"
     depends_on "libsm"
+    depends_on "libx11"
   end
 
   def install
@@ -44,13 +51,11 @@ class Gkrellm < Formula
   end
 
   test do
-    pid = fork do
-      exec "#{bin}/gkrellmd --pidfile #{testpath}/test.pid"
-    end
+    pid = spawn "#{bin}/gkrellmd --pidfile #{testpath}/test.pid"
     sleep 2
 
     begin
-      assert_predicate testpath/"test.pid", :exist?
+      assert_path_exists testpath/"test.pid"
     ensure
       Process.kill "SIGINT", pid
       Process.wait pid

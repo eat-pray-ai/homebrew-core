@@ -1,30 +1,24 @@
-require "language/node"
-
 class SafCli < Formula
   desc "CLI for the MITRE Security Automation Framework (SAF)"
   homepage "https://saf-cli.mitre.org"
-  url "https://registry.npmjs.org/@mitre/saf/-/saf-1.4.8.tgz"
-  sha256 "7c4011463328a923781f3b7c26b148cb729bac4d0775f18ccad0560f5512b261"
+  url "https://registry.npmjs.org/@mitre/saf/-/saf-1.4.17.tgz"
+  sha256 "ca003e6453efac1b4c40e3ac63709cad76d9b6fe04269dacf14b2310373c5cc4"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "9a0a801bacbe9c3eddea579b29da27b80bc211e5d2ca3460741bcd592056cdb5"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "9a0a801bacbe9c3eddea579b29da27b80bc211e5d2ca3460741bcd592056cdb5"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "9a0a801bacbe9c3eddea579b29da27b80bc211e5d2ca3460741bcd592056cdb5"
-    sha256 cellar: :any_skip_relocation, sonoma:         "5b6481ba84453a56896575668891b1e433d10eed49751368f2818cfa979660a0"
-    sha256 cellar: :any_skip_relocation, ventura:        "5b6481ba84453a56896575668891b1e433d10eed49751368f2818cfa979660a0"
-    sha256 cellar: :any_skip_relocation, monterey:       "5b6481ba84453a56896575668891b1e433d10eed49751368f2818cfa979660a0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "62e0efeca12b21ef67b20e426bc53e504d97266627e146f6dec033c999d9f6d8"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "be19818c032a7ecc50f0b895ffbb421fb7c2dd4f6d84e02523f09ef433b2c51e"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "be19818c032a7ecc50f0b895ffbb421fb7c2dd4f6d84e02523f09ef433b2c51e"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "be19818c032a7ecc50f0b895ffbb421fb7c2dd4f6d84e02523f09ef433b2c51e"
+    sha256 cellar: :any_skip_relocation, sonoma:        "16dd13059f2ba1cf35528788552a8d2e455ae591c8ea543ff0f2532579017c95"
+    sha256 cellar: :any_skip_relocation, ventura:       "16dd13059f2ba1cf35528788552a8d2e455ae591c8ea543ff0f2532579017c95"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "be19818c032a7ecc50f0b895ffbb421fb7c2dd4f6d84e02523f09ef433b2c51e"
   end
 
   depends_on "node"
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+    system "npm", "install", *std_npm_args
     bin.install_symlink Dir["#{libexec}/bin/*"]
-
-    # Replace universal binaries with their native slices
-    deuniversalize_machos
   end
 
   test do

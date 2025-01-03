@@ -1,19 +1,19 @@
 class Wolfmqtt < Formula
   desc "Small, fast, portable MQTT client C implementation"
   homepage "https://github.com/wolfSSL/wolfMQTT"
-  url "https://github.com/wolfSSL/wolfMQTT/archive/refs/tags/v1.19.0.tar.gz"
-  sha256 "f8ecac43bb584a9250468dafb95b7db0bfb8c29a11715c7965183a092f75c3bc"
+  url "https://github.com/wolfSSL/wolfMQTT/archive/refs/tags/v1.19.1.tar.gz"
+  sha256 "77031b151092e8506d7c621f5e12e79531edca2336edf23146d3d72c70e6557f"
   license "GPL-2.0-or-later"
+  revision 1
   head "https://github.com/wolfSSL/wolfMQTT.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "dff16f2fbe2c26fe6722438d8ae234153b23898ae4a4933bbdec185d386c94d5"
-    sha256 cellar: :any,                 arm64_ventura:  "66855c22567818428aaf8aa9ee7dbabb30b3fd8deffc638aeb8c664204928634"
-    sha256 cellar: :any,                 arm64_monterey: "11f4ffd6c3f9427cbc6fc79ebeca21591ce3fe0eb2d9a71adfff61730e492d2e"
-    sha256 cellar: :any,                 sonoma:         "0bdff7f693a3c30c1d9ba2080d3218ceb860493d4fcb92832e03ebfe048a6a6b"
-    sha256 cellar: :any,                 ventura:        "12333823582936854312de0b5705953379289cfa18c844813909c816477422a8"
-    sha256 cellar: :any,                 monterey:       "d9b1b3ee602d988570c5260ea0c061653c626df78ed527c8c9e52e12d54ab684"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "a203d97727e0c433e9ceacc1f72ed469a4c343a366b23bccee8110d5c7a6cb3b"
+    sha256 cellar: :any,                 arm64_sequoia: "3cc0ee01e3c1c852518ae34460393aa7bb635cd18edaaebbdc80da8111666227"
+    sha256 cellar: :any,                 arm64_sonoma:  "de6d9d05fe702f19a5f2a08d843475098fd68469c1a7ff84c542d3a68439bd41"
+    sha256 cellar: :any,                 arm64_ventura: "8ba8bd884b3c1a6181903d39e45828ebce5987ed16f179d2623aa55b8f4068a4"
+    sha256 cellar: :any,                 sonoma:        "f50115d12168622e7c272f78b5038b37b5f06fa63e711dd79962ad1c3305ffd7"
+    sha256 cellar: :any,                 ventura:       "e1c2586892699a4ec2adf9441950e1b6d0088ebeb31aa3944c0c9b6b9af2917a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "99a00efffceb07ebf6759f8a6756edad5696e2c8673bc31174f341711edf0dee"
   end
 
   depends_on "autoconf" => :build
@@ -43,13 +43,13 @@ class Wolfmqtt < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOT
+    (testpath/"test.cpp").write <<~CPP
       #include <wolfmqtt/mqtt_client.h>
       int main() {
         MqttClient mqttClient;
         return 0;
       }
-    EOT
+    CPP
     system ENV.cc, "test.cpp", "-L#{lib}", "-lwolfmqtt", "-o", "test"
     system "./test"
   end

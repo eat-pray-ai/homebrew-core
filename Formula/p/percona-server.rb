@@ -1,10 +1,10 @@
 class PerconaServer < Formula
   desc "Drop-in MySQL replacement"
   homepage "https://www.percona.com"
-  # TODO: Check if we can use unversioned `protobuf` at version bump
   url "https://downloads.percona.com/downloads/Percona-Server-8.0/Percona-Server-8.0.36-28/source/tarball/percona-server-8.0.36-28.tar.gz"
   sha256 "8a4b44bd9cf79a38e6275e8f5f9d4e8d2c308854b71fd5bf5d1728fff43a6844"
   license "BSD-3-Clause"
+  revision 5
 
   livecheck do
     url "https://docs.percona.com/percona-server/latest/"
@@ -19,30 +19,31 @@ class PerconaServer < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "e8ddfcd137263345d70bdb98a10ce465e3afa3742e0340176ced344d7a76af09"
-    sha256 arm64_ventura:  "fece2bd93b32cc7798eae60ec05ffccb6ca8f1a2514f17413e5f60ac449851e0"
-    sha256 arm64_monterey: "792e8dc5522ae83089e3ad379d390a0b6830d386e9904945db9bdfb52e48a29a"
-    sha256 sonoma:         "343a4d8124a980e1c90e96978c4a648a1f14f8e0b2539cfd21584119729f76f7"
-    sha256 ventura:        "828ed28d3a9642ced256561c2d71c717ea95b85590e4aed2f2400e8af0a30bf7"
-    sha256 monterey:       "55b1d398b262723c6ca7db6bb4d9e11fbae6246d0294f7e63983b0ff5cb5bae4"
-    sha256 x86_64_linux:   "8220675cd32b2106a4d4d03f12189e17c4184e55f3662287108d559e9d1f979d"
+    sha256 arm64_sequoia: "fec95e510b9791fb9797228d29d757e9c4c1453d36d8390a53794df17806512f"
+    sha256 arm64_sonoma:  "4ae492edceda80ef8b82348a449092c4b4e5a1f7fd3d52a851f11cb82b07b694"
+    sha256 arm64_ventura: "1587b3cb95c97e79ac2e6d86596d3c948fe5516feffab946a68b976f4b76e4ff"
+    sha256 sonoma:        "c89b003df5aa0d63ed12c7aab667422f563235e70b982074e07f7fb828fa5cb8"
+    sha256 ventura:       "f0abcb7718fa4ecd85751b3a80e83664af0146bba7d37b089bc96f8678010076"
+    sha256 x86_64_linux:  "e878b7107cb796cb84b2472943e95203991dbdd9b6c5b075bbdeb0c2ba271461"
   end
 
   depends_on "bison" => :build
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
-  depends_on "icu4c"
+  depends_on "pkgconf" => :build
+  depends_on "abseil"
+  depends_on "icu4c@76"
   depends_on "libevent"
   depends_on "libfido2"
   depends_on "lz4"
   depends_on "openldap" # Needs `ldap_set_urllist_proc`, not provided by LDAP.framework
   depends_on "openssl@3"
-  depends_on "protobuf@21"
+  depends_on "protobuf"
   depends_on "zlib" # Zlib 1.2.13+
   depends_on "zstd"
 
   uses_from_macos "curl"
   uses_from_macos "cyrus-sasl"
+  uses_from_macos "krb5"
   uses_from_macos "libedit"
 
   on_linux do
@@ -60,15 +61,21 @@ class PerconaServer < Formula
     cause "Wrong inlining with Clang 8.0, see MySQL Bug #86711"
   end
 
-  fails_with :gcc do
-    version "6"
-    cause "GCC 7.1 or newer is required"
-  end
-
   # https://github.com/percona/percona-server/blob/Percona-Server-#{version}/cmake/boost.cmake
   resource "boost" do
     url "https://boostorg.jfrog.io/artifactory/main/release/1.77.0/source/boost_1_77_0.tar.bz2"
     sha256 "fc9f85fc030e233142908241af7a846e60630aa7388de9a5fafb1f3a26840854"
+  end
+
+  # Backport support for newer Protobuf. Remove with 8.0.39 / 8.4.2
+  patch do
+    url "https://github.com/percona/percona-server/commit/089c011f8e2a865e4bd97715653b4bc0973c43a1.patch?full_index=1"
+    sha256 "aac166f579e636923abeb86cc89934efaf0185df35355aab2d08192d9bf9efd8"
+  end
+  # Backport support for Protobuf 22+ on Linux. Remove with 8.0.40 / 8.4.3
+  patch do
+    url "https://github.com/mysql/mysql-server/commit/269abc0409b22bb87ec88bd4d53dfb7a1403eace.patch?full_index=1"
+    sha256 "ffcee32804e7e1237907432adb3590fcbf30c625eea836df6760c05a312a84e1"
   end
 
   # Patch out check for Homebrew `boost`.
@@ -147,11 +154,7 @@ class PerconaServer < Formula
     end
 
     # Remove the tests directory
-    rm_rf prefix/"mysql-test"
-
-    # Don't create databases inside of the prefix!
-    # See: https://github.com/Homebrew/homebrew/issues/4975
-    rm_rf prefix/"data"
+    rm_r(prefix/"mysql-test")
 
     # Fix up the control script and link into bin.
     inreplace "#{prefix}/support-files/mysql.server",
@@ -213,12 +216,12 @@ class PerconaServer < Formula
       "--basedir=#{prefix}", "--datadir=#{testpath}/mysql", "--tmpdir=#{testpath}/tmp"
     port = free_port
     fork do
-      system "#{bin}/mysqld", "--no-defaults", "--user=#{ENV["USER"]}",
+      system bin/"mysqld", "--no-defaults", "--user=#{ENV["USER"]}",
         "--datadir=#{testpath}/mysql", "--port=#{port}", "--tmpdir=#{testpath}/tmp"
     end
     sleep 5
     assert_match "information_schema",
       shell_output("#{bin}/mysql --port=#{port} --user=root --password= --execute='show databases;'")
-    system "#{bin}/mysqladmin", "--port=#{port}", "--user=root", "--password=", "shutdown"
+    system bin/"mysqladmin", "--port=#{port}", "--user=root", "--password=", "shutdown"
   end
 end

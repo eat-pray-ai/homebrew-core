@@ -19,7 +19,7 @@ class Hyperscan < Formula
 
   depends_on "boost" => :build
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "ragel" => :build
   # Only supports x86 instructions and will fail to build on ARM.
   # See https://github.com/intel/hyperscan/issues/197
@@ -43,7 +43,7 @@ class Hyperscan < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <stdio.h>
       #include <hs/hs.h>
       int main()
@@ -51,7 +51,7 @@ class Hyperscan < Formula
         printf("hyperscan v%s", hs_version());
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-lhs", "-o", "test"
     system "./test"
   end

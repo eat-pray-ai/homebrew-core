@@ -1,8 +1,8 @@
 class FaasCli < Formula
   desc "CLI for templating and/or deploying FaaS functions"
   homepage "https://www.openfaas.com/"
-  url "https://github.com/openfaas/faas-cli/archive/refs/tags/0.16.30.tar.gz"
-  sha256 "7cf8aba4b73f3b76fe345203d1f5c2042b40ec8a28cb34c28a2edc5c5105e426"
+  url "https://github.com/openfaas/faas-cli/archive/refs/tags/0.16.38.tar.gz"
+  sha256 "76b6990376aa510d993f8fc973f55d5bfbd9171689edc0a7fd92b8dfe3579ea3"
   license "MIT"
   head "https://github.com/openfaas/faas-cli.git", branch: "master"
 
@@ -12,13 +12,12 @@ class FaasCli < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "d6104c8fe5ec0e0bf9634b51093a1ceea4b8649c4fafe9e447b8b1dc499060e3"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "6e3e763c5f7667509aa136994ec060d34c75e4b2b583f2d65bd6c94445cd2d4a"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "eb16944f53999439c3e2b5d55397041d20808cfbc5871d6006c77b148d94ec7e"
-    sha256 cellar: :any_skip_relocation, sonoma:         "544b78e1ed26a199281d62f304a77d2479d38ea84706249c2429637b88807058"
-    sha256 cellar: :any_skip_relocation, ventura:        "7e3ffbd26696fda66d41d4cd6888e9993cab8f3ad2fc32946e6d8af133d7bbfe"
-    sha256 cellar: :any_skip_relocation, monterey:       "67b1a2b44ca2623639a9c72bda8cae19e0a1315c4a4077706dd399c34ba8a711"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "7067144278169f6da5db754659ebe059cdb9a344e153a04e48a329481fb2a073"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "0ce1a3182adc50dc7421fc6d7e2de1871e5dc07d6ac130129c2559f58ab37031"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "0ce1a3182adc50dc7421fc6d7e2de1871e5dc07d6ac130129c2559f58ab37031"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "0ce1a3182adc50dc7421fc6d7e2de1871e5dc07d6ac130129c2559f58ab37031"
+    sha256 cellar: :any_skip_relocation, sonoma:        "739fcdfa935332937dfd059b05d299e9221cd7aeb6db4d17f4cf070c66b778dd"
+    sha256 cellar: :any_skip_relocation, ventura:       "739fcdfa935332937dfd059b05d299e9221cd7aeb6db4d17f4cf070c66b778dd"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "d726431bdb132eaff35659e4bf1a298745933a90a22a8aa58d428c2c7381bae3"
   end
 
   depends_on "go" => :build
@@ -58,7 +57,7 @@ class FaasCli < Formula
       end
     end
 
-    (testpath/"test.yml").write <<~EOS
+    (testpath/"test.yml").write <<~YAML
       provider:
         name: openfaas
         gateway: https://localhost:#{port}
@@ -69,7 +68,7 @@ class FaasCli < Formula
           lang: python
           handler: ./dummy_function
           image: dummy_image
-    EOS
+    YAML
 
     begin
       output = shell_output("#{bin}/faas-cli deploy --tls-no-verify -yaml test.yml 2>&1", 1)

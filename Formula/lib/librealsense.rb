@@ -1,8 +1,8 @@
 class Librealsense < Formula
   desc "Intel RealSense D400 series and SR300 capture"
   homepage "https://github.com/IntelRealSense/librealsense"
-  url "https://github.com/IntelRealSense/librealsense/archive/refs/tags/v2.55.1.tar.gz"
-  sha256 "54546d834ff5d8b35d9955319ad2e428f6d9ae4c61b932d1bd716ed81ad135f7"
+  url "https://github.com/IntelRealSense/librealsense/archive/refs/tags/v2.56.3.tar.gz"
+  sha256 "a18112df0dc0bf442b58fb754f719be1992ddbba154564db5321729ba340c8a9"
   license "Apache-2.0"
   head "https://github.com/IntelRealSense/librealsense.git", branch: "master"
 
@@ -12,46 +12,44 @@ class Librealsense < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "87e280ea3812239dca4ad87a1804ec565c89a85ed7edf284e15ba2532ae5aff8"
-    sha256 cellar: :any,                 arm64_ventura:  "76e7a053fbe4db047091da72157e4c2e1e9e5a69b69352ed90e186b5653be4dd"
-    sha256 cellar: :any,                 arm64_monterey: "b4ba20552da3fed47851399c0fe0c663d42bd289aea5de83fe4b9e648257e144"
-    sha256 cellar: :any,                 sonoma:         "fb49c09f9103faf9d3d301d5275bf6fc0dd58052d3a33d5363522261dbda8d4f"
-    sha256 cellar: :any,                 ventura:        "91a2ed66c52d5a267ade16cf701c4b04aa6f8ca17f2ca0995fae7804059cd4b8"
-    sha256 cellar: :any,                 monterey:       "c62805b38655234714aa8f8338e97f14afa05aa72299987747a75dd4920c4db9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "cec569b56db3d7ef79f3cad4d09e8975ed91c71ede4a7d2cab225c81a4fca992"
+    sha256 cellar: :any,                 arm64_sequoia: "9ab6629652e192760b9d9f92dff28a7f757f0a3520270d3882e68f8db0c67e69"
+    sha256 cellar: :any,                 arm64_sonoma:  "9e1c5408d61e477d72f6ad60504c3db954a65612ed97d5f1e6009bdf6a60c5f4"
+    sha256 cellar: :any,                 arm64_ventura: "5a513c1af7e9709eef2cea30f39021e3158e5635680f956d83b36b66646e127d"
+    sha256 cellar: :any,                 sonoma:        "d940b9e56d353878c839a10ca9a2298e84ee374778a34b97dc59f635875ec2a2"
+    sha256 cellar: :any,                 ventura:       "703d25a4b7c1f12aaec0f0a5669e5f026bcf38fbb37cc4203be67e9a838c65ab"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3b22dcd8cd361829146e951c7b81efe906c500c440367052d90985d8996b4ef1"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "glfw"
   depends_on "libusb"
-  depends_on "openssl@3"
-  # Build on Apple Silicon fails when generating Unix Makefiles.
-  # Ref: https://github.com/IntelRealSense/librealsense/issues/8090
-  on_arm do
-    depends_on xcode: :build
+
+  on_linux do
+    depends_on "mesa"
+    depends_on "mesa-glu"
+    depends_on "openssl@3"
+    depends_on "systemd"
   end
 
   def install
-    ENV["OPENSSL_ROOT_DIR"] = Formula["openssl@3"].prefix
+    ENV["OPENSSL_ROOT_DIR"] = Formula["openssl@3"].prefix if OS.linux?
 
     args = %W[
       -DENABLE_CCACHE=OFF
       -DBUILD_WITH_OPENMP=OFF
+      -DCMAKE_CXX_STANDARD=17
       -DCMAKE_INSTALL_RPATH=#{rpath}
     ]
-    if Hardware::CPU.arm?
-      args << "-DCMAKE_CONFIGURATION_TYPES=Release"
-      args << "-GXcode"
-    end
+    args << "-DCHECK_FOR_UPDATES=false" if OS.linux?
 
-    system "cmake", "-S", ".", "-B", "build", *std_cmake_args, *args
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <librealsense2/rs.h>
       #include <stdio.h>
       int main()
@@ -59,7 +57,7 @@ class Librealsense < Formula
         printf(RS2_API_VERSION_STR);
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-o", "test"
     assert_equal version.to_s, shell_output("./test").strip
   end

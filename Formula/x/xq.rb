@@ -2,18 +2,17 @@ class Xq < Formula
   desc "Command-line XML and HTML beautifier and content extractor"
   homepage "https://github.com/sibprogrammer/xq"
   url "https://github.com/sibprogrammer/xq.git",
-      tag:      "v1.2.4",
-      revision: "08f46d7f6e6ce087919439a74790734b415ff336"
+      tag:      "v1.3.0",
+      revision: "86a755578f7bfb82fddc1f712c96db2f0bf36076"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "5ffc01a92f4816483599550d53f73b71770dd8ed46f04419a819fa409a58f9a8"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "5ffc01a92f4816483599550d53f73b71770dd8ed46f04419a819fa409a58f9a8"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "5ffc01a92f4816483599550d53f73b71770dd8ed46f04419a819fa409a58f9a8"
-    sha256 cellar: :any_skip_relocation, sonoma:         "8d45ce98343c355a287e9cd4781e07b888360586ddb8eab270ebc750b73bf4e9"
-    sha256 cellar: :any_skip_relocation, ventura:        "8d45ce98343c355a287e9cd4781e07b888360586ddb8eab270ebc750b73bf4e9"
-    sha256 cellar: :any_skip_relocation, monterey:       "8d45ce98343c355a287e9cd4781e07b888360586ddb8eab270ebc750b73bf4e9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f31e98b6eb7629fc55497e06a58862156de25ba3597788ff766528f4cf140d28"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "acee76fdd23d919d0c9e3bee5ff519742be43f958833f8949972a48f222fb253"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "acee76fdd23d919d0c9e3bee5ff519742be43f958833f8949972a48f222fb253"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "acee76fdd23d919d0c9e3bee5ff519742be43f958833f8949972a48f222fb253"
+    sha256 cellar: :any_skip_relocation, sonoma:        "3f27afa855799f0e43c3d7d878349dba62998d23a2504a3e0979998183b410e0"
+    sha256 cellar: :any_skip_relocation, ventura:       "3f27afa855799f0e43c3d7d878349dba62998d23a2504a3e0979998183b410e0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a3bfe60511be1ea50e381c53d56e8b7125315c189e3e7c23809c8eefa73df627"
   end
 
   depends_on "go" => :build

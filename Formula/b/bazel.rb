@@ -1,8 +1,8 @@
 class Bazel < Formula
   desc "Google's own build tool"
   homepage "https://bazel.build/"
-  url "https://github.com/bazelbuild/bazel/releases/download/7.1.2/bazel-7.1.2-dist.zip"
-  sha256 "9cf6ed2319c816919d97015eef6d0c5942cd1aed48e03c73ba0815d953ed61ab"
+  url "https://github.com/bazelbuild/bazel/releases/download/7.4.1/bazel-7.4.1-dist.zip"
+  sha256 "83386618bc489f4da36266ef2620ec64a526c686cf07041332caff7c953afaf5"
   license "Apache-2.0"
 
   livecheck do
@@ -11,16 +11,16 @@ class Bazel < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "1ef7f93af5c07c56d728eae61d70a140ccef16cd99390d276fd381dcf27bc9f3"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "f025c6dd7d2410bb3a822dd4f36532f37496e6eae564be1ea4357e42156bd484"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "f3aa923acb4fc06096fa0b9212871483f8167c1921d98a06b4e5d43c410b2e7b"
-    sha256 cellar: :any_skip_relocation, sonoma:         "0ed1779eba7b6b57e4a1c1042a0e99ae4ddd992a2b277d5a8f33b3bf7dd507f8"
-    sha256 cellar: :any_skip_relocation, ventura:        "19606ce2fdfb988bbe96469b606a41e9f3654aa35bd38e9903b40e088b29b0cc"
-    sha256 cellar: :any_skip_relocation, monterey:       "b285fe8b08b7047d72124d41458001daaf9970c05f24f5591ab4687ca96f286c"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "1d0e1ab6f5803279244b510d252b7da929451f871dd84bc69089de5399b23170"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "182820919fd8a4729c3769fad482783bc15f42da84b3128d9db5ffec2e6ec900"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "3fff3607b0e68a3ef19810fe60418093e9ba3ac59fa6dc1af71a8187ba8c304a"
+    sha256 cellar: :any_skip_relocation, sonoma:        "819cc3996a5b758d2ee1892f777c8236849fd480fd9b742d4fb11cf13598fee8"
+    sha256 cellar: :any_skip_relocation, ventura:       "d8d1a7f56fd5131c04fdf8c12056dbbee07252f371e0971d684591cec46600cc"
   end
 
-  depends_on "python@3.12" => :build
-  depends_on "openjdk@11"
+  depends_on "python@3.13" => :build
+  depends_on "openjdk@21"
 
   uses_from_macos "unzip"
   uses_from_macos "zip"
@@ -31,11 +31,11 @@ class Bazel < Formula
     ENV["EMBED_LABEL"] = "#{version}-homebrew"
     # Force Bazel ./compile.sh to put its temporary files in the buildpath
     ENV["BAZEL_WRKDIR"] = buildpath/"work"
-    # Force Bazel to use openjdk@11
-    ENV["EXTRA_BAZEL_ARGS"] = "--host_javabase=@local_jdk//:jdk"
-    ENV["JAVA_HOME"] = Language::Java.java_home("11")
+    # Force Bazel to use openjdk@21
+    ENV["EXTRA_BAZEL_ARGS"] = "--tool_java_runtime_version=local_jdk"
+    ENV["JAVA_HOME"] = Language::Java.java_home("21")
     # Force Bazel to use Homebrew python
-    ENV.prepend_path "PATH", Formula["python@3.12"].opt_libexec/"bin"
+    ENV.prepend_path "PATH", Formula["python@3.13"].opt_libexec/"bin"
 
     # Bazel clears environment variables other than PATH during build, which
     # breaks Homebrew's shim scripts that need HOMEBREW_* variables.
@@ -59,9 +59,9 @@ class Bazel < Formula
       bin.install "scripts/packages/bazel.sh" => "bazel"
       ln_s libexec/"bin/bazel-real", bin/"bazel-#{version}"
       (libexec/"bin").install "output/bazel" => "bazel-real"
-      bin.env_script_all_files libexec/"bin", Language::Java.java_home_env("11")
+      bin.env_script_all_files libexec/"bin", Language::Java.java_home_env("21")
 
-      bash_completion.install "bazel-bin/scripts/bazel-complete.bash"
+      bash_completion.install "bazel-bin/scripts/bazel-complete.bash" => "bazel"
       zsh_completion.install "scripts/zsh_completion/_bazel"
       fish_completion.install "bazel-bin/scripts/bazel.fish"
     end
@@ -70,13 +70,13 @@ class Bazel < Formula
   test do
     touch testpath/"WORKSPACE"
 
-    (testpath/"ProjectRunner.java").write <<~EOS
+    (testpath/"ProjectRunner.java").write <<~JAVA
       public class ProjectRunner {
         public static void main(String args[]) {
           System.out.println("Hi!");
         }
       }
-    EOS
+    JAVA
 
     (testpath/"BUILD").write <<~EOS
       java_binary(
@@ -92,11 +92,11 @@ class Bazel < Formula
     # Verify that `bazel` invokes Bazel's wrapper script, which delegates to
     # project-specific `tools/bazel` if present. Invoking `bazel-VERSION`
     # bypasses this behavior.
-    (testpath/"tools"/"bazel").write <<~EOS
+    (testpath/"tools/bazel").write <<~SHELL
       #!/bin/bash
       echo "stub-wrapper"
       exit 1
-    EOS
+    SHELL
     (testpath/"tools/bazel").chmod 0755
 
     assert_equal "stub-wrapper\n", shell_output("#{bin}/bazel --version", 1)

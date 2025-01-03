@@ -1,8 +1,8 @@
 class Pmtiles < Formula
   desc "Single-file executable tool for creating, reading and uploading PMTiles archives"
   homepage "https://protomaps.com/docs/pmtiles"
-  url "https://github.com/protomaps/go-pmtiles/archive/refs/tags/v1.20.0.tar.gz"
-  sha256 "21f5da4802d4860b50fbd4fb59d4b2081b80fb30c33e8d4373432e23165d3dfb"
+  url "https://github.com/protomaps/go-pmtiles/archive/refs/tags/v1.22.3.tar.gz"
+  sha256 "d57fdbcc3117863c30076df68371c08abecfd10de9b336c4eb166723e6d324e5"
   license "BSD-3-Clause"
 
   livecheck do
@@ -11,26 +11,25 @@ class Pmtiles < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "fcdd71956da9b00de4a1e719e1ba673efff88be1d451f900271fbd99413644d7"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "4c51964fcbfc13d9bef5e2c7317da2f732bdb3f6c97dce8c2fa507a90b22d35e"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "5de2f5768122d02d6238c2c7f599d5f0d49f9fe900143a4a980b19c9988adfac"
-    sha256 cellar: :any_skip_relocation, sonoma:         "0e3bca78debb39976957e5b492507ee3e9ff0db53cd9b13a96c516f88ad211e5"
-    sha256 cellar: :any_skip_relocation, ventura:        "4914dbfa681bf46d7653c191d1a34e7bff89be2b9fc9980a5a9658666d6deb88"
-    sha256 cellar: :any_skip_relocation, monterey:       "8d5110feede0e2410937050affedbaefec1cfe9e4a5267352cc7fa6b443cd316"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "2a0e5363717e7e88440455e0358694a779282607495e596a5afc2a8d6a1e55cb"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "4bf1210d16eb26a5aaa4903e3baa4a537eb73ac26064bd17db1a342dda9328d2"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "4bf1210d16eb26a5aaa4903e3baa4a537eb73ac26064bd17db1a342dda9328d2"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "4bf1210d16eb26a5aaa4903e3baa4a537eb73ac26064bd17db1a342dda9328d2"
+    sha256 cellar: :any_skip_relocation, sonoma:        "9f686891b28f526000501c767b835ba5d2e18aa3bd96626c6b93e42261ccce81"
+    sha256 cellar: :any_skip_relocation, ventura:       "9f686891b28f526000501c767b835ba5d2e18aa3bd96626c6b93e42261ccce81"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "848987e43218d909c2522241d9960ec6514fd48afba7b90af8b4204075e3a726"
   end
 
   depends_on "go" => :build
 
   def install
-    system "go", "build", *std_go_args
+    system "go", "build", *std_go_args(ldflags: "-s -w")
   end
 
   test do
     port = free_port
 
     pid = fork do
-      exec "#{bin}/pmtiles", "serve", ".", "--port", port.to_s
+      exec bin/"pmtiles", "serve", ".", "--port", port.to_s
     end
     sleep 3
     output = shell_output("curl -sI http://localhost:#{port}")

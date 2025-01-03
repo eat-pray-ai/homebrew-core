@@ -1,19 +1,18 @@
 class Jnv < Formula
   desc "Interactive JSON filter using jq"
   homepage "https://github.com/ynqa/jnv"
-  url "https://github.com/ynqa/jnv/archive/refs/tags/v0.3.0.tar.gz"
-  sha256 "4cbb0700b3b1c4212c97edca577039abf4ea238ca8c966978825d537f13f8885"
+  url "https://github.com/ynqa/jnv/archive/refs/tags/v0.4.2.tar.gz"
+  sha256 "12f23a6082afbb80e567222ebfb827d71c08fb343473c1f909f5554aa9a4867f"
   license "MIT"
   head "https://github.com/ynqa/jnv.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "3c4a4d321848c6e62f36cf921aff575d56e7e1c913a745d8b4e633e87c8cc449"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "2159c5e6c9d548b28abad2ec9f2f908758ba1aa035bae21ecb4c3bfb0f42ac28"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "3214aeeafa34b3cabf330b10276efd6bfabf6b86fb34aad8c716addb1a10f5d6"
-    sha256 cellar: :any_skip_relocation, sonoma:         "2866a9d24e838dbfab3ffd53ed8821adef3ac1d062e4781b6bb8633d4cb1cc9e"
-    sha256 cellar: :any_skip_relocation, ventura:        "13f99b3f55a70f9d23a07cac1f0a81752d06e5baa30020162daf8d5ecd639e5f"
-    sha256 cellar: :any_skip_relocation, monterey:       "ebeb7b8259a4bb7f73dbe2bebee0bb5136683af0abc308cc97170e81337c4279"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "c9e0ea9aa4d8745b0fa0eba94c750fec760003616d5d93a82930ed6d2596209f"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "c0cf70293e7111aec8fcc6ff7d8782df0a64324fa9aba266556e9ada1ec0a6bc"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "435612947d9def4bbd93299bd0a642574a290a85fa85555e89d4421bb7a1da27"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "d4ae1af80dd9b3e71cdb82ac43cfb314ad39abdae7b67d91185472c085957262"
+    sha256 cellar: :any_skip_relocation, sonoma:        "14c45837cc6aabe8acb4664dd207f60996bc371ee02af9b4df3fa6fa0a6ec00f"
+    sha256 cellar: :any_skip_relocation, ventura:       "4c646d3a72b8931e85298c85db9dc673d8fe6785f93bac9ce0dcd07bf103daf6"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a99e6ff1cf644ca2cbcc72ea2443508e6f0ff5ab2eed863ff51c55559af0bd9e"
   end
 
   depends_on "autoconf" => :build

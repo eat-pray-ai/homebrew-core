@@ -13,6 +13,7 @@ class Pkcs11Helper < Formula
   end
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "02b61fe7186023ea090b8fab072d980451ef4edc5e860c247c2ccba6c422de2b"
     sha256 cellar: :any,                 arm64_sonoma:   "d5877e3655d952f137610ab0168b4e996dec23dfc16b1ac4db5ab0cdb46eb525"
     sha256 cellar: :any,                 arm64_ventura:  "720ab7371a01c2ffe4884736240afb22b32c04162a2f5bdf658658556ed7ff74"
     sha256 cellar: :any,                 arm64_monterey: "341be8334102c4305e939ec2b171724076afeb36182cbecc585b84a79de9eb04"
@@ -25,23 +26,17 @@ class Pkcs11Helper < Formula
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "openssl@3"
 
   def install
-    args = %W[
-      --disable-debug
-      --disable-dependency-tracking
-      --prefix=#{prefix}
-    ]
-
-    system "autoreconf", "--verbose", "--install", "--force"
-    system "./configure", *args
+    system "autoreconf", "--force", "--install", "--verbose"
+    system "./configure", *std_configure_args
     system "make", "install"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <stdio.h>
       #include <stdlib.h>
       #include <pkcs11-helper-1.0/pkcs11h-core.h>
@@ -50,9 +45,8 @@ class Pkcs11Helper < Formula
         printf("Version: %08x", pkcs11h_getVersion ());
         return 0;
       }
-    EOS
-    system ENV.cc, testpath/"test.c", "-I#{include}", "-L#{lib}",
-                   "-lpkcs11-helper", "-o", "test"
+    C
+    system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-lpkcs11-helper", "-o", "test"
     system "./test"
   end
 end

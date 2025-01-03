@@ -5,10 +5,10 @@ class Ssh3 < Formula
       tag:      "v0.1.7",
       revision: "31f8242cf30b675c25b981b862f36e73f9fa1d9d"
   license "Apache-2.0"
-  head "https://github.com/francoismichel/ssh3.git",
-       branch: "main"
+  head "https://github.com/francoismichel/ssh3.git", branch: "main"
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "0f4b007d021b93cfb0c17d853b9ad0f8e8d9112402a7acbbb466f90517e20a12"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "d1738b1f0a7e8d6b101de0c28c854a885cff32e44a3cf1296fcdb3a411950879"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "356b85de8658e16ee74a1c86abd3be1491c61b09cb4634ae39fd49c9ec008d76"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "9cba01524ab567c3e2c65463a10e87841b917ce6bb16a90256235453890bebbc"
@@ -22,13 +22,9 @@ class Ssh3 < Formula
   uses_from_macos "libxcrypt"
 
   def install
-    system "go", "build",
-           *std_go_args(output: bin/"ssh3", ldflags: "-s -w"),
-           "cmd/ssh3/main.go"
-    ENV["CGO_ENABLED"] = "1"
-    system "go", "build",
-           *std_go_args(output: bin/"ssh3-server", ldflags: "-s -w"),
-           "cmd/ssh3-server/main.go"
+    ldflags = "-s -w"
+    system "go", "build", *std_go_args(ldflags:, output: bin/"ssh3"), "./cmd/ssh3"
+    system "go", "build", *std_go_args(ldflags:, output: bin/"ssh3-server"), "./cmd/ssh3-server"
   end
 
   test do

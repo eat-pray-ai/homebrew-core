@@ -1,8 +1,8 @@
 class Pv < Formula
   desc "Monitor data's progress through a pipe"
   homepage "https://www.ivarch.com/programs/pv.shtml"
-  url "https://www.ivarch.com/programs/sources/pv-1.8.10.tar.gz"
-  sha256 "d4c90c17cfcd44aa96b98237731e4f811e071d4c2052a689d2d81e6671f571b1"
+  url "https://www.ivarch.com/programs/sources/pv-1.9.25.tar.gz"
+  sha256 "162495aabb1cb842186cb224995e3d5f60a9f527a49ccbd8212383cc72b7c36c"
   license "Artistic-2.0"
 
   livecheck do
@@ -11,20 +11,26 @@ class Pv < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "004faa12fdd3db1914ce0421c0c2e03ae1b82295d5e2d1cfdc68681e366be2eb"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "1bfb8b5841df46f8bd32f7e2cb9bd03af62a3e9b8617fbcfeecf84d7ab6769f3"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "701476576b7084c588eb4e10aca427231c812cd75321fbee9ca2185723ead6c8"
-    sha256 cellar: :any_skip_relocation, sonoma:         "53d9b52ea085a7d7e12f9a6b2c2916c41e746e702cb84bcd21cc19b55329e908"
-    sha256 cellar: :any_skip_relocation, ventura:        "a8b8f98b51a1ae4d0ec6f84b2df1b8b3487123ef25b14e8244286053cadb3653"
-    sha256 cellar: :any_skip_relocation, monterey:       "b015d9f5d346126e92bf11ffa799d40c585f1e3f5f2e952604a7acbce175b072"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "c15eece234ed08b4ff463ef219b9306d2c549e3bce295c1a4ca4d81516da0bbf"
+    rebuild 1
+    sha256 arm64_sequoia: "e0da19b94f65cb3443073d84dc56636fc17122537f222cc74eb8526872036685"
+    sha256 arm64_sonoma:  "5cb01ad3f5394b602152c5a8501e778dc72005e9fe0aacfeb7924a5309c702cc"
+    sha256 arm64_ventura: "c57e295e51a38b43d01acdb12b546551b2a7dc2234fa51e3452ea0a8df48a910"
+    sha256 sonoma:        "e336a400640f881823b2aeb1cddadcd5cdadcee1d70d95d140c628b49cfde3cf"
+    sha256 ventura:       "9495bf894c4d9265c399544d8e7c8a84fbd1d570fd06193b8e969c3036d6706b"
+    sha256 x86_64_linux:  "9df26dd6d6cbc6753eb33552a2bc28bd6587aa2875bf3edacd1c279fe824cfbc"
+  end
+
+  uses_from_macos "ncurses"
+
+  on_macos do
+    depends_on "gettext"
   end
 
   def install
     # Fix compile with newer Clang
     ENV.append_to_cflags "-Wno-implicit-function-declaration" if DevelopmentTools.clang_build_version >= 1403
 
-    system "./configure", "--prefix=#{prefix}", "--mandir=#{man}", "--disable-nls"
+    system "./configure", "--mandir=#{man}", *std_configure_args
     system "make", "install"
   end
 

@@ -3,51 +3,45 @@ class Peru < Formula
 
   desc "Dependency retriever for version control and archives"
   homepage "https://github.com/buildinspace/peru"
-  url "https://files.pythonhosted.org/packages/8e/c7/c451e70443c0b82440384d51f4b9517b921d4fe44172d63dc10a09da114f/peru-1.3.1.tar.gz"
-  sha256 "31cbcc3b1c0663866fcfb2065cb7ac26fda1843a3e5638f260cc0d78b3372f39"
+  url "https://files.pythonhosted.org/packages/a8/45/cec03aca5ab8a8a1ff8248dcd5c9f17e5a7e9c9e8e9d0b9a135a1c0605e7/peru-1.3.3.tar.gz"
+  sha256 "ac6b0d0e85fbe7d57d4587b4e58551de83fd4af4f8245a0851414898cce3e1b1"
   license "MIT"
 
   bottle do
-    rebuild 5
-    sha256 cellar: :any,                 arm64_sonoma:   "6bbfa6021acb4de8dc1031932083f0e0ca2acc3296dec9dd87c9e77e389d9d49"
-    sha256 cellar: :any,                 arm64_ventura:  "8dade0a9d43215a49d727c92312ca7bfa777ce0f4e91dea0c98944abee794ed3"
-    sha256 cellar: :any,                 arm64_monterey: "806150274ee7f2e12348d7025968174a01c12cf4da437fa6c1ae191fc8e19136"
-    sha256 cellar: :any,                 sonoma:         "5b2f8e9640bf44828878d727ec08acc4d4aa74fc07dd2cb9819c395491950fb4"
-    sha256 cellar: :any,                 ventura:        "73263481f1bd20dd689d255565e8c93a5c86e9475a86922af76cb83634910e04"
-    sha256 cellar: :any,                 monterey:       "c70dc90087a362d3c131be4b2a54a14cc9f1c21828433ef73c5e2ed1d125a44e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "52fdcc8015a74fbb3c94714c8113f53cc1ede04a363044f2392a2af9990076b8"
+    sha256 cellar: :any,                 arm64_sequoia: "fd7035d7b44788659c3c228fdbca57d6f918799469ca542046e70b64465e3855"
+    sha256 cellar: :any,                 arm64_sonoma:  "124352399f26fd9fdc5a396a33f6f624ef613eb7a5eb07b50aac7262ac12a0c3"
+    sha256 cellar: :any,                 arm64_ventura: "ad488293d43ee05ac8eccf9e5278e7613b26a8ac960b1385d128fa78e1465f15"
+    sha256 cellar: :any,                 sonoma:        "e575c707cc3431e180e541d516812c8f4303adfd3e786198da14f4af7c27ddc5"
+    sha256 cellar: :any,                 ventura:       "45a48b49b8eef723df7537615fb968eb984c1c6e6a4a44634177c3ce35b367d8"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "73ab93c07fc0d53f07452e107fa9352fc3a269a608f0284a4baa41369c9e6257"
   end
 
   depends_on "libyaml"
-  depends_on "python@3.12"
-
-  resource "docopt" do
-    url "https://files.pythonhosted.org/packages/a2/55/8f8cab2afd404cf578136ef2cc5dfb50baa1761b68c9da1fb1e4eed343c9/docopt-0.6.2.tar.gz"
-    sha256 "49b3a825280bd66b3aa83585ef59c4a8c82f2c8a522dbe754a8bc8d08c85c491"
-  end
+  depends_on "python@3.13"
 
   resource "pyyaml" do
-    url "https://files.pythonhosted.org/packages/cd/e5/af35f7ea75cf72f2cd079c95ee16797de7cd71f29ea7c68ae5ce7be1eda0/PyYAML-6.0.1.tar.gz"
-    sha256 "bfdf460b1736c775f2ba9f6a92bca30bc2095067b8a9d77876d1fad6cc3b4a43"
+    url "https://files.pythonhosted.org/packages/54/ed/79a089b6be93607fa5cdaedf301d7dfb23af5f25c398d5ead2525b063e17/pyyaml-6.0.2.tar.gz"
+    sha256 "d584d9ec91ad65861cc08d42e834324ef890a082e591037abe114850ff7bbc3e"
   end
 
   def install
     # Fix plugins (executed like an executable) looking for Python outside the virtualenv
     Dir["peru/resources/plugins/**/*.py"].each do |f|
-      inreplace f, "#! /usr/bin/env python3", "#!#{libexec}/bin/python3.12"
+      inreplace f, "#! /usr/bin/env python3", "#!#{libexec}/bin/python3.13"
     end
 
     virtualenv_install_with_resources
   end
 
   test do
-    (testpath/"peru.yaml").write <<~EOS
+    (testpath/"peru.yaml").write <<~YAML
       imports:
         peru: peru
       git module peru:
         url: https://github.com/buildinspace/peru.git
-    EOS
-    system "#{bin}/peru", "sync"
+    YAML
+
+    system bin/"peru", "sync"
     assert_predicate testpath/".peru", :exist?
     assert_predicate testpath/"peru", :exist?
   end

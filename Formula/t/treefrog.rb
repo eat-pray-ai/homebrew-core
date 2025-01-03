@@ -1,8 +1,8 @@
 class Treefrog < Formula
   desc "High-speed C++ MVC Framework for Web Application"
   homepage "https://www.treefrogframework.org/"
-  url "https://github.com/treefrogframework/treefrog-framework/archive/refs/tags/v2.9.0.tar.gz"
-  sha256 "90cc96a883c09e42a73b6ca7a8ed262ba59c398966c32e984dd3f9d49feda2c2"
+  url "https://github.com/treefrogframework/treefrog-framework/archive/refs/tags/v2.10.1.tar.gz"
+  sha256 "ab580fe31ca097306963d3189dae0b471f674377421d75f8aff6780d17b0414e"
   license "BSD-3-Clause"
   head "https://github.com/treefrogframework/treefrog-framework.git", branch: "master"
 
@@ -12,44 +12,30 @@ class Treefrog < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "6c780fca27734da1076f7483d8bb87b35799d25dce52b706e69d65fe5dcc7259"
-    sha256 arm64_ventura:  "f1eb50428c185ec2052a5c4bbdbe68818a020c9ba68505dbc19b58851f10e11e"
-    sha256 arm64_monterey: "063a507434d9c87b19a59d5d1bd0c73e82a73a268353cf9e989e0289fabdb6d4"
-    sha256 sonoma:         "942d2b7aec40f2630b90758724854dc45a6e58ced2e9085c6f0a4dd49fbff0dd"
-    sha256 ventura:        "e405fe58976f308f25e5d7924bff0f77589a592f4e1ff0f2db7bbed4efdba767"
-    sha256 monterey:       "27c89d9321cba0ef0301efe2ff663ffe5ddb79e198dc8f975975356c125bd2f8"
-    sha256 x86_64_linux:   "cb7320c8416c2d800ee3c744e9e48e22a957e0af6c03ffe31a2fed205f79dd6e"
+    sha256 arm64_sonoma:  "f3df866109eec865647812d2d3578fceb588f2d103a0472d893de834f44d0bdf"
+    sha256 arm64_ventura: "6937cab6ad7b96a6cd30cc8e021d088bb704127eaeb7cefae560f47f5aa56b57"
+    sha256 sonoma:        "c1c95ef9795cde56632a5f9c2c5aa702f1e2ef4f392845cc1b655d0bb2067e56"
+    sha256 ventura:       "ef97dc3d4f74e9683449379b9d9087a55bae272348b1a63deeedcedd4997f0b0"
+    sha256 x86_64_linux:  "216205bbe3f88da678d5fdb93161b71adc63d4ce94244525116ede90560549fc"
   end
 
-  depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
-  depends_on xcode: :build
-  depends_on "gflags"
+  depends_on "pkgconf" => :build
   depends_on "glog"
+  depends_on "lz4"
   depends_on "mongo-c-driver"
   depends_on "qt"
 
-  fails_with gcc: "5"
-
   def install
-    # src/corelib.pro hardcodes different paths for mongo-c-driver headers on macOS and Linux.
-    if OS.mac?
-      inreplace "src/corelib.pro", "/usr/local", HOMEBREW_PREFIX
-    else
-      inreplace "src/corelib.pro", "/usr/lib", HOMEBREW_PREFIX/"lib"
-    end
+    rm_r("3rdparty")
+    # Skip unneeded CMake check
+    inreplace "configure", "if ! which cmake ", "if false "
 
-    system "./configure", "--prefix=#{prefix}", "--enable-shared-mongoc", "--enable-shared-glog"
-
-    cd "src" do
-      system "make"
-      system "make", "install"
-    end
-
-    cd "tools" do
-      system "make"
-      system "make", "install"
-    end
+    system "./configure", "--prefix=#{prefix}",
+                          "--enable-shared-glog",
+                          "--enable-shared-lz4",
+                          "--enable-shared-mongoc"
+    system "make", "-C", "src", "install"
+    system "make", "-C", "tools", "install"
   end
 
   test do

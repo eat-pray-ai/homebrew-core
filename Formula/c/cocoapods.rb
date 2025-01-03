@@ -1,21 +1,21 @@
 class Cocoapods < Formula
   desc "Dependency manager for Cocoa projects"
   homepage "https://cocoapods.org/"
-  url "https://github.com/CocoaPods/CocoaPods/archive/refs/tags/1.15.2.tar.gz"
-  sha256 "324a13efb2c3461f489c275462528e9e721f83108d09d768d2049710d82d933c"
+  url "https://github.com/CocoaPods/CocoaPods/archive/refs/tags/1.16.2.tar.gz"
+  sha256 "3067f21a0025aedb5869c7080b6c4b3fa55d397b94fadc8c3037a28a6cee274c"
   license "MIT"
+  revision 1
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "4f9825eaf19aba42fc19939c47c49b3d4e322d383f5a79ab029167351d5547c6"
-    sha256 cellar: :any,                 arm64_ventura:  "e1729cced418772a8d8aa810c7cb153ec66db56a9b2cbec3e53adaaa576fb1ba"
-    sha256 cellar: :any,                 arm64_monterey: "e8dc98276c80101c70aa14f6e736e1154b988f3b53f6be357b7a76cf776c3b4b"
-    sha256 cellar: :any,                 sonoma:         "981c5baaab7a26258bfccfb7efc7141b9a88912b5fe06197ac07423fc436ed34"
-    sha256 cellar: :any,                 ventura:        "1cf37b506f2b50d73a26b3b1e1f28009faeb66d6a3ec4671453ac6d360e96cba"
-    sha256 cellar: :any,                 monterey:       "fa000679291ddbfa5792e8b04f71c106c4c3325116215ceb76e46f4c8ed7f85d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "1cad9d3142ee7623d1ca22773dbeefa0e936e224aecef263a1657a91413c9958"
+    sha256 cellar: :any,                 arm64_sequoia: "c0bd1f8e2bdb31e76d8919d8c5181c5ffacab9aa03b9be9cd77c4fcfdd2f0527"
+    sha256 cellar: :any,                 arm64_sonoma:  "46d7033d09663c83d43346815b67d4abac9c68b2cff38a7a0eaf55fcf459f56d"
+    sha256 cellar: :any,                 arm64_ventura: "95765343247a0af19d81ab36c3ab8e379e7729f688da64ae723f49c7deba34d7"
+    sha256 cellar: :any,                 sonoma:        "783c64ac3c486bae33e11edf68a56380245d3fe783e1c60e2548a08e05adedef"
+    sha256 cellar: :any,                 ventura:       "b1358f53cd22a76793b935b5b3d4fa384cbe292d85d6a02fccf7232ea038890d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "bb0ed8f654a355942ff4df4236ad181fa474aad5188cf2de73e6412b9df098b1"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "ruby"
   uses_from_macos "libffi", since: :catalina
 
@@ -29,6 +29,6 @@ class Cocoapods < Formula
   end
 
   test do
-    system "#{bin}/pod", "list"
+    system bin/"pod", "list"
   end
 end

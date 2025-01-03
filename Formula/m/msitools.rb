@@ -13,6 +13,7 @@ class Msitools < Formula
   end
 
   bottle do
+    sha256 arm64_sequoia:  "68e661be46cc7452fe15b99dc90f3cbe572d7cf644fd399707c7313dc3bcb52b"
     sha256 arm64_sonoma:   "ee10c9cb4bc12d8b4576418734817953546f1aaae34b94b1aa19fa0649159bdf"
     sha256 arm64_ventura:  "01b5cc782019274ccbad9e4afe6c5a27cc2e109dfa6bfb7ee143fd09a63a38a6"
     sha256 arm64_monterey: "5a6840a0a0b3c0e54e55ef878605137f4eb4e2c1082ca7ba62bc02b484fdea2e"
@@ -29,7 +30,7 @@ class Msitools < Formula
   depends_on "gobject-introspection" => :build
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "vala" => :build
   depends_on "gcab"
   depends_on "glib"
@@ -54,7 +55,7 @@ class Msitools < Formula
     # wixl: build two installers
     1.upto(2) do |i|
       (testpath/"test#{i}.txt").write "abc"
-      (testpath/"installer#{i}.wxs").write <<~EOS
+      (testpath/"installer#{i}.wxs").write <<~XML
         <?xml version="1.0"?>
         <Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
            <Product Id="*" UpgradeCode="DADAA9FC-54F7-4977-9EA1-8BDF6DC73C7#{i}"
@@ -77,8 +78,8 @@ class Msitools < Formula
               </Feature>
            </Product>
         </Wix>
-      EOS
-      system "#{bin}/wixl", "-o", "installer#{i}.msi", "installer#{i}.wxs"
+      XML
+      system bin/"wixl", "-o", "installer#{i}.msi", "installer#{i}.wxs"
       assert_predicate testpath/"installer#{i}.msi", :exist?
     end
 
@@ -95,16 +96,16 @@ class Msitools < Formula
 
     # msiextract: extract files from an installer
     mkdir "files"
-    system "#{bin}/msiextract", "--directory", "files", "installer1.msi"
+    system bin/"msiextract", "--directory", "files", "installer1.msi"
     assert_equal (testpath/"test1.txt").read,
                  (testpath/"files/Program Files/test/test1.txt").read
 
     # msidump: dump tables from an installer
     mkdir "idt"
-    system "#{bin}/msidump", "--directory", "idt", "installer1.msi"
+    system bin/"msidump", "--directory", "idt", "installer1.msi"
     assert_predicate testpath/"idt/File.idt", :exist?
 
     # msibuild: replace a table in an installer
-    system "#{bin}/msibuild", "installer1.msi", "-i", "idt/File.idt"
+    system bin/"msibuild", "installer1.msi", "-i", "idt/File.idt"
   end
 end

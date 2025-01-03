@@ -4,7 +4,7 @@ class Fuego < Formula
   url "https://svn.code.sf.net/p/fuego/code/trunk", revision: "1981"
   version "1.1"
   license any_of: ["GPL-3.0-only", "LGPL-3.0-only"]
-  revision 11
+  revision 13
   version_scheme 1
   head "https://svn.code.sf.net/p/fuego/code/trunk"
 
@@ -14,13 +14,12 @@ class Fuego < Formula
   end
 
   bottle do
-    sha256                               arm64_sonoma:   "4efea019ce107615d44cb7e953b9cb8cb1a75ad64247cb0a62f9a7a821e02d65"
-    sha256                               arm64_ventura:  "d93f77ed5fe2e7e6f68dcedd67453d5648c3f47485b594815b712bf383042f40"
-    sha256                               arm64_monterey: "0a5a466446e91d45f7be39b5a6e0e9973a9875cc585ba47d48b5cad1bc61b03f"
-    sha256                               sonoma:         "f911631864a16c00781379c907d725e38098e5f5894dba700093af6eb3b8437b"
-    sha256                               ventura:        "a49aeab701ca4152243dfcc2bbe3833945b3599e6d26f623c0155884609c80cd"
-    sha256                               monterey:       "e0ce16f58174e8fc0e23ab87683d42988f9054b7a8f19aa6a1abf4d0ea1e9ecb"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "61f2f5e9664488211903b1883f92c9a9c18905095a0d15b3a1be81507fbbc0d5"
+    sha256                               arm64_sequoia: "13e5216438f83d46c8ee563d374ce2d1779d939e3685ddfb8dbadc4e80973603"
+    sha256                               arm64_sonoma:  "6e990c366d2f9336021ece74d5e1631138494956102841e5e604a6b191c1f835"
+    sha256                               arm64_ventura: "e46f29878cd3da3bd37ea45ed0b059d6107614db694ab42cdae6aab8e9300fb7"
+    sha256                               sonoma:        "e386d89a79e0a445169ad537a6c0355470cc627eb8dff028e63683fdb87faf4c"
+    sha256                               ventura:       "17498a162c38903e19def645d699200834edd0257faaffa506f4270bc53628b0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a636b9b22b178bf38ad82e3c488b5decc87d7124c254e3f7a16cc37bfc642cf1"
   end
 
   depends_on "autoconf" => :build

@@ -12,6 +12,7 @@ class Hackrf < Formula
   end
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "700b528a727979c136ce3c8c009ff76ed6683fa32236684847652da562bef92e"
     sha256 cellar: :any,                 arm64_sonoma:   "5bcb0c337a5f17808365a9472d8537f4bc91a7e16d0147656020a9e2c7fb8735"
     sha256 cellar: :any,                 arm64_ventura:  "785f40b5807a55615798acdb3c2f3084da4f619199ce4680dbdb03a33800e656"
     sha256 cellar: :any,                 arm64_monterey: "34c1393265906dce624d9ce369a051d119523f5c645f0ce651ac2fd3127101b8"
@@ -22,22 +23,16 @@ class Hackrf < Formula
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "fftw"
   depends_on "libusb"
 
   def install
-    cd "host" do
-      args = std_cmake_args
+    args = OS.linux? ? ["-DUDEV_RULES_GROUP=plugdev", "-DUDEV_RULES_PATH=#{lib}/udev/rules.d"] : []
 
-      if OS.linux?
-        args << "-DUDEV_RULES_GROUP=plugdev"
-        args << "-DUDEV_RULES_PATH=#{lib}/udev/rules.d"
-      end
-
-      system "cmake", ".", *args
-      system "make", "install"
-    end
+    system "cmake", "-S", "host", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
     pkgshare.install "firmware-bin/"
   end
 

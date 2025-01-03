@@ -11,6 +11,7 @@ class Terraform < Formula
 
   bottle do
     rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "87e8faf4dc4090ff8259a2cc258ac20518c154989af694475a3105d5ad57d664"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "82a9dcb1351fa533ea106fe0222678c89814a42ce4939d17c01178f4dbff4713"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "b9f647f7ab0dc2c8878c6f4ab51bcd412197bc02e30389b15cc37de2b0dfaf8b"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "8b14e9ffc5a5d154e5d6b58b94c18372c2f69c5ce1fd5735b351c1a1bac0187f"
@@ -28,10 +29,6 @@ class Terraform < Formula
   conflicts_with "tenv", because: "both install terraform binary"
   conflicts_with "tfenv", because: "tfenv symlinks terraform binaries"
 
-  # Needs libraries at runtime:
-  # /usr/lib/x86_64-linux-gnu/libstdc++.so.6: version `GLIBCXX_3.4.29' not found (required by node)
-  fails_with gcc: "5"
-
   def install
     system "go", "build", *std_go_args(ldflags: "-s -w")
   end
@@ -48,7 +45,7 @@ class Terraform < Formula
 
   test do
     minimal = testpath/"minimal.tf"
-    minimal.write <<~EOS
+    minimal.write <<~HCL
       variable "aws_region" {
         default = "us-west-2"
       }
@@ -74,8 +71,8 @@ class Terraform < Formula
         ami           = var.aws_amis[var.aws_region]
         count         = 4
       }
-    EOS
-    system "#{bin}/terraform", "init"
-    system "#{bin}/terraform", "graph"
+    HCL
+    system bin/"terraform", "init"
+    system bin/"terraform", "graph"
   end
 end

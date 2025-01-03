@@ -7,6 +7,7 @@ class Slides < Formula
   head "https://github.com/maaslalani/slides.git", branch: "main"
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "755ccfe47079714863054effd6f18d4da28b579895c56d69ba4abd506c2c65d1"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "d474822334c4c065d42e7c81de42e4924afca758106f358cdd755e454c13be84"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "335ffbac50cfea46abb4afa92116f16c1d351d77deb103a19e6434b11d2a540d"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "a17e1f07ab13a27bca222b103799a247e15d2bb6f3b239d5f973029886e4e1d8"
@@ -26,14 +27,14 @@ class Slides < Formula
   end
 
   test do
-    (testpath/"test.md").write <<-MARKDOWN
-    # Slide 1
-    Content
+    (testpath/"test.md").write <<~MARKDOWN
+      # Slide 1
+      Content
 
-    ---
+      ---
 
-    # Slide 2
-    More Content
+      # Slide 2
+      More Content
     MARKDOWN
 
     # Bubbletea-based apps are hard to test even under PTY.spawn (or via
@@ -41,13 +42,10 @@ class Slides < Formula
     # "<ESC>[6n" to report the cursor position. For now we just run the command
     # for a second and see that it tried to send some ANSI out of it.
     require "pty"
-    r, _, pid = PTY.spawn "#{bin}/slides test.md"
-    sleep 1
-    Process.kill("TERM", pid)
-    begin
-      assert_match(/\e\[/, r.read)
-    rescue Errno::EIO
-      # GNU/Linux raises EIO when read is done on closed pty
+    PTY.spawn(bin/"slides", "test.md") do |r, _, pid|
+      sleep 1
+      Process.kill("TERM", pid)
+      assert_match(/\e\[/, r.read_nonblock(1024))
     end
   end
 end

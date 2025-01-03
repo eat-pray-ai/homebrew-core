@@ -35,14 +35,13 @@ class Mpir < Formula
 
   def install
     # Regenerate ./configure script due to patch above
-    system "autoreconf", "--verbose", "--install", "--force"
-    args = %W[--disable-silent-rules --prefix=#{prefix} --enable-cxx]
-    system "./configure", *args
+    system "autoreconf", "--force", "--install", "--verbose"
+    system "./configure", "--disable-silent-rules", "--enable-cxx", *std_configure_args
     system "make", "install"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <mpir.h>
       #include <stdlib.h>
 
@@ -55,7 +54,7 @@ class Mpir < Formula
         if (mpz_get_si (j) != 5 || mpz_get_si (k) != 1) abort();
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c", "-I#{include}", "-L#{lib}", "-lmpir", "-o", "test"
     system "./test"
   end

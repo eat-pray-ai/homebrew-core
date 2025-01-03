@@ -1,19 +1,18 @@
 class Mtools < Formula
   desc "Tools for manipulating MSDOS files"
   homepage "https://www.gnu.org/software/mtools/"
-  url "https://ftp.gnu.org/gnu/mtools/mtools-4.0.44.tar.gz"
-  mirror "https://ftpmirror.gnu.org/mtools/mtools-4.0.44.tar.gz"
-  sha256 "10be76148870f984fa44df297473a4e45184472cdb19a4d05ef17fdb59b5d5a4"
+  url "https://ftp.gnu.org/gnu/mtools/mtools-4.0.46.tar.gz"
+  mirror "https://ftpmirror.gnu.org/mtools/mtools-4.0.46.tar.gz"
+  sha256 "4243e79af24133525755f37fc85e9c09fd904c89561ee19cd669454fc5b28ded"
   license "GPL-3.0-or-later"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "9689a807460b4a4b69876a8b4369f63b98f8b5c6e6cc205923b3636cda22ac52"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "0a0f9a0019cff8eeccd637877d2166969ce9484756debe8a4d93ef8ee1f96380"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "8390f3de81dde1bc03f9a5bfb5c5f7c84dde0f072e503b991f26f39fcf9ccbbd"
-    sha256 cellar: :any_skip_relocation, sonoma:         "420075f755b412d1d8ab8973dbc7a1a9c5ab89f8060f7485c4f65d7579cf665b"
-    sha256 cellar: :any_skip_relocation, ventura:        "47aff66ced453f92d383c74546b18bb773dce5ce121603efec5d4dabd2905a86"
-    sha256 cellar: :any_skip_relocation, monterey:       "49b0b135fa91f67e246d2c78ec6f159a54ce29b9479f9ec7481a5521a2454404"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "a5f33a77cf8b89771cbc7393042ca761fa3db365f9c551496178cea955c12d78"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "06b18781ccf00aed5ebf26e14addc0b0c7da5b6a383b810e7712f850929e0b9e"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "a91d7b683a0d78cafcf56dd581908cbca2e62673922d0e5de3ebf4cd9b271118"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "7d9f7d214585bb4ea9cbd7b47e010032ec33d59838b3c08932b58305d00fe7ed"
+    sha256 cellar: :any_skip_relocation, sonoma:        "ea49ff9deab0af2151880a8e9f47fa31541da1b696c31609e73b35af919f0dd2"
+    sha256 cellar: :any_skip_relocation, ventura:       "bc35bae1aea11e78e87ec2d747a4cef399e66418d548878de635d5a968463d0b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5c32a679fe8d4a8e8d9ba5c92385dc7047263517df73d8ab28babc4e413cb2aa"
   end
 
   conflicts_with "multimarkdown", because: "both install `mmd` binaries"

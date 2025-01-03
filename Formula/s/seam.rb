@@ -1,26 +1,23 @@
-require "language/node"
-
 class Seam < Formula
   desc "This utility lets you control Seam resources"
   homepage "https://github.com/seamapi/seam-cli"
-  url "https://registry.npmjs.org/seam-cli/-/seam-cli-0.0.58.tgz"
-  sha256 "4c9c7989f02506e241d0921921859b7b0774b6fed9ed3fe90983f9f877248e76"
+  url "https://registry.npmjs.org/seam-cli/-/seam-cli-0.0.60.tgz"
+  sha256 "e25f9c24234222813d3cbaa152180b61949ef0800f617daba469d297fee5eee8"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "95b294db393a09b5ad522e2caf6d838d5da5057be7e8c4a4622d2df29a5c502c"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "95b294db393a09b5ad522e2caf6d838d5da5057be7e8c4a4622d2df29a5c502c"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "95b294db393a09b5ad522e2caf6d838d5da5057be7e8c4a4622d2df29a5c502c"
-    sha256 cellar: :any_skip_relocation, sonoma:         "82e467fcc5944ff9d411a2acbdfa5ad32f7be7dbd88c8c153be3e09749975676"
-    sha256 cellar: :any_skip_relocation, ventura:        "82e467fcc5944ff9d411a2acbdfa5ad32f7be7dbd88c8c153be3e09749975676"
-    sha256 cellar: :any_skip_relocation, monterey:       "82e467fcc5944ff9d411a2acbdfa5ad32f7be7dbd88c8c153be3e09749975676"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "c2da746fbe8decc9ebd66e5fdd3a985666a427f48613cb386229559ce193b59a"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "4cf7355dabc33a7060c8fd32929e6be4067f2925f1808a9affe9d8a59402c56a"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "4cf7355dabc33a7060c8fd32929e6be4067f2925f1808a9affe9d8a59402c56a"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "4cf7355dabc33a7060c8fd32929e6be4067f2925f1808a9affe9d8a59402c56a"
+    sha256 cellar: :any_skip_relocation, sonoma:        "e4b91883ce4c7fc181c743f76a719cedb7d2ecaa111007e98b8ea30d0e8ae16f"
+    sha256 cellar: :any_skip_relocation, ventura:       "e4b91883ce4c7fc181c743f76a719cedb7d2ecaa111007e98b8ea30d0e8ae16f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4cf7355dabc33a7060c8fd32929e6be4067f2925f1808a9affe9d8a59402c56a"
   end
 
   depends_on "node"
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+    system "npm", "install", *std_npm_args
     bin.install_symlink Dir["#{libexec}/bin/*"]
   end
 

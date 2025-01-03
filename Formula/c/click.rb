@@ -12,6 +12,7 @@ class Click < Formula
   end
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "e987eede7eef110c096c8093ccfbf321f3835378f8a65619627eabe348e0d985"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "aece6aa76034deb2d8e1437d85f4e4c94195de67eb7948d19b2fc2423824808c"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "a828f3d797aa3aca5596984e8b8f51afdbe123c3f8e7fa4fa6e760f66a4e57e4"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "902ecbe1a647d12fe9fa8fc5de1e6c0336e8f4d1b979c24c71da8ee0c446ee14"
@@ -23,10 +24,8 @@ class Click < Formula
 
   depends_on "rust" => :build
 
-  uses_from_macos "expect" => :test
-
   on_linux do
-    depends_on "pkg-config" => :build
+    depends_on "pkgconf" => :build
     depends_on "openssl@3"
   end
 
@@ -35,18 +34,17 @@ class Click < Formula
   end
 
   test do
-    mkdir testpath/"config"
     # Default state configuration file to avoid warning on startup
-    (testpath/"config/click.config").write <<~EOS
+    (testpath/"config/click.config").write <<~YAML
       ---
       namespace: ~
       context: ~
       editor: ~
       terminal: ~
-    EOS
+    YAML
 
     # Fake K8s configuration
-    (testpath/"config/config").write <<~EOS
+    (testpath/"config/config").write <<~YAML
       apiVersion: v1
       clusters:
         - cluster:
@@ -69,14 +67,10 @@ class Click < Formula
               invalid
             client-key-data: >-
               invalid
-    EOS
+    YAML
 
     # This test cannot test actual K8s connectivity, but it is enough to prove click starts
-    (testpath/"click-test").write <<~EOS
-      spawn "#{bin}/click" --config_dir "#{testpath}/config"
-      expect "*\\[*none*\\]* *\\[*none*\\]* *\\[*none*\\]* >"
-      send "quit\\r"
-    EOS
-    system "expect", "-f", "click-test"
+    output = pipe_output("#{bin}/click --config_dir #{testpath}/config", "quit")
+    assert_equal "[\e[38;5;9m\e[1mnone\e[0m] [\e[38;5;10m\e[1mnone\e[0m] [\e[38;5;3mnone\e[39m] > ", output
   end
 end

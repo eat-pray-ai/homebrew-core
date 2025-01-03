@@ -1,19 +1,18 @@
 class Mapcrafter < Formula
   desc "Minecraft map renderer"
-  homepage "https://mapcrafter.org"
+  homepage "https://github.com/mapcrafter/mapcrafter"
   url "https://github.com/mapcrafter/mapcrafter/archive/refs/tags/v.2.4.tar.gz"
   sha256 "f3b698d34c02c2da0c4d2b7f4e251bcba058d0d1e4479c0418eeba264d1c8dae"
-  license "GPL-3.0"
-  revision 11
+  license "GPL-3.0-or-later"
+  revision 13
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "686ca81e6553b20137845a249547dd5c0bc9eca21e795dee7238784aed8da0af"
-    sha256 cellar: :any,                 arm64_ventura:  "2691f7edbb01d1f8972ab1c808025f404463ec86fa9af943fb18a9ac783adf9a"
-    sha256 cellar: :any,                 arm64_monterey: "cf591739bbe4f5de38d18348856455adcebf191e1276d527ad62f4dcf6aae79b"
-    sha256 cellar: :any,                 sonoma:         "16b5995c15d49481dd4c5b9379607aa178be523df840b29c700a58e3703093e0"
-    sha256 cellar: :any,                 ventura:        "1ad1854d8ae46de7df1004772050985b62b75dce9ca12ec5c85a21b80c563865"
-    sha256 cellar: :any,                 monterey:       "7055def0f7806a90f0cd64b12015cf65725ac7e7097d0a8978accd61411590af"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "48422e315761b9032fdba7b4736a17089f0db8d265007656525f8f4188042daf"
+    sha256 cellar: :any,                 arm64_sequoia: "d4556cc5cdbe849c4749c90f875acf0d6c8fd23161067c32896f21b7774baf55"
+    sha256 cellar: :any,                 arm64_sonoma:  "550b5c6e1af585913ca491e70a7ee26f0bf00cca855944852c3c5a407dea44e7"
+    sha256 cellar: :any,                 arm64_ventura: "bb17c4f398412e9152aae89cce1dc562abd658ce7260f85f65ec142268e1d970"
+    sha256 cellar: :any,                 sonoma:        "c79426460a944b07d0f53856be421471ab5893dd15794e2bdbe740413d926ad4"
+    sha256 cellar: :any,                 ventura:       "8b37b8c357fed7bf253a4876aa17e4e1dc33dc1bece5632395149225350b6a27"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1e53d3945f9d2caeac7b028aede4b5a65ff3db01f290f45297395aa4e3132736"
   end
 
   depends_on "cmake" => :build

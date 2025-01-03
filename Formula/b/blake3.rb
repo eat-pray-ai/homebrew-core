@@ -1,32 +1,29 @@
 class Blake3 < Formula
   desc "C implementation of the BLAKE3 cryptographic hash function"
   homepage "https://github.com/BLAKE3-team/BLAKE3"
-  url "https://github.com/BLAKE3-team/BLAKE3/archive/refs/tags/1.5.1.tar.gz"
-  sha256 "822cd37f70152e5985433d2c50c8f6b2ec83aaf11aa31be9fe71486a91744f37"
+  url "https://github.com/BLAKE3-team/BLAKE3/archive/refs/tags/1.5.5.tar.gz"
+  sha256 "6feba0750efc1a99a79fb9a495e2628b5cd1603e15f56a06b1d6cb13ac55c618"
   license any_of: ["CC0-1.0", "Apache-2.0"]
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "c2201b562ac720e557ddcd29b16967231efdb43ced0cb15360b71a8f50ba35d7"
-    sha256 cellar: :any,                 arm64_ventura:  "d4d8f65bd488c430e008d1d2248ee700ec6f3e7c775bbf3f853787d176f5bb8f"
-    sha256 cellar: :any,                 arm64_monterey: "f5d9b4b1e92f61ba7ebc9ab84aad73641044650b4ed5e66de373b7c650b352f3"
-    sha256 cellar: :any,                 sonoma:         "2f4c994fbe40aa9550077ef7270d7529107706ab2b43e54c9bd42cd047f98280"
-    sha256 cellar: :any,                 ventura:        "5a35a1a282fa9ad9ed1166aa14d3c073d6195c9c97600653c198d3f966cd8247"
-    sha256 cellar: :any,                 monterey:       "9ae5366201da7e076fdcfa3c5b2f768de540c083798a6dde7363d19b6d8bccad"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f5c6ef340097f3d5195f8b77d1af22d8ef701f2ad47ef0344ed8897f74bddd4e"
+    sha256 cellar: :any,                 arm64_sequoia: "b9d053b51e933e41cb5949074ad9a299fd2b31cbd59804a8c853e5e5c85cf6f0"
+    sha256 cellar: :any,                 arm64_sonoma:  "0df024291db039b86a0de52917c0ec819085256130547ad0b534d0206a2e0d84"
+    sha256 cellar: :any,                 arm64_ventura: "ae11cf3d5117500c362a13b1e3e26df04004e14a2c0739914b81fbef270ccea0"
+    sha256 cellar: :any,                 sonoma:        "dd4a5e905c5b2bb06a323ede9c871c3284ba739c8a6934c8443c5ebfe548c8f8"
+    sha256 cellar: :any,                 ventura:       "f6f057edf60d9448debbe993061fe1ec0a19f706473a7f99a43cc122ec4ad95b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f6138af9754e790d10ef2aa346c41860730a9ebcc1beb1d737ef57e73b1a21cf"
   end
 
   depends_on "cmake" => :build
 
   def install
-    system "cmake", "-S", "c", "-B", "build",
-                    "-DBUILD_SHARED_LIBS=ON",
-                    *std_cmake_args
+    system "cmake", "-S", "c", "-B", "build", "-DBUILD_SHARED_LIBS=ON", *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <errno.h>
       #include <stdio.h>
       #include <stdlib.h>
@@ -61,7 +58,7 @@ class Blake3 < Formula
         printf("\\n");
         return 0;
       }
-    EOS
+    C
     (testpath/"input.txt").write <<~EOS
       content
     EOS

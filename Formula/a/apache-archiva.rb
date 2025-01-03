@@ -7,6 +7,7 @@ class ApacheArchiva < Formula
   license all_of: ["Apache-2.0", "GPL-2.0-only"]
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "0353821ce360af9daa593f637080c56b6e2cfbdd79430d90592577476aefd5be"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "608f320fba80feaae78ae4a9245939f3c115a06ad852b83a510332f816982fc3"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "d50d77e7248f8d9c91d0db6952a249cd7913d9463268e99494d909defc5d3a24"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "d50d77e7248f8d9c91d0db6952a249cd7913d9463268e99494d909defc5d3a24"
@@ -26,8 +27,8 @@ class ApacheArchiva < Formula
 
   def install
     libexec.install Dir["*"]
-    rm_f libexec.glob("bin/wrapper*")
-    rm_f libexec.glob("lib/libwrapper*")
+    rm(libexec.glob("bin/wrapper*"))
+    rm(libexec.glob("lib/libwrapper*"))
     (bin/"archiva").write_env_script libexec/"bin/archiva", Language::Java.java_home_env
 
     wrapper = Formula["java-service-wrapper"].opt_libexec

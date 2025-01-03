@@ -1,27 +1,27 @@
 class Gnupg < Formula
   desc "GNU Pretty Good Privacy (PGP) package"
   homepage "https://gnupg.org/"
-  url "https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.4.5.tar.bz2"
-  sha256 "f68f7d75d06cb1635c336d34d844af97436c3f64ea14bcb7c869782f96f44277"
+  url "https://gnupg.org/ftp/gcrypt/gnupg/gnupg-2.4.7.tar.bz2"
+  sha256 "7b24706e4da7e0e3b06ca068231027401f238102c41c909631349dcc3b85eb46"
   license "GPL-3.0-or-later"
 
+  # GnuPG appears to indicate stable releases with an even-numbered minor
+  # (https://gnupg.org/download/#end-of-life).
   livecheck do
     url "https://gnupg.org/ftp/gcrypt/gnupg/"
-    regex(/href=.*?gnupg[._-]v?(\d+(?:\.\d+)+)\.t/i)
+    regex(/href=.*?gnupg[._-]v?(\d+\.\d*[02468](?:\.\d+)*)\.t/i)
   end
 
   bottle do
-    rebuild 1
-    sha256 arm64_sonoma:   "788b60ce047a2f42d2ecd7d2aa9df254d1757c48e1b7e4754b03f0659a326848"
-    sha256 arm64_ventura:  "1c7b98bc6ee15c3802434b579d8c3c22871394bf67b90f1c812d338b548d4784"
-    sha256 arm64_monterey: "61e9545b0230b560f37fcfe4a8733d0ccd2380e8378314facb5b9f4bc8d8abb2"
-    sha256 sonoma:         "96d57cbeb4c200ffd1b86109504c0ee3b3bd471c686e9f2209e5cda6a3c63731"
-    sha256 ventura:        "1cf8c4e10b1fb68dc4ecbe7103afc397269483029d25d34536da7852af50397c"
-    sha256 monterey:       "7db109b4a863f306649ef7176eb3d35131ab5b10753c056c426d0472b3514f91"
-    sha256 x86_64_linux:   "c4cd477cce7539e1c111562e2d23960a90bc807d4871ccde28e84d0b7198d5ca"
+    sha256 arm64_sequoia: "47b40c87309680baa445bb8b9bb71c94f7c9020789a6ae5f45980febeb6d1e42"
+    sha256 arm64_sonoma:  "f2778e812043b14964316eaaa17bc8fde02331fea2746af82bd5694d93456710"
+    sha256 arm64_ventura: "7f2f1d42257dc87ee46240ae4ea8eff46455245fdf832b905d52d8364e08da2c"
+    sha256 sonoma:        "989a2348d01b160110ab4ba3bedda4e194bf02122d31e6029fc536baba261a37"
+    sha256 ventura:       "1b8bfec784f857856a2471ed8702259987fab15b101f9d948c81467b0fd5bc91"
+    sha256 x86_64_linux:  "a091d36b710f7fdd8db5cb20dc4af2f20254b04f3d17fd2df2155701e0da9d27"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "gnutls"
   depends_on "libassuan"
   depends_on "libgcrypt"
@@ -46,11 +46,12 @@ class Gnupg < Formula
     ENV.append "CPPFLAGS", "-I#{libusb.opt_include}/libusb-#{libusb.version.major_minor}"
 
     mkdir "build" do
-      system "../configure", *std_configure_args,
-                             "--disable-silent-rules",
-                             "--sysconfdir=#{etc}",
+      system "../configure", "--disable-silent-rules",
                              "--enable-all-tests",
-                             "--with-pinentry-pgm=#{Formula["pinentry"].opt_bin}/pinentry"
+                             "--sysconfdir=#{etc}",
+                             "--with-pinentry-pgm=#{Formula["pinentry"].opt_bin}/pinentry",
+                             "--with-readline=#{Formula["readline"].opt_prefix}",
+                             *std_configure_args
       system "make"
       system "make", "check"
       system "make", "install"
@@ -60,9 +61,9 @@ class Gnupg < Formula
     # https://dev.gnupg.org/T5415#145864
     if OS.mac?
       # write to buildpath then install to ensure existing files are not clobbered
-      (buildpath/"scdaemon.conf").write <<~EOS
+      (buildpath/"scdaemon.conf").write <<~CONF
         disable-ccid
-      EOS
+      CONF
       pkgetc.install "scdaemon.conf"
     end
   end
@@ -73,7 +74,7 @@ class Gnupg < Formula
   end
 
   test do
-    (testpath/"batch.gpg").write <<~EOS
+    (testpath/"batch.gpg").write <<~GPG
       Key-Type: RSA
       Key-Length: 2048
       Subkey-Type: RSA
@@ -83,7 +84,8 @@ class Gnupg < Formula
       Expire-Date: 1d
       %no-protection
       %commit
-    EOS
+    GPG
+
     begin
       system bin/"gpg", "--batch", "--gen-key", "batch.gpg"
       (testpath/"test.txt").write "Hello World!"

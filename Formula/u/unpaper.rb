@@ -8,6 +8,7 @@ class Unpaper < Formula
   head "https://github.com/unpaper/unpaper.git", branch: "main"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "698367ece512da282636d61bd2a514efacb0d014684cc2ae663d9f0121cf3d64"
     sha256 cellar: :any,                 arm64_sonoma:   "13a3d8a2709a9ff5af9d0cfe4149ecfed559ab159e89157d090363226a94149b"
     sha256 cellar: :any,                 arm64_ventura:  "bbce025f0f3d27f9980e1032a83434024d6dca13fb547c4360c481cda4c43d65"
     sha256 cellar: :any,                 arm64_monterey: "10c463411cad146cee0c513868d177e9a5ec6d1fdea8f9cb2ad466f08715ac48"
@@ -19,11 +20,9 @@ class Unpaper < Formula
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "sphinx-doc" => :build
   depends_on "ffmpeg"
-
-  fails_with gcc: "5" # ffmpeg is compiled with GCC
 
   def install
     system "meson", "setup", "build", *std_meson_args
@@ -47,6 +46,6 @@ class Unpaper < Formula
       0 0 0 0 0 0
     EOS
     system bin/"unpaper", testpath/"test.pbm", testpath/"out.pbm"
-    assert_predicate testpath/"out.pbm", :exist?
+    assert_path_exists testpath/"out.pbm"
   end
 end

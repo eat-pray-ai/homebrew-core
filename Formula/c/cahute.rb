@@ -3,8 +3,8 @@ class Cahute < Formula
 
   desc "Library and set of utilities to interact with Casio calculators"
   homepage "https://cahuteproject.org/"
-  url "https://ftp.cahuteproject.org/releases/cahute-0.4.tar.gz"
-  sha256 "a178389ac82e2e83cd55d8d80ee1771daae88331a0e799d5573d986428825648"
+  url "https://ftp.cahuteproject.org/releases/cahute-0.6.tar.gz"
+  sha256 "2fb0a8f0b14d75fb0d8a6fa07f3feda9b4cfaad11115340285e2c9414565059c"
   license "CECILL-2.1"
   head "https://gitlab.com/cahuteproject/cahute.git", branch: "develop"
 
@@ -14,18 +14,17 @@ class Cahute < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "2bdbb8f9a3a96e4464e4198b967d978495a0c5777ba60c056a651f7b159d43a8"
-    sha256 cellar: :any,                 arm64_ventura:  "f77183811692e901e0137ff22a56393bfbc98b5865c49024bbcb5e6979699ed2"
-    sha256 cellar: :any,                 arm64_monterey: "6bfdbc3ab88c8dd88af56205e18834212fa457c5e3766f041f046690024baa0e"
-    sha256 cellar: :any,                 sonoma:         "fe98c279c43a8782bd8384a68a4e18bf45006ed2509da114086d67352b821f2f"
-    sha256 cellar: :any,                 ventura:        "22f99a9106482a5ed4972667491e6ce853f0451ec33e615d35f313e007ed28ea"
-    sha256 cellar: :any,                 monterey:       "161ea8710adc8997525d327d4b3d939d21c42888096cdbba41b553ecc5fe7dad"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "6ce0312a62d15a5b1f26391bd53c599805447e9f30a425699a5894979ee9a00c"
+    sha256 cellar: :any,                 arm64_sequoia: "a9f182ecca26940644fc57a55482d3cea23db23a9b7bc04d631d79ceaa4009c8"
+    sha256 cellar: :any,                 arm64_sonoma:  "5538bcc49d7187f12c367f25303f72880ef2ec69aca596dc4c6d50cd315fefa2"
+    sha256 cellar: :any,                 arm64_ventura: "7fcf7b11c26bf1cee45ea46082d741952de45c82f3532f2849468495351ee161"
+    sha256 cellar: :any,                 sonoma:        "56ce31df801211ccaf95a98f2d2dd9b8c79870d6aaa5784c039bd4a2b85936a7"
+    sha256 cellar: :any,                 ventura:       "1aa7caddf5a84461d3633f09d878704f395ab7e0467f0817be79cd23ceaa10de"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a58adf247829574b1deab7b035c71ec60e404e889241dc8e5910458508e09dec"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => [:build, :test]
-  depends_on "python@3.12" => :build
+  depends_on "pkgconf" => [:build, :test]
+  depends_on "python@3.13" => :build
   depends_on "libusb"
   depends_on "sdl2"
 
@@ -34,8 +33,12 @@ class Cahute < Formula
     sha256 "b3bda1d108d5dd99f4a20d24d9c348e91c4db7ab1b749200bded2f839ccbe68f"
   end
 
+  def python3
+    "python3.13"
+  end
+
   def install
-    venv = virtualenv_create(buildpath/"venv", "python3.12")
+    venv = virtualenv_create(buildpath/"venv", python3)
     venv.pip_install resources
 
     system "cmake", "-S", ".", "-B", "build", "-DPython3_EXECUTABLE=#{venv.root}/bin/python", *std_cmake_args
@@ -47,17 +50,13 @@ class Cahute < Formula
     # Assume that there is no calculator connected while testing
     assert_match "Could not connect to the calculator.", shell_output("#{bin}/p7 idle 2>&1", 1)
     assert_match "Could not connect to the calculator.", shell_output("#{bin}/p7screen 2>&1", 1)
-
-    # xfer9860 is a reimplementation of an older program of the same name, which does not indicate
-    # a failure exit code when a calculator isn't present. So here, we expect a successful exit
-    # status but an error message printed to the console.
-    assert_match "Could not connect to the calculator.", shell_output("#{bin}/xfer9860 -i 2>&1")
+    assert_match "Could not connect to the calculator.", shell_output("#{bin}/xfer9860 -i 2>&1", 1)
 
     # No calculator is connected, so this will also fail. Any test file will do.
     shell_output("#{bin}/p7os flash #{test_fixtures "test.ico"} 2>&1", 1)
 
     # Taken from https://cahuteproject.org/developer-guides/detection/usb.html
-    (testpath/"usb-detect.c").write <<~EOS
+    (testpath/"usb-detect.c").write <<~C
       #include <stdio.h>
       #include <cahute.h>
 
@@ -65,12 +64,14 @@ class Cahute < Formula
           char const *type_name;
 
           switch (entry->cahute_usb_detection_entry_type) {
-          case CAHUTE_USB_DETECTION_ENTRY_TYPE_SEVEN:
-              type_name = "fx-9860G or compatible";
+          case CAHUTE_USB_DETECTION_ENTRY_TYPE_SERIAL:
+              type_name =
+                  "Serial calculator (fx-9860G, Classpad 300 / 330 (+) or "
+                  "compatible)";
               break;
 
           case CAHUTE_USB_DETECTION_ENTRY_TYPE_SCSI:
-              type_name = "fx-CG or compatible";
+              type_name = "UMS calculator (fx-CG, fx-CP400+, fx-GIII)";
               break;
 
           default:
@@ -89,15 +90,27 @@ class Cahute < Formula
       }
 
       int main(void) {
+          cahute_context *context;
           int err;
 
-          err = cahute_detect_usb(&my_callback, NULL);
+          err = cahute_create_context(&context);
+          if (err) {
+              fprintf(
+                  stderr,
+                  "cahute_create_context() has returned error %s.\\n",
+                  cahute_get_error_name(err)
+              );
+              return 1;
+          }
+
+          err = cahute_detect_usb(context, &my_callback, NULL);
           if (err)
               fprintf(stderr, "Cahute has returned error 0x%04X.\\n", err);
 
+          cahute_destroy_context(context);
           return 0;
       }
-    EOS
+    C
 
     pkg_config_cflags = shell_output("pkg-config --cflags --libs cahute libusb-1.0").strip.split
     system ENV.cc, "usb-detect.c", *pkg_config_cflags, "-o", "usb-detect"

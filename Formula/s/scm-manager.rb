@@ -1,8 +1,8 @@
 class ScmManager < Formula
   desc "Manage Git, Mercurial, and Subversion repos over HTTP"
   homepage "https://www.scm-manager.org"
-  url "https://packages.scm-manager.org/repository/releases/sonia/scm/packaging/unix/3.3.0/unix-3.3.0.tar.gz"
-  sha256 "cf3fd465c385779a3a66b1655dfc81eda53a5474937a41d5eb00a4d7cab8c218"
+  url "https://packages.scm-manager.org/repository/releases/sonia/scm/packaging/unix/3.6.0/unix-3.6.0.tar.gz"
+  sha256 "b2283869b7217829db2f05caa601d5b5197c44e4059f178ed52e7fca9ffc52a3"
   license all_of: ["Apache-2.0", "MIT"]
 
   livecheck do
@@ -11,13 +11,7 @@ class ScmManager < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "6f6cbf22743a06d4915cf4a44515d1eb3c2c215b7b497cc04568a64b537194fd"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "6f6cbf22743a06d4915cf4a44515d1eb3c2c215b7b497cc04568a64b537194fd"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "6f6cbf22743a06d4915cf4a44515d1eb3c2c215b7b497cc04568a64b537194fd"
-    sha256 cellar: :any_skip_relocation, sonoma:         "6f6cbf22743a06d4915cf4a44515d1eb3c2c215b7b497cc04568a64b537194fd"
-    sha256 cellar: :any_skip_relocation, ventura:        "6f6cbf22743a06d4915cf4a44515d1eb3c2c215b7b497cc04568a64b537194fd"
-    sha256 cellar: :any_skip_relocation, monterey:       "6f6cbf22743a06d4915cf4a44515d1eb3c2c215b7b497cc04568a64b537194fd"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d175118e0f442074bd8e03240835982987b238fba8d02b944e38e141431e65bc"
+    sha256 cellar: :any_skip_relocation, all: "c34c7d874fc5777459d1312b62358c823aff945c4e0b01289c7aa193e5c01af3"
   end
 
   depends_on "jsvc"

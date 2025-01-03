@@ -1,19 +1,19 @@
 class Fzf < Formula
   desc "Command-line fuzzy finder written in Go"
   homepage "https://github.com/junegunn/fzf"
-  url "https://github.com/junegunn/fzf/archive/refs/tags/v0.54.0.tar.gz"
-  sha256 "ce658b153254e25cf4244365d639cf3ac5b91230a20f76bd6845d88e1267a2db"
+  url "https://github.com/junegunn/fzf/archive/refs/tags/v0.57.0.tar.gz"
+  sha256 "d4e8e25fad2d3f75943b403c40b61326db74b705bf629c279978fdd0ceb1f97c"
   license "MIT"
   head "https://github.com/junegunn/fzf.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "351a11f5ebd0f90ed0042e6b2799f0dc4f8ad3036ec657ec7c6cf99bfe28ab42"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "b1f87a12d332a01a5031189b8ddd2cb1d5187a7448a0a7302f771fc9b207b971"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "67936242412bb96d9e3bcb3ecfd35262b8b16ff1f006c04ace8210f28a13c2a4"
-    sha256 cellar: :any_skip_relocation, sonoma:         "f22b6db3a4fee6e2d8e92f148fb05eb7d9e91669bb92fde6d5e517f95e6142c8"
-    sha256 cellar: :any_skip_relocation, ventura:        "e229e650a154fad8cd552ee4298ed417af392b9e442b50914f405de8bbe7d4df"
-    sha256 cellar: :any_skip_relocation, monterey:       "bddda32dcb25a8019512d89a2958fbc1791a376e107a3546b600ef9e709bba8b"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "7398b1ac794f34e548bb753fcefd5b3980214b5358fa150e89b72aa9b7cba45f"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "f4936470e8ddcd195e4345557c51fd86015e81fd52b9ee3eefef66d37b16e10d"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "f4936470e8ddcd195e4345557c51fd86015e81fd52b9ee3eefef66d37b16e10d"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "f4936470e8ddcd195e4345557c51fd86015e81fd52b9ee3eefef66d37b16e10d"
+    sha256 cellar: :any_skip_relocation, sonoma:        "afc798baf3dd3230d0fe570dcc682db1e11ec8a4f7e4012d8d49d46afbcaaf50"
+    sha256 cellar: :any_skip_relocation, ventura:       "afc798baf3dd3230d0fe570dcc682db1e11ec8a4f7e4012d8d49d46afbcaaf50"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "278da1e0a4a8321b9b7a331e12717965741d8df9b2b0403118604a7635e93abe"
   end
 
   depends_on "go" => :build
@@ -24,6 +24,7 @@ class Fzf < Formula
     system "go", "build", *std_go_args(ldflags: "-s -w -X main.version=#{version} -X main.revision=brew")
     man1.install "man/man1/fzf.1", "man/man1/fzf-tmux.1"
     bin.install "bin/fzf-tmux"
+    bin.install "bin/fzf-preview.sh"
 
     # Please don't install these into standard locations (e.g. `zsh_completion`, etc.)
     # See: https://github.com/Homebrew/homebrew-core/pull/137432
@@ -37,16 +38,8 @@ class Fzf < Formula
 
   def caveats
     <<~EOS
-      To set up shell integration, add this to your shell configuration file:
-        # bash
-        eval "$(fzf --bash)"
-
-        # zsh
-        source <(fzf --zsh)
-
-        # fish
-        fzf --fish | source
-
+      To set up shell integration, see:
+        https://github.com/junegunn/fzf#setting-up-shell-integration
       To use fzf in Vim, add the following line to your .vimrc:
         set rtp+=#{opt_prefix}
     EOS

@@ -1,19 +1,26 @@
 class Inko < Formula
   desc "Safe and concurrent object-oriented programming language"
   homepage "https://inko-lang.org/"
-  url "https://releases.inko-lang.org/0.15.0.tar.gz"
-  sha256 "a28205c4776cc87894ef0deb0e7a043d42a790eab913558ad25d27884ffd2006"
+  url "https://releases.inko-lang.org/0.17.1.tar.gz"
+  sha256 "752c1881b7029f76f7a900ace23fbc5b81e1ceebea214c7f998c03284fd92dba"
   license "MPL-2.0"
   head "https://github.com/inko-lang/inko.git", branch: "main"
 
+  # The upstream website doesn't provide easily accessible version information
+  # or link to release tarballs, so we check the release manifest file that
+  # the Inko version manager (`ivm`) uses.
+  livecheck do
+    url "https://releases.inko-lang.org/manifest.txt"
+    regex(/^v?(\d+(?:\.\d+)+)$/im)
+  end
+
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "51a6d9635099eb9183bca841bc8e8eeb1b58bc22095354f4c510913ddc9e0690"
-    sha256 cellar: :any,                 arm64_ventura:  "9e48dbcd041065ab6e05cd77bf70b98005f73e8b85eb66dbddd2b92a3f3bebd6"
-    sha256 cellar: :any,                 arm64_monterey: "8a1302a1751c5e74a3791aaad462a9c7b976df193964e9a0b257a3a393af994c"
-    sha256 cellar: :any,                 sonoma:         "cc72afee9d9e29467f218873235f037e77313179911c73f0c1069bb0ab048a18"
-    sha256 cellar: :any,                 ventura:        "67708a7b08d56dfd788604698b060482b937902821484b5dc44b0f6e52a8ccff"
-    sha256 cellar: :any,                 monterey:       "c10652b60c03eb4ffb4f62d187a2a3b601449df0ff9ffbf9dc71d9bff85c7d85"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "8b152aca6d20dd0e8b33867db08d2129ab72d1785b365d930baad9097f95b5ad"
+    sha256 cellar: :any,                 arm64_sequoia: "a6a054979919629af9dc5b93c3caa53863e8035085c9d0f4816d0ceaead78133"
+    sha256 cellar: :any,                 arm64_sonoma:  "17e298645d17fc2f4b0aaa29d622be52b5ef2c467e65fa044eec038cc726749b"
+    sha256 cellar: :any,                 arm64_ventura: "4f19eba4d1fd8a58ed8b21b56c1b8dd8912f6768e62d6d617bd1cf2d9de5a2fb"
+    sha256 cellar: :any,                 sonoma:        "cb722f459dc312af8b58b861afb37d4cbcfb3bd506ed3ddca32c0bfd8acc15eb"
+    sha256 cellar: :any,                 ventura:       "84c3dc1eb5b4e187055055c654f523d8c6be3d59f992857aa3dd4433013cad70"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "afedc35fa2c235553e564dba014a3840e38de0dee25b271f67c83208da1cacb6"
   end
 
   depends_on "coreutils" => :build
@@ -38,11 +45,11 @@ class Inko < Formula
 
   test do
     (testpath/"hello.inko").write <<~EOS
-      import std.stdio (STDOUT)
+      import std.stdio (Stdout)
 
       class async Main {
         fn async main {
-          STDOUT.new.print('Hello, world!')
+          Stdout.new.print('Hello, world!')
         }
       }
     EOS

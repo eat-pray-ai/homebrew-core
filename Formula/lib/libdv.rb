@@ -3,9 +3,11 @@ class Libdv < Formula
   homepage "https://libdv.sourceforge.net/"
   url "https://downloads.sourceforge.net/project/libdv/libdv/1.0.0/libdv-1.0.0.tar.gz"
   sha256 "a305734033a9c25541a59e8dd1c254409953269ea7c710c39e540bd8853389ba"
+  license "LGPL-2.1-or-later"
 
   bottle do
     rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia:  "d9ec199c7cbb78a2e15ba681e90f94cb34e7c4e4d4856ebe85553661847a4f3b"
     sha256 cellar: :any,                 arm64_sonoma:   "b3e7be7a0887586ce1373382cdd83d7537b273fc622cf606ea3e1d425461b594"
     sha256 cellar: :any,                 arm64_ventura:  "e7c73ec9982ec05267073663395ff00a2a5eb7927a0df172441890d402e11077"
     sha256 cellar: :any,                 arm64_monterey: "58a4f24c622c38ba33f3c2972dff249e77b891d68e06553a99a71dc42801f08e"
@@ -28,7 +30,7 @@ class Libdv < Formula
     depends_on "autoconf" => :build
     depends_on "automake" => :build
     depends_on "libtool" => :build
-    depends_on "pkg-config" => :build
+    depends_on "pkgconf" => :build
   end
 
   # remove SDL1 dependency by force
@@ -42,18 +44,17 @@ class Libdv < Formula
       # This flag is the preferred method over what macports uses.
       # See the apple docs: https://cl.ly/2HeF bottom of the "Finding Imported Symbols" section
       ENV.append "LDFLAGS", "-undefined dynamic_lookup"
-      system "autoreconf", "-fvi"
+      system "autoreconf", "--force", "--install", "--verbose"
     end
 
     # Fix compile with newer Clang
     ENV.append_to_cflags "-Wno-implicit-function-declaration" if DevelopmentTools.clang_build_version >= 1403
 
-    system "./configure", "--disable-dependency-tracking",
-                          "--prefix=#{prefix}",
+    system "./configure", "--disable-asm",
                           "--disable-gtktest",
                           "--disable-gtk",
-                          "--disable-asm",
-                          "--disable-sdltest"
+                          "--disable-sdltest",
+                          *std_configure_args
     system "make", "install"
   end
 end

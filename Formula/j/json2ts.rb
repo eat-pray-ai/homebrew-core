@@ -1,26 +1,18 @@
-require "language/node"
-
 class Json2ts < Formula
   desc "Compile JSONSchema to TypeScript type declarations"
   homepage "https://github.com/bcherny/json-schema-to-typescript"
-  url "https://registry.npmjs.org/json-schema-to-typescript/-/json-schema-to-typescript-14.1.0.tgz"
-  sha256 "76e8e65b8a4d0d3965e08a069d53cce1cc301074a58c7e14f63b850c8388593b"
+  url "https://registry.npmjs.org/json-schema-to-typescript/-/json-schema-to-typescript-15.0.3.tgz"
+  sha256 "82233ff634ed9ffca59710d10056b5e95a0f2268b52543adf9fe578db1e46e40"
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "356ec8e580d8ddf1640cc7674388c8ea3dc904ff8f9195409406f14f8e969cc7"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "356ec8e580d8ddf1640cc7674388c8ea3dc904ff8f9195409406f14f8e969cc7"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "356ec8e580d8ddf1640cc7674388c8ea3dc904ff8f9195409406f14f8e969cc7"
-    sha256 cellar: :any_skip_relocation, sonoma:         "431a220f4b5354bef7c66a5ecb1cc7ea675a3a308a220dbbfa67e619fc484bb4"
-    sha256 cellar: :any_skip_relocation, ventura:        "431a220f4b5354bef7c66a5ecb1cc7ea675a3a308a220dbbfa67e619fc484bb4"
-    sha256 cellar: :any_skip_relocation, monterey:       "431a220f4b5354bef7c66a5ecb1cc7ea675a3a308a220dbbfa67e619fc484bb4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "21abaff39c354b3078918f7e985836c2c7a9ac7dd4b89ad9ddd11595b9537a51"
+    sha256 cellar: :any_skip_relocation, all: "11457a39c52b5a1b68bfb59cfc45048e5823d396c67601eaf6c081503045f4fd"
   end
 
   depends_on "node"
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+    system "npm", "install", *std_npm_args
     bin.install_symlink Dir["#{libexec}/bin/*"]
   end
 
@@ -70,7 +62,7 @@ class Json2ts < Formula
       }
     TS
 
-    output = pipe_output("#{bin}/json2ts", schema)
+    output = pipe_output(bin/"json2ts", schema)
     assert_equal output, typescript
   end
 end

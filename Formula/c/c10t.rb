@@ -4,21 +4,23 @@ class C10t < Formula
   url "https://github.com/udoprog/c10t/archive/refs/tags/1.7.tar.gz"
   sha256 "0e5779d517105bfdd14944c849a395e1a8670bedba5bdab281a0165c3eb077dc"
   license "BSD-3-Clause"
-  revision 8
+  revision 10
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "355ca9fb9bb10bdbf2462da32181daa401abe8803d7bd2e403ea3f8eaec6f30a"
-    sha256 cellar: :any,                 arm64_ventura:  "3343bb2cab905b7f8fa2970080457a5ce35bac8f0d8b437c71488078bd7d65eb"
-    sha256 cellar: :any,                 arm64_monterey: "9c3bb3f90c776e7c9a26c68eb7736bccec14201131b21a1d8cef6ffe1c807148"
-    sha256 cellar: :any,                 sonoma:         "bc41d3565e4a08b220f1fa633e9bf22deba60ad963df117cc6f8a101bcd80217"
-    sha256 cellar: :any,                 ventura:        "302af66eb43af05e5916de3c03e4099852fe3c732c646e5a354b54a092b73348"
-    sha256 cellar: :any,                 monterey:       "7d77247a708fc5de9e6dedf06d0b7cb96e57ca04669fc4e71699374a439a7c08"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "9b1d919dd79da3d6c061a727f7f92356d176be1165c4fb43ecf19faac0e475a8"
+    sha256 cellar: :any,                 arm64_sequoia: "70ab94023e384a3ab08cfd9e0af0e0a44c83dbca6093465d5723049050243b39"
+    sha256 cellar: :any,                 arm64_sonoma:  "95e91b204b1e1a40ffd9a6a2a4bef1fb572612210980e52bc5c6f6eb9d29fe67"
+    sha256 cellar: :any,                 arm64_ventura: "7bac068da2879d7f2909fcb2a09d2d5962f1a9be7bed12ec7bb49def6246b83a"
+    sha256 cellar: :any,                 sonoma:        "630ca35c4c72f49320d8e11fe2901868b2ad4d82bc247afb875d81e7e8cd1fb7"
+    sha256 cellar: :any,                 ventura:       "e81cbae89815db03fc8f84cbdb8a87abc1000eeecbb9ce79ada9e7e968a7b859"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8fb0e64ba0f4146416e66bb79fd0972d6ca5af6a6ef087fa519764355f91b14b"
   end
 
   depends_on "cmake" => :build
   depends_on "boost"
   depends_on "freetype"
+  depends_on "libpng"
+
+  uses_from_macos "zlib"
 
   # Needed to compile against newer boost
   # Can be removed for the next version of c10t after 1.7
@@ -47,8 +49,8 @@ class C10t < Formula
 
   def install
     ENV.cxx11
-    inreplace "test/CMakeLists.txt", "boost_unit_test_framework", "boost_unit_test_framework-mt"
-    args = std_cmake_args
+
+    args = []
     unless OS.mac?
       args += %W[
         -DCMAKE_LINK_WHAT_YOU_USE=ON
@@ -56,13 +58,14 @@ class C10t < Formula
         -DZLIB_INCLUDE_DIR=#{Formula["zlib"].include}
       ]
     end
-    system "cmake", ".", *args
-    system "make"
-    bin.install "c10t"
+
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    bin.install "build/c10t"
   end
 
   test do
-    system "#{bin}/c10t", "--list-colors"
+    system bin/"c10t", "--list-colors"
   end
 end
 

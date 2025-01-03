@@ -6,6 +6,7 @@ class Celero < Formula
   license "Apache-2.0"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "8df764c6550e49e740ac10d19e1dcfa18708fac66695b00ffeb724eaf2d798d4"
     sha256 cellar: :any,                 arm64_sonoma:   "a623447721e67bc374800d2c048c9c65fdba7fe06a21ea497a5adba2905157ff"
     sha256 cellar: :any,                 arm64_ventura:  "6c5aa0d8b749c0ae1a99501d00026676de190997457820798992145237268783"
     sha256 cellar: :any,                 arm64_monterey: "f3c479a0f6ab3d2d366bae855864122e04cf21627b000a395fbb68fb1f44366c"
@@ -20,17 +21,19 @@ class Celero < Formula
   depends_on "cmake" => :build
 
   def install
-    cmake_args = std_cmake_args + %w[
+    args = %w[
       -DCELERO_COMPILE_DYNAMIC_LIBRARIES=ON
       -DCELERO_ENABLE_EXPERIMENTS=OFF
       -DCELERO_ENABLE_TESTS=OFF
     ]
-    system "cmake", ".", *cmake_args
-    system "make", "install"
+
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <celero/Celero.h>
       #include <chrono>
       #include <thread>
@@ -46,7 +49,7 @@ class Celero < Formula
       BENCHMARK(DemoSleep, TwiceBaseline, 60, 1) {
         std::this_thread::sleep_for(std::chrono::microseconds(20000));
       }
-    EOS
+    CPP
     system ENV.cxx, "-std=c++14", "test.cpp", "-L#{lib}", "-lcelero", "-o", "test"
     system "./test"
   end

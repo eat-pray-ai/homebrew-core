@@ -1,12 +1,19 @@
 class Toast < Formula
   desc "Tool for running tasks in containers"
   homepage "https://github.com/stepchowfun/toast"
-  url "https://github.com/stepchowfun/toast/archive/refs/tags/v0.47.6.tar.gz"
-  sha256 "6cda205ec551232106a05a94b6a71d9eb90e4d3bf1541e629062c65257aa3e6a"
   license "MIT"
   head "https://github.com/stepchowfun/toast.git", branch: "main"
 
+  stable do
+    url "https://github.com/stepchowfun/toast/archive/refs/tags/v0.47.6.tar.gz"
+    sha256 "6cda205ec551232106a05a94b6a71d9eb90e4d3bf1541e629062c65257aa3e6a"
+
+    # eliminate needless lifetimes, upstream pr ref, https://github.com/stepchowfun/toast/pull/524
+    patch :DATA
+  end
+
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "32d64e56a321339f6c83f3df40c5078da1b9327bdda1db3c96a1f0d59fb2cb27"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "e1dad05bd1a76d6196771c60a29cc3c2256daa2aefd8d0876f24456e5d53a920"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "c7fa6a46b5891777ee8e5b5bb1b89aaf35a5cdad3f21baeea98e80f7aa699a1c"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "58486cde44a6b9b49599967271149cff9530b74993ba06246fbbd98bb5c362e9"
@@ -25,14 +32,29 @@ class Toast < Formula
   end
 
   test do
-    (testpath/"toast.yml").write <<~EOS
+    (testpath/"toast.yml").write <<~YAML
       image: alpine
       tasks:
         homebrew_test:
           description: brewtest
           command: echo hello
-    EOS
+    YAML
 
     assert_match "homebrew_test", shell_output("#{bin}/toast --list")
   end
 end
+
+__END__
+diff --git a/src/failure.rs b/src/failure.rs
+index bb01653..05ab70b 100644
+--- a/src/failure.rs
++++ b/src/failure.rs
+@@ -24,7 +24,7 @@ impl fmt::Display for Failure {
+ }
+
+ impl error::Error for Failure {
+-    fn source<'a>(&'a self) -> Option<&(dyn error::Error + 'static)> {
++    fn source(&self) -> Option<&(dyn error::Error + 'static)> {
+         match self {
+             Self::System(_, source) => source.as_ref().map(|e| &**e),
+             Self::User(_, source) => source.as_ref().map(|e| &**e),

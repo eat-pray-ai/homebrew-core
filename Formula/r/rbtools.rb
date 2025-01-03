@@ -3,23 +3,22 @@ class Rbtools < Formula
 
   desc "CLI and API for working with code and document reviews on Review Board"
   homepage "https://www.reviewboard.org/downloads/rbtools/"
-  url "https://files.pythonhosted.org/packages/47/20/112a54002d2023b249906508feefeebcce7d73a25618f3f1f76c7673734d/RBTools-5.0.tar.gz"
-  sha256 "beb373100d0f2d707370a6ce449b6f98110dd0081accffd766d955cea16f08bc"
+  url "https://files.pythonhosted.org/packages/f8/ca/243e2c69d014c29d77c9160b0d03d9f8fa310944ea4068ed7d4d60986b2f/rbtools-5.1.1.tar.gz"
+  sha256 "b6017ff512547d5c04f9449d8ea42e151dbf255728c12efa24bd93c57df5b3e4"
   license "MIT"
   head "https://github.com/reviewboard/rbtools.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "d8c47b99c3dffa17933154d063bb26b3fd6e6d68f030dc8fd34565a1b5b1debd"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "d8c47b99c3dffa17933154d063bb26b3fd6e6d68f030dc8fd34565a1b5b1debd"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "d8c47b99c3dffa17933154d063bb26b3fd6e6d68f030dc8fd34565a1b5b1debd"
-    sha256 cellar: :any_skip_relocation, sonoma:         "b72af757a32f5971f1eed8c2cd00fdd43ec687261e009ff32e88d49b46badc89"
-    sha256 cellar: :any_skip_relocation, ventura:        "b72af757a32f5971f1eed8c2cd00fdd43ec687261e009ff32e88d49b46badc89"
-    sha256 cellar: :any_skip_relocation, monterey:       "b72af757a32f5971f1eed8c2cd00fdd43ec687261e009ff32e88d49b46badc89"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "ce62926ea87ef44675804fbc21dbbc0e2494f9581a47bc463eb64b1dbc63c91c"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "cbadde63ab37a0215f09776f8b1f970c726f181ac52c19cd72be15fc7ac5cda4"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "cbadde63ab37a0215f09776f8b1f970c726f181ac52c19cd72be15fc7ac5cda4"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "cbadde63ab37a0215f09776f8b1f970c726f181ac52c19cd72be15fc7ac5cda4"
+    sha256 cellar: :any_skip_relocation, sonoma:        "488247f4474a8a3c2fcfb1f317a80706420bee5afc3c96f74b08abc05b538045"
+    sha256 cellar: :any_skip_relocation, ventura:       "488247f4474a8a3c2fcfb1f317a80706420bee5afc3c96f74b08abc05b538045"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cbadde63ab37a0215f09776f8b1f970c726f181ac52c19cd72be15fc7ac5cda4"
   end
 
   depends_on "certifi"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   resource "colorama" do
     url "https://files.pythonhosted.org/packages/d8/53/6f443c9a4a8358a93a6792e2acffb9d9d5cb0a5cfd8802644b7b1c9a02e4/colorama-0.4.6.tar.gz"
@@ -32,31 +31,36 @@ class Rbtools < Formula
   end
 
   resource "importlib-metadata" do
-    url "https://files.pythonhosted.org/packages/a0/fc/c4e6078d21fc4fa56300a241b87eae76766aa380a23fc450fc85bb7bf547/importlib_metadata-7.1.0.tar.gz"
-    sha256 "b78938b926ee8d5f020fc4772d487045805a55ddbad2ecf21c6d60938dc7fcd2"
+    url "https://files.pythonhosted.org/packages/cd/12/33e59336dca5be0c398a7482335911a33aa0e20776128f038019f1a95f1b/importlib_metadata-8.5.0.tar.gz"
+    sha256 "71522656f0abace1d072b9e5481a48f07c138e00f079c38c8f883823f9c26bd7"
   end
 
   resource "importlib-resources" do
-    url "https://files.pythonhosted.org/packages/c8/9d/6ee73859d6be81c6ea7ebac89655e92740296419bd37e5c8abdb5b62fd55/importlib_resources-6.4.0.tar.gz"
-    sha256 "cdb2b453b8046ca4e3798eb1d84f3cce1446a0e8e7b5ef4efb600f19fc398145"
+    url "https://files.pythonhosted.org/packages/98/be/f3e8c6081b684f176b761e6a2fef02a0be939740ed6f54109a2951d806f3/importlib_resources-6.4.5.tar.gz"
+    sha256 "980862a1d16c9e147a59603677fa2aa5fd82b87f223b6cb870695bcfce830065"
   end
 
   resource "packaging" do
-    url "https://files.pythonhosted.org/packages/ee/b5/b43a27ac7472e1818c4bafd44430e69605baefe1f34440593e0332ec8b4d/packaging-24.0.tar.gz"
-    sha256 "eb82c5e3e56209074766e6885bb04b8c38a0c015d0a30036ebe7ece34c9989e9"
+    url "https://files.pythonhosted.org/packages/d0/63/68dbb6eb2de9cb10ee4c9c14a0148804425e13c4fb20d61cce69f53106da/packaging-24.2.tar.gz"
+    sha256 "c228a6dc5e932d346bc5739379109d49e8853dd8223571c7c5b55260edc0b97f"
+  end
+
+  resource "puremagic" do
+    url "https://files.pythonhosted.org/packages/09/2d/40599f25667733e41bbc3d7e4c7c36d5e7860874aa5fe9c584e90b34954d/puremagic-1.28.tar.gz"
+    sha256 "195893fc129657f611b86b959aab337207d6df7f25372209269ed9e303c1a8c0"
   end
 
   resource "pydiffx" do
     url "https://files.pythonhosted.org/packages/d3/76/ad0677d82b7c75deb4da63151d463a9f90e97f3817b83f4e3f74034eb384/pydiffx-1.1.tar.gz"
     sha256 "0986dbb0a87cbf79e244e2f1c0e2b696d8e86b3861ea2955757a61d38e139228"
 
-    # upstream patch ref, https://github.com/beanbaginc/diffx/pull/2
+    # Workaround needing six pre-installed: https://github.com/beanbaginc/diffx/pull/2
     patch :DATA
   end
 
   resource "six" do
-    url "https://files.pythonhosted.org/packages/71/39/171f1c67cd00715f190ba0b100d606d440a28c93c7714febeca8b79af85e/six-1.16.0.tar.gz"
-    sha256 "1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"
+    url "https://files.pythonhosted.org/packages/94/e7/b2c673351809dca68a0e064b6af791aa332cf192da575fd474ed7d6f16a2/six-1.17.0.tar.gz"
+    sha256 "ff70335d468e7eb6ec65b95b99d3a2836546063f63acc5171de367e834932a81"
   end
 
   resource "texttable" do
@@ -65,24 +69,22 @@ class Rbtools < Formula
   end
 
   resource "tqdm" do
-    url "https://files.pythonhosted.org/packages/5a/c0/b7599d6e13fe0844b0cda01b9aaef9a0e87dbb10b06e4ee255d3fa1c79a2/tqdm-4.66.4.tar.gz"
-    sha256 "e4d936c9de8727928f3be6079590e97d9abfe8d39a590be678eb5919ffc186bb"
+    url "https://files.pythonhosted.org/packages/a8/4b/29b4ef32e036bb34e4ab51796dd745cdba7ed47ad142a9f4a1eb8e0c744d/tqdm-4.67.1.tar.gz"
+    sha256 "f8aef9c52c08c13a65f30ea34f4e5aac3fd1a34959879d7e59e63027286627f2"
   end
 
   resource "typing-extensions" do
-    url "https://files.pythonhosted.org/packages/e8/fb/4217a963512b9646274fe4ce0aebc8ebff09bbb86c458c6163846bb65d9d/typing_extensions-4.12.1.tar.gz"
-    sha256 "915f5e35ff76f56588223f15fdd5938f9a1cf9195c0de25130c627e4d597f6d1"
+    url "https://files.pythonhosted.org/packages/df/db/f35a00659bc03fec321ba8bce9420de607a1d37f8342eee1863174c69557/typing_extensions-4.12.2.tar.gz"
+    sha256 "1a7ead55c7e559dd4dee8856e3a88b41225abfe1ce8df57b7c13915fe121ffb8"
   end
 
   resource "zipp" do
-    url "https://files.pythonhosted.org/packages/d3/20/b48f58857d98dcb78f9e30ed2cfe533025e2e9827bbd36ea0a64cc00cbc1/zipp-3.19.2.tar.gz"
-    sha256 "bf1dcf6450f873a13e952a29504887c89e6de7506209e5b1bcc3460135d4de19"
+    url "https://files.pythonhosted.org/packages/3f/50/bad581df71744867e9468ebd0bcd6505de3b275e06f202c2cb016e3ff56f/zipp-3.21.0.tar.gz"
+    sha256 "2c9958f6430a2040341a52eb608ed6dd93ef4392e02ffe219417c1b28b5dd1f4"
   end
 
   def install
-    # Work around pydiffx needing six pre-installed
-    # Upstream PR: https://github.com/beanbaginc/diffx/pull/2
-    virtualenv_install_with_resources end_with: "pydiffx"
+    virtualenv_install_with_resources
 
     bash_completion.install "rbtools/commands/conf/completions/bash" => "rbt"
     zsh_completion.install "rbtools/commands/conf/completions/zsh" => "_rbt"
@@ -90,7 +92,7 @@ class Rbtools < Formula
 
   test do
     system "git", "init"
-    system "#{bin}/rbt", "setup-repo", "--server", "https://demo.reviewboard.org"
+    system bin/"rbt", "setup-repo", "--server", "https://demo.reviewboard.org"
     out = shell_output("#{bin}/rbt clear-cache")
     assert_match "Cleared cache in", out
   end
@@ -98,42 +100,23 @@ end
 
 __END__
 diff --git a/setup.py b/setup.py
-index ed91128..860ef81 100755
+index ed91128..87edbc2 100755
 --- a/setup.py
 +++ b/setup.py
-@@ -8,10 +8,9 @@ import sys
-
+@@ -8,7 +8,6 @@ import sys
+ 
  from setuptools import setup, find_packages
-
+ 
 -from pydiffx import get_package_version
--
-
+ 
+ 
  PACKAGE_NAME = 'pydiffx'
-+version = '1.1'
-
- # NOTE: When updating, make sure you update the classifiers below.
- SUPPORTED_PYVERS = ['2.7', '3.6', '3.7', '3.8', '3.9', '3.10', '3.11']
 @@ -36,7 +35,7 @@ with open('README.rst', 'r') as fp:
-
-
+ 
+ 
  setup(name=PACKAGE_NAME,
 -      version=get_package_version(),
-+      version=version,
++      version='1.1',
        license='MIT',
        description='Python module for reading and writing DiffX files.',
        long_description=long_description,
-@@ -48,7 +47,14 @@ setup(name=PACKAGE_NAME,
-       maintainer_email='christian@beanbaginc.com',
-       install_requires=[
-           'six',
-+          'pygments',
-       ],
-+      extras_require={
-+          'test': [
-+              'pytest',
-+              'kgb ~= 7.1.1'
-+          ]
-+      },
-       entry_points={
-           'pygments.lexers': [
-               'diffx = pydiffx.integrations.pygments_lexer:DiffXLexer',

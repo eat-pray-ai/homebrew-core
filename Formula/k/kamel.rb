@@ -1,8 +1,8 @@
 class Kamel < Formula
   desc "Apache Camel K CLI"
   homepage "https://camel.apache.org/"
-  url "https://github.com/apache/camel-k/archive/refs/tags/v2.3.3.tar.gz"
-  sha256 "0a2ce0113407bb56b60ed38a0e150b0056eb890fc1daa5fc31695aef96233317"
+  url "https://github.com/apache/camel-k/archive/refs/tags/v2.5.0.tar.gz"
+  sha256 "6daf43eddcc495623c6d72873126d517c311bddb33b9760ff6a393746ac99645"
   license "Apache-2.0"
   head "https://github.com/apache/camel-k.git", branch: "main"
 
@@ -12,13 +12,12 @@ class Kamel < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "b1f826cdca3ca00d6385b4db1e0bf3416baf7546d7cb987d34975683811149ed"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "390385ef425bee204736d84dd17479806c9e9019cc3f04c6feefb65695909a77"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "077970838a5d9cce6d125119d7702d06ade5e6eb87bb6eac44f0f46572b0e2c1"
-    sha256 cellar: :any_skip_relocation, sonoma:         "0c9abae2584bf5f676145bb9b4ff5192264a36894bc27bc2620b15faa36cdbc2"
-    sha256 cellar: :any_skip_relocation, ventura:        "c9f9d399a327009305f885c24feee4e51aaf943b79ca29d23d078872335ae873"
-    sha256 cellar: :any_skip_relocation, monterey:       "8a74e9b0b530d3aee06c46a2082b47d4c9d937cfe3c9e8f40f54659df1fb153e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "41e61377191ca1469ffc5eb789c3ff40e75ba828980d247798c03635e09df027"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "e9d4aab56cc3091e565478d7690bb37bbd89379b72248b09729cfd6f0b50dc3e"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "e9d4aab56cc3091e565478d7690bb37bbd89379b72248b09729cfd6f0b50dc3e"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "e9d4aab56cc3091e565478d7690bb37bbd89379b72248b09729cfd6f0b50dc3e"
+    sha256 cellar: :any_skip_relocation, sonoma:        "12742f199c61f434187c4987b7e7d497457b4da53f8d0af923cc8f6a7dd61677"
+    sha256 cellar: :any_skip_relocation, ventura:       "12742f199c61f434187c4987b7e7d497457b4da53f8d0af923cc8f6a7dd61677"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "600a8d5222d7278cf7e1f79ec0114204ed7244ea088c802c1a2ac37edebc2a20"
   end
 
   depends_on "go" => :build
@@ -47,9 +46,9 @@ class Kamel < Formula
     assert_match "Error: cannot get command client: invalid configuration", reset_output
 
     rebuild_output = shell_output("echo $(#{bin}/kamel rebuild 2>&1)")
-    assert_match "Config not found", rebuild_output
+    assert_match "Error: cannot get command client: invalid configuration", rebuild_output
 
     reset_output = shell_output("echo $(#{bin}/kamel reset 2>&1)")
-    assert_match "Config not found", reset_output
+    assert_match "Error: cannot get command client: invalid configuration", reset_output
   end
 end

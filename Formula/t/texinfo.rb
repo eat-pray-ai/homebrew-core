@@ -1,19 +1,18 @@
 class Texinfo < Formula
   desc "Official documentation format of the GNU project"
   homepage "https://www.gnu.org/software/texinfo/"
-  url "https://ftp.gnu.org/gnu/texinfo/texinfo-7.1.tar.xz"
-  mirror "https://ftpmirror.gnu.org/texinfo/texinfo-7.1.tar.xz"
-  sha256 "deeec9f19f159e046fdf8ad22231981806dac332cc372f1c763504ad82b30953"
+  url "https://ftp.gnu.org/gnu/texinfo/texinfo-7.2.tar.xz"
+  mirror "https://ftpmirror.gnu.org/texinfo/texinfo-7.2.tar.xz"
+  sha256 "0329d7788fbef113fa82cb80889ca197a344ce0df7646fe000974c5d714363a6"
   license "GPL-3.0-or-later"
 
   bottle do
-    sha256 arm64_sonoma:   "6ee1d5c2e64d80dcc8da4639d55d6c7a907550efd3ecfb4757f719f875e3df1b"
-    sha256 arm64_ventura:  "7e412d561339fa51dd78af8d0f6ec0c6a56cd7ce907fb7b6c417a6c6f1eaadba"
-    sha256 arm64_monterey: "a106b57dcf2dbcd8e3c4ca4d25a48c93a8dec9ba8ba1940082d70c0220846342"
-    sha256 sonoma:         "65cf063c13da2f386da45a9161a8b1a8f88191273c66205f3c3267cc31857510"
-    sha256 ventura:        "971990897e2ec8424366cd1a0715972a58550890498b27a138f9d588115660fb"
-    sha256 monterey:       "34c5c6ada9cdd5cc4a1f84e16aa0990ddb3f3b98a9ac5890845e8ae2f327111e"
-    sha256 x86_64_linux:   "0e19faddba0095b10438272020bc3add109e39523683bc8705e1e0f1a9b2ca25"
+    sha256 arm64_sequoia: "abfc842bb08fd512dd878e2233ea6d0d3682685dd9d5a03a86c6c8d170ca104e"
+    sha256 arm64_sonoma:  "948d36004ea61e34f1b27d04d4b56c5b1e2cf7bc28861c89fa9cd7c3c87cbdb5"
+    sha256 arm64_ventura: "71ed6d2d1b181f10f9fabac5935ff3956d7b63f670e652465b601c2929a19cc2"
+    sha256 sonoma:        "4bc4f8a0d5ed88dbee2565088997164573ca8c2e7f229030b2035ba8905172a2"
+    sha256 ventura:       "a8e566d23516d94e0f573b648122c74c317c7eea8d16acf55645e5347759c363"
+    sha256 x86_64_linux:  "46fdddc6b9297240790546b7f1405a7ea103a7c652c74c05cc1bef6b88f320f1"
   end
 
   uses_from_macos "ncurses"
@@ -34,7 +33,7 @@ class Texinfo < Formula
   def post_install
     info_dir = HOMEBREW_PREFIX/"share/info/dir"
     info_dir.delete if info_dir.exist?
-    info_dir.dirname.glob("*.info") do |f|
+    info_dir.dirname.glob(["*.info", "*.info.gz"]) do |f|
       quiet_system("#{bin}/install-info", "--quiet", f, info_dir)
     end
   end
@@ -47,7 +46,8 @@ class Texinfo < Formula
       @end ifnottex
       @bye
     EOS
-    system "#{bin}/makeinfo", "test.texinfo"
-    assert_match "Hello World!", File.read("test.info")
+
+    system bin/"makeinfo", "test.texinfo"
+    assert_match "Hello World!", (testpath/"test.info").read
   end
 end

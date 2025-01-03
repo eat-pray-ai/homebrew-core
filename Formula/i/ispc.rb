@@ -1,8 +1,8 @@
 class Ispc < Formula
   desc "Compiler for SIMD programming on the CPU"
   homepage "https://ispc.github.io"
-  url "https://github.com/ispc/ispc/archive/refs/tags/v1.24.0.tar.gz"
-  sha256 "a45ec5402d8a3b23d752125a083fa031becf093b8304ccec55b1c2f37b5479c3"
+  url "https://github.com/ispc/ispc/archive/refs/tags/v1.25.3.tar.gz"
+  sha256 "6f00038e0e86e90474f3117c3b393f6695a8fbe1b3d8fe3b1a0baf197dfb7557"
   license "BSD-3-Clause"
 
   # Upstream sometimes creates releases that use a stable tag (e.g., `v1.2.3`)
@@ -14,39 +14,29 @@ class Ispc < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "54fa5a0a549861e1de159999de691426f573c126adc7a0d69bf9fcd294180cce"
-    sha256 cellar: :any,                 arm64_ventura:  "7c55ec8a529fb34cf8f085433586363b222a0ba6afb225fa94c266b21183d91e"
-    sha256 cellar: :any,                 arm64_monterey: "26c15e7e84c676fdf79f818f38c5a95296a6ecc4b958bfae06bc637e9846e83d"
-    sha256 cellar: :any,                 sonoma:         "237a797a7178f652c1137947c31e16216e8befaec98c40d19943fe6cee2b2dc7"
-    sha256 cellar: :any,                 ventura:        "9bc5d7902ca0a355a502afa39a63812b654f3643e8f15189cf9825f378070e39"
-    sha256 cellar: :any,                 monterey:       "7ca251d052ec6bbb9b0eee31a8d65008dfe8cd2caa6ae0fa5a73e88017d4d1a6"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "e0292ec3a7d8efc0efdcf854ac28f44b0cfbe82f22c58d93d8afc5876f9670ff"
+    sha256 cellar: :any, arm64_sequoia: "7fdb124a8e5dcd9ebd6318f96ef0115eb31baa4bb0c37db04925a5d579d1e462"
+    sha256 cellar: :any, arm64_sonoma:  "416917fa154a69629e2c31dcc50cbd9bd7857351a12773f2c40d5c7a002ded3a"
+    sha256 cellar: :any, arm64_ventura: "d5ad759c26824c571ad97281925d7f5539a82682f2e303255433c2423005e2e0"
+    sha256 cellar: :any, sonoma:        "1441055791b7e00135fc9bb578199328b8dc911f66feb2b3988275f83626ca2b"
+    sha256 cellar: :any, ventura:       "36287742709f4ebef6b3f6f58fdb331c1f6b6cfad40f46997c41113821932d7e"
   end
 
   depends_on "bison" => :build
   depends_on "cmake" => :build
   depends_on "flex" => :build
-  depends_on "python@3.12" => :build
-  depends_on "llvm@17"
+  depends_on "llvm"
+
+  uses_from_macos "python" => :build
 
   on_linux do
     depends_on "tbb"
   end
-
-  fails_with gcc: "5"
 
   def llvm
     deps.map(&:to_formula).find { |f| f.name.match? "^llvm" }
   end
 
   def install
-    # Force cmake to use our compiler shims instead of bypassing them.
-    inreplace "CMakeLists.txt", "set(CMAKE_C_COMPILER \"clang\")", "set(CMAKE_C_COMPILER \"#{ENV.cc}\")"
-    inreplace "CMakeLists.txt", "set(CMAKE_CXX_COMPILER \"clang++\")", "set(CMAKE_CXX_COMPILER \"#{ENV.cxx}\")"
-
-    # Disable building of i686 target on Linux, which we do not support.
-    inreplace "cmake/GenerateBuiltins.cmake", "set(target_arch \"i686\")", "return()" unless OS.mac?
-
     args = %W[
       -DISPC_INCLUDE_EXAMPLES=OFF
       -DISPC_INCLUDE_TESTS=OFF
@@ -85,7 +75,7 @@ class Ispc < Formula
     system bin/"ispc", "--arch=#{arch}", "--target=#{target}", testpath/"simple.ispc",
                        "-o", "simple_ispc.o", "-h", "simple_ispc.h"
 
-    (testpath/"simple.cpp").write <<~EOS
+    (testpath/"simple.cpp").write <<~CPP
       #include "simple_ispc.h"
       int main() {
         float vin[9], vout[9];
@@ -93,7 +83,7 @@ class Ispc < Formula
         ispc::simple(vin, vout, 9);
         return 0;
       }
-    EOS
+    CPP
     system ENV.cxx, "-I#{testpath}", "-c", "-o", testpath/"simple.o", testpath/"simple.cpp"
     system ENV.cxx, "-o", testpath/"simple", testpath/"simple.o", testpath/"simple_ispc.o"
 

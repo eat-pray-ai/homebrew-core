@@ -1,25 +1,24 @@
 class LastpassCli < Formula
   desc "LastPass command-line interface tool"
   homepage "https://github.com/lastpass/lastpass-cli"
-  url "https://github.com/lastpass/lastpass-cli/releases/download/v1.5.0/lastpass-cli-1.5.0.tar.gz"
-  sha256 "542dc3d7ff175866c0eddfcc6f2dffdb54acf6854dd1fadaf4d509dcde2d4bf3"
+  url "https://github.com/lastpass/lastpass-cli/releases/download/v1.6.1/lastpass-cli-1.6.1.tar.gz"
+  sha256 "5e4ff5c9fef8aa924547c565c44e5b4aa31e63d642873847b8e40ce34558a5e1"
   license "GPL-2.0-or-later" => { with: "openvpn-openssl-exception" }
   head "https://github.com/lastpass/lastpass-cli.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "2e0e9e93eceb917add96f46595db8779192f3b97fb09e3652e22507448b4f96e"
-    sha256 cellar: :any,                 arm64_ventura:  "29a6b3f8d4213ae70f9b139c69b77c4198f29c98969ab4ca0149c01458545c84"
-    sha256 cellar: :any,                 arm64_monterey: "7fb41903543bc5ba3e6955618c8cf30aa6b93bcfb73bd214e51eb991beee0fef"
-    sha256 cellar: :any,                 sonoma:         "7251f3d6e491146ce84c01690ede3458be53f419e4413bd26d47e2994b55989e"
-    sha256 cellar: :any,                 ventura:        "afcd5243540bdf1f55a2e89854884ca0385c1971f35312e074c57f085ca10588"
-    sha256 cellar: :any,                 monterey:       "1f2a8fc79da38209ae4240841f93d0e1cbe971f42d1f6333bb7aeb65d3973a61"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "e4b1f2db3b88a3aa788b06e465c6e605d1e3d21c361a13b1e75e394d13a9c4b7"
+    sha256 cellar: :any,                 arm64_sequoia: "5ef0e66dd2a0206034d4750a932bdf7b3842ad64bf394791cbb7b4de5e0ebfdc"
+    sha256 cellar: :any,                 arm64_sonoma:  "b381ad7ecd30a993342cf22f59f91de72a6f9a7006225f2ee76a3c9abb10bc80"
+    sha256 cellar: :any,                 arm64_ventura: "c015a4006f07dd1dc19005a042712559699c49a687e251583e2307e1f00a21d2"
+    sha256 cellar: :any,                 sonoma:        "a7610f932a5e2cb85bd7aaf671cab2c9ee6e00c6775ae6dc0268e115b77218f4"
+    sha256 cellar: :any,                 ventura:       "043a2e2ed36e33158ea8318ee177294c4064151cb053834a4eb4bf00d36420b2"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "4503fb1a86f94795f9ccd9433497cde32a9186968873dae16782e53adcb61d79"
   end
 
   depends_on "asciidoc" => :build
   depends_on "cmake" => :build
   depends_on "docbook-xsl" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "openssl@3"
   depends_on "pinentry"
 

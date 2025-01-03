@@ -11,6 +11,7 @@ class Fontconfig < Formula
   end
 
   bottle do
+    sha256 arm64_sequoia:  "032ec9dfdfc3005bf76ea31b943073c7ac6d4cb42151798d6ba7a05dd90fd267"
     sha256 arm64_sonoma:   "4732e8c8cd6f940fa3ace12a5a5428baaef29bdccf9bc520fa4d37a1f0bf639c"
     sha256 arm64_ventura:  "deeb5f60979bcc3d57a201914ceba3ad83ca36139be32620f529b5d69f0d1c38"
     sha256 arm64_monterey: "93df98ef8a2740e22c028048bfa34f2635b4265ef406462d89705f9c39df969c"
@@ -29,7 +30,7 @@ class Fontconfig < Formula
     depends_on "libtool" => :build
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "freetype"
 
   uses_from_macos "gperf" => :build
@@ -54,25 +55,24 @@ class Fontconfig < Formula
       font_dirs << Dir["/System/Library/Assets{,V2}/com_apple_MobileAsset_Font*"].max
     end
 
-    system "autoreconf", "-iv" if build.head?
+    system "autoreconf", "--force", "--install", "--verbose" if build.head?
     ENV["UUID_CFLAGS"] = "-I#{Formula["util-linux"].include}" if OS.linux?
-    system "./configure", "--disable-dependency-tracking",
-                          "--disable-silent-rules",
+    system "./configure", "--disable-silent-rules",
                           "--disable-docs",
                           "--enable-static",
                           "--with-add-fonts=#{font_dirs.join(",")}",
-                          "--prefix=#{prefix}",
                           "--localstatedir=#{var}",
-                          "--sysconfdir=#{etc}"
+                          "--sysconfdir=#{etc}",
+                          *std_configure_args
     system "make", "install", "RUN_FC_CACHE_TEST=false"
   end
 
   def post_install
     ohai "Regenerating font cache, this may take a while"
-    system "#{bin}/fc-cache", "-frv"
+    system bin/"fc-cache", "-frv"
   end
 
   test do
-    system "#{bin}/fc-list"
+    system bin/"fc-list"
   end
 end

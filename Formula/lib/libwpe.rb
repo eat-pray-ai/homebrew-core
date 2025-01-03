@@ -17,7 +17,7 @@ class Libwpe < Formula
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "libxkbcommon"
   depends_on :linux
   depends_on "mesa"
@@ -29,13 +29,13 @@ class Libwpe < Formula
   end
 
   test do
-    (testpath/"wpe-test.c").write <<~EOS
+    (testpath/"wpe-test.c").write <<~C
       #include "wpe/wpe.h"
       #include <stdio.h>
       int main() {
         printf("%u.%u.%u", wpe_get_major_version(), wpe_get_minor_version(), wpe_get_micro_version());
       }
-    EOS
+    C
     ENV.append_to_cflags "-I#{include}/wpe-1.0"
     ENV.append "LDFLAGS", "-L#{lib}"
     ENV.append "LDLIBS", "-lwpe-1.0"

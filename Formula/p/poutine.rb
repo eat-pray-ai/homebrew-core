@@ -1,19 +1,18 @@
 class Poutine < Formula
   desc "Security scanner that detects vulnerabilities in build pipelines"
   homepage "https://boostsecurityio.github.io/poutine/"
-  url "https://github.com/boostsecurityio/poutine/archive/refs/tags/v0.13.0.tar.gz"
-  sha256 "d36f1e5849599d5b56a8838818a1dc41e30e113a5f1a098607cf40b32e5639fb"
+  url "https://github.com/boostsecurityio/poutine/archive/refs/tags/v0.16.0.tar.gz"
+  sha256 "6a37f8ebbd7aaf59a2e716989fae02274630d6b5b6d9b412ad0e62eb7120a7c2"
   license "Apache-2.0"
   head "https://github.com/boostsecurityio/poutine.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "cc8d260725a77263604bc08485eb37f1738577175e69c44043491289b11b2ecc"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "74ed2b5adbbdc796e284b38769bfa4bab796348f26b57279d897e658a508ada7"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "8d7005fb53c259e8db333a56704e471c7bacd07a11e622550883f863768aa87d"
-    sha256 cellar: :any_skip_relocation, sonoma:         "2d8af7029d02d05ff9c3f76e2727c8f63a752d9d04f7198b08d89433c993f3a1"
-    sha256 cellar: :any_skip_relocation, ventura:        "78c635b84df8386a38c56639f0bee52ac8b7e8f0bac3e87d1b7a241fd4ff277d"
-    sha256 cellar: :any_skip_relocation, monterey:       "deb3d82f09e410df4b11fe230790ea2ecc85d310487dbb206c0a16588c0cd643"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "d0b9d689c1a7811a4e465afefcb7b3ef8f5b7a1d297035742108352b98f06b52"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "b64630976f9250659df867f0c4a69fd7f6e51651ba9c483acc3476bb80c3d0ee"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "b64630976f9250659df867f0c4a69fd7f6e51651ba9c483acc3476bb80c3d0ee"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "b64630976f9250659df867f0c4a69fd7f6e51651ba9c483acc3476bb80c3d0ee"
+    sha256 cellar: :any_skip_relocation, sonoma:        "fd2b05d18e2773d0a857afb7995aadb0b07e0da65685ebd84f30d2a1d7ae4469"
+    sha256 cellar: :any_skip_relocation, ventura:       "fd2b05d18e2773d0a857afb7995aadb0b07e0da65685ebd84f30d2a1d7ae4469"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "72832cd96791f7b3db2b03921061c774a4d6b1f3fd40765a2e7c4f016d49090e"
   end
 
   depends_on "go" => :build
@@ -33,11 +32,11 @@ class Poutine < Formula
 
   test do
     mkdir testpath/".poutine"
-    (testpath/".poutine.yml").write <<~EOS
+    (testpath/".poutine.yml").write <<~YAML
       include:
       - path: .poutine
       ignoreForks: true
-    EOS
+    YAML
 
     assert_match version.to_s, shell_output("#{bin}/poutine version")
 
@@ -46,19 +45,18 @@ class Poutine < Formula
     (testpath/"repo/.github/workflows/").mkpath
     system "git", "-C", testpath/"repo", "init"
     system "git", "-C", testpath/"repo", "remote", "add", "origin", "git@github.com:actions/whatever.git"
-    vulnerable_workflow = <<-HEREDOC
-    on:
-      pull_request_target:
-    jobs:
-      test:
-        runs-on: ubuntu-latest
-        steps:
-        - uses: actions/checkout@v3
-          with:
-            ref: ${{ github.event.pull_request.head.sha }}
-        - run: make test
-    HEREDOC
-    (testpath/"repo/.github/workflows/build.yml").write(vulnerable_workflow)
+    (testpath/"repo/.github/workflows/build.yml").write <<~YAML
+      on:
+        pull_request_target:
+      jobs:
+        test:
+          runs-on: ubuntu-latest
+          steps:
+          - uses: actions/checkout@v3
+            with:
+              ref: ${{ github.event.pull_request.head.sha }}
+          - run: make test
+    YAML
     system "git", "-C", testpath/"repo", "add", ".github/workflows/build.yml"
     system "git", "-C", testpath/"repo", "commit", "-m", "message"
     assert_match "Detected usage of `make`", shell_output("#{bin}/poutine analyze_local #{testpath}/repo")

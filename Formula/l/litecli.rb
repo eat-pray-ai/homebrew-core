@@ -3,21 +3,16 @@ class Litecli < Formula
 
   desc "CLI for SQLite Databases with auto-completion and syntax highlighting"
   homepage "https://github.com/dbcli/litecli"
-  url "https://files.pythonhosted.org/packages/2e/9e/016649bac18c4a41fb903e936d51f3077c3ff56363ef9da49573df74117e/litecli-1.11.0.tar.gz"
-  sha256 "616de68d87d2bb18bf5e669eb6b5a68d5b937ea81a8ad439c1f51a25d1c81f56"
+  url "https://files.pythonhosted.org/packages/ff/59/1e7ba81c715049b3eb299e65d29553fb64b3766dcc8669a1829faa0e6559/litecli-1.13.2.tar.gz"
+  sha256 "ac374929a5b3d914a9f47e0a7f4a838a7e1f6e963b4893cd7d67a1e2a3ac4762"
   license "BSD-3-Clause"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "6a572d0d5957d894cd5839fe7e99c1f0d9fe01d921acac1fc11bd4aaeb32e7b7"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "6a572d0d5957d894cd5839fe7e99c1f0d9fe01d921acac1fc11bd4aaeb32e7b7"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "6a572d0d5957d894cd5839fe7e99c1f0d9fe01d921acac1fc11bd4aaeb32e7b7"
-    sha256 cellar: :any_skip_relocation, sonoma:         "6a572d0d5957d894cd5839fe7e99c1f0d9fe01d921acac1fc11bd4aaeb32e7b7"
-    sha256 cellar: :any_skip_relocation, ventura:        "6a572d0d5957d894cd5839fe7e99c1f0d9fe01d921acac1fc11bd4aaeb32e7b7"
-    sha256 cellar: :any_skip_relocation, monterey:       "6a572d0d5957d894cd5839fe7e99c1f0d9fe01d921acac1fc11bd4aaeb32e7b7"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "bc74bf1829660c97ee4bd8a30b4314de9e11dd1db5ae176b5449c694609a929f"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, all: "a7f95edb75808431e62435913c9d62047e40aa04ac1645cccc49db3962c42325"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   uses_from_macos "sqlite"
 
@@ -32,28 +27,23 @@ class Litecli < Formula
   end
 
   resource "configobj" do
-    url "https://files.pythonhosted.org/packages/cb/87/17d4c6d634c044ab08b11c0cd2a8a136d103713d438f8792d7be2c5148fb/configobj-5.0.8.tar.gz"
-    sha256 "6f704434a07dc4f4dc7c9a745172c1cad449feb548febd9f7fe362629c627a97"
+    url "https://files.pythonhosted.org/packages/f5/c4/c7f9e41bc2e5f8eeae4a08a01c91b2aea3dfab40a3e14b25e87e7db8d501/configobj-5.0.9.tar.gz"
+    sha256 "03c881bbf23aa07bccf1b837005975993c4ab4427ba57f959afdd9d1a2386848"
   end
 
   resource "prompt-toolkit" do
-    url "https://files.pythonhosted.org/packages/cc/c6/25b6a3d5cd295304de1e32c9edbcf319a52e965b339629d37d42bb7126ca/prompt_toolkit-3.0.43.tar.gz"
-    sha256 "3527b7af26106cbc65a040bcc84839a3566ec1b051bb0bfe953631e704b0ff7d"
+    url "https://files.pythonhosted.org/packages/2d/4f/feb5e137aff82f7c7f3248267b97451da3644f6cdc218edfe549fb354127/prompt_toolkit-3.0.48.tar.gz"
+    sha256 "d6623ab0477a80df74e646bdbc93621143f5caf104206aa29294d53de1a03d90"
   end
 
   resource "pygments" do
-    url "https://files.pythonhosted.org/packages/55/59/8bccf4157baf25e4aa5a0bb7fa3ba8600907de105ebc22b0c78cfbf6f565/pygments-2.17.2.tar.gz"
-    sha256 "da46cec9fd2de5be3a8a784f434e4c4ab670b4ff54d605c4c2717e9d49c4c367"
-  end
-
-  resource "six" do
-    url "https://files.pythonhosted.org/packages/71/39/171f1c67cd00715f190ba0b100d606d440a28c93c7714febeca8b79af85e/six-1.16.0.tar.gz"
-    sha256 "1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926"
+    url "https://files.pythonhosted.org/packages/8e/62/8336eff65bcbc8e4cb5d05b55faf041285951b6e80f33e2bff2024788f31/pygments-2.18.0.tar.gz"
+    sha256 "786ff802f32e91311bff3889f6e9a86e81505fe99f2735bb6d60ae0c5004f199"
   end
 
   resource "sqlparse" do
-    url "https://files.pythonhosted.org/packages/50/26/5da251cd090ccd580f5cfaa7d36cdd8b2471e49fffce60ed520afc27f4bc/sqlparse-0.5.0.tar.gz"
-    sha256 "714d0a4932c059d16189f58ef5411ec2287a4360f17cdd0edd2d09d4c5087c93"
+    url "https://files.pythonhosted.org/packages/57/61/5bc3aff85dc5bf98291b37cf469dab74b3d0aef2dd88eade9070a200af05/sqlparse-0.5.2.tar.gz"
+    sha256 "9e37b35e16d1cc652a2545f0997c1deb23ea28fa1f3eefe609eee3063c3b105f"
   end
 
   resource "tabulate" do
@@ -68,16 +58,18 @@ class Litecli < Formula
 
   def install
     virtualenv_install_with_resources
+
+    generate_completions_from_executable(bin/"litecli", shells: [:fish, :zsh], shell_parameter_format: :click)
   end
 
   test do
-    (testpath/".config/litecli/config").write <<~EOS
+    (testpath/".config/litecli/config").write <<~INI
       [main]
       table_format = tsv
       less_chatty = True
-    EOS
+    INI
 
-    (testpath/"test.sql").write <<~EOS
+    (testpath/"test.sql").write <<~SQL
       CREATE TABLE IF NOT EXISTS package_manager (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name VARCHAR(256)
@@ -86,7 +78,7 @@ class Litecli < Formula
         package_manager (name)
       VALUES
         ('Homebrew');
-    EOS
+    SQL
     system "sqlite3 test.db < test.sql"
 
     require "pty"

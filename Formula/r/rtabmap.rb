@@ -4,7 +4,7 @@ class Rtabmap < Formula
   url "https://github.com/introlab/rtabmap/archive/refs/tags/0.21.4.tar.gz"
   sha256 "242f8da7c5d20f86a0399d6cfdd1a755e64e9117a9fa250ed591c12f38209157"
   license "BSD-3-Clause"
-  revision 3
+  revision 8
   head "https://github.com/introlab/rtabmap.git", branch: "master"
 
   # Upstream doesn't create releases for all tagged versions, so we use the
@@ -15,13 +15,11 @@ class Rtabmap < Formula
   end
 
   bottle do
-    sha256                               arm64_sonoma:   "7ded9e75cd1ec90eff980ea4e6c0521b36589017bf0acb62217333e13587b6c1"
-    sha256                               arm64_ventura:  "7a754f0c9a97663b06b2e6d4d1981466d9be5d53e05944907d45566374c501ef"
-    sha256                               arm64_monterey: "90b2c03985689419a44adf25624956659fdbcb0a24fd270ec8d860ee6e270ec6"
-    sha256                               sonoma:         "be3dd2bdc5e8f370e6ff645d79c388fc94297e79b8cedf7371efa85a56d0a989"
-    sha256                               ventura:        "6ad77bc214708a2f7f75bf98196bf88f44ef4933a130a3d1604d91ec36e5e910"
-    sha256                               monterey:       "35a17b327683a640aeda1b244500e24e97f06b0fd4670f2a8876c08d5cfc9bc1"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f78d18274347eb17d660b304b9a5be507bf7c3b33f8388bdb9c08ad06c02bd91"
+    sha256                               arm64_sonoma:  "3ab35d0f76835659984b70183d57a20588d9569187523261be461cc6e19cfe99"
+    sha256                               arm64_ventura: "00f968f349ee73d0d29a0b72f85b54ee5436a6b80b94508bfdce8b77afdb0677"
+    sha256                               sonoma:        "8d84b6e2b4575ad988f4d3126120fa3b5feab4e5a96d81fee3d242c1ca79f539"
+    sha256                               ventura:       "6793f08bbcec9446a2320776517c09e2dfd121c5f295938bd423f9c7ee15b88e"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e122a1f417172e0e432ae9122748cb065262245a58fd83acb57f3ed756257ab5"
   end
 
   depends_on "cmake" => [:build, :test]
@@ -31,6 +29,23 @@ class Rtabmap < Formula
   depends_on "opencv"
   depends_on "pcl"
   depends_on "pdal"
+  depends_on "qt"
+  depends_on "sqlite"
+  depends_on "vtk"
+
+  uses_from_macos "zlib"
+
+  on_macos do
+    depends_on "boost"
+    depends_on "flann"
+    depends_on "freetype"
+    depends_on "glew"
+    depends_on "libomp"
+    depends_on "libpcap"
+    depends_on "libpng"
+    depends_on "lz4"
+    depends_on "qhull"
+  end
 
   def install
     # Work around an Xcode 15 linker issue which causes linkage against LLVM's
@@ -45,7 +60,8 @@ class Rtabmap < Formula
     args = %W[
       -DCMAKE_INSTALL_RPATH=#{rpath}
     ]
-    system "cmake", "-S", ".", "-B", "build", *std_cmake_args, *args
+
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
 
@@ -68,14 +84,14 @@ class Rtabmap < Formula
     ENV.delete "CPATH" if OS.mac? && MacOS::CLT.installed?
 
     rtabmap_dir = lib/"rtabmap-#{version.major_minor}"
-    (testpath/"CMakeLists.txt").write <<~EOS
+    (testpath/"CMakeLists.txt").write <<~CMAKE
       cmake_minimum_required(VERSION 3.10)
       project(test)
       find_package(RTABMap REQUIRED COMPONENTS core)
       add_executable(test test.cpp)
       target_link_libraries(test rtabmap::core)
-    EOS
-    (testpath/"test.cpp").write <<~EOS
+    CMAKE
+    (testpath/"test.cpp").write <<~CPP
       #include <rtabmap/core/Rtabmap.h>
       #include <stdio.h>
       int main()
@@ -84,11 +100,13 @@ class Rtabmap < Formula
         printf(RTABMAP_VERSION);
         return 0;
       }
-    EOS
+    CPP
+
     args = std_cmake_args
     args << "-DCMAKE_BUILD_RPATH=#{lib}" if OS.linux?
-    system "cmake", ".", *args, "-DCMAKE_VERBOSE_MAKEFILE=ON", "-DRTABMap_DIR=#{rtabmap_dir}"
-    system "make"
-    assert_equal version.to_s, shell_output("./test").strip
+
+    system "cmake", "-S", ".", "-B", "build", *args, "-DCMAKE_VERBOSE_MAKEFILE=ON", "-DRTABMap_DIR=#{rtabmap_dir}"
+    system "cmake", "--build", "build"
+    assert_equal version.to_s, shell_output("./build/test").strip
   end
 end

@@ -7,6 +7,7 @@ class Globe < Formula
   license "BSD-2-Clause"
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "87a814940b862f27a09f5d541049e915294f68ee18e10b2149e007e8b411d6bd"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "9a2871805874a01d7197dcfec9a4bee19ec0b66717f8c06329ebf1777b684019"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "4473c2c0beaa4ed43eb61e261c0dea124561f7060500b34f6dbe0d8ed2a74f54"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "7aaea040d2d0551c2b5ff578222fceb20b0768d9a040c1ab7091f919b7df1235"
@@ -26,7 +27,7 @@ class Globe < Formula
   # Upstream uses weak ciphers which modern OpenSSL rejects,
   # so fetching and livechecking no longer work.
   # Last release on 2014-08-13
-  deprecate! date: "2023-12-06", because: :unmaintained
+  disable! date: "2024-12-06", because: :unmaintained
 
   def install
     bin.mkpath
@@ -36,6 +37,6 @@ class Globe < Formula
   end
 
   test do
-    system "#{bin}/globe"
+    system bin/"globe"
   end
 end

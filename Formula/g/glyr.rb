@@ -7,6 +7,7 @@ class Glyr < Formula
   revision 2
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "75c0b25000de973e7ea592d3ae07a610f54038c6e73adddf93ca8f50e0df12ff"
     sha256 cellar: :any,                 arm64_sonoma:   "74187740cb6f6aabc0c532714c8753435c33a49408407c3ba5b0236c5b85cc03"
     sha256 cellar: :any,                 arm64_ventura:  "0b11085d86604b659fe43f99e91838695ff2c6bb4a1e5f2790e6af6fc90246da"
     sha256 cellar: :any,                 arm64_monterey: "800ed9d047c06e8490f6318b36c88c34feb4dac7dbe60a539edd752f4568a08e"
@@ -20,7 +21,7 @@ class Glyr < Formula
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "gettext"
   depends_on "glib"
 
@@ -28,8 +29,9 @@ class Glyr < Formula
   uses_from_macos "sqlite"
 
   def install
-    system "cmake", ".", *std_cmake_args
-    system "make", "install"
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do

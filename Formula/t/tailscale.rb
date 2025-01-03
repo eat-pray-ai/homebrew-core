@@ -2,8 +2,8 @@ class Tailscale < Formula
   desc "Easiest, most secure way to use WireGuard and 2FA"
   homepage "https://tailscale.com"
   url "https://github.com/tailscale/tailscale.git",
-      tag:      "v1.68.2",
-      revision: "c79c500c7e93c8e416c77f85d106b04a4aab23ab"
+      tag:      "v1.78.3",
+      revision: "1b41fdeddb6598b35ba15cc6b07740e0cc0e8411"
   license "BSD-3-Clause"
 
   livecheck do
@@ -12,13 +12,12 @@ class Tailscale < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "14597e4e17ae69c3271fa7824c5afb128154f0dd0cb4ab0fc23428ff4a304187"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "3df5cd2ebd47bf0f69fdf5957fe73d3df45d74b6b74d747ed85cab59b0ab72e8"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "64aec43364f493dcbbf6eb1d44c97a72781f1d06942ff6e2ea108e850c3f3e34"
-    sha256 cellar: :any_skip_relocation, sonoma:         "ea59e406983cd2d83216fe3f4445182564521f359fd2b24d1b2223bbc9c0e2f6"
-    sha256 cellar: :any_skip_relocation, ventura:        "6142412ddcf2cb51028c41d93395fbf993671c568c804b6494b92bc1926dff04"
-    sha256 cellar: :any_skip_relocation, monterey:       "4957b6522ea50d2203fe67e7f4f27960a917e6405f97483d65ac7f2fe25bbd5c"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "34fc261aa45b10a293f5241d86c41e7b93d3ead12d224f4d4ace63110f0d2785"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "2775ccbf953176caa175e23be2092ec6ebd996847b72792c35993f95907d936b"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "81fec4905d01f2ca8645b2a7b43f9d2f8dc257282f3e92ee5888f586bb55f941"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "5eb91e0fe05c342cd99edf659a94db6328396e1cb84c98bae20a03b3c89eb0fa"
+    sha256 cellar: :any_skip_relocation, sonoma:        "12b4ceb3815109dc6efc66ed79a8757106a5664674a54900af56dbaa55f60026"
+    sha256 cellar: :any_skip_relocation, ventura:       "1b9311b3db6f5416b6a2b199a2289fc62ad14be5872779bcce44fd47802e5102"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "f3f0874251e0ad246997f54dbfd1104406c810ac6a199f3ff7d423975c46343f"
   end
 
   depends_on "go" => :build

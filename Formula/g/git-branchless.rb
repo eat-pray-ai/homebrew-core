@@ -1,9 +1,10 @@
 class GitBranchless < Formula
   desc "High-velocity, monorepo-scale workflow for Git"
   homepage "https://github.com/arxanas/git-branchless"
-  url "https://github.com/arxanas/git-branchless/archive/refs/tags/v0.9.0.tar.gz"
-  sha256 "fa64dc92ec522520a6407ff61241fc1819a3093337b4e3d0f80248ae76938d43"
+  url "https://github.com/arxanas/git-branchless/archive/refs/tags/v0.10.0.tar.gz"
+  sha256 "1eb8dbb85839c5b0d333e8c3f9011c3f725e0244bb92f4db918fce9d69851ff7"
   license any_of: ["Apache-2.0", "MIT"]
+  revision 1
   head "https://github.com/arxanas/git-branchless.git", branch: "master"
 
   # Upstream appears to use GitHub releases to indicate that a version is
@@ -15,18 +16,17 @@ class GitBranchless < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "94d48275ff7f05494ed9a80084381b367bd56f82e67e265069806987a8411f9d"
-    sha256 cellar: :any,                 arm64_ventura:  "6c3c8e9c6246ecbd43f05de74cffc45e76d8ba1f46c5d2b6a014751144f2d4b2"
-    sha256 cellar: :any,                 arm64_monterey: "3d1bf86800d60009cfa4e86cdd07bd481493963685c8e189a729a971c7052686"
-    sha256 cellar: :any,                 sonoma:         "3b036d955e30b83fde879c735bd9e20bd39880392fd797aea004497a83bfba4b"
-    sha256 cellar: :any,                 ventura:        "996464d2800b01b547794dce0d296c10ebb36e4250e2c3eb0b7393b3f384cf22"
-    sha256 cellar: :any,                 monterey:       "f92bf814c3ffaea775f71d47941a0b2215d57131431689ab71602dfe4901c258"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f6b4243dbcb36ee645026ec663cb2472817339f8c7c9cc06f03d287b71f38a60"
+    sha256 cellar: :any,                 arm64_sequoia: "ca739d76b3d52de81f0ec9e679aba6847426b0c4d9c84b8db0c934ad576dc439"
+    sha256 cellar: :any,                 arm64_sonoma:  "993e9b56d4598738d7c5fd6fb6b90393396cd59a3bfb630294c7709a6507b04b"
+    sha256 cellar: :any,                 arm64_ventura: "a1e2afd8baea79531f7774ec70cc2230c945edde309036d0fb0aa5a9809b87fa"
+    sha256 cellar: :any,                 sonoma:        "4ca5e3cd013c7556f3b32d06cac5186e3bdf369afdc2fe92c81ef52e08f631ff"
+    sha256 cellar: :any,                 ventura:       "c72f47a4f49662451cd7154370b69240f75ceb7db7f33b90bc0e8532f39dd5c2"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "6c6f31ef2352a3bbcc8e2478b7edfcf91df250d22084ade647a3fb187ace0f32"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
-  depends_on "libgit2"
+  depends_on "libgit2@1.8" # needs https://github.com/rust-lang/git2-rs/issues/1109 to support libgit2 1.9
 
   def install
     ENV["LIBGIT2_NO_VENDOR"] = "1"
@@ -50,7 +50,7 @@ class GitBranchless < Formula
     linkage_with_libgit2 = (bin/"git-branchless").dynamically_linked_libraries.any? do |dll|
       next false unless dll.start_with?(HOMEBREW_PREFIX.to_s)
 
-      File.realpath(dll) == (Formula["libgit2"].opt_lib/shared_library("libgit2")).realpath.to_s
+      File.realpath(dll) == (Formula["libgit2@1.8"].opt_lib/shared_library("libgit2")).realpath.to_s
     end
 
     assert linkage_with_libgit2, "No linkage with libgit2! Cargo is likely using a vendored version."

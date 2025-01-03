@@ -6,15 +6,16 @@ class Modman < Formula
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "c533a04301f9104213accc8724198bdb249e186fc36866697c94d4ce0f4d56c2"
+    rebuild 2
+    sha256 cellar: :any_skip_relocation, all: "f932bb64388501a75aff2a97fe0b75b6bbefa13d38f29d99cf49672015aba60d"
   end
 
   def install
     bin.install "modman"
-    bash_completion.install "bash_completion" => "modman.bash"
+    bash_completion.install "bash_completion" => "modman"
   end
 
   test do
-    system "#{bin}/modman"
+    system bin/"modman"
   end
 end

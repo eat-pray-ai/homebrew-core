@@ -1,8 +1,8 @@
 class Wstunnel < Formula
   desc "Tunnel all your traffic over Websocket or HTTP2"
   homepage "https://github.com/erebe/wstunnel"
-  url "https://github.com/erebe/wstunnel/archive/refs/tags/v9.7.2.tar.gz"
-  sha256 "9493d4e08dea82b7ed07db800c5e7438ac3410cf1add4d18955cd46dbb0f87ce"
+  url "https://github.com/erebe/wstunnel/archive/refs/tags/v10.1.8.tar.gz"
+  sha256 "45ba8b334701f831c3d9f3db1fdf5de5fb019dc102dcac151cd3d72076862dbf"
   license "BSD-3-Clause"
   head "https://github.com/erebe/wstunnel.git", branch: "main"
 
@@ -15,13 +15,12 @@ class Wstunnel < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "3661846792199642005e6fb4d0afb3a257ab229a2e99544d835aa4a251e55e54"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "3c12e4e1d9505b456e48812f679e6fa5209bcd0562c3fb88441442543b8561fb"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "ce1fdf7b43e1e7ee720026dcb38bf2777bc22c6f5665fff8f612b2e82469dfef"
-    sha256 cellar: :any_skip_relocation, sonoma:         "a58c93f056d81dc12b7c63a1ddbba67f5228cebafaf51bdcdd6c589269fc6139"
-    sha256 cellar: :any_skip_relocation, ventura:        "e83a44ffbaceccbe67f42946a8e0f44080a32f4a97074081ad8d8743ef1d03ca"
-    sha256 cellar: :any_skip_relocation, monterey:       "70bd96fb405d493b27f17183d5ad3b8ca1289eee2c99b217070b7d37d743ff15"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "eaa46a7412d638558d82e387214bbb2f6647a04a4aee6e252a6a8c86156c733d"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "33a1c9d495b08197ba06badfabf8f75752b0875a039d9271d0d0d52ca1a22067"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "0bf05de82a31a33c70e9278282333c0c00ee5c3459fa2cec72b7ec5d642cc903"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "213fa87e2d238275f455e691be38612658a737d9954d413ba424c9b28e187962"
+    sha256 cellar: :any_skip_relocation, sonoma:        "b4d577a7cfcfda7a195e89aebf3ca3160eab10d89a384a9b35686992cb9d93b4"
+    sha256 cellar: :any_skip_relocation, ventura:       "4d713c6ba48180a465b00a55b6a50dfbb14c962c3191467117d58b5470a85ec4"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "e6aaa2e6d04f48db83db3419f03e672ba0f71dc399bb00e72e12d3e513e4e180"
   end
 
   depends_on "rust" => :build

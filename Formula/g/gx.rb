@@ -7,6 +7,7 @@ class Gx < Formula
   head "https://github.com/whyrusleeping/gx.git", branch: "master"
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "2f163d19c275918bb2de9aed07722dda266c010469bcb562bfbd65666d32b64c"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "54ee0e7162c46736a63a8587f315b69d2090386bac3c46b0da3a9fcbfda5258f"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "a49ac2040542b71f63e9c30592e102b07fc10561a79b99014773f7c88ffe7c47"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "f1323ff13674b582766dccca83ee63a63314eb3fbc0ccfd815dd9138e073b1f1"
@@ -21,10 +22,15 @@ class Gx < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "40fe8e9f82a981fbf440651d85215bdc246ef4da138b5378da7318b4f3f04645"
   end
 
+  # project is no longer maintained as people should be
+  # expected to use go modules to manage dependencies
+  # also see upstream discussion on this, https://github.com/whyrusleeping/gx/issues/247
+  deprecate! date: "2024-12-07", because: :unmaintained
+
   depends_on "go" => :build
 
   def install
-    system "go", "build", "-o", bin/"gx"
+    system "go", "build", *std_go_args(ldflags: "-s -w")
   end
 
   test do

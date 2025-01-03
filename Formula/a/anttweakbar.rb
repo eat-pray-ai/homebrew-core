@@ -1,6 +1,6 @@
 class Anttweakbar < Formula
   desc "C/C++ library for adding GUIs to OpenGL apps"
-  homepage "https://anttweakbar.sourceforge.net/"
+  homepage "https://anttweakbar.sourceforge.io/doc/"
   url "https://downloads.sourceforge.net/project/anttweakbar/AntTweakBar_116.zip"
   version "1.16"
   sha256 "fbceb719c13ceb13b9fd973840c2c950527b6e026f9a7a80968c14f76fcf6e7c"
@@ -47,13 +47,13 @@ class Anttweakbar < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <AntTweakBar.h>
       int main() {
         TwBar *bar; // TwBar is an internal structure of AntTweakBar
         return 0;
       }
-    EOS
+    CPP
     system ENV.cc, "test.cpp", "-L#{lib}", "-lAntTweakBar", "-o", "test"
     system "./test"
   end

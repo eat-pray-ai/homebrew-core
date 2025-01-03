@@ -7,6 +7,7 @@ class Mstch < Formula
   revision 1
 
   bottle do
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "437c22d289926bc83d04a407aacb2673331d7bb27165a6c17af2994febc67c02"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "2f20877158629504b39573ded1a2dd06de78cd1de916eb10fdfadaddee5dca44"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "de4dc750e2737a8745de171858fc53741ee2625540f3ed64516f5afd9a8abc6f"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "16e5ebc65aa83659f1ae24aedc277490f3423336de6081092a16c54d541d535d"
@@ -23,8 +24,9 @@ class Mstch < Formula
   depends_on "boost"
 
   def install
-    system "cmake", ".", *std_cmake_args
-    system "make", "install"
+    system "cmake", "-S", ".", "-B", "build", *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
 
     (lib/"pkgconfig/mstch.pc").write pc_file
   end
@@ -45,7 +47,7 @@ class Mstch < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <mstch/mstch.hpp>
       #include <cassert>
       #include <string>
@@ -55,7 +57,7 @@ class Mstch < Formula
 
         assert(mstch::render(view, context) == "Hello, world");
       }
-    EOS
+    CPP
 
     system ENV.cxx, "test.cpp", "-L#{lib}", "-lmstch", "-std=c++11", "-o", "test"
     system "./test"

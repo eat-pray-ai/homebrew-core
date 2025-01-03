@@ -1,20 +1,12 @@
-require "language/node"
-
 class Astgen < Formula
   desc "Generate AST in json format for JS/TS"
   homepage "https://github.com/joernio/astgen"
-  url "https://github.com/joernio/astgen/archive/refs/tags/v3.16.0.tar.gz"
-  sha256 "3097f0db0d7dc223c851ed42e2692d2991f36f0e4446321f5f4ef22413af696c"
+  url "https://github.com/joernio/astgen/archive/refs/tags/v3.22.0.tar.gz"
+  sha256 "2452a5a428218bf47c68e4176e65aa192681e7d69acc004d3cfc3741e2a3bbc0"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "ed39988aab49ef7a4f34118af779465a330dd25bf0a793146552c2c659aed178"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "ed39988aab49ef7a4f34118af779465a330dd25bf0a793146552c2c659aed178"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "ed39988aab49ef7a4f34118af779465a330dd25bf0a793146552c2c659aed178"
-    sha256 cellar: :any_skip_relocation, sonoma:         "ed39988aab49ef7a4f34118af779465a330dd25bf0a793146552c2c659aed178"
-    sha256 cellar: :any_skip_relocation, ventura:        "ed39988aab49ef7a4f34118af779465a330dd25bf0a793146552c2c659aed178"
-    sha256 cellar: :any_skip_relocation, monterey:       "ed39988aab49ef7a4f34118af779465a330dd25bf0a793146552c2c659aed178"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f050211f92e11b55282dcefa185607a3eccd2dc3ea481a3fe84ccab532e46fc4"
+    sha256 cellar: :any_skip_relocation, all: "b512a4689cf7988db396e17090218487836954ca2eb76e494356284b959326c6"
   end
 
   depends_on "node"
@@ -22,18 +14,24 @@ class Astgen < Formula
   uses_from_macos "zlib"
 
   def install
-    # Disable custom postinstall script
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec), "--ignore-scripts"
-    bin.install_symlink Dir["#{libexec}/bin/*"]
+    # Install `devDependency` packages to compile the TypeScript files
+    system "npm", "install", *std_npm_args(prefix: false), "-D"
+    system "npm", "run", "build"
+
+    # NOTE: We have to manually install `typescript` along with the package
+    # dependencies because it's `require`d in `TscUtils.js` but is only
+    # specified as a `devDependency`.
+    system "npm", "install", *std_npm_args, "typescript"
+    bin.install_symlink Dir["#{libexec}/bin/astgen"]
   end
 
   test do
-    (testpath/"main.js").write <<~EOS
+    (testpath/"main.js").write <<~JS
       console.log("Hello, world!");
-    EOS
+    JS
 
     assert_match "Converted AST", shell_output("#{bin}/astgen -t js -i . -o #{testpath}/out")
-    assert_match '"fullName": "main.js"', (testpath/"out/main.js.json").read
-    assert_match '"0": "Console"', (testpath/"out/main.js.typemap").read
+    assert_match "\"fullName\":\"#{testpath}/main.js\"", (testpath/"out/main.js.json").read
+    assert_match '"0":"Console"', (testpath/"out/main.js.typemap").read
   end
 end

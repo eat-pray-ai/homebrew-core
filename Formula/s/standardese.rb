@@ -3,7 +3,7 @@ class Standardese < Formula
   homepage "https://standardese.github.io"
   # TODO: use resource blocks for vendored deps
   license "MIT"
-  revision 18
+  revision 20
   head "https://github.com/standardese/standardese.git", branch: "master"
 
   # Remove stable block when patch is no longer needed.
@@ -21,21 +21,18 @@ class Standardese < Formula
   end
 
   bottle do
-    sha256                               arm64_sonoma:   "362272beec22bc9b8ffe1cf3d1e139fb2f7b2b5216c53fc047bf02abff981dc5"
-    sha256                               arm64_ventura:  "4602636a4276f940a0151df62e52d3e7cf0f5b8b58ae338109095820d51d30d2"
-    sha256                               arm64_monterey: "d8c9a2a0650c729c836a36f6922a7c8bda0439aac982853932df0f0235e55a3c"
-    sha256                               sonoma:         "06d53bdd40fb8a90a51fcc340d3073d6ac845fb1c9ce550eff9f4cbda9508e83"
-    sha256                               ventura:        "3f5d2991596e83b23235378510c02a2e8b7b7f17819ab763b501c3979ca88da5"
-    sha256                               monterey:       "5d0c9a7d4defee7b0edddc12fed4d356155f6bb0d735023f9e80fbb72dd18583"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "a179ebb256a5d21a95cc52a0de2d87528ccef9e139d4f3790a0f6714481c5511"
+    sha256                               arm64_sequoia: "83fcba84e5474be69854c2ecd8d59f2e5e2333f4004c93603d8106a1d91748a9"
+    sha256                               arm64_sonoma:  "fc114064e9734f88f666e37d041e138a31e2517d8a2f7c7ea0f9041414e16b60"
+    sha256                               arm64_ventura: "b3e88e943e501323bbf9a717a2e63757283685c5c061ef7c21ba0baff483b3c9"
+    sha256                               sonoma:        "b9a998194e7bfb6b44cfe0f46d7a19640894efe44c122e097c3978a6e1cd3825"
+    sha256                               ventura:       "737f19c5312d5a62a7224ec89440e8f82e5f348510798ed296c79ffd2f5e9a9c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5890b84174fe4da58ab252abe20070a09378430b1f7f6d1c6dc138e3aa127df2"
   end
 
   depends_on "cmake" => :build
   depends_on "boost"
   depends_on "cmark-gfm"
   depends_on "llvm" # must be Homebrew LLVM, not system, because of `llvm-config`
-
-  fails_with gcc: "5" # LLVM is built with Homebrew GCC
 
   # https://github.com/standardese/cppast/blob/main/external/external.cmake#L12
   resource "type_safe" do
@@ -72,7 +69,7 @@ class Standardese < Formula
   end
 
   test do
-    (testpath/"test.hpp").write <<~EOS
+    (testpath/"test.hpp").write <<~CPP
       #pragma once
 
       #include <string>
@@ -98,7 +95,7 @@ class Standardese < Formula
           /// \\notes Some stuff at the end.
           using Baz = Test;
       };
-    EOS
+    CPP
     system bin/"standardese", "--compilation.standard", "c++17",
                               "--output.format", "xml",
                               testpath/"test.hpp"

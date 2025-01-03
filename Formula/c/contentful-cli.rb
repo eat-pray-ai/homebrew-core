@@ -1,27 +1,24 @@
-require "language/node"
-
 class ContentfulCli < Formula
   desc "Contentful command-line tools"
   homepage "https://github.com/contentful/contentful-cli"
-  url "https://registry.npmjs.org/contentful-cli/-/contentful-cli-3.3.3.tgz"
-  sha256 "d3e5b17de843d7230babb6f6604c3aa4c6d5acff627b934a8eb3ae302ae80b4f"
+  url "https://registry.npmjs.org/contentful-cli/-/contentful-cli-3.7.1.tgz"
+  sha256 "076db6c7046fc702ff9a3cbb6775e4bc38aafc9c34cf5c265c12f99f22b55939"
   license "MIT"
   head "https://github.com/contentful/contentful-cli.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "a0df0be8cf868331c49d56dfc7abb5a4addff00fcae0e2360b8015611cda58d6"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "a0df0be8cf868331c49d56dfc7abb5a4addff00fcae0e2360b8015611cda58d6"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "a0df0be8cf868331c49d56dfc7abb5a4addff00fcae0e2360b8015611cda58d6"
-    sha256 cellar: :any_skip_relocation, sonoma:         "c4952a10b381a4352212247893f8c32b8a26842df875a12792f666f6e8557cd3"
-    sha256 cellar: :any_skip_relocation, ventura:        "c4952a10b381a4352212247893f8c32b8a26842df875a12792f666f6e8557cd3"
-    sha256 cellar: :any_skip_relocation, monterey:       "c4952a10b381a4352212247893f8c32b8a26842df875a12792f666f6e8557cd3"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "70109e3187f2db0f0753ac9fa52aec12948b842544391ac8dec4cec4b88f629c"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "748e968361002f719fe37cb8f3cb9a3d0a0039d1cd74b69e7aa23eaadabd838f"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "748e968361002f719fe37cb8f3cb9a3d0a0039d1cd74b69e7aa23eaadabd838f"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "748e968361002f719fe37cb8f3cb9a3d0a0039d1cd74b69e7aa23eaadabd838f"
+    sha256 cellar: :any_skip_relocation, sonoma:        "958be43cfcec0bbef8411c14cb164d1b41264e3cf2c92aa9148abedce645c3f0"
+    sha256 cellar: :any_skip_relocation, ventura:       "958be43cfcec0bbef8411c14cb164d1b41264e3cf2c92aa9148abedce645c3f0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "1b3890561b5dc6e84bedec68adfa12cc0266cfd01db35736c7f680f1d6ad8c04"
   end
 
   depends_on "node"
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+    system "npm", "install", *std_npm_args
     bin.install_symlink Dir["#{libexec}/bin/*"]
   end
 

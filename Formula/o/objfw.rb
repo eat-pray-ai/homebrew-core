@@ -1,8 +1,8 @@
 class Objfw < Formula
   desc "Portable, lightweight framework for the Objective-C language"
   homepage "https://objfw.nil.im/"
-  url "https://objfw.nil.im/downloads/objfw-1.1.5.tar.gz"
-  sha256 "9d45d2009a0bb9b1a0918918e454b47b8161670df8016b5f3a85eccea91d8988"
+  url "https://objfw.nil.im/downloads/objfw-1.2.3.tar.gz"
+  sha256 "8324d3b352121544f817f40f71c21005457ee0255104c7e0d5aedbd6d968bced"
   license "LGPL-3.0-only"
   head "https://objfw.nil.im/", using: :fossil
 
@@ -12,13 +12,13 @@ class Objfw < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "6f16015b6c32e9de4d84855647117f3a2f74f74b2f24828a99d45bbf4e7153c4"
-    sha256 arm64_ventura:  "d078bacc667a7183f1c12079cd880ddb8db1050967d762a36e0343bb618d8102"
-    sha256 arm64_monterey: "e8f5fbc918bd805a9176ae994190f67521a469b25f8840f84bc016dfe283bce6"
-    sha256 sonoma:         "8c9ed071395c1bd1079fdbeb567afbcfb3323fa859d979455c32a364ff898b1c"
-    sha256 ventura:        "8b5fa0cc92ba275f8f8e993c4d7d76806d5159bed8cdf9d5ba23b93bac174e3d"
-    sha256 monterey:       "5abefcda2e911c206a82949bcf13199f365b1bc35b3f0e5e66769dd8c2254b63"
-    sha256 x86_64_linux:   "11e9e2b6b89d1de0c3a25e0e5b9d7f98db3b3c6cf1faf4541431a88fc7e4fa3e"
+    rebuild 1
+    sha256 arm64_sequoia: "966443a0101b0f019e8262a412f7da946240e2b5bf0ad1204e00e69ec583caff"
+    sha256 arm64_sonoma:  "41177507640d9144e188db893c30bba5a4b42e4e70950a18fa26a3cefa371305"
+    sha256 arm64_ventura: "b7df0cab9a10b59be982906cbe2c8c9da0cbe13edaaf48f442050587301dab8d"
+    sha256 sonoma:        "f3c5c01bdcbb88edbeb6bcadfbc5dc59d360fa0e453fcf6f66a29f4b81f9a854"
+    sha256 ventura:       "0491d3bef0c7c449afcc2555ebef680fb884c2dfb9c1af17c89aeec2918b809c"
+    sha256 x86_64_linux:  "d13ccc8c605d43fe373327d0588ba5e877f5350866af1b458fb2cd196f66511b"
   end
 
   depends_on "autoconf" => :build
@@ -34,15 +34,20 @@ class Objfw < Formula
   patch :DATA
 
   def install
+    ENV.clang if OS.linux?
+
     system "./autogen.sh"
     system "./configure", "--prefix=#{prefix}"
     system "make", "install"
-    inreplace bin/"objfw-config", "llvm_clang", "clang" if OS.linux?
+
+    return unless OS.mac?
+
+    inreplace bin/"objfw-config", 'OBJC="clang"', 'OBJC="/usr/bin/clang"'
   end
 
   test do
-    system "#{bin}/objfw-new", "--app", "Test"
-    system "#{bin}/objfw-compile", "-o", "t", "Test.m"
+    system bin/"objfw-new", "--app", "Test"
+    system bin/"objfw-compile", "-o", "t", "Test.m"
     system "./t"
   end
 end

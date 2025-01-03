@@ -8,6 +8,7 @@ class Redshift < Formula
 
   bottle do
     rebuild 1
+    sha256 arm64_sequoia:  "82b1df8db7796fa1af92a7b3ef4ea428e4d94a65850a5e2cdb90f354605cf065"
     sha256 arm64_sonoma:   "b2ad69df7721d0d5c8777741384c3de6e24d370c394a4f39f6432239cdb2b158"
     sha256 arm64_ventura:  "a14f34f6fee41eb43734e14fc6b18965bc5438aa7a4acbf3a5b881e31bef5663"
     sha256 arm64_monterey: "639cdf26164ff6a637c3adb96d4e5b92f6712199c8d49276638965836ac142c9"
@@ -30,15 +31,13 @@ class Redshift < Formula
   end
 
   depends_on "intltool" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "gettext"
   depends_on "glib"
 
   def install
-    args = %W[
-      --prefix=#{prefix}
+    args = %w[
       --disable-silent-rules
-      --disable-dependency-tracking
       --disable-geoclue
       --disable-geoclue2
       --with-systemduserunitdir=no
@@ -51,7 +50,7 @@ class Redshift < Formula
     end
 
     system "./bootstrap" if build.head?
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args
     system "make", "install"
     pkgshare.install "redshift.conf.sample"
   end
@@ -68,11 +67,11 @@ class Redshift < Formula
   service do
     run opt_bin/"redshift"
     keep_alive true
-    log_path "/dev/null"
-    error_log_path "/dev/null"
+    log_path File::NULL
+    error_log_path File::NULL
   end
 
   test do
-    system "#{bin}/redshift", "-V"
+    system bin/"redshift", "-V"
   end
 end

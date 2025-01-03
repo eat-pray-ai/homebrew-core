@@ -1,33 +1,33 @@
 class Weechat < Formula
   desc "Extensible IRC client"
-  homepage "https://www.weechat.org"
-  url "https://weechat.org/files/src/weechat-4.3.4.tar.xz"
-  sha256 "cad458022f4699120b7d72e062b346c4d0e78359cc9785fa2e1686fd74ba7f67"
+  homepage "https://weechat.org/"
+  url "https://weechat.org/files/src/weechat-4.5.1.tar.xz"
+  sha256 "67c143c7bc70e689b9ea86df674c9a9ff3cf44ccc9cdff21be6a561d5eafc528"
   license "GPL-3.0-or-later"
+  revision 1
   head "https://github.com/weechat/weechat.git", branch: "master"
 
   bottle do
-    sha256 arm64_sonoma:   "0e323f9e5085d6bb923fc788071252b39f83e051e840f353ec76ecc202ba842c"
-    sha256 arm64_ventura:  "ef6b600e3c44da9490265c6bfa1c65bdbed83be4b4a0fc3dce101857a152b117"
-    sha256 arm64_monterey: "abd6535db40afeb5db1c956c1255a1b9b2b8cf60695ec7ee83e5c930f0f1ab3e"
-    sha256 sonoma:         "22a2bd7624907fc016eb577d06b8f9c7c6b8a7252ca9ce77c5f3b55da84d12e2"
-    sha256 ventura:        "e692e0f4d97656f1c59c0b89bfc5e03b668c760cbfb3448bf92c73ed01ec5ce6"
-    sha256 monterey:       "7922c099b0d8a6a521162d3e5c7bd84637d5fd3827211b761a665ddd8ea58b00"
-    sha256 x86_64_linux:   "cb11a0c962be1ed24d2f139576a7c00f9fcba0a8d4f9668a3ff5d388d255bd9e"
+    sha256 arm64_sequoia: "1d67c5430fb275208b17667d4d46efb27f73407d16b74b87450e21f6da71b990"
+    sha256 arm64_sonoma:  "eb160a670b4fe6283c27439b8ef204fd5cef1960657ab42f22d4b9deed6a3a35"
+    sha256 arm64_ventura: "ec8f40a100219d9e16f3ec871a8df4be7516318c85b99c7edaacc0be8993f8b5"
+    sha256 sonoma:        "4bb5fba2ce14d53c8a7be428c86bfff71628f56413fa3110cf0937e8ba24ccb4"
+    sha256 ventura:       "0fef6a116c728fc85aed039a03fb8ae0e9b850cb8156e689f3f63d26dc6ae803"
+    sha256 x86_64_linux:  "22e73215745c6ca186413a0b85847bffbc1d744090e2a5542afbb129b9e2fb24"
   end
 
   depends_on "asciidoctor" => :build
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "gettext" => :build # for xgettext
+  depends_on "pkgconf" => :build
   depends_on "aspell"
   depends_on "cjson"
-  depends_on "gettext"
   depends_on "gnutls"
   depends_on "libgcrypt"
   depends_on "lua"
   depends_on "ncurses"
   depends_on "perl"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "ruby"
   depends_on "zstd"
 
@@ -36,16 +36,17 @@ class Weechat < Formula
   uses_from_macos "zlib"
 
   on_macos do
+    depends_on "gettext"
     depends_on "libgpg-error"
   end
 
   def python3
-    which("python3.12")
+    which("python3.13")
   end
 
   def install
     pyver = Language::Python.major_minor_version python3
-    # Help pkg-config find python as we only provide `python3-embed` for aliased python formula
+    # Help pkgconf find python as we only provide `python3-embed` for aliased python formula
     inreplace "cmake/FindPython.cmake", " python3-embed ", " python-#{pyver}-embed "
 
     args = %W[
@@ -67,6 +68,6 @@ class Weechat < Formula
   end
 
   test do
-    system "#{bin}/weechat", "-r", "/quit"
+    system bin/"weechat", "-r", "/quit"
   end
 end

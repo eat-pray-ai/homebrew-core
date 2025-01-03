@@ -1,47 +1,30 @@
 class Chkbit < Formula
-  include Language::Python::Virtualenv
-
   desc "Check your files for data corruption"
-  homepage "https://github.com/laktak/chkbit-py"
-  url "https://files.pythonhosted.org/packages/ce/c3/83700e8a9c188638403e5eb897c59e8940af0fac3a37678c22b996c8c9f8/chkbit-4.2.1.tar.gz"
-  sha256 "6dbcb17c43667fcd63189e0c4682c83bcf0a6d0663e043fe08e4cda565cb1c3e"
+  homepage "https://github.com/laktak/chkbit"
+  url "https://github.com/laktak/chkbit/archive/refs/tags/v6.0.0.tar.gz"
+  sha256 "a95d6faad4b292b5dd16789fc2cae1615dc77c6ec3923067d56d228e2bcb8d8b"
   license "MIT"
-  head "https://github.com/laktak/chkbit-py.git", branch: "master"
+  head "https://github.com/laktak/chkbit.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "eca43da47371875365f790d768a4c659af462c1aa0b12fb5ad462dd45a20e38a"
-    sha256 cellar: :any,                 arm64_ventura:  "6266986c2a346550d5112318e3d3d174a531943e87640923f7a86286ad310dc8"
-    sha256 cellar: :any,                 arm64_monterey: "ea5749e4aa1f96805a69a0f0b0ceef26c49ba5894fce7aff8af1665997b85720"
-    sha256 cellar: :any,                 sonoma:         "9fbcdc42034ae0d906ca14794a07f0c2e37278046c5fdcfcc349043340a6e550"
-    sha256 cellar: :any,                 ventura:        "81ce5dc4ffcc1812df1101ab0c697c7eb60548ae9d4e42844267edabd2af25cc"
-    sha256 cellar: :any,                 monterey:       "73327c0a66310ba120b57391fc5e93601dea45fcd601712d0c3f2ca1f9f77e80"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3c5eb0a6a4d5101e55ce44c31bb6369b34c937723e844befd18c6271459d4f00"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "77998a9ca4836886652028173813a941b661808caeb1efcf58c58a658d3694ce"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "77998a9ca4836886652028173813a941b661808caeb1efcf58c58a658d3694ce"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "77998a9ca4836886652028173813a941b661808caeb1efcf58c58a658d3694ce"
+    sha256 cellar: :any_skip_relocation, sonoma:        "088a0163ebee17be07ae738340e0251d5d0398701a5eea27c2c297beb84cfa3d"
+    sha256 cellar: :any_skip_relocation, ventura:       "088a0163ebee17be07ae738340e0251d5d0398701a5eea27c2c297beb84cfa3d"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a863fe0bcaf71b12f471cd8db71f01900ac5ed812658da4028f3d371914e51d5"
   end
 
-  depends_on "rust" => :build
-  depends_on "python@3.12"
-
-  uses_from_macos "zlib"
-
-  resource "blake3" do
-    url "https://files.pythonhosted.org/packages/b0/8d/43eafa8a785547c33b611068ffd6d914f5c5f96637d5b453abc556f095a0/blake3-0.4.1.tar.gz"
-    sha256 "0625c8679203d5a1d30f859696a3fd75b2f50587984690adab839ef112f4c043"
-  end
+  depends_on "go" => :build
 
   def install
-    virtualenv_install_with_resources
+    ldflags = "-s -w -X main.appVersion=#{version}"
+    system "go", "build", *std_go_args(ldflags:), "./cmd/chkbit"
   end
 
   test do
-    assert_equal version.to_s, shell_output("#{bin}/chkbit --version").chomp
-
-    (testpath/"one.txt").write <<~EOS
-      testing
-      testing
-      testing
-    EOS
-
-    system bin/"chkbit", "-u", testpath
+    assert_match version.to_s, shell_output("#{bin}/chkbit version").chomp
+    system bin/"chkbit", "init", "split", testpath
     assert_predicate testpath/".chkbit", :exist?
   end
 end

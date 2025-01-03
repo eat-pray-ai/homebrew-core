@@ -1,19 +1,10 @@
 class DosboxStaging < Formula
   desc "Modernized DOSBox soft-fork"
   homepage "https://dosbox-staging.github.io/"
+  url "https://github.com/dosbox-staging/dosbox-staging/archive/refs/tags/v0.82.0.tar.gz"
+  sha256 "a3f63f86bf203ba28512e189ce6736cdb0273647e77a62ce47ed3d01b3b4a88d"
   license "GPL-2.0-or-later"
   head "https://github.com/dosbox-staging/dosbox-staging.git", branch: "main"
-
-  stable do
-    url "https://github.com/dosbox-staging/dosbox-staging/archive/refs/tags/v0.81.1.tar.gz"
-    sha256 "2b389fdc338454f916240aab5a2ae5560d1dd9808d63c70f34ec9a91e60b535a"
-
-    # Backport fix to bypass SDL wraps on macOS
-    patch do
-      url "https://github.com/dosbox-staging/dosbox-staging/commit/9f0fc1dc762010e5f7471d01c504d817a066cae3.patch?full_index=1"
-      sha256 "20b009216d877138802c698fc9aa89ea1c2becc3c13c06bdcf388ffe7a63bef2"
-    end
-  end
 
   # New releases of dosbox-staging are indicated by a GitHub release (and
   # an announcement on the homepage), not just a new version tag.
@@ -23,18 +14,17 @@ class DosboxStaging < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "c0acb77ffeec1998eaf05f50fd123f7c5d60cd0eb3650d4b267202a9eed6520a"
-    sha256 arm64_ventura:  "8dfd66a126fdf5377b5facf51526bcc1ba3f658c76cad10ad74bfc05d7618719"
-    sha256 arm64_monterey: "9ce6593351bc70da42abee12ff5ed96f59ce15b37157127c0ac17500ef805236"
-    sha256 sonoma:         "4ce3401dec1900d9db2dd6fc9327d99b9269453e72697468106f26aeb76211fe"
-    sha256 ventura:        "40fbcc2a17cbe0a49f52df32206643c25bac07af97e4ba2ace2a3dde609d9f00"
-    sha256 monterey:       "956f3c50523268e900a1dbafc938095b0d886a8aa0ba951611388f0847caeafc"
-    sha256 x86_64_linux:   "557f821e2cca2f17ff524aa08e07ebba24ca141603588e32eff6771addcea278"
+    sha256 arm64_sequoia: "b4459a8981e6641db94c96e2d32920527d94cfafb287df5506edd8fc2ac328e2"
+    sha256 arm64_sonoma:  "6950d63dad00ad337f09c11dbc5817b7d7260b29afb14f87b71a3052b1fb2726"
+    sha256 arm64_ventura: "64265c0ff0d6211d766f08ce22c72032c888120866ca92834980f2aa56b6a9a0"
+    sha256 sonoma:        "d3573b89df240f1369d2b069012992697affb4cbc0f72666bae7f9f12f5cc023"
+    sha256 ventura:       "fc3e42f4cdea9607d9f99e227e07f9d4a1d4483d36fed9017dae754d8cc6fba4"
+    sha256 x86_64_linux:  "4db81ea132af948b33d6856c3b1c28b0e7c142ee9e443b55d299f46f77326822"
   end
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "fluid-synth"
   depends_on "glib"
   depends_on "iir1"
@@ -46,6 +36,7 @@ class DosboxStaging < Formula
   depends_on "sdl2_image"
   depends_on "sdl2_net"
   depends_on "speexdsp"
+
   uses_from_macos "zlib"
 
   on_linux do
@@ -54,10 +45,8 @@ class DosboxStaging < Formula
     depends_on "mesa-glu"
   end
 
-  fails_with gcc: "5"
-
   def install
-    (buildpath/"subprojects").rmtree # Ensure we don't use vendored dependencies
+    rm_r(buildpath/"subprojects") # Ensure we don't use vendored dependencies
     args = %w[-Ddefault_library=shared -Db_lto=true -Dtracy=false]
 
     system "meson", "setup", "build", *args, *std_meson_args

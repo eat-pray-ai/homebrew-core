@@ -6,26 +6,28 @@ class CargoOutdated < Formula
   # pulls same source from crates.io. v0.15.0+ is needed to avoid an older unsupported libgit2.
   # We can switch back to GitHub releases when upstream decides to upload.
   # Issue ref: https://github.com/kbknapp/cargo-outdated/issues/388
-  url "https://static.crates.io/crates/cargo-outdated/cargo-outdated-0.15.0.crate"
-  sha256 "0641d14a828fe7dcf73e6df54d31ce19d4def4654d6fa8ec709961e561658a4d"
+  url "https://static.crates.io/crates/cargo-outdated/cargo-outdated-0.16.0.crate"
+  sha256 "965d39dfcc7afd39a0f2b01e282525fc2211f6e8acc85f1ee27f704420930678"
   license "MIT"
+  revision 1
   head "https://github.com/kbknapp/cargo-outdated.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "2a64cfa869ebf18a5b503eb18e9fff3a5bfbe03ff140c13632ab474a9f4aec52"
-    sha256 cellar: :any,                 arm64_ventura:  "97f5a8cd382904cbadf6cebb05aa4724f1a4ea2e33c1de7dc49e1d5e3779b645"
-    sha256 cellar: :any,                 arm64_monterey: "66c5b1160d69b285925f22908da23f5c16e012d02c2886b47dbb2e4e296fbaa2"
-    sha256 cellar: :any,                 sonoma:         "6b79a061b01990586e093d97fac5dc62a14d2d15c6eb70b45935d6ccfacf3de6"
-    sha256 cellar: :any,                 ventura:        "6bd512544a6d9822d3a049df30d68300f462af2df0d1476822623d3857f2280b"
-    sha256 cellar: :any,                 monterey:       "5a05df06ef26ab97b72391a7bd91bf06afe8b016944c691557d0063b76971492"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "7543eddf05cf16cdf8c4f938e19509b9a1d160fae615f0e7aa8603397e8d5740"
+    sha256 cellar: :any,                 arm64_sequoia: "6049f49c035ed7bb3e593d48821239c93b03643ef60aacb847d86db52037c8a0"
+    sha256 cellar: :any,                 arm64_sonoma:  "d702cdb138bab9eb25da3782caaeaad6702bc604e0f99551472ac0b926557d87"
+    sha256 cellar: :any,                 arm64_ventura: "1060e9672f0ced9f9e2f62f3140c79a9561062ab24439a3c1ea669244bf323a6"
+    sha256 cellar: :any,                 sonoma:        "61985936a86ff5a4848bd6fe7c9fec1346065ec0ef16dad3ae6b880a86cd50cc"
+    sha256 cellar: :any,                 ventura:       "aea8615845515169d44ee3cbdb4cc8b29b591a0530f5142a8eaef64ee1bf5fe9"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "23c83b573ccf7c64e862557f2bd62a398476ee426fb91826746f68114f0335ee"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "rust" => :build
-  depends_on "rustup-init" => :test
-  depends_on "libgit2"
+  depends_on "rustup" => :test
+  depends_on "libgit2@1.8" # needs https://github.com/rust-lang/git2-rs/issues/1109 to support libgit2 1.9
   depends_on "openssl@3"
+
+  uses_from_macos "zlib"
 
   def install
     ENV["LIBGIT2_NO_VENDOR"] = "1"
@@ -45,14 +47,13 @@ class CargoOutdated < Formula
   test do
     # Show that we can use a different toolchain than the one provided by the `rust` formula.
     # https://github.com/Homebrew/homebrew-core/pull/134074#pullrequestreview-1484979359
-    ENV["RUSTUP_INIT_SKIP_PATH_CHECK"] = "yes"
-    rustup_init = Formula["rustup-init"].bin/"rustup-init"
-    system rustup_init, "-y", "--profile", "minimal", "--default-toolchain", "beta", "--no-modify-path"
-    ENV.prepend_path "PATH", HOMEBREW_CACHE/"cargo_cache/bin"
+    ENV.prepend_path "PATH", Formula["rustup"].bin
+    system "rustup", "default", "beta"
+    system "rustup", "set", "profile", "minimal"
 
     crate = testpath/"demo-crate"
     mkdir crate do
-      (crate/"Cargo.toml").write <<~EOS
+      (crate/"Cargo.toml").write <<~TOML
         [package]
         name = "demo-crate"
         version = "0.1.0"
@@ -62,7 +63,7 @@ class CargoOutdated < Formula
 
         [dependencies]
         libc = "0.1"
-      EOS
+      TOML
 
       (crate/"lib.rs").write "use libc;"
 
@@ -72,7 +73,7 @@ class CargoOutdated < Formula
     end
 
     [
-      Formula["libgit2"].opt_lib/shared_library("libgit2"),
+      Formula["libgit2@1.8"].opt_lib/shared_library("libgit2"),
       Formula["openssl@3"].opt_lib/shared_library("libssl"),
       Formula["openssl@3"].opt_lib/shared_library("libcrypto"),
     ].each do |library|

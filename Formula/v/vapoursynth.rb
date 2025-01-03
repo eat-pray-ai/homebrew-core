@@ -1,8 +1,8 @@
 class Vapoursynth < Formula
   desc "Video processing framework with simplicity in mind"
   homepage "https://www.vapoursynth.com"
-  url "https://github.com/vapoursynth/vapoursynth/archive/refs/tags/R68.tar.gz"
-  sha256 "3bd787f7d1e5feb9e57861b6b9a4646b88300e26a3b9302fe21c6102b1f193f0"
+  url "https://github.com/vapoursynth/vapoursynth/archive/refs/tags/R70.11.tar.gz"
+  sha256 "41af974964a20aec670f5d2b235e043cb9c3a68db90fa39cc57c609c7d8baa91"
   license "LGPL-2.1-or-later"
   head "https://github.com/vapoursynth/vapoursynth.git", branch: "master"
 
@@ -12,13 +12,13 @@ class Vapoursynth < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "6af7f3246a37d2f88c11c498b7e93fab25066d1bfd4f131d3a5b779f57b06cdd"
-    sha256 cellar: :any,                 arm64_ventura:  "98705aeafbbd18332d2e67a3326791392989919c9f8b6f512853280c5b5fea7d"
-    sha256 cellar: :any,                 arm64_monterey: "e5b86c9886666ee3a244a478c707f86a3e66e6f615608efa3cb0fce2707faaea"
-    sha256 cellar: :any,                 sonoma:         "429fce3b48d45ed3007819ff9bf5fe1210ab2965001af4e2d83b76c9879b9314"
-    sha256 cellar: :any,                 ventura:        "985347586afc1a76ae4bebf3fe59b573174a3cbb089af62f36a7d40d9ca72947"
-    sha256 cellar: :any,                 monterey:       "37623c6c1c173419fbbe14c90f5da3fde6918b87314c84e7041a499307ac7600"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "438c4ec1f03fb63fddebd4a2cc7f1a530f91f8406a98f87a1f2919897038ad99"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "ee5adc2d1dbf7d498288d7985f4cb0c8864839da236f488589d3cafbac790298"
+    sha256 cellar: :any,                 arm64_sonoma:  "b2871cef73318ec5e2c6d1ecddbb5c6076234f780168b629383dca0bb6454dcf"
+    sha256 cellar: :any,                 arm64_ventura: "9067216d100a77925d1dc08f8c0e2e299b278dff4dc4d0a6c606d44e98ae60df"
+    sha256 cellar: :any,                 sonoma:        "65d657bc9182c090778de56296d0c1de271c090bcea3594eba6e0857fbb9936f"
+    sha256 cellar: :any,                 ventura:       "67ec89b25a5740650272adf4efd902856c956e83698190d8687d07222b40ace0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7220852e6334b59bb248017f896ba23d16e559c672db7a5953e9fb48535ef07a"
   end
 
   depends_on "autoconf" => :build
@@ -26,22 +26,32 @@ class Vapoursynth < Formula
   depends_on "cython" => :build
   depends_on "libtool" => :build
   depends_on "nasm" => :build
-  depends_on "pkg-config" => :build
-  depends_on "python@3.12"
+  depends_on "pkgconf" => :build
+  depends_on "python@3.13"
   depends_on "zimg"
 
-  fails_with gcc: "5"
+  # std::to_chars requires at least MACOSX_DEPLOYMENT_TARGET=13.3
+  # so it is possible to avoid LLVM dependency on Ventura but the
+  # bottle would have issues if system was on macOS 13.2 or older.
+  on_ventura :or_older do
+    depends_on "llvm"
+    fails_with :clang
+  end
 
   def install
+    if OS.mac? && MacOS.version <= :ventura
+      ENV.llvm_clang
+      ENV.prepend "LDFLAGS", "-L#{Formula["llvm"].opt_lib}/c++"
+    end
+
     system "./autogen.sh"
     inreplace "Makefile.in", "pkglibdir = $(libdir)", "pkglibdir = $(exec_prefix)"
-    system "./configure", "--prefix=#{prefix}",
-                          "--disable-silent-rules",
-                          "--disable-dependency-tracking",
+    system "./configure", "--disable-silent-rules",
                           "--with-cython=#{Formula["cython"].bin}/cython",
                           "--with-plugindir=#{HOMEBREW_PREFIX}/lib/vapoursynth",
                           "--with-python_prefix=#{prefix}",
-                          "--with-python_exec_prefix=#{prefix}"
+                          "--with-python_exec_prefix=#{prefix}",
+                          *std_configure_args
     system "make", "install"
   end
 
@@ -63,7 +73,7 @@ class Vapoursynth < Formula
   end
 
   test do
-    system Formula["python@3.12"].opt_bin/"python3.12", "-c", "import vapoursynth"
+    system Formula["python@3.13"].opt_bin/"python3.13", "-c", "import vapoursynth"
     system bin/"vspipe", "--version"
   end
 end

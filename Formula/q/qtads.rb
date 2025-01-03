@@ -12,6 +12,7 @@ class Qtads < Formula
   end
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "6e3606d6b81aace60e22a195af69bdc1a487903f6199f66f625b5cd80063b468"
     sha256 cellar: :any,                 arm64_sonoma:   "c8737515d6dc5506c6c44f91ceba97426015e71112171006ab57f1646a4d2231"
     sha256 cellar: :any,                 arm64_ventura:  "06f702f167f0b8579f382b626a612fb14a646221420d84b605ad46738751e4bd"
     sha256 cellar: :any,                 arm64_monterey: "8bd68c471a53ce7d00aadc3fde4a51a3b86a6130a3312a326b5293b3223d253b"
@@ -23,15 +24,13 @@ class Qtads < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "251840532a70387d1007ab9a992bb9f6e8d6c543133fc19d5d41b0dd81c822a5"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "fluid-synth"
   depends_on "libsndfile"
   depends_on "libvorbis"
   depends_on "mpg123"
   depends_on "qt@5"
   depends_on "sdl2"
-
-  fails_with gcc: "5"
 
   def install
     args = ["DEFINES+=NO_STATIC_TEXTCODEC_PLUGINS"]

@@ -1,19 +1,18 @@
 class LivekitCli < Formula
   desc "Command-line interface to LiveKit"
   homepage "https://livekit.io"
-  url "https://github.com/livekit/livekit-cli/archive/refs/tags/v2.0.3.tar.gz"
-  sha256 "56da9d55d3b09ef4ababafaf678aad018b2d3d8b3001d888fd6aafe04b33aab5"
+  url "https://github.com/livekit/livekit-cli/archive/refs/tags/v2.3.1.tar.gz"
+  sha256 "e6e6bf11930e47356248fd1b7e90549692ee415a77caf8f9d8b15ae471a31420"
   license "Apache-2.0"
   head "https://github.com/livekit/livekit-cli.git", branch: "main"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "190bd21a53e673ea3e5fd6d70ddf776e55aad253c806da456c1ff46666a467d0"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "137e934f591ae48059eb464f33cf67eb7d3c8355186841fa5cba5fd100c2a26b"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "fa013d96301e420f3fd5b089b634ade85c25762d6b87ddb05f23273a08203c59"
-    sha256 cellar: :any_skip_relocation, sonoma:         "adaa714139e39458b7bf16571f132b555cf3011832365413f4a3fdd8e430fc44"
-    sha256 cellar: :any_skip_relocation, ventura:        "da5247143a54fc652f336c80bcc29b09cd62e180f0377dd906d764181bc2e85f"
-    sha256 cellar: :any_skip_relocation, monterey:       "3d6bc15d64af24c87b4999948e1b1758a2137dde7878c8d34dfabfdababfa045"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "c30ae9c2ea026d2d257fdf9db98c4b3257f41a961e938dcced5c307a75fd67a6"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "bda9df0c2e63f78d7db9d5112a30434a50ad04701408624d04c765500d07f0be"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "bda9df0c2e63f78d7db9d5112a30434a50ad04701408624d04c765500d07f0be"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "bda9df0c2e63f78d7db9d5112a30434a50ad04701408624d04c765500d07f0be"
+    sha256 cellar: :any_skip_relocation, sonoma:        "b3c87745f07681b3c1aa89d5602d1838a5bdfec611ec0b4cff1450418b7c90e9"
+    sha256 cellar: :any_skip_relocation, ventura:       "b3c87745f07681b3c1aa89d5602d1838a5bdfec611ec0b4cff1450418b7c90e9"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a0f789d9dd73230cab3f057257607deb6e50dd2a66482e6e851e1212576013d8"
   end
 
   depends_on "go" => :build
@@ -23,6 +22,10 @@ class LivekitCli < Formula
     system "go", "build", *std_go_args(ldflags:, output: bin/"lk"), "./cmd/lk"
 
     bin.install_symlink "lk" => "livekit-cli"
+
+    bash_completion.install "autocomplete/bash_autocomplete" => "lk"
+    fish_completion.install "autocomplete/fish_autocomplete" => "lk.fish"
+    zsh_completion.install "autocomplete/zsh_autocomplete" => "_lk"
   end
 
   test do

@@ -6,6 +6,7 @@ class Xinit < Formula
   license all_of: ["MIT", "APSL-2.0"]
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "15d5a518d2a37401674216f24e90c812d27b7ce053f67325be0524152210df44"
     sha256 cellar: :any,                 arm64_sonoma:   "b5dbad520af878ccb170fb1924e58f0bcb0c384377ae7aaca2d64091aa8ff4ee"
     sha256 cellar: :any,                 arm64_ventura:  "0fbd33c0f3e8a01224d5f4c2f1437236957d9f9b80d0199f6bf729fe783320c9"
     sha256 cellar: :any,                 arm64_monterey: "b32fd947d6ab4e3d27cae884ecba3d25d618cc5df48869995db8211857a75cf9"
@@ -17,7 +18,7 @@ class Xinit < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "540015cba432ff1f7e719b37f9c2c3af6d8f40784840eeb8e8774cf8575b82a0"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "tradcpp" => :build
   depends_on "xorg-server" => :test
 
@@ -50,7 +51,7 @@ class Xinit < Formula
       (share/"fonts/X11").install share/"fonts/TTF"
 
       (prefix.glob "**/*").each do |f|
-        inreplace f, "/opt/X11", HOMEBREW_PREFIX, false if f.file?
+        inreplace f, "/opt/X11", HOMEBREW_PREFIX, audit_result: false if f.file?
       end
 
       inreplace bin/"font_cache" do |s|
@@ -79,7 +80,7 @@ class Xinit < Formula
   def install
     install_xquartz_resource if OS.mac?
 
-    configure_args = std_configure_args + %W[
+    configure_args = %W[
       --bindir=#{HOMEBREW_PREFIX}/bin
       --sysconfdir=#{etc}
       --with-bundle-id-prefix=#{plist_name.chomp ".startx"}
@@ -87,7 +88,7 @@ class Xinit < Formula
       --with-launchdaemons-dir=#{prefix}
     ]
 
-    system "./configure", *configure_args
+    system "./configure", *configure_args, *std_configure_args
     system "make", "RAWCPP=tradcpp"
     system "make", "XINITDIR=#{prefix}/etc/X11/xinit",
                    "sysconfdir=#{prefix}/etc",
@@ -106,7 +107,7 @@ class Xinit < Formula
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include <assert.h>
       #include <xcb/xcb.h>
 
@@ -117,7 +118,7 @@ class Xinit < Formula
         xcb_disconnect(connection);
         return 0;
       }
-    EOS
+    C
     xcb = Formula["libxcb"]
     system ENV.cc, "./test.c", "-o", "test", "-I#{xcb.include}", "-L#{xcb.lib}", "-lxcb"
     exec bin/"xinit", "./test", "--", Formula["xorg-server"].bin/"Xvfb", ":1"

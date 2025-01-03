@@ -6,6 +6,7 @@ class Libxext < Formula
   license "MIT"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "a0434e871b6dfa64f18757e5d6df179308bcf1b53e5fa233c7d54222be8d513b"
     sha256 cellar: :any,                 arm64_sonoma:   "50a9b29c594f9b93690466d66b52f2ac36461d956016b135a85d3dfbc883e336"
     sha256 cellar: :any,                 arm64_ventura:  "fb6852f038dacbef11883d2fb8277e517d1eb237f563f62c96996f764ef40032"
     sha256 cellar: :any,                 arm64_monterey: "d580398c8be17c909f43f110b4d8a459850f066c4ef97d7a6184c5c66242893c"
@@ -15,34 +16,32 @@ class Libxext < Formula
     sha256 cellar: :any_skip_relocation, x86_64_linux:   "c62be32e864f64fc9ed3392a2f6eae085350c5b929b52306ac5e26c07b38bd3f"
   end
 
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "libx11"
   depends_on "xorgproto"
 
   def install
     args = %W[
-      --prefix=#{prefix}
       --sysconfdir=#{etc}
       --localstatedir=#{var}
-      --disable-dependency-tracking
       --disable-silent-rules
       --enable-specs=no
     ]
 
-    system "./configure", *args
+    system "./configure", *args, *std_configure_args
     system "make"
     system "make", "install"
   end
 
   test do
-    (testpath/"test.c").write <<~EOS
+    (testpath/"test.c").write <<~C
       #include "X11/extensions/shape.h"
 
       int main(int argc, char* argv[]) {
         XShapeEvent event;
         return 0;
       }
-    EOS
+    C
     system ENV.cc, "test.c"
     assert_equal 0, $CHILD_STATUS.exitstatus
   end

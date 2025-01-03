@@ -4,8 +4,8 @@ class Influxdb < Formula
   # When bumping to 3.x, update license stanza to `license any_of: ["Apache-2.0", "MIT"]`
   # Ref: https://github.com/influxdata/influxdb/blob/main/Cargo.toml#L124
   url "https://github.com/influxdata/influxdb.git",
-      tag:      "v2.7.6",
-      revision: "3c58c06206bd8c585f847382d074524564174bc1"
+      tag:      "v2.7.11",
+      revision: "fbf5d4ab5e65d3a3661aa52e1d05259d19a6a81b"
   license "MIT"
   head "https://github.com/influxdata/influxdb.git", branch: "main-2.x"
 
@@ -21,18 +21,17 @@ class Influxdb < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "8593997d6a8072614b10cf5a45603436d64aef72af3d65377573bdc58768753c"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "92f6700b9089c9faa7d0c50d9f8e858de0eb61a165ae41ddb2c40855c8652c49"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "2de3d2b5694859c53dddfe3ba7f489a7107cc5ce9ee7f80e6a2da567aeef21f5"
-    sha256 cellar: :any_skip_relocation, sonoma:         "4768de146cb69ec462da844c65f0745d767ac98b0e550da2c49713db5d331212"
-    sha256 cellar: :any_skip_relocation, ventura:        "f1144a0fe030b254f10a511a6c9213a2592e7828aa68d59cd0ea8a454abd3ace"
-    sha256 cellar: :any_skip_relocation, monterey:       "a09e387af6897a7a5b58087718882454382195dca8bffd6e9fd7b2c621147c29"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f2b5160be70392770344c3b452a8288591127fe3306d04ca2fcd0616798a6a95"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "577ba9284522799541c29345f9c05007fa0a4d49c506e9d6e3ef8410cf070bba"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "9cb31a2b14b041a044bb1bd8ca75a3a1799d6ab4c9981d95eafe2675cf1786fc"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "1ff048a6a4b8784a6f07c16c40a406fa90f7acc77b9f6db1d2b59403fac0d211"
+    sha256 cellar: :any_skip_relocation, sonoma:        "2cbda744c82743c7e1b0193708c813b22602b65ce9c3c5117f595ea44933103e"
+    sha256 cellar: :any_skip_relocation, ventura:       "5b206daf7596804851d172d0f70d0713b2477a1cc7fb58d5b0c18a3deba9a6f0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "dce1ad38f5b09ae95904350471e1d3dd7dd9eb1558e07c52e9dda1db2dd8ab2a"
   end
 
   depends_on "breezy" => :build
   depends_on "go" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "protobuf" => :build
   depends_on "rust" => :build
 
@@ -51,13 +50,19 @@ class Influxdb < Formula
   # NOTE: The version/URL here is specified in scripts/fetch-ui-assets.sh in influxdb.
   # If you're upgrading to a newer influxdb version, check to see if this needs upgraded too.
   resource "ui-assets" do
-    url "https://github.com/influxdata/ui/releases/download/OSS-v2.7.1/build.tar.gz"
-    sha256 "d24e7d48abedf6916ddd649de4f4544e16df6dcb6dd9162d6b16b1a322c80a6f"
+    url "https://github.com/influxdata/ui/releases/download/OSS-2.7.8/build.tar.gz"
+    sha256 "28ace1df37b7860b011e5c1b8c74830b0ec584d2f86c24e58a7c855c168f58a8"
 
     livecheck do
       url "https://raw.githubusercontent.com/influxdata/influxdb/v#{LATEST_VERSION}/scripts/fetch-ui-assets.sh"
       regex(/UI_RELEASE=["']?OSS[._-]v?(\d+(?:\.\d+)+)["']?$/i)
     end
+  end
+
+  # rust 1.83 build patch, upstream pr ref, https://github.com/influxdata/flux/pull/5516
+  patch do
+    url "https://raw.githubusercontent.com/Homebrew/formula-patches/a188defd190459f5d1faa8c8f9e253e8f83ca161/influxdb/2.7.11-rust-1.83.patch"
+    sha256 "15fa09ae18389b21b8d93792934abcf85855a666ddd8faeaeca6890452fd5bd4"
   end
 
   def install
@@ -75,8 +80,7 @@ class Influxdb < Formula
 
     # Build the server.
     ldflags = %W[
-      -s
-      -w
+      -s -w
       -X main.version=#{version}
       -X main.commit=#{Utils.git_short_head(length: 10)}
       -X main.date=#{time.iso8601}

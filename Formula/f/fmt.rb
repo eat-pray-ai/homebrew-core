@@ -1,28 +1,21 @@
 class Fmt < Formula
   desc "Open-source formatting library for C++"
   homepage "https://fmt.dev/"
-  url "https://github.com/fmtlib/fmt/archive/refs/tags/10.2.1.tar.gz"
-  sha256 "1250e4cc58bf06ee631567523f48848dc4596133e163f02615c97f78bab6c811"
+  url "https://github.com/fmtlib/fmt/releases/download/11.1.1/fmt-11.1.1.zip"
+  sha256 "a25124e41c15c290b214c4dec588385153c91b47198dbacda6babce27edc4b45"
   license "MIT"
-  revision 1
   head "https://github.com/fmtlib/fmt.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "666aae4a2019ed7957e96ed6e6d182db676a2088a7b1646bb0a1ad48809fe571"
-    sha256 cellar: :any,                 arm64_ventura:  "3316fbda0bed3dd713f2045c3fefa14fead6fe1a11c58c55262dee93a40e2bda"
-    sha256 cellar: :any,                 arm64_monterey: "80d218961620251763fcaac82ae04ce2d604ad6c86cd19ae0320c54ba7b1b0f4"
-    sha256 cellar: :any,                 sonoma:         "c193bef5f45e097a20c2b622dee0347dc76a8e1fe49de12297f5803ab2b2f977"
-    sha256 cellar: :any,                 ventura:        "772fed0ecbf537c7a55d768b380363324e815c7805dfc4322749abdc4ebdeb9e"
-    sha256 cellar: :any,                 monterey:       "5ed3d39677cf4bec72c05cd8ae62adf102b38ba82dcdea545f41f3a1dea39443"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "bd75f94114953993f1a36280918192dae764319c3f8e2f54e875d9f8266848f0"
+    sha256 cellar: :any,                 arm64_sequoia: "740ac2d7801d773d9c710de3c5ce57ee166dac98154482e528fe34a498273b2e"
+    sha256 cellar: :any,                 arm64_sonoma:  "dd19b62215387ced15630303ef095b13942c0a512e5702af7132f54ed657d5a1"
+    sha256 cellar: :any,                 arm64_ventura: "0bfcc566187f698eaed4ebbc3a4cfbd7d3dbc77bf241a49002ab5ae2d153e302"
+    sha256 cellar: :any,                 sonoma:        "229b5ef5bda903f2e176b6a3206e78c9a57b02e0e316a48582dc0d8c98455354"
+    sha256 cellar: :any,                 ventura:       "4748963dff6039b723842f98331c07a603a94c281d3b0d3ef1ed7f13f5641e20"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8993a605fed9279affcca6f7d456f76a755eb908640bde0f12821e89d394fd98"
   end
 
   depends_on "cmake" => :build
-
-  # Fix handling of static separator; cherry-picked from:
-  # https://github.com/fmtlib/fmt/commit/44c3fe1ebb466ab5c296e1a1a6991c7c7b51b72e
-  # Remove when included in a release.
-  patch :DATA
 
   def install
     system "cmake", "-S", ".", "-B", "build", "-DBUILD_SHARED_LIBS=TRUE", *std_cmake_args
@@ -35,7 +28,7 @@ class Fmt < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <iostream>
       #include <string>
       #include <fmt/format.h>
@@ -45,7 +38,7 @@ class Fmt < Formula
         std::cout << str;
         return 0;
       }
-    EOS
+    CPP
 
     system ENV.cxx, "test.cpp", "-std=c++11", "-o", "test",
                   "-I#{include}",
@@ -54,30 +47,3 @@ class Fmt < Formula
     assert_equal "The answer is 42", shell_output("./test")
   end
 end
-
-__END__
-diff --git a/include/fmt/format-inl.h b/include/fmt/format-inl.h
-index 9fc87ecf2027df0346935e7666ea80ec70e65575..872aa9802df1ffa8572a2f0d29f58bdb2b171a1a 100644
---- a/include/fmt/format-inl.h
-+++ b/include/fmt/format-inl.h
-@@ -110,7 +110,11 @@ template <typename Char> FMT_FUNC Char decimal_point_impl(locale_ref) {
- 
- FMT_FUNC auto write_loc(appender out, loc_value value,
-                         const format_specs<>& specs, locale_ref loc) -> bool {
--#ifndef FMT_STATIC_THOUSANDS_SEPARATOR
-+#ifdef FMT_STATIC_THOUSANDS_SEPARATOR
-+  value.visit(loc_writer<>{
-+      out, specs, std::string(1, FMT_STATIC_THOUSANDS_SEPARATOR), "\3", "."});
-+  return true;
-+#else
-   auto locale = loc.get<std::locale>();
-   // We cannot use the num_put<char> facet because it may produce output in
-   // a wrong encoding.
-@@ -119,7 +123,6 @@ FMT_FUNC auto write_loc(appender out, loc_value value,
-     return std::use_facet<facet>(locale).put(out, value, specs);
-   return facet(locale).put(out, value, specs);
- #endif
--  return false;
- }
- }  // namespace detail
- 

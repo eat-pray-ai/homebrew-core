@@ -1,6 +1,6 @@
 class GlibmmAT266 < Formula
   desc "C++ interface to glib"
-  homepage "https://www.gtkmm.org/"
+  homepage "https://gtkmm.gnome.org/"
   url "https://download.gnome.org/sources/glibmm/2.66/glibmm-2.66.7.tar.xz"
   sha256 "fe02c1e5f5825940d82b56b6ec31a12c06c05c1583cfe62f934d0763e1e542b3"
   license "LGPL-2.1-or-later"
@@ -12,6 +12,7 @@ class GlibmmAT266 < Formula
   end
 
   bottle do
+    sha256 cellar: :any, arm64_sequoia:  "09f7e9e0f71ca1c71d18121565ae99838f482f009b6e3fb9789092276fdbb916"
     sha256 cellar: :any, arm64_sonoma:   "1466172346191c3cf8989fd4bed922ad0bf8ef0b00395b1dd005f1cf6f27db50"
     sha256 cellar: :any, arm64_ventura:  "9fa6fe82b00364519f11c54063f12cd9bd2f502a92d8a7562292a11e28e445fe"
     sha256 cellar: :any, arm64_monterey: "8ade0f784ae08c3a84a6fb594039066598fc3c653a096e431a37c03151116d7b"
@@ -23,7 +24,7 @@ class GlibmmAT266 < Formula
 
   depends_on "meson" => :build
   depends_on "ninja" => :build
-  depends_on "pkg-config" => [:build, :test]
+  depends_on "pkgconf" => [:build, :test]
   depends_on "glib"
   depends_on "libsigc++@2"
 
@@ -34,7 +35,7 @@ class GlibmmAT266 < Formula
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <glibmm.h>
 
       int main(int argc, char *argv[])
@@ -42,9 +43,9 @@ class GlibmmAT266 < Formula
          Glib::ustring my_string("testing");
          return 0;
       }
-    EOS
+    CPP
 
-    flags = shell_output("pkg-config --cflags --libs glibmm-2.4").chomp.split
+    flags = shell_output("pkgconf --cflags --libs glibmm-2.4").chomp.split
     system ENV.cxx, "-std=c++11", "test.cpp", "-o", "test", *flags
     system "./test"
   end

@@ -1,5 +1,3 @@
-require "language/node"
-
 class Netlistsvg < Formula
   desc "Draws an SVG schematic from a yosys JSON netlist"
   homepage "https://github.com/nturley/netlistsvg"
@@ -8,19 +6,20 @@ class Netlistsvg < Formula
   license "MIT"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "0db6e0d42e5a96a82499730ce2be1ae11af72f23b0d16e536eabf2e30c7d8983"
+    rebuild 2
+    sha256 cellar: :any_skip_relocation, all: "13485ed6f7d18a5733d709b8806159803cbfcfa7bf1afaa6b0e3acd9a12fc200"
   end
 
   depends_on "yosys" => :test
   depends_on "node"
 
   def install
-    system "npm", "install", *Language::Node.std_npm_install_args(libexec)
+    system "npm", "install", *std_npm_args
     bin.install_symlink Dir["#{libexec}/bin/*"]
   end
 
   test do
-    (testpath/"dff.v").write <<~EOS
+    (testpath/"dff.v").write <<~VERILOG
       module DFF (output reg Q, input C, D, R);
       always @(posedge C)
         if (~R) begin
@@ -29,7 +28,7 @@ class Netlistsvg < Formula
             Q <= D;
         end
       endmodule
-    EOS
+    VERILOG
     system "yosys -q -p \"prep -top DFF; write_json dff.json\" dff.v"
     system bin/"netlistsvg", "dff.json", "-o", "dff.svg"
     assert_predicate testpath/"dff.svg", :exist?

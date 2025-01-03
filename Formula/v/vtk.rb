@@ -1,39 +1,40 @@
 class Vtk < Formula
   desc "Toolkit for 3D computer graphics, image processing, and visualization"
   homepage "https://www.vtk.org/"
-  url "https://www.vtk.org/files/release/9.3/VTK-9.3.1.tar.gz"
-  sha256 "8354ec084ea0d2dc3d23dbe4243823c4bfc270382d0ce8d658939fd50061cab8"
+  url "https://www.vtk.org/files/release/9.4/VTK-9.4.1.tar.gz"
+  sha256 "c253b0c8d002aaf98871c6d0cb76afc4936c301b72358a08d5f3f72ef8bc4529"
   license "BSD-3-Clause"
   head "https://gitlab.kitware.com/vtk/vtk.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "8be7f373e56c770e091431c962b0491c79ab6a4b6555bff1ba6240b09ebf6ab9"
-    sha256 cellar: :any,                 arm64_ventura:  "a97a0dba42ae9ea040426cee42339246ac3fe0a30e1fa95b39cdee6b3271527d"
-    sha256 cellar: :any,                 arm64_monterey: "514e9e7a0c8f2228c280677dc19fbe56d2b50473e58a318c0763b1e7b21d6082"
-    sha256 cellar: :any,                 sonoma:         "8b99b06f38b00b1cc9ecda5af447c28b2a395c7cbfd86787e34c84cb1acf3ffb"
-    sha256 cellar: :any,                 ventura:        "5ba54a1864de0ebe2253aba4f9adc9e2bfa8f1c22f4f26df2afce7b364bf5a04"
-    sha256 cellar: :any,                 monterey:       "ec75ce94aba4fd73fce0a53fd6fd3f02d37759af3fdc13bbfab105ae74e79be4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f2fce54f4356fca3555bd1056f3adf28c017c7a42edb0233a7b15ac730d4b8df"
+    sha256 cellar: :any,                 arm64_sonoma:  "861af55635ecc3501cdbe94f6a839f2fe79590c58f21cd77a8e1e179b1444a71"
+    sha256 cellar: :any,                 arm64_ventura: "c5857daa338929a47c7e4ab43546f9f67b32c586ce6735cdfee2361a7daaa361"
+    sha256 cellar: :any,                 sonoma:        "e9f5ebec5dfedd9dddf72e1f21f2673176d648fab3bb302a2837880d49e0f10f"
+    sha256 cellar: :any,                 ventura:       "5ba7c66ce11cc1deca229c494590d162341d1baa02616342b89a3cf96a808c2f"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cbd384a51a64c5e8d35297769d71f7f35087cf423b1c367e093be83fb426b8d4"
   end
 
   depends_on "cmake" => [:build, :test]
   depends_on "boost"
+  depends_on "cgns"
   depends_on "double-conversion"
   depends_on "eigen"
   depends_on "fontconfig"
-  depends_on "gl2ps"
-  depends_on "glew"
+  depends_on "freetype"
   depends_on "hdf5"
   depends_on "jpeg-turbo"
   depends_on "jsoncpp"
+  depends_on "libharu"
   depends_on "libogg"
   depends_on "libpng"
   depends_on "libtiff"
   depends_on "lz4"
   depends_on "netcdf"
+  depends_on "nlohmann-json"
+  depends_on "proj"
   depends_on "pugixml"
   depends_on "pyqt"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "qt"
   depends_on "sqlite"
   depends_on "theora"
@@ -46,9 +47,6 @@ class Vtk < Formula
   uses_from_macos "zlib"
 
   on_macos do
-    depends_on "libaec"
-    depends_on "zstd"
-
     on_arm do
       if DevelopmentTools.clang_build_version == 1316
         depends_on "llvm" => :build
@@ -62,19 +60,21 @@ class Vtk < Formula
   end
 
   on_linux do
-    depends_on "libaec"
+    depends_on "gl2ps"
     depends_on "libx11"
     depends_on "libxcursor"
     depends_on "mesa"
-    depends_on "mesa-glu"
   end
 
-  fails_with gcc: "5"
-
   def install
+    # Work around problematic netCDF CMake file by forcing pkg-config fallback.
+    # Ref: https://github.com/Unidata/netcdf-c/issues/1444
+    odie "Try removing netCDF workaround!" if Formula["netcdf"].stable.version > "4.9.2"
+    inreplace "CMake/FindNetCDF.cmake", "find_package(netCDF CONFIG QUIET)", "# \\0"
+
     ENV.llvm_clang if DevelopmentTools.clang_build_version == 1316 && Hardware::CPU.arm?
 
-    python = "python3.12"
+    python = "python3.13"
     qml_plugin_dir = lib/"qml/VTK.#{version.major_minor}"
     vtkmodules_dir = prefix/Language::Python.site_packages(python)/"vtkmodules"
     rpaths = [rpath, rpath(source: qml_plugin_dir), rpath(source: vtkmodules_dir)]
@@ -83,24 +83,29 @@ class Vtk < Formula
       -DBUILD_SHARED_LIBS:BOOL=ON
       -DCMAKE_INSTALL_RPATH:STRING=#{rpaths.join(";")}
       -DCMAKE_DISABLE_FIND_PACKAGE_ICU:BOOL=ON
+      -DCMAKE_CXX_STANDARD=14
+      -DVTK_IGNORE_CMAKE_CXX11_CHECKS=ON
       -DVTK_WRAP_PYTHON:BOOL=ON
       -DVTK_PYTHON_VERSION:STRING=3
       -DVTK_LEGACY_REMOVE:BOOL=ON
       -DVTK_MODULE_ENABLE_VTK_InfovisBoost:STRING=YES
       -DVTK_MODULE_ENABLE_VTK_InfovisBoostGraphAlgorithms:STRING=YES
       -DVTK_MODULE_ENABLE_VTK_RenderingFreeTypeFontConfig:STRING=YES
+      -DVTK_MODULE_USE_EXTERNAL_VTK_cgns:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_doubleconversion:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_eigen:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_expat:BOOL=ON
-      -DVTK_MODULE_USE_EXTERNAL_VTK_gl2ps:BOOL=ON
-      -DVTK_MODULE_USE_EXTERNAL_VTK_glew:BOOL=ON
+      -DVTK_MODULE_USE_EXTERNAL_VTK_freetype:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_hdf5:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_jpeg:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_jsoncpp:BOOL=ON
+      -DVTK_MODULE_USE_EXTERNAL_VTK_libharu:BOOL=ON
+      -DVTK_MODULE_USE_EXTERNAL_VTK_libproj:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_libxml2:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_lz4:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_lzma:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_netcdf:BOOL=ON
+      -DVTK_MODULE_USE_EXTERNAL_VTK_nlohmannjson:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_ogg:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_png:BOOL=ON
       -DVTK_MODULE_USE_EXTERNAL_VTK_pugixml:BOOL=ON
@@ -113,11 +118,8 @@ class Vtk < Formula
       -DVTK_GROUP_ENABLE_Qt:STRING=YES
       -DVTK_QT_VERSION:STRING=6
     ]
-
-    # https://github.com/Homebrew/linuxbrew-core/pull/21654#issuecomment-738549701
-    args << "-DOpenGL_GL_PREFERENCE=LEGACY"
-
-    args << "-DVTK_USE_COCOA:BOOL=ON" if OS.mac?
+    # External gl2ps causes failure linking to macOS OpenGL.framework
+    args << "-DVTK_MODULE_USE_EXTERNAL_VTK_gl2ps:BOOL=ON" unless OS.mac?
 
     system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
     system "cmake", "--build", "build"
@@ -132,15 +134,15 @@ class Vtk < Formula
     vtk_cmake_module = vtk_dir/"VTK-vtk-module-find-packages.cmake"
     assert_match Formula["boost"].version.to_s, vtk_cmake_module.read, "VTK needs to be rebuilt against Boost!"
 
-    (testpath/"CMakeLists.txt").write <<~EOS
+    (testpath/"CMakeLists.txt").write <<~CMAKE
       cmake_minimum_required(VERSION 3.3 FATAL_ERROR)
       project(Distance2BetweenPoints LANGUAGES CXX)
       find_package(VTK REQUIRED COMPONENTS vtkCommonCore CONFIG)
       add_executable(Distance2BetweenPoints Distance2BetweenPoints.cxx)
       target_link_libraries(Distance2BetweenPoints PRIVATE ${VTK_LIBRARIES})
-    EOS
+    CMAKE
 
-    (testpath/"Distance2BetweenPoints.cxx").write <<~EOS
+    (testpath/"Distance2BetweenPoints.cxx").write <<~CPP
       #include <cassert>
       #include <vtkMath.h>
       int main() {
@@ -149,18 +151,18 @@ class Vtk < Formula
         assert(vtkMath::Distance2BetweenPoints(p0, p1) == 3.0);
         return 0;
       }
-    EOS
+    CPP
 
     system "cmake", ".", "-DCMAKE_BUILD_TYPE=Debug", "-DCMAKE_VERBOSE_MAKEFILE=ON", "-DVTK_DIR=#{vtk_dir}"
     system "make"
     system "./Distance2BetweenPoints"
 
-    (testpath/"Distance2BetweenPoints.py").write <<~EOS
+    (testpath/"Distance2BetweenPoints.py").write <<~PYTHON
       import vtk
       p0 = (0, 0, 0)
       p1 = (1, 1, 1)
       assert vtk.vtkMath.Distance2BetweenPoints(p0, p1) == 3
-    EOS
+    PYTHON
 
     system bin/"vtkpython", "Distance2BetweenPoints.py"
   end

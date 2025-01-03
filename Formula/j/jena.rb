@@ -1,19 +1,20 @@
 class Jena < Formula
   desc "Framework for building semantic web and linked data apps"
   homepage "https://jena.apache.org/"
-  url "https://www.apache.org/dyn/closer.lua?path=jena/binaries/apache-jena-5.0.0.tar.gz"
-  mirror "https://archive.apache.org/dist/jena/binaries/apache-jena-5.0.0.tar.gz"
-  sha256 "49ee3baec829f15e98a6fd101ebc23217ac33dc84cd674a5fc699458c12f2c8a"
+  url "https://www.apache.org/dyn/closer.lua?path=jena/binaries/apache-jena-5.2.0.tar.gz"
+  mirror "https://archive.apache.org/dist/jena/binaries/apache-jena-5.2.0.tar.gz"
+  sha256 "33659ba971c02fbedfbbd9214e06fb04e7b498b82653445c7fd28de0a9af6005"
   license "Apache-2.0"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, all: "da38fa75dfea187764ab10e292403ef4c1d9c7e611900c38eea3831bbe2635f4"
+    sha256 cellar: :any_skip_relocation, all: "b69212cbd2a3d9337a7f82a0a15542f260e5b95daf0938b113e869f859795d30"
   end
 
   depends_on "openjdk"
 
   conflicts_with "pwntools", because: "both install `update` binaries"
   conflicts_with "samba", because: "both install `tdbbackup` binaries"
+  conflicts_with "tdb", because: "both install `tdbbackup`, `tdbdump` binaries"
 
   def install
     env = {
@@ -21,7 +22,7 @@ class Jena < Formula
       JENA_HOME: libexec,
     }
 
-    rm_rf "bat" # Remove Windows scripts
+    rm_r("bat") # Remove Windows scripts
 
     libexec.install Dir["*"]
     Pathname.glob("#{libexec}/bin/*") do |file|
@@ -35,6 +36,6 @@ class Jena < Formula
   end
 
   test do
-    system "#{bin}/sparql", "--version"
+    system bin/"sparql", "--version"
   end
 end

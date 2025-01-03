@@ -1,10 +1,10 @@
 class OrTools < Formula
   desc "Google's Operations Research tools"
   homepage "https://developers.google.com/optimization/"
-  url "https://github.com/google/or-tools/archive/refs/tags/v9.10.tar.gz"
-  sha256 "e7c27a832f3595d4ae1d7e53edae595d0347db55c82c309c8f24227e675fd378"
+  url "https://github.com/google/or-tools/archive/refs/tags/v9.11.tar.gz"
+  sha256 "f6a0bd5b9f3058aa1a814b798db5d393c31ec9cbb6103486728997b49ab127bc"
   license "Apache-2.0"
-  revision 3
+  revision 6
   head "https://github.com/google/or-tools.git", branch: "stable"
 
   livecheck do
@@ -13,17 +13,16 @@ class OrTools < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "7986a565b53a7a62767d312094ce5d30b8b22bde897e6ad04281371cfdb6b60a"
-    sha256 cellar: :any,                 arm64_ventura:  "a5289e00c31c046a9cfaace8a05c9af252f6443d2c8cc8cc3e3a7fc37e4b63d8"
-    sha256 cellar: :any,                 arm64_monterey: "b75c04de3a092cb8bb0b1f70b82ff17bc626ae3f3a8cc782120db4256357fbcc"
-    sha256 cellar: :any,                 sonoma:         "9e46241c531a9ab77ee82d751b82956e1d9b9dfc3b0bb4679984b2a927f0e31e"
-    sha256 cellar: :any,                 ventura:        "bced90ca8c280435261b12e5ae5cd4f2f0e729600eb5be612f50914ec7c06e91"
-    sha256 cellar: :any,                 monterey:       "1ecddc034026e0d1a2a7765b3b44de7427e339c8f9ff0ec92fbb81d5752ad962"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "f98bff4d5b29105d478d9a36bd5ea1ddba822d9d8c9984a65a6a1397e462c92c"
+    sha256 cellar: :any,                 arm64_sequoia: "8ac0ae38f8695eba43c984bd1269092e3f13d67f75150d29b06b1d1289531042"
+    sha256 cellar: :any,                 arm64_sonoma:  "0f25b2a92b96d5f357a0069b58a0b6a3ed185c40679e9aa4fc9b46ee20f6b262"
+    sha256 cellar: :any,                 arm64_ventura: "6b7766320ae2e1cb23a0f99ce675e39ee328419bac8ccea048bf9332a21b92db"
+    sha256 cellar: :any,                 sonoma:        "0ad05862df2fb52032646ca6c04e8d391a3d8330bc4d96bcc52e683a48ba079f"
+    sha256 cellar: :any,                 ventura:       "cee7f140e9992bb98ff2e8fe04c007c6dab3ce7076e6eb133e50d45c32c5c8d9"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2a6376408302c8d91b58d8b8c210f57732fb76bce0503f40998e37dcafdf34fb"
   end
 
   depends_on "cmake" => [:build, :test]
-  depends_on "pkg-config" => [:build, :test]
+  depends_on "pkgconf" => [:build, :test]
   depends_on "abseil"
   depends_on "cbc"
   depends_on "cgl"
@@ -37,7 +36,12 @@ class OrTools < Formula
   depends_on "scip"
   uses_from_macos "zlib"
 
-  fails_with gcc: "5"
+  # Add missing `#include`s to fix incompatibility with `abseil` 20240722.0.
+  # https://github.com/google/or-tools/pull/4339
+  patch do
+    url "https://raw.githubusercontent.com/Homebrew/formula-patches/bb1af4bcb2ac8b2af4de4411d1ce8a6876ed9c15/or-tools/abseil-vlog-is-on.patch"
+    sha256 "0f8f28e7363a36c6bafb9b60dc6da880b39d5b56d8ead350f27c8cb1e275f6b6"
+  end
 
   def install
     # FIXME: Upstream enabled Highs support in their binary distribution, but our build fails with it.
@@ -57,14 +61,14 @@ class OrTools < Formula
 
   test do
     # Linear Solver & Glop Solver
-    (testpath/"CMakeLists.txt").write <<~EOS
+    (testpath/"CMakeLists.txt").write <<~CMAKE
       cmake_minimum_required(VERSION 3.14)
       project(test LANGUAGES CXX)
       find_package(ortools CONFIG REQUIRED)
       add_executable(simple_lp_program #{pkgshare}/simple_lp_program.cc)
       target_compile_features(simple_lp_program PUBLIC cxx_std_17)
       target_link_libraries(simple_lp_program PRIVATE ortools::ortools)
-    EOS
+    CMAKE
     cmake_args = []
     build_env = {}
     if OS.mac?
@@ -88,7 +92,7 @@ class OrTools < Formula
     # Sat Solver
     system ENV.cxx, "-std=c++17", pkgshare/"simple_sat_program.cc",
                     "-I#{include}", "-L#{lib}", "-lortools",
-                    *shell_output("pkg-config --cflags --libs absl_log absl_raw_hash_set").chomp.split,
+                    *shell_output("pkg-config --cflags --libs absl_check absl_log absl_raw_hash_set").chomp.split,
                     "-o", "simple_sat_program"
     system "./simple_sat_program"
   end

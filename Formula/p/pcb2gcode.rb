@@ -4,17 +4,15 @@ class Pcb2gcode < Formula
   url "https://github.com/pcb2gcode/pcb2gcode/archive/refs/tags/v2.5.0.tar.gz"
   sha256 "96f1b1b4fd58e86f152b691202a15593815949dc9250fab9ab02f2346f5c2c52"
   license "GPL-3.0-or-later"
-  revision 6
+  revision 8
   head "https://github.com/pcb2gcode/pcb2gcode.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "27ed86df9a677b86d0f3b5da18174f4bae523b83194eb2a823c00df5eae5e598"
-    sha256 cellar: :any,                 arm64_ventura:  "7ae936306e87c7a2f53bb0a9b178dfb8fa5db8fb85120553b2cfa0167a9583c2"
-    sha256 cellar: :any,                 arm64_monterey: "adf83b9e81bc4365daba6683f49fca7a34be8eb17e9fe194944134a05b07e37a"
-    sha256 cellar: :any,                 sonoma:         "1aaeb26437220ca3b1e23fab234a1a207dd1c2986d6a0b756e5bce9a27957813"
-    sha256 cellar: :any,                 ventura:        "ec0216c497ec9f81f9b6d2896b0f2a7961b9bb730a7202c2367003efee8a1cff"
-    sha256 cellar: :any,                 monterey:       "39fa779c59ff7f2559137e5140b4f82d5cf70df44da690b564f2cc7071bab23d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3d622e3292f5c3a7ba71def4dcd7c27a19cde4f0a17b47a8e7a4604b7d502a92"
+    sha256 cellar: :any,                 arm64_sonoma:  "c29b1146f609eb8cdd430d11432024ca58f6e1f652a94c22d989ba7f1859751a"
+    sha256 cellar: :any,                 arm64_ventura: "1bd775f10b1fcec13597b9fe2f26858ba9b22df4015bb6f0f633b760c1f52b70"
+    sha256 cellar: :any,                 sonoma:        "c60f05e50ccb6cf55ab4711d22650e036c53d914c73df39d60e65d3bf8245e28"
+    sha256 cellar: :any,                 ventura:       "b8c036923b52057524e833672a896936c0732d564390807c5b21dc7dc0bea8e0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3637e073b135195ec18571de3119125e82dd8027252bb14aa6b01622f1a47544"
   end
 
   depends_on "autoconf" => :build
@@ -26,7 +24,7 @@ class Pcb2gcode < Formula
   depends_on "libsigc++@2" => :build
   depends_on "libtool" => :build
   depends_on "pangomm@2.46" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "at-spi2-core"
   depends_on "boost"
   depends_on "cairo"
@@ -38,11 +36,9 @@ class Pcb2gcode < Formula
   depends_on "harfbuzz"
   depends_on "pango"
 
-  fails_with gcc: "5"
-
   def install
     system "autoreconf", "--force", "--install", "--verbose"
-    system "./configure", *std_configure_args, "--disable-silent-rules"
+    system "./configure", "--disable-silent-rules", *std_configure_args
     system "make", "install"
   end
 
@@ -118,8 +114,8 @@ class Pcb2gcode < Formula
       al-y=15
       software=LinuxCNC
     EOS
-    system "#{bin}/pcb2gcode", "--front=front.gbr",
-                               "--outline=edge.gbr",
-                               "--drill=drill.drl"
+    system bin/"pcb2gcode", "--front=front.gbr",
+                            "--outline=edge.gbr",
+                            "--drill=drill.drl"
   end
 end

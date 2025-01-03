@@ -6,21 +6,22 @@ class Rpmspectool < Formula
   url "https://files.pythonhosted.org/packages/7d/cc/53ef9a699df75f3f29f672d0bdf7aae162829e2c98f7b7b5f063fd5d3a46/rpmspectool-1.99.10.tar.gz"
   sha256 "b79d59388ecba5f8b957c722a43a429b5a728435f5ed0992011e9482850e3583"
   license "GPL-3.0-or-later"
-  revision 1
+  revision 2
 
   bottle do
-    sha256 cellar: :any_skip_relocation, x86_64_linux: "691814075a99bbecdd1cb2d4c71339418cc9540f391d59cc94dcb7ab97541b89"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, x86_64_linux: "4c77cc55ad2dd5ef71b1f0e6f962181198567a56ce65828e3ed2c18cafed4cb6"
   end
 
   depends_on "curl"
   depends_on :linux
   depends_on "openssl@3"
-  depends_on "python@3.12"
+  depends_on "python@3.13"
   depends_on "rpm"
 
   resource "argcomplete" do
-    url "https://files.pythonhosted.org/packages/f0/a2/ce706abe166457d5ef68fac3ffa6cf0f93580755b7d5f883c456e94fab7b/argcomplete-3.2.2.tar.gz"
-    sha256 "f3e49e8ea59b4026ee29548e24488af46e30c9de57d48638e24f54a1ea1000a2"
+    url "https://files.pythonhosted.org/packages/7f/03/581b1c29d88fffaa08abbced2e628c34dd92d32f1adaed7e42fc416938b0/argcomplete-3.5.2.tar.gz"
+    sha256 "23146ed7ac4403b70bd6026402468942ceba34a6732255b9edf5b7354f68a6bb"
   end
 
   resource "pycurl" do
@@ -30,6 +31,9 @@ class Rpmspectool < Formula
 
   def install
     virtualenv_install_with_resources
+
+    generate_completions_from_executable(libexec/"bin/register-python-argcomplete", "rpmspectool",
+                                         shell_parameter_format: :arg)
   end
 
   test do
@@ -71,6 +75,6 @@ class Rpmspectool < Formula
       %_infodir/hello.info*
     EOS
     system bin/"rpmspectool", "get", testpath/"hello.spec"
-    assert_predicate testpath/"hello-2.12.1.tar.gz", :exist?
+    assert_path_exists testpath/"hello-2.12.1.tar.gz"
   end
 end

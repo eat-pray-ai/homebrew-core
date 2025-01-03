@@ -1,19 +1,18 @@
 class Rqlite < Formula
   desc "Lightweight, distributed relational database built on SQLite"
   homepage "https://www.rqlite.io/"
-  url "https://github.com/rqlite/rqlite/archive/refs/tags/v8.26.6.tar.gz"
-  sha256 "441e4fb97ff095affa6d97501a653713867b514047bb594f771d4f41333db16c"
+  url "https://github.com/rqlite/rqlite/archive/refs/tags/v8.36.3.tar.gz"
+  sha256 "c57e1499e013d69f2c0201a368546691537a67388e967c38c03948a9ea208b57"
   license "MIT"
   head "https://github.com/rqlite/rqlite.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "823a72ec764e4338d9091a9289974f85bb05319ca794438043a273c7bad40222"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "cc391a6e3c42e0db5b4c7ae47ac595d63b855c634e96c57b5622ec71b87226c4"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "0aa9385e50dd8dadd93422d4e742daade0f85cb48cd89255ab7177cde10405a8"
-    sha256 cellar: :any_skip_relocation, sonoma:         "663c477917dd8f0e815cf41a615aee4ef5d36bd13a651766b8a271437680dfeb"
-    sha256 cellar: :any_skip_relocation, ventura:        "2438e8986dc984152dc1665ca6176387242e72bbe2161d3965cb34ced2bb64c2"
-    sha256 cellar: :any_skip_relocation, monterey:       "ba3007356e28c338bd3a169db1cac8628705e76d83fe2dedb254bbc0295cc6ce"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "66ae7173f995fd3894ce6db45fe29b3fea4de6231b3ad61f3713079208f40fe7"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "b5bb190ab32e98616d12ce57015d19d47806dc6c1213e7395b41460a6c5e75da"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "fb4db206c68757b4a1319afeeb0807cc738e29d402dca3d49c706e04d82e859b"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "c4fcd8c6f15bd2b1880f4172060fb6f5f06da7bdbf803193c357c5ed586df5fe"
+    sha256 cellar: :any_skip_relocation, sonoma:        "78669a1f1eba9665fcbe9ecccd89f5bf34150fa280a9ffd112dbfdb08af19d5f"
+    sha256 cellar: :any_skip_relocation, ventura:       "48ab9b622a7e2522c978155b8f702201f33c6f86ab445b9cc5987dc8c54cb53a"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "7e0b2af2f02b5c8548fd978563272354b81eac8f906473249cbaa213cb2bd02b"
   end
 
   depends_on "go" => :build
@@ -33,11 +32,11 @@ class Rqlite < Formula
     end
     sleep 5
 
-    (testpath/"test.sql").write <<~EOS
+    (testpath/"test.sql").write <<~SQL
       CREATE TABLE foo (id INTEGER NOT NULL PRIMARY KEY, name TEXT)
       .schema
       quit
-    EOS
+    SQL
     output = shell_output("#{bin}/rqlite -p #{port} < test.sql")
     assert_match "foo", output
 

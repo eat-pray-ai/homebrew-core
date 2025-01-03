@@ -17,6 +17,7 @@ class Sslsplit < Formula
   end
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "5696431080e31e8d974ee9b41e2380690b0ce415deefeee3d71350d1d614706d"
     sha256 cellar: :any,                 arm64_sonoma:   "a78baab2eb804a8825d8e32e7b196ba855c020f95e82b2f3d97791f57ed6f6f8"
     sha256 cellar: :any,                 arm64_ventura:  "ad6eef71652050dd7586ca130538d612f71d6e0486a5c1b2b9eb98e5d0675e0c"
     sha256 cellar: :any,                 arm64_monterey: "dba0a5403a541ff22b1e63577de39af59c2bdfa4ea43536664526efd4c10b479"
@@ -29,7 +30,7 @@ class Sslsplit < Formula
   end
 
   depends_on "check" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "libevent"
   depends_on "libnet"
   depends_on "libpcap"
@@ -42,10 +43,12 @@ class Sslsplit < Formula
   end
 
   test do
-    port = free_port
-
-    cmd = "#{bin}/sslsplit -D http 0.0.0.0 #{port} www.roe.ch 80"
-    output = pipe_output("(#{cmd} & PID=$! && sleep 3 ; kill $PID) 2>&1")
-    assert_match "Starting main event loop", output
+    Open3.popen2e(bin/"sslsplit", "-D", "http", "0.0.0.0", free_port.to_s, "www.roe.ch", "80") do |_, stdout, w|
+      sleep 5
+      sleep 10 if OS.mac? && Hardware::CPU.intel?
+      assert_match "Starting main event loop", stdout.read_nonblock(4096)
+    ensure
+      Process.kill "TERM", w.pid
+    end
   end
 end

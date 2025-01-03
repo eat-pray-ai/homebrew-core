@@ -6,24 +6,27 @@ class Twtxt < Formula
   url "https://files.pythonhosted.org/packages/fc/4c/cff74642212dbca8d4d9059119555cd335324b3da0b52990a414a0257756/twtxt-1.3.1.tar.gz"
   sha256 "f15e580f8016071448b24048402b939b9e8dec07eabacd84b1f2878d751b71ff"
   license "MIT"
-  revision 3
+  revision 5
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "c9754630facb7591ea4c8955702ef2c5bb031f0ac7e4eda4c87a1a3fefd0e475"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "0f6bfdf3dee16f355befc73fba9a367df74dfa9ae6376f1d287c8452d0044228"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "c39441fb3ba55f17c0ae54e602933a247c1794c1416723c440aa3873bf230d70"
-    sha256 cellar: :any_skip_relocation, sonoma:         "6880b3bad0c56418133949178beaec7cfc0751dc7b652fe9b6d9299f3f37cd3f"
-    sha256 cellar: :any_skip_relocation, ventura:        "0fe258826fc35fb7dd35510985b49d0a4cda496a7c429b909eb2f52033ae3daf"
-    sha256 cellar: :any_skip_relocation, monterey:       "30c95f228b0ef110938f150485fd8a59543cb2d2d79cc31526707660d2b66024"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "8301fdfa0508cd4c11972a53ad15b33d133b793d275e4dc5123f311e81c65751"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "edb8ea5c3391196da08836218420f89c6bd007decd33854e0c2e306789489076"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "47364ec472d99034f372dc075295ee98d3e7ebb38e29d9a692b353d7dc46eb4c"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "682fab3d700db2019e0e40e049950be61c64fd995d2fe9d44cb451f07d03f877"
+    sha256 cellar: :any_skip_relocation, sonoma:        "e07965ffd9743f2bb45dd95af5f3b1a45e090388116234aa52fee0da93a645fb"
+    sha256 cellar: :any_skip_relocation, ventura:       "d1853863f6717ea82bbafa030651b0975700a319d6637aba0e7a619518e425d0"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "8c5d0c9f7b62813e47e77c796d0ed351e038091ed3dbd91b1a6fd90187fd252f"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
+
+  resource "aiohappyeyeballs" do
+    url "https://files.pythonhosted.org/packages/bc/69/2f6d5a019bd02e920a3417689a89887b39ad1e350b562f9955693d900c40/aiohappyeyeballs-2.4.3.tar.gz"
+    sha256 "75cf88a15106a5002a8eb1dab212525c00d1f4c0fa96e551c9fbe6f09a621586"
+  end
 
   resource "aiohttp" do
-    url "https://files.pythonhosted.org/packages/04/a4/e3679773ea7eb5b37a2c998e25b017cc5349edf6ba2739d1f32855cfb11b/aiohttp-3.9.5.tar.gz"
-    sha256 "edea7d15772ceeb29db4aff55e482d4bcfb6ae160ce144f2682de02f6d693551"
+    url "https://files.pythonhosted.org/packages/1d/cd/af0e573bdb77ae7df1148fe8e4ea854215a37db0b116aac6b5496335095e/aiohttp-3.11.4.tar.gz"
+    sha256 "9d95cce8bb010597b3f2217155befe4708e0538d3548aa08d640ebf54e3f57cb"
   end
 
   resource "aiosignal" do
@@ -32,8 +35,8 @@ class Twtxt < Formula
   end
 
   resource "attrs" do
-    url "https://files.pythonhosted.org/packages/e3/fc/f800d51204003fa8ae392c4e8278f256206e7a919b708eef054f5f4b650d/attrs-23.2.0.tar.gz"
-    sha256 "935dc3b529c262f6cf76e50877d35a4bd3c1de194fd41f47a2b7ae8f19971f30"
+    url "https://files.pythonhosted.org/packages/fc/0f/aafca9af9315aee06a89ffde799a10a582fe8de76c563ee80bbcdc08b3fb/attrs-24.2.0.tar.gz"
+    sha256 "5cfb1b9148b5b086569baec03f20d7b6bf3bcacc9a42bebf87ffaaca362f6346"
   end
 
   resource "click" do
@@ -42,23 +45,28 @@ class Twtxt < Formula
   end
 
   resource "frozenlist" do
-    url "https://files.pythonhosted.org/packages/cf/3d/2102257e7acad73efc4a0c306ad3953f68c504c16982bbdfee3ad75d8085/frozenlist-1.4.1.tar.gz"
-    sha256 "c037a86e8513059a2613aaba4d817bb90b9d9b6b69aace3ce9c877e8c8ed402b"
+    url "https://files.pythonhosted.org/packages/8f/ed/0f4cec13a93c02c47ec32d81d11c0c1efbadf4a471e3f3ce7cad366cbbd3/frozenlist-1.5.0.tar.gz"
+    sha256 "81d5af29e61b9c8348e876d442253723928dce6433e0e76cd925cd83f1b4b817"
   end
 
   resource "humanize" do
-    url "https://files.pythonhosted.org/packages/76/21/7a0b24fae849562397efd79da58e62437243ae0fd0f6c09c6bc26225b75c/humanize-4.9.0.tar.gz"
-    sha256 "582a265c931c683a7e9b8ed9559089dea7edcf6cc95be39a3cbc2c5d5ac2bcfa"
+    url "https://files.pythonhosted.org/packages/6a/40/64a912b9330786df25e58127194d4a5a7441f818b400b155e748a270f924/humanize-4.11.0.tar.gz"
+    sha256 "e66f36020a2d5a974c504bd2555cf770621dbdbb6d82f94a6857c0b1ea2608be"
   end
 
   resource "idna" do
-    url "https://files.pythonhosted.org/packages/21/ed/f86a79a07470cb07819390452f178b3bef1d375f2ec021ecfc709fc7cf07/idna-3.7.tar.gz"
-    sha256 "028ff3aadf0609c1fd278d8ea3089299412a7a8b9bd005dd08b9f8285bcb5cfc"
+    url "https://files.pythonhosted.org/packages/f1/70/7703c29685631f5a7590aa73f1f1d3fa9a380e654b86af429e0934a32f7d/idna-3.10.tar.gz"
+    sha256 "12f65c9b470abda6dc35cf8e63cc574b1c52b11df2c86030af0ac09b01b13ea9"
   end
 
   resource "multidict" do
-    url "https://files.pythonhosted.org/packages/f9/79/722ca999a3a09a63b35aac12ec27dfa8e5bb3a38b0f857f7a1a209a88836/multidict-6.0.5.tar.gz"
-    sha256 "f7e301075edaf50500f0b341543c41194d8df3ae5caf4702f2095f3ca73dd8da"
+    url "https://files.pythonhosted.org/packages/d6/be/504b89a5e9ca731cd47487e91c469064f8ae5af93b7259758dcfc2b9c848/multidict-6.1.0.tar.gz"
+    sha256 "22ae2ebf9b0c69d206c003e2f6a914ea33f0a932d4aa16f236afc049d9958f4a"
+  end
+
+  resource "propcache" do
+    url "https://files.pythonhosted.org/packages/a9/4d/5e5a60b78dbc1d464f8a7bbaeb30957257afdc8512cbb9dfd5659304f5cd/propcache-0.2.0.tar.gz"
+    sha256 "df81779732feb9d01e5d513fad0122efb3d53bbc75f61b2a4f29a020bc985e70"
   end
 
   resource "python-dateutil" do
@@ -72,8 +80,8 @@ class Twtxt < Formula
   end
 
   resource "yarl" do
-    url "https://files.pythonhosted.org/packages/e0/ad/bedcdccbcbf91363fd425a948994f3340924145c2bc8ccb296f4a1e52c28/yarl-1.9.4.tar.gz"
-    sha256 "566db86717cf8080b99b58b083b773a908ae40f06681e87e589a976faf8246bf"
+    url "https://files.pythonhosted.org/packages/4b/d5/0d0481857de42a44ba4911f8010d4b361dc26487f48d5503c66a797cff48/yarl-1.17.2.tar.gz"
+    sha256 "753eaaa0c7195244c84b5cc159dc8204b7fd99f716f11198f999f2332a86b178"
   end
 
   # Drop setuptools dep: https://github.com/buckket/twtxt/pull/178
@@ -89,13 +97,13 @@ class Twtxt < Formula
   end
 
   test do
-    (testpath/"config").write <<~EOS
+    (testpath/"config").write <<~INI
       [twtxt]
       nick = homebrew
       twtfile = twtxt.txt
       [following]
       brewtest = https://example.org/alice.txt
-    EOS
+    INI
     assert_match "✓ You’ve unfollowed brewtest", shell_output("#{bin}/twtxt -c config unfollow brewtest")
 
     assert_match version.to_s, shell_output(bin/"twtxt --version")

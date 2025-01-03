@@ -3,8 +3,8 @@
 class Mercurial < Formula
   desc "Scalable distributed version control system"
   homepage "https://mercurial-scm.org/"
-  url "https://www.mercurial-scm.org/release/mercurial-6.8.tar.gz"
-  sha256 "08e4d0e5da8af1132b51e6bc3350180ad57adcd935f097b6d0bc119a2c2c0a10"
+  url "https://www.mercurial-scm.org/release/mercurial-6.9.tar.gz"
+  sha256 "629604293df2be8171ec856bf4f8b4faa8e4305af13607dce0f89f74132836d6"
   license "GPL-2.0-or-later"
 
   livecheck do
@@ -13,19 +13,18 @@ class Mercurial < Formula
   end
 
   bottle do
-    sha256 arm64_sonoma:   "075dd1a68170ea4a2e687e62262c7f21eba8d1825bcfa4efb74eeeb93a1bd06a"
-    sha256 arm64_ventura:  "923b12be1779bffe7ebf0175a437b7964836efa7b00318c9dda264360e0ad132"
-    sha256 arm64_monterey: "492f5e7d27715594646b39d1c1c284b9455b65522351e2c534eb5c4439eb7004"
-    sha256 sonoma:         "42ffc44e24c155a09ff78eb5e47bd77b8f5b09d142841c039a97e1805ebc713f"
-    sha256 ventura:        "1210f189e2f7f01905a0912fcef2ff9ba36e35693695755b22cdc7c73c1307d0"
-    sha256 monterey:       "799e1d924154c778b6fd7dcf9f50936dfc65f9001242f4e798850d5e094945f4"
-    sha256 x86_64_linux:   "ca36c5108e6b6541c476af43d85516fd70c553e909b7234a1e1f4bcab7e07b90"
+    sha256 arm64_sequoia: "da5b687457ce8d760b8690ba36e43c5ab41ce01805e979a8ba2ecfc8a2b1b670"
+    sha256 arm64_sonoma:  "3d4ccb397b16f32cf8b3d5970bf275925deead6785da4bc8acbb9e1a60df6ac7"
+    sha256 arm64_ventura: "2966f3590deb854aa3d7999faf5913e08546d306cc762cfea3117f9f622374a9"
+    sha256 sonoma:        "0bd87913912c5a3e62fbec0b8f514dde3a600714ae00a66c41cfc2f527e04198"
+    sha256 ventura:       "2841f1c8832d1f9cd8c69f2933b5cf9e5e7451100c7700aa9ae002a9e507a894"
+    sha256 x86_64_linux:  "5afa0ff24aa33ec5d64af3a69e9e79347a9b7b7d5bc117b4db892b65b5449fe6"
   end
 
-  depends_on "python@3.12"
+  depends_on "python@3.13"
 
   def install
-    python3 = "python3.12"
+    python3 = "python3.13"
     system python3, "-m", "pip", "install", *std_pip_args(build_isolation: true), "."
 
     # Install chg (see https://www.mercurial-scm.org/wiki/CHg)

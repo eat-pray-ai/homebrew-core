@@ -29,6 +29,7 @@ class GhcAT94 < Formula
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
+  depends_on maximum_macos: [:sonoma, :build]
   depends_on "python@3.12" => :build
   depends_on "sphinx-doc" => :build
 
@@ -152,7 +153,7 @@ class GhcAT94 < Formula
   end
 
   def post_install
-    system "#{bin}/ghc-pkg", "recache"
+    system bin/"ghc-pkg", "recache"
   end
 
   test do

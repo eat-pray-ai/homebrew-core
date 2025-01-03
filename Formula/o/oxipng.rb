@@ -1,27 +1,29 @@
 class Oxipng < Formula
   desc "Multithreaded PNG optimizer written in Rust"
   homepage "https://github.com/shssoichiro/oxipng"
-  url "https://github.com/shssoichiro/oxipng/archive/refs/tags/v9.1.1.tar.gz"
-  sha256 "f50db90c7ef95c0964dc980f6596b821f362e15d6d4bab247f1eb4aab7554db8"
+  url "https://github.com/shssoichiro/oxipng/archive/refs/tags/v9.1.3.tar.gz"
+  sha256 "5f34bc3a9eba661a686106261720061b1136301ccd67cc653c9c70d71fa33c09"
   license "MIT"
 
   bottle do
-    rebuild 1
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "9fdd4be90f915c227b082531a803296bea10670202f5b9f43a49f42c96b77cbb"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "799aee08ac1b340d69807fc69fda8d2acbb30d67c5f95a8e3f7b9276c3cb9271"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "ac860a10f482704f8b732e43138ab81720fdc4f1af522a27fb44ac3676015c42"
-    sha256 cellar: :any_skip_relocation, sonoma:         "51d0acd5344987d04055aff80cee92c15a7e5973dbe10c77ba8903bc9f06048b"
-    sha256 cellar: :any_skip_relocation, ventura:        "f5f5bc9127350691ca9e4b6bf2227410578cef12ca0982bbea07e46c8b957da7"
-    sha256 cellar: :any_skip_relocation, monterey:       "54b4aef8f48f3dc0c22fd083253ba8136685ede238b3500e9bb2ef9ef9d14b6e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "859dc8247db729b83a23d1279d2e5c31b4b14b7f9376838715f832b316b3e7da"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "da7a006b93d7ee3fe9f667cf1a11a62d8cd79b8f705947c6ffaa5fa42074fec2"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "4b77742c78b5e0e7c3eac52db69bd1f791c7662afccaf910bbd12314f73a89bc"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "6abc255325194b6d36c4c788f44af641f1a208f8d2a5d9ecb8093c10e902e0b4"
+    sha256 cellar: :any_skip_relocation, sonoma:        "4dd9ae7f31cf980b3fcef1dd36b5e8e0beaa5c0cbc0ba22641cbe7322fec29c2"
+    sha256 cellar: :any_skip_relocation, ventura:       "107479be718136c8c684d9e22abcda1a3f2aad75f9444150cdd98264000cc71b"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "ca221ba914561373dd85ae276ac981f361414ba12eff445739ee30ea327c8b15"
   end
 
   depends_on "rust" => :build
 
   def install
     system "cargo", "install", *std_cargo_args
+    system "cargo", "run",
+           "--manifest-path", "xtask/Cargo.toml",
+           "--jobs", ENV.make_jobs.to_s,
+           "--locked", "--", "mangen"
 
-    man1.install "target/release/assets/oxipng.1"
+    man1.install "target/xtask/mangen/manpages/oxipng.1"
   end
 
   test do

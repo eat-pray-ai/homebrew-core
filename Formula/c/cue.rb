@@ -1,19 +1,18 @@
 class Cue < Formula
   desc "Validate and define text-based and dynamic configuration"
   homepage "https://cuelang.org/"
-  url "https://github.com/cue-lang/cue/archive/refs/tags/v0.9.2.tar.gz"
-  sha256 "949084a037dce6af09072d5b3acd9e6e004b49b2b24e1e3bf93e71bcd1ca99e0"
+  url "https://github.com/cue-lang/cue/archive/refs/tags/v0.11.1.tar.gz"
+  sha256 "a99dabdea26e8f2988b8e4f595ec686c99fcbd045c6ebc84ac8990592314fe8f"
   license "Apache-2.0"
   head "https://github.com/cue-lang/cue.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "0b8e79538b896fc66fd48e3fb5084c2edf2e581cd26496ca3bd0e04a45c3794b"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "e53cb070a102d763294af2da09326b7c83cfd16d2eb18e7174145d504ecb2c55"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "002a0d7a28bb1d5430ace1d523f044f2965556c59152a10d4b293dd61040eee6"
-    sha256 cellar: :any_skip_relocation, sonoma:         "252b2fcd53af336e2c2954467376b8a70f4cdeeb6e3b5313995f94c31fb44953"
-    sha256 cellar: :any_skip_relocation, ventura:        "16accb69f7669d2b37e00ea86590721f358300766095a89fe1c9070efb4bcd59"
-    sha256 cellar: :any_skip_relocation, monterey:       "693e5308880f425c89913a075d333f345cda8627ed8bb76d781070e7c1f811ab"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "59c6b19b94e5eb2fbb5763c32654e5fde51c9296bc48671a647f1184cf202a7a"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "ef7cd7d63fa9e1929dbf2ccdc96ccc188d6ab508cf363d7450dc5c49c9ad289b"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "ef7cd7d63fa9e1929dbf2ccdc96ccc188d6ab508cf363d7450dc5c49c9ad289b"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "ef7cd7d63fa9e1929dbf2ccdc96ccc188d6ab508cf363d7450dc5c49c9ad289b"
+    sha256 cellar: :any_skip_relocation, sonoma:        "0c4bb1663510c17fcaa58910910f369bcbf298810c4468a60bde160d0d70c556"
+    sha256 cellar: :any_skip_relocation, ventura:       "0c4bb1663510c17fcaa58910910f369bcbf298810c4468a60bde160d0d70c556"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a78358221e7ed297460c02093d037ff9b25d11dbeca146f06ccd6d5d39a312ba"
   end
 
   depends_on "go" => :build
@@ -25,18 +24,18 @@ class Cue < Formula
   end
 
   test do
-    (testpath/"ranges.yml").write <<~EOS
+    (testpath/"ranges.yml").write <<~YAML
       min: 5
       max: 10
       ---
       min: 10
       max: 5
-    EOS
+    YAML
 
-    (testpath/"check.cue").write <<~EOS
+    (testpath/"check.cue").write <<~CUE
       min?: *0 | number    // 0 if undefined
       max?: number & >min  // must be strictly greater than min if defined.
-    EOS
+    CUE
 
     expected = <<~EOS
       max: invalid value 5 (out of bound >10):

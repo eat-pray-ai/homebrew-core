@@ -1,8 +1,8 @@
 class F3d < Formula
   desc "Fast and minimalist 3D viewer"
   homepage "https://f3d-app.github.io/f3d/"
-  url "https://github.com/f3d-app/f3d/archive/refs/tags/v2.5.0.tar.gz"
-  sha256 "d7f6dd7d9e4465c1f44d168c3a38aad24569a25907673180c8791a783e73f02f"
+  url "https://github.com/f3d-app/f3d/archive/refs/tags/v2.5.1.tar.gz"
+  sha256 "55ea01931f90f066df1abc0ae4e9575672e80b83b241f51884224baa8dccac24"
   license "BSD-3-Clause"
   revision 1
 
@@ -15,19 +15,18 @@ class F3d < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "d1cc7c01b332499f0b6029d00fbd941afeb9b1b8b4cdd63848ac8bc80da9eeeb"
-    sha256 cellar: :any,                 arm64_ventura:  "5ab0589087f07df3fc947d4f94e2f234d8926a1ec9f75ab021911ed28d76f20d"
-    sha256 cellar: :any,                 arm64_monterey: "e56500ca09cd442367725ab5d4a0ae4c22eafb18572886aeddb806ee4f2b2bbc"
-    sha256 cellar: :any,                 sonoma:         "a3382d6934a82df7686998f33703a9e5ac3a9b9301549f8d2b31a7df416fcfdd"
-    sha256 cellar: :any,                 ventura:        "5d69b498e1d29279dc4cbcc90b3e55ef373f1427418648b83fd2f5583b1e6971"
-    sha256 cellar: :any,                 monterey:       "eb799cbbe16a078c0bd7d407ec7882f748e5bd39c0e2293e0d164daef96ce443"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "0dcd40f0dbe5edb13dcad6daf7bfde12558c4c5190ab21a545b985f8fedf1609"
+    sha256 cellar: :any,                 arm64_sonoma:  "a158b6d659492373c960283233a2434c85594ecb1cd33aef5c28ea5bea55a54b"
+    sha256 cellar: :any,                 arm64_ventura: "0e69108d23b6a6286f99e3d60c71347681c2a066c4e445f8e5d5230353e0639e"
+    sha256 cellar: :any,                 sonoma:        "7b2a9064eecc991892d9a4d3bf5dbe7cb90c3262ab7b10923194ccd576c4742e"
+    sha256 cellar: :any,                 ventura:       "99910851df88d8b03085f336beb523a6a8ad8500904e9f0d356d3716cc070db7"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "cfbed537c4b1ff81af941dfb7702cd3dfc6bd4d2e4b7ba67d6881dd6a8a68a95"
   end
 
   depends_on "cmake" => :build
   depends_on "alembic"
   depends_on "assimp"
   depends_on "glew"
+  depends_on "jsoncpp"
   depends_on "opencascade"
   depends_on "vtk"
 
@@ -37,11 +36,10 @@ class F3d < Formula
     depends_on "glew"
     depends_on "hdf5"
     depends_on "imath"
-    depends_on "jsoncpp"
     depends_on "libaec"
     depends_on "netcdf"
     depends_on "tbb"
-    depends_on "tcl-tk"
+    depends_on "tcl-tk@8"
     depends_on "zstd"
   end
 

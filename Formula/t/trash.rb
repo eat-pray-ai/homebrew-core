@@ -8,6 +8,7 @@ class Trash < Formula
 
   bottle do
     rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia:  "f3b7a766bcc683b339c145ab7d8b484f2bbd65aac6903fd952dec7f4521efe5f"
     sha256 cellar: :any_skip_relocation, arm64_sonoma:   "90cffd3d151720b768c48a8874f7b8dfaaf6f7a9e9000ffe23cfa3f9e4aa6b76"
     sha256 cellar: :any_skip_relocation, arm64_ventura:  "60186a8823abc9dd734475e3f787edd7c2d6a2254fff25b7289de2db15447099"
     sha256 cellar: :any_skip_relocation, arm64_monterey: "541af91d1cb128aa743460a529a3dcab5bac63b61ccde0a60d73aee23ab7d5c0"
@@ -21,10 +22,9 @@ class Trash < Formula
     sha256 cellar: :any_skip_relocation, high_sierra:    "0ef5ea924ba8d01398686657a839ad270796f3f10eee86d6522980d32038df9a"
   end
 
-  depends_on :macos
+  keg_only :shadowed_by_macos
 
-  conflicts_with "macos-trash", because: "both install a `trash` binary"
-  conflicts_with "trash-cli", because: "both install a `trash` binary"
+  depends_on :macos
 
   def install
     # https://github.com/ali-rantakari/trash/issues/43
@@ -37,6 +37,6 @@ class Trash < Formula
   end
 
   test do
-    system "#{bin}/trash"
+    system bin/"trash"
   end
 end

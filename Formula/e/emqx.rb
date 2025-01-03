@@ -1,8 +1,8 @@
 class Emqx < Formula
   desc "MQTT broker for IoT"
   homepage "https://www.emqx.io/"
-  url "https://github.com/emqx/emqx/archive/refs/tags/v5.7.1.tar.gz"
-  sha256 "90b1c880d88f47f43dbc6cabf4fbb319ef3f774fc5aa4f2c3405dbd0fa79a02a"
+  url "https://github.com/emqx/emqx/archive/refs/tags/v5.8.4.tar.gz"
+  sha256 "39a5acafdd72cd9b6d05407c677c063448b8551eed272681a9809636441f2bfd"
   license "Apache-2.0"
   head "https://github.com/emqx/emqx.git", branch: "master"
 
@@ -15,28 +15,28 @@ class Emqx < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "d15cbddc453d1d7b93545977b0db3283acb73f697d461d121185604885d1cc3e"
-    sha256 cellar: :any,                 arm64_ventura:  "b6e8f0cc57582c4fd993f394f8bd353daa1a40b769d374c497b84444df3d60d5"
-    sha256 cellar: :any,                 arm64_monterey: "c2f64ed96dd0954a52ff0e3e3109b1ddc7c52d97ef383d2282f091c368f9f668"
-    sha256 cellar: :any,                 sonoma:         "112150d93a5e3a2a3f2ac95298e1a602fa3e192979b5005fbdf289e0849b19d2"
-    sha256 cellar: :any,                 ventura:        "ffaa5bf8f54afe763fb66331fb7cc5e00d842699a3ab9db50ca3f99981478848"
-    sha256 cellar: :any,                 monterey:       "8935b538239196965f753eb89e1f8b33dd10c685e1e16264225f490949828b37"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "9e892c081e091c88efcba70caf273f1b66ace28c5289456ba3c5bf2de144ab5f"
+    sha256 cellar: :any,                 arm64_sequoia: "62e49049372084a41a83c9a5a577f915034528cc36848e6f7f93e3156d9b0dd9"
+    sha256 cellar: :any,                 arm64_sonoma:  "6174bc5b183c7144c5ede7636bb48340840daa98cc0c6ff39b7957486fafe738"
+    sha256 cellar: :any,                 arm64_ventura: "34ee1b72100e19063f8211b7c25ba42e4c1fb0b0e159d576fba6d2a66a96f582"
+    sha256 cellar: :any,                 sonoma:        "8f1f95b150ce1955edffc39fb31d2db268c002f7b47f909e820ae59bc2e2c330"
+    sha256 cellar: :any,                 ventura:       "b8d80c62c26259ac4bdbc93917dee2aecdc58e30c0b1535e10ee4c5188472e7c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "3d3a044d03cdf72861c9b666d2c981eeed4f3d2bf3e3b659b9c21a657ed540a8"
   end
 
   depends_on "autoconf"  => :build
   depends_on "automake"  => :build
-  depends_on "ccache"    => :build
   depends_on "cmake"     => :build
   depends_on "coreutils" => :build
-  depends_on "erlang" => :build
+  depends_on "erlang@26" => :build
   depends_on "freetds"   => :build
   depends_on "libtool"   => :build
   depends_on "openssl@3"
 
-  uses_from_macos "curl"  => :build
-  uses_from_macos "unzip" => :build
-  uses_from_macos "zip"   => :build
+  uses_from_macos "curl"       => :build
+  uses_from_macos "unzip"      => :build
+  uses_from_macos "zip"        => :build
+  uses_from_macos "cyrus-sasl"
+  uses_from_macos "krb5"
 
   on_linux do
     depends_on "ncurses"
@@ -73,6 +73,10 @@ class Emqx < Formula
         MachO.codesign!(dynlib) if Hardware::CPU.arm?
       end
     end
+  end
+
+  service do
+    run [opt_bin/"emqx", "foreground"]
   end
 
   test do

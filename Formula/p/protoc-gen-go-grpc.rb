@@ -1,8 +1,8 @@
 class ProtocGenGoGrpc < Formula
   desc "Protoc plugin that generates code for gRPC-Go clients"
   homepage "https://github.com/grpc/grpc-go"
-  url "https://github.com/grpc/grpc-go/archive/refs/tags/cmd/protoc-gen-go-grpc/v1.4.0.tar.gz"
-  sha256 "e932b9ceb1a338eabdb3a421b7e3bbc871f85d359d31955a5e4627ee1132f882"
+  url "https://github.com/grpc/grpc-go/archive/refs/tags/cmd/protoc-gen-go-grpc/v1.5.1.tar.gz"
+  sha256 "54cb438abe590c9366e08251f811810fa004b1193154fe6e6a7d7c782a37332e"
   license "Apache-2.0"
 
   livecheck do
@@ -11,13 +11,13 @@ class ProtocGenGoGrpc < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "54e069e294ed066cea79382a990ea8cca724ab375efdfeb987f4587aaabffba6"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "54e069e294ed066cea79382a990ea8cca724ab375efdfeb987f4587aaabffba6"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "54e069e294ed066cea79382a990ea8cca724ab375efdfeb987f4587aaabffba6"
-    sha256 cellar: :any_skip_relocation, sonoma:         "6f5ad040c80e043489b9f61c98d50cb19768e93ee9494d161886305ea29602d9"
-    sha256 cellar: :any_skip_relocation, ventura:        "6f5ad040c80e043489b9f61c98d50cb19768e93ee9494d161886305ea29602d9"
-    sha256 cellar: :any_skip_relocation, monterey:       "6f5ad040c80e043489b9f61c98d50cb19768e93ee9494d161886305ea29602d9"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "3b00231000adce3581fe6bb425b387f8e2c109c8b1a566ea147bd6937d789907"
+    rebuild 1
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "6fea4b83597ec851d649c1b749618dda37e3815b4780b28467557aa0a29df606"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "6fea4b83597ec851d649c1b749618dda37e3815b4780b28467557aa0a29df606"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "6fea4b83597ec851d649c1b749618dda37e3815b4780b28467557aa0a29df606"
+    sha256 cellar: :any_skip_relocation, sonoma:        "5f99bc500ba51adf40e538a0400b8f345647cc0e7b0275745aa1f195e87910a3"
+    sha256 cellar: :any_skip_relocation, ventura:       "5f99bc500ba51adf40e538a0400b8f345647cc0e7b0275745aa1f195e87910a3"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "b754fb14b20c7f4fe1f9f3f03693b2100ea882ffb3fad7c40f96df092437f870"
   end
 
   depends_on "go" => :build
@@ -25,12 +25,12 @@ class ProtocGenGoGrpc < Formula
 
   def install
     cd "cmd/protoc-gen-go-grpc" do
-      system "go", "build", *std_go_args
+      system "go", "build", *std_go_args(ldflags: "-s -w")
     end
   end
 
   test do
-    (testpath/"service.proto").write <<~EOS
+    (testpath/"service.proto").write <<~PROTO
       syntax = "proto3";
 
       option go_package = ".;proto";
@@ -41,7 +41,7 @@ class ProtocGenGoGrpc < Formula
 
       message HelloRequest {}
       message HelloResponse {}
-    EOS
+    PROTO
 
     system "protoc", "--plugin=#{bin}/protoc-gen-go-grpc", "--go-grpc_out=.", "service.proto"
 

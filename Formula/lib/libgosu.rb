@@ -7,6 +7,7 @@ class Libgosu < Formula
   head "https://github.com/gosu/gosu.git", branch: "master"
 
   bottle do
+    sha256 cellar: :any,                 arm64_sequoia:  "3a5fa70c9c6f1dcdb60fbeb50e8ec544b341c25f0c9d426d5f3982948a10a427"
     sha256 cellar: :any,                 arm64_sonoma:   "e212870f51bae367a0d9e2fe223ad8b6b69562efa3f368f7ca09ca554c9d83e3"
     sha256 cellar: :any,                 arm64_ventura:  "521365479b25946aab5db44d2672521ec732e5dc9d1fd80c23bad38f0d7756ed"
     sha256 cellar: :any,                 arm64_monterey: "fc8542f6a694357798be7e2280be1bc66b1ced40692806638f2ac7fc699bf189"
@@ -19,7 +20,7 @@ class Libgosu < Formula
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "sdl2"
 
   on_linux do
@@ -29,16 +30,14 @@ class Libgosu < Formula
     depends_on "openal-soft"
   end
 
-  fails_with gcc: "5"
-
   def install
-    system "cmake", "-S", ".", "-B", "build", *std_cmake_args, "-DCMAKE_INSTALL_RPATH=#{rpath}"
+    system "cmake", "-S", ".", "-B", "build", "-DCMAKE_INSTALL_RPATH=#{rpath}", *std_cmake_args
     system "cmake", "--build", "build"
     system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <stdlib.h>
       #include <Gosu/Gosu.hpp>
 
@@ -62,7 +61,7 @@ class Libgosu < Formula
           MyWindow window;
           window.show();
       }
-    EOS
+    CPP
 
     system ENV.cxx, "test.cpp", "-o", "test", "-L#{lib}", "-lgosu", "-I#{include}", "-std=c++17"
 

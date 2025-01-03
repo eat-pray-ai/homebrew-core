@@ -1,19 +1,18 @@
 class Sfcgal < Formula
   desc "C++ wrapper library around CGAL"
   homepage "https://sfcgal.gitlab.io/SFCGAL/"
-  url "https://gitlab.com/sfcgal/SFCGAL/-/archive/v1.5.1/SFCGAL-v1.5.1.tar.gz"
-  sha256 "ea5d1662fada7de715ad564dc810c3059024ed81ae393f5352489f706fdfa3b1"
+  url "https://gitlab.com/sfcgal/SFCGAL/-/archive/v2.0.0/SFCGAL-v2.0.0.tar.gz"
+  sha256 "11843953f49e7e4432c42fd27d54e1ff7ca55d0cc72507725c2a5d840c2c6535"
   license "LGPL-2.0-or-later"
-  revision 2
+  revision 1
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "ffa4d1bb599bf2a6960411bb19c9fc8c4136ce8bbeb0b841e905ab966a107fe1"
-    sha256 cellar: :any,                 arm64_ventura:  "30dd23a618d69e0769549af0cd2c157957ff71e8f4d044937b6b9bcd3721bf47"
-    sha256 cellar: :any,                 arm64_monterey: "dabc44df168eda5b08cad5856ff0dbca4ba3a22bd64519dac79220181aa5a2c8"
-    sha256 cellar: :any,                 sonoma:         "51f6f3f46b34a93cdf16c844d0be99796538f8993add9f803fb0c3f986c5b5b3"
-    sha256 cellar: :any,                 ventura:        "eaaf02d44bbfafe4cb9d48c53a47474db7e7cc3a16ddefc764b3322065b8a9eb"
-    sha256 cellar: :any,                 monterey:       "138ec5e064ef30ea47dd1a3f11060fe46f32fd27aa913c62ed3f90fc3a85cce0"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "4f36d0bbea3c7a2d02ffc0637de10d9140faaae4c418fd14c0810e9fca8560f6"
+    sha256 cellar: :any,                 arm64_sequoia: "5a5a7f00226cf8b89b1f5ff32b9fe9631cd6b9f4e5c327f623a772d41b9fb416"
+    sha256 cellar: :any,                 arm64_sonoma:  "a12e862ef7496cb0bfdb492ec9949be9c50fa1a984c8b9f20dafef512f315fc4"
+    sha256 cellar: :any,                 arm64_ventura: "315a037148929c830f9c288734944ccc74a0a8f688d43e5fc0ffaac7c54b26c3"
+    sha256 cellar: :any,                 sonoma:        "8609c67b397d379b5f2beef2f34a9ec7ad92874f06f524a4b48698696f9f0d0f"
+    sha256 cellar: :any,                 ventura:       "a0e4ed2664ff65b78076b2a00d1197a529e03719ee7265a5381eb20e6d564686"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "5f87e1dfd50b1aa58838daa7246cfdce0dbe6304627b8a78b791758874fd3f32"
   end
 
   depends_on "cmake" => :build
@@ -21,9 +20,6 @@ class Sfcgal < Formula
   depends_on "cgal"
   depends_on "gmp"
   depends_on "mpfr"
-
-  # error: array must be initialized with a brace-enclosed initializer
-  fails_with gcc: "5"
 
   def install
     system "cmake", "-S", ".", "-B", "build", *std_cmake_args

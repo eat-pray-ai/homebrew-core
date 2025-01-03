@@ -1,18 +1,17 @@
 class SteamguardCli < Formula
   desc "CLI for steamguard"
   homepage "https://github.com/dyc3/steamguard-cli"
-  url "https://github.com/dyc3/steamguard-cli/archive/refs/tags/v0.14.0.tar.gz"
-  sha256 "ff4a80355cba37339dbf3e31edd3ce5f11593a25c8d162d4485a6b8d8414fdb8"
+  url "https://github.com/dyc3/steamguard-cli/archive/refs/tags/v0.15.0.tar.gz"
+  sha256 "0dc655447a1fdd10edfdd5e3abfffcbbd7d4fb779c5ee10c007e7928404eeabb"
   license "GPL-3.0-or-later"
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "54b977e3deb04e93c916476aa3cd3cd0038531a0e71d94f897eed945bcd591c6"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "b2d45ab8c4615603233b6795018e1b25898baa80802bbd640104efe82ba2e243"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "308fe41710ed5af7a6aed5ba505494e864e0fc6f636f6a194f7517314c9b2468"
-    sha256 cellar: :any_skip_relocation, sonoma:         "bbbf5f2fe08c14f7c86626414b236a3ac7763f2bb9e1825c99b773c6417a6170"
-    sha256 cellar: :any_skip_relocation, ventura:        "cfb427f37153bc573cbaf3c3c1c4eede1b275ed1f81ef2f120d5ed9f6d9dee20"
-    sha256 cellar: :any_skip_relocation, monterey:       "36423f3be39f9d6e25c5c69b6f940b97c4febfecf4084ed3ab2ab9e4a8f985f4"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "ec8c3bd9bdf8dd173bcfc4bb052c8cc20f4987c6f81d40bf80764cb515c5e5d2"
+    sha256 cellar: :any_skip_relocation, arm64_sequoia: "2bc2fea7ba9eda272a82ad0753cc5bcfbaee5dae66cdfc02eeaa05abfc994846"
+    sha256 cellar: :any_skip_relocation, arm64_sonoma:  "2fe36fe5920f16f359e910b05f65613d09d830076253443aebdf64577c588067"
+    sha256 cellar: :any_skip_relocation, arm64_ventura: "b5865c2d041ce521b21d9086fad28d5b70e6d437e86a447f2d232b3e18614e9e"
+    sha256 cellar: :any_skip_relocation, sonoma:        "b94b9a702865492c969cf80319e36a257b94cac391679445ba23262aa915949f"
+    sha256 cellar: :any_skip_relocation, ventura:       "a49f95cffbc3c033120433feceb2def215df26eec50d3beb30419f7fe5c57d88"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "9e6e0f24ddb3c2163f20feb6298ef557bce4d9ed3bb3ec0e16452d8f9b20fec5"
   end
 
   depends_on "rust" => :build

@@ -4,7 +4,7 @@ class Ompl < Formula
   url "https://github.com/ompl/ompl/archive/refs/tags/1.6.0.tar.gz"
   sha256 "f03daa95d2bbf1c21e91a38786242c245f4740f16aa9e9adbf7c7e0236e3c625"
   license "BSD-3-Clause"
-  revision 7
+  revision 9
   head "https://github.com/ompl/ompl.git", branch: "main"
 
   # We check the first-party download page because the "latest" GitHub release
@@ -15,24 +15,23 @@ class Ompl < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "29b5ee6e97b08a26596798cd2c86d751dd4626d4950fbd940be9a38251b8c34e"
-    sha256 cellar: :any,                 arm64_ventura:  "2c6fea0193038adf2ee3f51512c6d9bf2305b1c8f2d5bc7eef29554bb286944f"
-    sha256 cellar: :any,                 arm64_monterey: "0efce905456e1425ee4c777d7dd6f0d53a8e99ee709b11f647e16c3951746114"
-    sha256 cellar: :any,                 sonoma:         "c3d56c5fba2f1cf3d52664749a294466a0bcc54db6a0652fccc7c62950246da3"
-    sha256 cellar: :any,                 ventura:        "de7c4d8e8860b5f716c4ed2a6c01df3439fc6a67215747f564469ccd33c0b45d"
-    sha256 cellar: :any,                 monterey:       "8d989f9b5cfd43260253271344db60973eff0d6123eceb91b5ac5af4470dec51"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "e821df680b3757fe7aeaaf4f17d3d78b1fc04487c8e3338ca59d6b44b049fd39"
+    sha256 cellar: :any,                 arm64_sequoia: "8ac8f978f87e2733b89b277cd2635146ebd688f9010f4378172752edd46bb56f"
+    sha256 cellar: :any,                 arm64_sonoma:  "552362506b178328e541716299039aa939188ed34b88313ae70f8791fbf5abdf"
+    sha256 cellar: :any,                 arm64_ventura: "0227accc2594bfb6fb47b413c2c8d16dea914b6aad1142ba0daa2d4d1b635198"
+    sha256 cellar: :any,                 sonoma:        "2858c1d0e1acefdf78f51477487d05c7f8764bd139b1a377fc21f6127d76b379"
+    sha256 cellar: :any,                 ventura:       "c41347171a28c989d5aee1b9ebac6cadce7d8ec42a8e76df25369cd33bd32c93"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2e8f87556b7fe33bfbe322043ee7db8a6cc1de2076bc43cdeda6f357c9d312ad"
   end
 
   depends_on "cmake" => :build
-  depends_on "pkg-config" => :build
+  depends_on "pkgconf" => :build
   depends_on "boost"
   depends_on "eigen"
   depends_on "flann"
   depends_on "ode"
 
   def install
-    args = std_cmake_args + %w[
+    args = %w[
       -DOMPL_REGISTRATION=OFF
       -DOMPL_BUILD_DEMOS=OFF
       -DOMPL_BUILD_TESTS=OFF
@@ -41,12 +40,14 @@ class Ompl < Formula
       -DCMAKE_DISABLE_FIND_PACKAGE_spot=ON
       -DCMAKE_DISABLE_FIND_PACKAGE_Triangle=ON
     ]
-    system "cmake", ".", *args
-    system "make", "install"
+
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
+    system "cmake", "--build", "build"
+    system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <ompl/base/spaces/RealVectorBounds.h>
       #include <cassert>
       int main(int argc, char *argv[]) {
@@ -55,7 +56,7 @@ class Ompl < Formula
         bounds.setHigh(5);
         assert(bounds.getVolume() == 5 * 5 * 5);
       }
-    EOS
+    CPP
 
     system ENV.cxx, "test.cpp", "-I#{include}/ompl-#{version.major_minor}", "-L#{lib}", "-lompl", "-o", "test"
     system "./test"

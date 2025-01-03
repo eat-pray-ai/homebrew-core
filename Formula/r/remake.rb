@@ -19,6 +19,7 @@ class Remake < Formula
 
   bottle do
     rebuild 1
+    sha256 arm64_sequoia:  "e653146f267c162714ce0110f5cc892c9a2cbf2e0555922a31f26e65139385ab"
     sha256 arm64_sonoma:   "a4f68de1ce00c29c883c1c43b36b256ae2d5d7575673036467cdac1dd565a84b"
     sha256 arm64_ventura:  "5a7316d4730a456b7a84576294cf3ecc43bb0d66198a56c006b8b6fcd7ee34a8"
     sha256 arm64_monterey: "fe58f73701268996a6f273fd59cc85694152ed4a2e1f2268b22c532c5797a91d"
@@ -33,17 +34,17 @@ class Remake < Formula
   depends_on "readline"
 
   def install
-    system "./configure", *std_configure_args, "--disable-silent-rules"
+    system "./configure", "--disable-silent-rules", *std_configure_args
     system "make", "install"
     # Remove texinfo files for make to avoid conflict
-    info.glob("make.info*").map(&:unlink)
+    rm info.glob("make.info*")
   end
 
   test do
-    (testpath/"Makefile").write <<~EOS
+    (testpath/"Makefile").write <<~MAKE
       all:
-      \techo "Nothing here, move along"
-    EOS
+      	echo "Nothing here, move along"
+    MAKE
     system bin/"remake", "-x"
   end
 end

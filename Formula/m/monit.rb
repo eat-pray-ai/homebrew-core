@@ -1,8 +1,8 @@
 class Monit < Formula
   desc "Manage and monitor processes, files, directories, and devices"
   homepage "https://mmonit.com/monit/"
-  url "https://mmonit.com/monit/dist/monit-5.34.0.tar.gz"
-  sha256 "37f514cd8973bbce104cb8517ff3fc504052a083703eee0d0e873db26b919820"
+  url "https://mmonit.com/monit/dist/monit-5.34.3.tar.gz"
+  sha256 "669d8b95ddec124d1444ba5264f67fdeae8e90e53b2929719f4750fc5ff3ba60"
   license "AGPL-3.0-or-later"
 
   livecheck do
@@ -11,13 +11,12 @@ class Monit < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "9b961058b5f02a9c80808f4ad56432f029d061f508a5d93c4302fd3b5109e47a"
-    sha256 cellar: :any,                 arm64_ventura:  "a8eacf89a5adc75d1958d4400aa1a0a82bf9f1abd87ddc967c5a8da51894423b"
-    sha256 cellar: :any,                 arm64_monterey: "86f677767c4d8f53000bafc3508285c3960bfa31189ff2144c787407c3be2d08"
-    sha256 cellar: :any,                 sonoma:         "c64f092092a97afafbc4afa84a49a6757dbbed54b4fc9b05505a52af54f6ed2f"
-    sha256 cellar: :any,                 ventura:        "28b4ac7d86d9913774a0c49b873dece3c5e4903be7891ca64adc4bc1c53ee923"
-    sha256 cellar: :any,                 monterey:       "38a80a517adb3ff706b4bc51045d301b8602c3c57cde443aa8cea22299b4021d"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "89e69dcd7d9b2665ac42593b2d72a33cbaac505cf07dcdf33223c09c4b59f7b2"
+    sha256 cellar: :any,                 arm64_sequoia: "1c49822ff3f34d3f38f70f8562e23a979b83bb0a576ae20764a64882aa4b7619"
+    sha256 cellar: :any,                 arm64_sonoma:  "cd196f55e0ce0f83b83896916223d2e84df2258b2babea6a4c31448855f33a83"
+    sha256 cellar: :any,                 arm64_ventura: "7a13cb2cc9d0060420e46bf9b270fd3c5ac4629be7b7869fe47dad0bcd6466ca"
+    sha256 cellar: :any,                 sonoma:        "23f9a7c6748a6e9bb526192cf580d2961a2c3464fb1886c4ba5c9c48ee1bf886"
+    sha256 cellar: :any,                 ventura:       "4a7810b191951b7b09c0ae2e62a9c0e21da6fe1e15359dc13d5d8fca3d5e7926"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "a925dce72fea5958a38ddd1791cf28ae70f283c011bdc51640328a19f22fb836"
   end
 
   depends_on "openssl@3"

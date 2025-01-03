@@ -1,8 +1,8 @@
 class PythonTkAT312 < Formula
   desc "Python interface to Tcl/Tk"
   homepage "https://www.python.org/"
-  url "https://www.python.org/ftp/python/3.12.4/Python-3.12.4.tgz"
-  sha256 "01b3c1c082196f3b33168d344a9c85fb07bfe0e7ecfe77fee4443420d1ce2ad9"
+  url "https://www.python.org/ftp/python/3.12.8/Python-3.12.8.tgz"
+  sha256 "5978435c479a376648cb02854df3b892ace9ed7d32b1fead652712bee9d03a45"
   license "Python-2.0"
 
   livecheck do
@@ -10,13 +10,13 @@ class PythonTkAT312 < Formula
   end
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "d81a66f917b4b252349f94ed92d318332b1ae698e61e60e31e885b560338221c"
-    sha256 cellar: :any,                 arm64_ventura:  "cef9cd137c18dd1e517efc441fed69ebf9a99e408babdf67bfd8f61a843cf536"
-    sha256 cellar: :any,                 arm64_monterey: "021376122320e526633d55119477293384d0ea645f9aa72bdf2658f9895303df"
-    sha256 cellar: :any,                 sonoma:         "0e0e915fc859859188ca9b40317df78cd202fec365ef7493ccc22d664caef40e"
-    sha256 cellar: :any,                 ventura:        "d4bd816b48f44a983991a6f6f9fb31ad11d6b039daaa612d172fb948b5815658"
-    sha256 cellar: :any,                 monterey:       "dc4ced05a349f822f4e770f7552c1e492ea7f476ea129dd2cccc1e8a4be3799e"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "b75da4ee04bbb4f59e879917d8a95961d488d0314cf26d681841d7ed0ab9cb8f"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "a3574367acf6709f2a7c0b17782833a2e001af410ef259050add4a43f90682db"
+    sha256 cellar: :any,                 arm64_sonoma:  "309b721eb2458cf6dc9dda0ecb35b89a954122d55cbe9bc917484762913e156c"
+    sha256 cellar: :any,                 arm64_ventura: "e22e1c111ea970d176af6a4c56a6b0e9652882ef13b82b68ce62274d762d3a33"
+    sha256 cellar: :any,                 sonoma:        "e56782b443230c04c1031e8b6b244c42ddfb962d89e52fc665ed958510dfec3f"
+    sha256 cellar: :any,                 ventura:       "2c39c750461cf635ef33a8926d4e8869a2c1aa290359ccfa12e00df4704296fb"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "981b81b43b0bdc7270a6a03469f9262f453ae09b82c57e0ef1302bfa9073c97f"
   end
 
   depends_on "python@3.12"
@@ -25,6 +25,17 @@ class PythonTkAT312 < Formula
   def python3
     "python3.12"
   end
+
+  # Apply commit from open PR to fix TCL 9 threaded detection
+  # PR ref: https://github.com/python/cpython/pull/128103
+  patch do
+    url "https://github.com/python/cpython/commit/a2019e226e4650cef35ebfde7ecd7ce044a4a670.patch?full_index=1"
+    sha256 "03c4b6a293d4a51f534858657717bdc1465c42acb3b78e64c41f9011f966e449"
+  end
+
+  # Backport of https://github.com/python/cpython/commit/47cbf038850852cdcbe7a404ed7c64542340d58a
+  # TODO: Remove if https://github.com/python/cpython/pull/124156 is backported to Python 3.12
+  patch :DATA
 
   def install
     xy = Language::Python.major_minor_version python3
@@ -36,7 +47,7 @@ class PythonTkAT312 < Formula
 
     cd "Modules" do
       tcltk_version = Formula["tcl-tk"].any_installed_version.major_minor
-      (Pathname.pwd/"setup.py").write <<~EOS
+      Pathname("setup.py").write <<~PYTHON
         from setuptools import setup, Extension
 
         setup(name="tkinter",
@@ -44,13 +55,13 @@ class PythonTkAT312 < Formula
               version="#{version}",
               ext_modules = [
                 Extension("_tkinter", ["_tkinter.c", "tkappinit.c"],
-                          define_macros=[("WITH_APPINIT", 1)],
+                          define_macros=[("WITH_APPINIT", 1), ("TCL_WITH_EXTERNAL_TOMMATH", 1)],
                           include_dirs=["#{python_include}/internal", "#{Formula["tcl-tk"].opt_include/"tcl-tk"}"],
-                          libraries=["tcl#{tcltk_version}", "tk#{tcltk_version}"],
+                          libraries=["tcl#{tcltk_version}", "tcl#{tcltk_version.major}tk#{tcltk_version}"],
                           library_dirs=["#{Formula["tcl-tk"].opt_lib}"])
               ]
         )
-      EOS
+      PYTHON
       system python3, "-m", "pip", "install", *std_pip_args(prefix: false, build_isolation: true),
                                               "--target=#{libexec}", "."
       rm_r libexec.glob("*.dist-info")
@@ -65,3 +76,48 @@ class PythonTkAT312 < Formula
     system python3, "-c", "import tkinter; root = tkinter.Tk()"
   end
 end
+
+__END__
+diff --git a/Lib/tkinter/ttk.py b/Lib/tkinter/ttk.py
+index 073b3ae20797c3..8ddb7f97e3b233 100644
+--- a/Lib/tkinter/ttk.py
++++ b/Lib/tkinter/ttk.py
+@@ -321,6 +321,8 @@ def _tclobj_to_py(val):
+     elif hasattr(val, 'typename'): # some other (single) Tcl object
+         val = _convert_stringval(val)
+ 
++    if isinstance(val, tuple) and len(val) == 0:
++        return ''
+     return val
+ 
+ def tclobjs_to_py(adict):
+diff --git a/Modules/_tkinter.c b/Modules/_tkinter.c
+index b0b70ccb8cc3d3..45897817a56051 100644
+--- a/Modules/_tkinter.c
++++ b/Modules/_tkinter.c
+@@ -325,6 +325,7 @@ typedef struct {
+     const Tcl_ObjType *ListType;
+     const Tcl_ObjType *StringType;
+     const Tcl_ObjType *UTF32StringType;
++    const Tcl_ObjType *PixelType;
+ } TkappObject;
+ 
+ #define Tkapp_Interp(v) (((TkappObject *) (v))->interp)
+@@ -637,6 +638,7 @@ Tkapp_New(const char *screenName, const char *className,
+     v->ListType = Tcl_GetObjType("list");
+     v->StringType = Tcl_GetObjType("string");
+     v->UTF32StringType = Tcl_GetObjType("utf32string");
++    v->PixelType = Tcl_GetObjType("pixel");
+ 
+     /* Delete the 'exit' command, which can screw things up */
+     Tcl_DeleteCommand(v->interp, "exit");
+@@ -1236,7 +1238,8 @@ FromObj(TkappObject *tkapp, Tcl_Obj *value)
+     }
+ 
+     if (value->typePtr == tkapp->StringType ||
+-        value->typePtr == tkapp->UTF32StringType)
++        value->typePtr == tkapp->UTF32StringType ||
++        value->typePtr == tkapp->PixelType)
+     {
+         return unicodeFromTclObj(tkapp, value);
+     }

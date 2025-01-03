@@ -1,8 +1,8 @@
 class Payara < Formula
   desc "Java EE application server forked from GlassFish"
   homepage "https://www.payara.fish"
-  url "https://search.maven.org/remotecontent?filepath=fish/payara/distributions/payara/6.2024.6/payara-6.2024.6.zip"
-  sha256 "01b70d244cc6933f659875a21d65ef6b5dee293fe22de5b9c9288b7b78d6eba3"
+  url "https://search.maven.org/remotecontent?filepath=fish/payara/distributions/payara/6.2024.12/payara-6.2024.12.zip"
+  sha256 "8f2f0347f4a819c8bfa36e2bfa5d95d9fda68da4c4aa174dfb564eb6c234d4b5"
   license any_of: [
     "CDDL-1.1",
     { "GPL-2.0-only" => { with: "Classpath-exception-2.0" } },
@@ -14,12 +14,7 @@ class Payara < Formula
   end
 
   bottle do
-    sha256 cellar: :any_skip_relocation, arm64_sonoma:   "df95de99b77d0a4d330814417b634448e62ce9778934cf6d1b993c4d2abc224d"
-    sha256 cellar: :any_skip_relocation, arm64_ventura:  "252168875fba6cf58b444f9f259c8ee58a14bfbfbc4d54d4ff7c2bf92d01e12f"
-    sha256 cellar: :any_skip_relocation, arm64_monterey: "252168875fba6cf58b444f9f259c8ee58a14bfbfbc4d54d4ff7c2bf92d01e12f"
-    sha256 cellar: :any_skip_relocation, sonoma:         "2fe3e6588e75e724dd96f00a0b08fbb26c9a82fec6fe11c5d522f313a12fa5f6"
-    sha256 cellar: :any_skip_relocation, ventura:        "2fe3e6588e75e724dd96f00a0b08fbb26c9a82fec6fe11c5d522f313a12fa5f6"
-    sha256 cellar: :any_skip_relocation, monterey:       "41642982377d5f4b1b2a9a1dd2bdde6c03f385122384e11e461a5c764c63940d"
+    sha256 cellar: :any_skip_relocation, all: "4bc50c2dd5154c990050b626dc8d6a7d226f6f5d9c549fa8fa341a24c8601090"
   end
 
   depends_on :macos # The test fails on Linux.
@@ -29,7 +24,7 @@ class Payara < Formula
 
   def install
     # Remove Windows scripts
-    rm_f Dir["**/*.{bat,exe}"]
+    rm(Dir["**/*.{bat,exe}"])
 
     inreplace "bin/asadmin", /AS_INSTALL=.*/,
                              "AS_INSTALL=#{libexec}/glassfish"

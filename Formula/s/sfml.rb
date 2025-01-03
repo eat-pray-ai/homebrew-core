@@ -2,23 +2,24 @@ class Sfml < Formula
   # Don't update SFML until there's a corresponding CSFML release
   desc "Multi-media library with bindings for multiple languages"
   homepage "https://www.sfml-dev.org/"
-  url "https://www.sfml-dev.org/files/SFML-2.6.1-sources.zip"
-  sha256 "5bf19e5c303516987f7f54d4ff1b208a0f9352ffa1cd55f992527016de0e8cb7"
+  url "https://www.sfml-dev.org/files/SFML-3.0.0-sources.zip"
+  sha256 "8cc41db46b59f07c44ecf21c74a0f956d37735dec9d90ff4522856cb162ba642"
   license "Zlib"
   head "https://github.com/SFML/SFML.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "a7975776a6cc79b56b3f24e2b479ebec22de528a0d0ceb39a2661b817e249dd5"
-    sha256 cellar: :any,                 arm64_ventura:  "dfb67204535360d3addd78d234dfebc885766bca2ca0e16a92225aec0228dcd1"
-    sha256 cellar: :any,                 arm64_monterey: "318fa96aca743fb92d730fd8ddfdd583173f9022e989c0931435035cc25cd3db"
-    sha256 cellar: :any,                 sonoma:         "c879bf7e4b5f343a9c821a35f232c0238021b9e97ba6308f86b307cd59836714"
-    sha256 cellar: :any,                 ventura:        "8a65d2d67f7fa763bac2b15c85b3ec7c0c6db3aab2cc2b2a3a9a2891061e532b"
-    sha256 cellar: :any,                 monterey:       "b81ac4939baef78b092833edf511cb3ee32c303799aed32454f09c206706bb29"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "8d0504ed719b8fefc75d3a8c92a4658e86e648c2f318d7ed994224518ee8f479"
+    rebuild 1
+    sha256 cellar: :any,                 arm64_sequoia: "fff37927fb4f670430d85f49261b6154978e0216d55768b7d5a1a5168232d18f"
+    sha256 cellar: :any,                 arm64_sonoma:  "ff020fbbaccb4b711f2fb9eff376c43f6ccd900e3f1e48d20636524aaa67c9b9"
+    sha256 cellar: :any,                 arm64_ventura: "3dfa4ab8f4d7242edb31a6f9e862c1f4322f45fec06fefc992e7c9d1764d6c80"
+    sha256 cellar: :any,                 sonoma:        "b941f80dc54ebbf31d9853ceef9a5c72641e10810f2dbbbf40375d32da1a95cb"
+    sha256 cellar: :any,                 ventura:       "31f1099add9105e6d52e114b60587fb84a4c11c5a2f9e4312d7c5a6336fde916"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "2caae5a406d4744b0bf2e718a56b20d0a51e3f936d7343802a6bcd2a552dfc72"
   end
 
   depends_on "cmake" => :build
   depends_on "doxygen" => :build
+  depends_on "pkgconf" => :build
   depends_on "flac"
   depends_on "freetype"
   depends_on "libogg"
@@ -27,6 +28,7 @@ class Sfml < Formula
   on_linux do
     depends_on "libx11"
     depends_on "libxcursor"
+    depends_on "libxi"
     depends_on "libxrandr"
     depends_on "mesa"
     depends_on "mesa-glu"
@@ -38,35 +40,37 @@ class Sfml < Formula
     # Fix "fatal error: 'os/availability.h' file not found" on 10.11 and
     # "error: expected function body after function declarator" on 10.12
     # Requires the CLT to be the active developer directory if Xcode is installed
-    ENV["SDKROOT"] = MacOS.sdk_path if OS.mac? && version <= :high_sierra
+    ENV["SDKROOT"] = MacOS.sdk_path if OS.mac? && MacOS.version <= :high_sierra
 
     # Always remove the "extlibs" to avoid install_name_tool failure
     # (https://github.com/Homebrew/homebrew/pull/35279) but leave the
     # headers that were moved there in https://github.com/SFML/SFML/pull/795
-    rm_rf Dir["extlibs/*"] - ["extlibs/headers"]
+    rm_r(Dir["extlibs/*"] - ["extlibs/headers"])
 
-    args = ["-DCMAKE_INSTALL_RPATH=#{lib}",
-            "-DSFML_MISC_INSTALL_PREFIX=#{share}/SFML",
-            "-DSFML_INSTALL_PKGCONFIG_FILES=TRUE",
-            "-DSFML_BUILD_DOC=TRUE"]
+    args = [
+      "-DBUILD_SHARED_LIBS=ON",
+      "-DCMAKE_INSTALL_RPATH=#{rpath}",
+      "-DSFML_INSTALL_PKGCONFIG_FILES=TRUE",
+      "-DSFML_BUILD_DOC=TRUE",
+      "-DSFML_USE_SYSTEM_DEPS=ON",
+    ]
 
-    args << "-DSFML_USE_SYSTEM_DEPS=ON" if OS.linux?
-
-    system "cmake", "-S", ".", "-B", "build", *std_cmake_args, *args
+    system "cmake", "-S", ".", "-B", "build", *args, *std_cmake_args
     system "cmake", "--build", "build"
+    system "cmake", "--build", "build", "--target=doc"
     system "cmake", "--install", "build"
   end
 
   test do
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include "Time.hpp"
       int main() {
         sf::Time t1 = sf::milliseconds(10);
         return 0;
       }
-    EOS
-    system ENV.cxx, "-I#{include}/SFML/System", testpath/"test.cpp",
-           "-L#{lib}", "-lsfml-system", "-o", "test"
+    CPP
+    system ENV.cxx, "-I#{include}/SFML/System", "-std=c++17", testpath/"test.cpp",
+                    "-L#{lib}", "-lsfml-system", "-o", "test"
     system "./test"
   end
 end

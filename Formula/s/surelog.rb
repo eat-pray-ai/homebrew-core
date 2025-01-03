@@ -1,27 +1,27 @@
 class Surelog < Formula
   desc "SystemVerilog Pre-processor, parser, elaborator, UHDM compiler"
   homepage "https://github.com/chipsalliance/Surelog"
-  url "https://github.com/chipsalliance/Surelog/archive/refs/tags/v1.83.tar.gz"
-  sha256 "3add228495a6ef0e0e3921cb20c30ae09a32c04c76faab4f1a78e546e1d98d86"
+  url "https://github.com/chipsalliance/Surelog/archive/refs/tags/v1.84.tar.gz"
+  sha256 "ddcbc0d943ee52f2487b7a064c57a8239d525efd9a45b1f3e3e4a96a56cb3377"
   license "Apache-2.0"
+  revision 1
   head "https://github.com/chipsalliance/Surelog.git", branch: "master"
 
   bottle do
-    sha256 cellar: :any,                 arm64_sonoma:   "95cf3995027d36d2c86df419f3341ce30d92ef16e95ece9ed01aab03d2ceceae"
-    sha256 cellar: :any,                 arm64_ventura:  "29c3c557786fd9d33250026372b3ddf8ef83b1191739d7c2893e2b777e3460a6"
-    sha256 cellar: :any,                 arm64_monterey: "82363d3a40298dfc30497c5f15b866e0f7449419fb5d50657d910fe3a1d9c2d8"
-    sha256 cellar: :any,                 sonoma:         "adde2f28100f1daefe024e60e4df424e0498c27961dcc0d7c40bbc6a3224d039"
-    sha256 cellar: :any,                 ventura:        "2b18e6e0d005b03d528c80005244aa775ee210ca59b58a7fac3d5500d1b76799"
-    sha256 cellar: :any,                 monterey:       "be420f7e49e3cfeeef09cc0a2ef91d4ef1c3532fdfa38d2c3533b1ed115ecbfe"
-    sha256 cellar: :any_skip_relocation, x86_64_linux:   "9f46a99a35b0df3f2eb6074db85834ecc1d0376ef3381e58c92f0ba7d65e5ecb"
+    sha256 cellar: :any,                 arm64_sequoia: "9ee2c25ec18fd1d9dd4f7793b6ba916671a576d1e79ea3f59b0c0ecd6f405def"
+    sha256 cellar: :any,                 arm64_sonoma:  "8ec82893f6dae9ba5959bc4c7d7910afe640343ebd7ec40f66eae243c30815c2"
+    sha256 cellar: :any,                 arm64_ventura: "3e75f97f1b262e924733ef2a7a26a416e90f3b0cedb67341e0a0eadfcbdbd992"
+    sha256 cellar: :any,                 sonoma:        "e7bec2531c7d241da26665a6baa89d6e7731a4e64066def102328cdd6ff6a75a"
+    sha256 cellar: :any,                 ventura:       "284118733c63ad3344c973917b2b52ee91468f3d442851729995e27c5622736c"
+    sha256 cellar: :any_skip_relocation, x86_64_linux:  "72570d5f28cac62d5bb5c5e72674a1e95b25cbb43b47fe57bbeb16d353cfe95b"
   end
 
   depends_on "antlr" => :build
   depends_on "cmake" => :build
   depends_on "nlohmann-json" => :build
   depends_on "openjdk" => :build
-  depends_on "python@3.12" => :build
-  depends_on "pkg-config" => :test
+  depends_on "python@3.13" => :build
+  depends_on "pkgconf" => :test
   depends_on "antlr4-cpp-runtime"
   depends_on "capnp"
   depends_on "uhdm"
@@ -36,7 +36,7 @@ class Surelog < Formula
                     "-DANTLR_JAR_LOCATION=#{antlr.opt_prefix}/antlr-#{antlr.version}-complete.jar",
                     "-DBUILD_SHARED_LIBS=ON",
                     "-DCMAKE_INSTALL_RPATH=#{rpath}",
-                    "-DPython3_EXECUTABLE=#{which("python3.12")}",
+                    "-DPython3_EXECUTABLE=#{which("python3.13")}",
                     "-DSURELOG_BUILD_TESTS=OFF",
                     "-DSURELOG_USE_HOST_ALL=ON",
                     "-DSURELOG_WITH_ZLIB=ON",
@@ -50,7 +50,7 @@ class Surelog < Formula
     system bin/"surelog", "--version"
 
     # ensure library is ok
-    (testpath/"test.cpp").write <<~EOS
+    (testpath/"test.cpp").write <<~CPP
       #include <Surelog/API/Surelog.h>
       #include <Surelog/CommandLine/CommandLineParser.h>
       #include <Surelog/Common/FileSystem.h>
@@ -102,9 +102,9 @@ class Surelog < Formula
         delete errors;
         return code;
       }
-    EOS
+    CPP
 
-    flags = shell_output("pkg-config --cflags --libs Surelog").chomp.split
+    flags = shell_output("pkgconf --cflags --libs Surelog").chomp.split
     system ENV.cxx, testpath/"test.cpp", "-o", "test",
                     "-L#{Formula["antlr4-cpp-runtime"].opt_prefix}/lib",
                     "-fPIC", "-std=c++17", *flags
